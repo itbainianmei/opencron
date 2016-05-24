@@ -16,9 +16,9 @@
     <packaging>pom</packaging>
 
     <scm>
-        <url>scm:git:git@github.com:benjobs/cronjob.git</url>
-        <connection>scm:git:git@github.com:benjobs/cronjob.git</connection>
-        <developerConnection>scm:git:git@github.com:benjobs/cronjob.git</developerConnection>
+        <url>scm:git:git@github.com:wolfboys/cronjob.git</url>
+        <connection>scm:git:git@github.com:wolfboys/cronjob.git</connection>
+        <developerConnection>scm:git:git@github.com:wolfboys/cronjob.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
