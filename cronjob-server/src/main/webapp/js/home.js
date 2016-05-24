@@ -653,7 +653,7 @@ var cronjobChart = {
                     xkey: 'date',
                     ykeys: ['success', 'failure', 'killed'],
                     labels: ['成功', '失败', '被杀'],
-                    lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
+                    lineColors: ['rgba(205,224,255,0.65)', 'rgba(237,26,26,0.65)', 'rgba(0,0,0,0.65)'],
                     hoverFillColor: 'rgb(45,45,45)',
                     lineWidth: 4,
                     pointSize: 5,
