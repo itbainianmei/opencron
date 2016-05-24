@@ -24,8 +24,8 @@ public class RegDemo {
 
     public static void main(String[] args) throws Exception {
         Term console = new Term();
-        console.setHost("120.132.92.16");
-        console.setPassword("blueapi123!@#");
+        console.setHost("192.168.0.1");
+        console.setPassword("root");
         console.setUser("root");
         console.setPort(22);
 
