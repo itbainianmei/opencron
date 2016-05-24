@@ -75,25 +75,43 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var agent_number = (parseFloat("${success}")/parseFloat("${fn:length(workers)}")*100).toFixed(2);
-            $("#agent_number").text(agent_number).attr("data-value",agent_number);
-            $("#agent_number_prop").attr("data-percentage",agent_number+"%").css("width",agent_number+"%");
 
+            var agent_number = (parseFloat("${success}")/parseFloat("${fn:length(workers)}")*100).toFixed(2);
+            if(!isNaN(agent_number)){
+                $("#agent_number").text(agent_number).attr("data-value",agent_number);
+                $("#agent_number_prop").attr("data-percentage",agent_number+"%").css("width",agent_number+"%");
+            }else {
+                $("#agent_number").text(0).attr("data-value",0);
+                $("#agent_number_prop").attr("data-percentage","0%").css("width","0%");
+            }
 
             var job_number = (parseFloat("${singleton}")/parseFloat("${job}")*100).toFixed(2);
-            $("#job_number").text(job_number).attr("data-value",job_number);
-            $("#job_number_prop").attr("data-percentage",job_number+"%").css("width",job_number+"%");
-
+            if(!isNaN(job_number)){
+                $("#job_number").text(job_number).attr("data-value",job_number);
+                $("#job_number_prop").attr("data-percentage",job_number+"%").css("width",job_number+"%");
+            }else {
+                $("#job_number").text(0).attr("data-value",0);
+                $("#job_number_prop").attr("data-percentage","0%").css("width","0%");
+            }
 
             var ok_number = (parseFloat("${successAutoRecord}")/parseFloat("${successRecord}")*100).toFixed(2);
-            $("#ok_number").text(ok_number).attr("data-value",ok_number);
-            $("#ok_number_prop").attr("data-percentage",ok_number+"%").css("width",ok_number+"%");
-
+            if(!isNaN(ok_number)){
+                $("#ok_number").text(ok_number).attr("data-value",ok_number);
+                $("#ok_number_prop").attr("data-percentage",ok_number+"%").css("width",ok_number+"%");
+            }else {
+                $("#ok_number").text(0).attr("data-value",0);
+                $("#ok_number_prop").attr("data-percentage","0%").css("width","0%");
+            }
 
             var no_number = (parseFloat("${failedAutoRecord}")/parseFloat("${failedRecord}")*100).toFixed(2);
+            if(!isNaN(no_number)){
+                $("#no_number").text(no_number).attr("data-value",no_number);
+                $("#no_number_prop").attr("data-percentage",no_number+"%").css("width",no_number+"%");
+            }else {
+                $("#no_number").text(0).attr("data-value",0);
+                $("#no_number_prop").attr("data-percentage","0%").css("width","0%");
+            }
 
-            $("#no_number").text(no_number).attr("data-value",no_number);
-            $("#no_number_prop").attr("data-percentage",no_number+"%").css("width",no_number+"%");
         });
     </script>
 
@@ -127,7 +145,7 @@
                             <span class="pull-left"><i aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
                                 <small>执行器</small>
-                                <h2 data-animation-duration="1500" data-value="3659" class="media-heading animate-number">${fn:length(workers)}</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${fn:length(workers)}</h2>
                             </div>
                         </div>
 
@@ -136,10 +154,10 @@
                                 <div class="title">通信状态(正常机器/失联机器)</div>
                             </div>
                             <div class="status pull-right bg-transparent-black-1">
-                                <span data-animation-duration="1500" data-value="" class="animate-number" id="agent_number" ></span>%
+                                <span data-animation-duration="1500" data-value="0" class="animate-number" id="agent_number" ></span>%
                             </div>
                             <div class="progress progress-little progress-transparent-black">
-                                <div data-percentage="83%" class="progress-bar animate-progress-bar" id="agent_number_prop"></div>
+                                <div data-percentage="0%" class="progress-bar animate-progress-bar" id="agent_number_prop"></div>
                             </div>
                         </div>
                     </div>
@@ -153,7 +171,7 @@
                             <span class="pull-left"><i aria-hidden="true" class="fa fa-tasks"></i></span>
                             <div class="media-body">
                                 <small>作业数</small>
-                                <h2 data-animation-duration="1500" data-value="3659" class="media-heading animate-number">${job}</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${job}</h2>
                             </div>
                         </div>
 
@@ -165,7 +183,7 @@
                                 <span data-animation-duration="1500" data-value="" class="animate-number" id="job_number"></span>%
                             </div>
                             <div class="progress progress-little progress-transparent-black">
-                                <div data-percentage="" class="progress-bar animate-progress-bar" id="job_number_prop" style="width: 83%;"></div>
+                                <div data-percentage="0%" class="progress-bar animate-progress-bar" id="job_number_prop" style="width: 0%;"></div>
                             </div>
                         </div>
                     </div>
@@ -180,7 +198,7 @@
                             <span class="pull-left"><i aria-hidden="true" class="fa fa-thumbs-up" style="font-size: 65px;margin-top: -5px;"></i></span>
                             <div class="media-body">
                                 <small>成功作业</small>
-                                <h2 data-animation-duration="1500" data-value="3659" class="media-heading animate-number">${successRecord}</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${successRecord}</h2>
                             </div>
                         </div>
 
@@ -189,10 +207,10 @@
                                 <div class="title">执行类型(自动执行/手动执行)</div>
                             </div>
                             <div class="status pull-right bg-transparent-black-1">
-                                <span data-animation-duration="1500" data-value="" class="animate-number" id="ok_number"></span>%
+                                <span data-animation-duration="1500" data-value="0" class="animate-number" id="ok_number"></span>%
                             </div>
                             <div class="progress progress-little progress-transparent-black">
-                                <div data-percentage="83%" class="progress-bar animate-progress-bar" id="ok_number_prop"></div>
+                                <div data-percentage="0%" class="progress-bar animate-progress-bar" id="ok_number_prop"></div>
                             </div>
                         </div>
                     </div>
