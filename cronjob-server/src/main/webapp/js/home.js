@@ -675,7 +675,7 @@ var cronjobChart = {
                                 beta: 0
                             }
                         },
-                        colors: ['rgba(255,255,255,0.45)', 'rgba(237,26,26,0.45)', 'rgba(0,0,0,0.45)'],
+                        colors: ['rgba(255,255,255,0.50)', 'rgba(237,26,26,0.50)', 'rgba(0,0,0,0.50)'],
                         title: {text: ''},
                         tooltip: {
                             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
