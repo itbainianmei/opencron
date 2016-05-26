@@ -25,13 +25,14 @@ package org.jcronjob.job;
 import org.apache.log4j.Logger;
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.base.utils.CommonUtils;
-import org.jcronjob.base.utils.DateUtils;
 import org.jcronjob.domain.Monitor;
 import org.jcronjob.domain.Record;
 import org.jcronjob.domain.Worker;
 import org.jcronjob.service.*;
 import org.jcronjob.vo.JobVo;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -40,9 +41,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class CronJobInitiator implements Serializable {
+public class CronJobInitializeBean implements Serializable,InitializingBean,DisposableBean {
 
-    private final Logger logger = Logger.getLogger(CronJobInitiator.class);
+    private final Logger logger = Logger.getLogger(CronJobInitializeBean.class);
 
     @Autowired
     private WorkerService workerService;
@@ -68,24 +69,24 @@ public class CronJobInitiator implements Serializable {
     @Autowired
     private MonitorService monitorService;
 
-
-    public void initCronJob() {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         //quartz job
-        List<JobVo> jobs = jobService.getJob(CronJob.ExecType.AUTO, CronJob.CronType.QUARTZ);
+        List<JobVo> jobs = jobService.getJobVo(CronJob.ExecType.AUTO, CronJob.CronType.QUARTZ);
         for (JobVo job : jobs) {
             try {
-                schedulerService.addOrModify(job, executeService);
+                schedulerService.addOrModify(job,executeService);
             } catch (SchedulerException e) {
                 e.printStackTrace();
             }
         }
 
         schedulerService.startCrontab();
-
         workerService.syncWorker();
     }
 
-    public void destroyCronJob() {
+    @Override
+    public void destroy() throws Exception {
         jobService.cleanCrontabJob();
         workerService.cleanWorker();
     }
@@ -113,19 +114,17 @@ public class CronJobInitiator implements Serializable {
                         if (CommonUtils.isEmpty(worker.getFailTime()) || new Date().getTime() - worker.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
                             noticeService.notice(worker);
                             //记录本次任务失败的时间
-                            workerService.updateStatus(String.format("update worker set failTime='%s',status=0 where workerid=%s",
-                                    DateUtils.formatFullDate(new Date()),
-                                    worker.getWorkerId()
-                            ));
+                            worker.setFailTime(new Date());
+                            workerService.updateStatus(worker,0);
                         }
 
                         if (worker.getStatus()) {
-                            workerService.updateStatus(String.format("update worker set status=0 where workerid=%s", worker.getWorkerId()));
+                            workerService.updateStatus(worker,0);
                         }
 
                     } else {
                         if (!worker.getStatus()) {
-                            workerService.updateStatus(String.format("update worker set status=1 where workerid=%s", worker.getWorkerId()));
+                            workerService.updateStatus(worker,1);
                         }
                     }
                 }
@@ -138,7 +137,7 @@ public class CronJobInitiator implements Serializable {
     public void redoJob() {
         List<Record> records = recordService.getReExecuteRecord();
         for (final Record record : records) {
-            JobVo jobVo = jobService.getJobById(record.getJobId());
+            JobVo jobVo = jobService.getJobVoById(record.getJobId());
             try {
                 jobVo.setWorker(workerService.getWorker(jobVo.getWorkerId()));
                 executeService.reRunJob(record, jobVo, CronJob.JobCategory.SINGLETON);
@@ -171,9 +170,5 @@ public class CronJobInitiator implements Serializable {
         }
     }
 
+
 }
-
-
-
-
-

@@ -22,9 +22,8 @@
 
 package org.jcronjob.service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.jcronjob.base.job.CronJob.*;
 
@@ -76,17 +75,19 @@ public class ExecuteService implements Job {
     }
 
     public boolean executeJob(final JobVo job, final ExecType execType) {
-
-        if (job.getCategory() == 1) {//流程任务..
+        if (job.getCategory() == JobCategory.FLOW.getCode()) {//流程任务..
             long flowGroup = System.currentTimeMillis();//分配一个流程组Id
-            boolean flag = executeFlowJob(job, execType, flowGroup, 0);
-            if (flag) {
-                for (int i = 0; i < job.getChildren().size(); i++) {
-                    flag = executeFlowJob(job.getChildren().get(i), execType, flowGroup, i + 1);
-                    if (!flag) return flag;
+            /**
+             * 一个指定大小的job队列
+             */
+            job.getChildren().add(0,job);
+            Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
+            for(JobVo jobVo:jobQueue){
+                if (!executeFlowJob(jobVo, execType, flowGroup)) {
+                    return false;
                 }
             }
-            return flag;
+            return true;
         }
 
         Record record = new Record(job, execType);
@@ -124,12 +125,13 @@ public class ExecuteService implements Job {
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    private boolean executeFlowJob(JobVo job, ExecType execType, long flowGroup, int flowNum) {
+
+    private boolean executeFlowJob(JobVo job, ExecType execType, long flowGroup) {
         Record record = new Record(job, execType);
         record.setRedoCount(0L);
         record.setFlowGroup(flowGroup);//组Id
         record.setCategory(JobCategory.FLOW.getCode());//流程任务
-        record.setFlowNum(flowNum);
+        record.setFlowNum(job.getFlowNum());
 
         //执行前先保存
         record = recordService.save(record);
@@ -264,7 +266,7 @@ public class ExecuteService implements Job {
         for (final Record record : records) {
 
             int state = record.getStatus();
-            final JobVo job = jobService.getJobById(record.getJobId());
+            final JobVo job = jobService.getJobVoById(record.getJobId());
             try {
                 record.setStatus(RunStatus.STOPPING.getStatus());//停止中
                 record.setSuccess(ResultStatus.KILLED.getStatus());

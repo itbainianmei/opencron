@@ -23,6 +23,7 @@
 package org.jcronjob.service;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.jcronjob.base.job.CronJob;
@@ -35,6 +36,7 @@ import static org.jcronjob.base.job.CronJob.*;
 import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.domain.Job;
 import org.jcronjob.vo.JobVo;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,16 +57,17 @@ public class JobService {
     @Autowired
     private MemcacheCache memcacheCache;
 
-    @Autowired
-    private SchedulerService schedulerService;
-
     private final String CRONTAB_KEY = "CRONJOB_CRONTAB";
+
+    public Job getJob(Long jobId) {
+        return (Job) queryDao.sqlUniqueQuery(Job.class,"SELECT * FROM job WHERE jobId=?",jobId);
+    }
 
     /**
      * 获取将要执行的任务
      * @return
      */
-    public List<JobVo> getJob(ExecType execType, CronType cronType) {
+    public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
         String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
         if (CommonUtils.notEmpty(jobs)) {
@@ -91,14 +94,14 @@ public class JobService {
     //任务修改后同步..
     public void syncCrontabJob() {
         this.cleanCrontabJob();
-        memcacheCache.put(this.CRONTAB_KEY, getJob(CronJob.ExecType.AUTO, CronJob.CronType.CRONTAB));
+        memcacheCache.put(this.CRONTAB_KEY, getJobVo(CronJob.ExecType.AUTO, CronJob.CronType.CRONTAB));
     }
 
     public List<JobVo> getCrontabJob() {
         return memcacheCache.get(this.CRONTAB_KEY, List.class);
     }
 
-    public Page<JobVo> getJobs(HttpSession session, Page page, JobVo job) {
+    public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {
         String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
                 " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user as u ON t.operateId = u.userId WHERE IFNULL(flowNum,0)=0 AND t.status=1 ";
         if (job != null) {
@@ -129,7 +132,7 @@ public class JobService {
         if (job.getCategory() == 1) {
             String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname" +
                     " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u " +
-                    " ON t.operateId = u.userId WHERE t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
+                    " ON t.operateId = u.userId WHERE t.status=1 AND t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
             List<JobVo> childJobs = queryDao.sqlQuery(JobVo.class, sql, job.getFlowId());
             job.setChildren(childJobs);
             return childJobs;
@@ -138,26 +141,14 @@ public class JobService {
     }
 
     public Job addOrUpdate(Job job) {
-        Job savedJob = (Job) queryDao.save(job);
-        schedulerService.startCrontab();
-        return savedJob;
+        return (Job)queryDao.save(job);
     }
 
-    public Job queryJobById(Long id) {
-        return queryDao.get(Job.class, id);
-    }
-
-    public JobVo getJobById(Long id) {
+    public JobVo getJobVoById(Long id) {
         String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
                 " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u ON t.operateId = u.userId WHERE t.jobId =?";
         JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
-        if (job.getCategory() == 1) {
-            sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname" +
-                    " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u " +
-                    " ON t.operateId = u.userId WHERE t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
-            List<JobVo> childJobs = queryDao.sqlQuery(JobVo.class, sql, job.getFlowId());
-            job.setChildren(childJobs);
-        }
+        queryChildren(job);
         return job;
     }
 
@@ -171,23 +162,70 @@ public class JobService {
         return queryDao.sqlQuery(JobVo.class, sql, workerId);
     }
 
-    public String checkName(Long id, String name) {
-        String sql = "SELECT COUNT(1) FROM job WHERE status=1 AND jobName=? ";
-        if (notEmpty(id)) {
-            sql += " AND jobId != " + id + " AND flowId != " + id;
+    public String checkName(Long jobId,Long workerId, String name) {
+        String sql = "SELECT COUNT(1) FROM job WHERE workerId=? AND status=1 AND jobName=? ";
+        if (notEmpty(jobId)) {
+            sql += " AND jobId != " + jobId + " AND flowId != " + jobId;
         }
-        return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
+        return (queryDao.getCountBySql(sql, workerId,name)) > 0L ? "no" : "yes";
     }
 
     @Transactional(readOnly = false)
-    public void dealOldFlowJob(Long deleteId) {
-        Boolean exist = queryDao.getCountBySql("SELECT COUNT(1) FROM record r LEFT JOIN job t ON r.jobid = t.jobid WHERE t.flowid = ?", deleteId) > 0L;
-        if (exist) {
-            queryDao.createSQLQuery("UPDATE job SET status = 0 WHERE flowid = " + deleteId).executeUpdate();
-        } else {
-            queryDao.createSQLQuery("DELETE FROM job WHERE flowid = " + deleteId).executeUpdate();
+    public int delete(Long jobId) {
+        return queryDao.createSQLQuery("update job set status=0 WHERE jobId = " + jobId).executeUpdate();
+    }
+
+    @Transactional(readOnly = false)
+    public void saveFlowJob(Job job, List<Job> children) throws SchedulerException {
+        job.setLastFlag(false);
+        job.setUpdateTime(new Date());
+        job.setFlowNum(0);//顶层sort是0
+
+        /**
+         * 保存最顶层的父级任务
+         */
+        if (job.getJobId()!=null) {
+            addOrUpdate(job);
+            /**
+             * 当前作业已有的子作业
+             */
+            JobVo jobVo = new JobVo();
+            jobVo.setCategory(JobCategory.FLOW.getCode());
+            jobVo.setFlowId(job.getFlowId());
+            List<JobVo> childrenx = queryChildren(jobVo);
+            top:for(JobVo jobVo1:childrenx){
+                for(Job job1:children){
+                    if ( job1.getJobId()!=null && job1.getJobId().equals(jobVo1.getJobId()) ) {
+                        continue top;
+                    }
+                }
+                /**
+                 * 已有的子作业被删除的,则做删除操作...
+                 */
+                delete(jobVo1.getJobId());
+            }
+        }else {
+            Job job1 = addOrUpdate(job);
+            job1.setFlowId(job1.getJobId());//flowId
+            addOrUpdate(job1);
+            job.setJobId(job1.getJobId());
+
         }
-        schedulerService.startCrontab();
+
+        for (int i=0;i<children.size();i++) {
+            Job chind = children.get(i);
+            /**
+             * 子作业的流程编号都为顶层父任务的jobId
+             */
+            chind.setFlowId(job.getJobId());
+            chind.setOperateId(job.getOperateId());
+            chind.setExecType(job.getExecType());
+            chind.setUpdateTime(new Date());
+            chind.setCategory(1);
+            chind.setFlowNum(i+1);
+            chind.setLastFlag(chind.getFlowNum()==children.size());
+            addOrUpdate(chind);
+        }
     }
 
 

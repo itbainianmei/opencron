@@ -39,6 +39,6 @@
 		</property>
 	</bean>
 
-	<bean class="org.jcronjob.job.CronJobInitiator" init-method="initCronJob" destroy-method="destroyCronJob" lazy-init="false"/>
+	<bean class="org.jcronjob.job.CronJobInitializeBean" lazy-init="false"/>
 
 </beans>

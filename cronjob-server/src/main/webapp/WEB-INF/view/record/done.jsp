@@ -61,14 +61,14 @@
         function showChild(id){
             var open = $("#record_"+id).attr("childOpen");
             if (open == "off"){
-                $("#icon"+id).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
                 $(".child"+id).show();
                 $("#record_"+id).attr("childOpen","on");
                 $(".name_"+id+"_1").hide();
                 $(".name_"+id+"_2").show();
             }else {
-                $("#icon"+id).removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 $(".redoGroup"+id).css("background-color","");
                 $(".child"+id).hide();
                 $("#record_"+id).attr("childOpen","off");
@@ -80,7 +80,7 @@
         function showFatherRedo(id,flowGroup,length){
             var open = $("#record_"+id).attr("childOpen");
             if (open == "off"){
-                $("#icon"+id).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
                 $(".child"+id).show();
                 $("#record_"+id).attr("childOpen","on");
@@ -90,7 +90,7 @@
                 $(".name_"+id+"_1").hide();
                 $(".name_"+id+"_2").show();
             }else {
-                $("#icon"+id).removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 $(".redoGroup"+id).css("background-color","");
                 $(".child"+id).hide();
                 $("#record_"+id).attr("childOpen","off");
@@ -105,7 +105,7 @@
         function showChildRedo(id,flowGroup,length){
             var open = $("#record_"+id).attr("childOpen");
             if (open == "off"){
-                $("#icon"+id).removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
                 $(".child"+id).show();
                 $("#record_"+id).attr("childOpen","on");
@@ -115,7 +115,7 @@
                 $(".name_"+id+"_1").hide();
                 $(".name_"+id+"_2").show();
             }else {
-                $("#icon"+id).removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.1)");
                 $(".child"+id).hide();
                 $("#record_"+id).attr("childOpen","off");
@@ -130,7 +130,7 @@
         function showChildFlow(id,flowId){
             var open = $("#recordFlow_"+id).attr("childOpen");
             if (open == "off"){
-                $("#iconFlow"+id).removeClass("glyphicon-circle-arrow-down").addClass("glyphicon-circle-arrow-up");
+                $("#iconFlow"+id).removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
                 $(".childFlow"+id).show();
                 $(".flowRecord"+flowId).css("background-color","rgba(0,0,0,0.1)");
                 $("#recordFlow_"+id).attr("childOpen","on");
@@ -138,8 +138,8 @@
                 $(".name_"+id+"_2").show();
             }else {
                 $(".flowRecord"+flowId).css("background-color","");
-                $("#iconFlow"+id).removeClass("glyphicon-circle-arrow-up").addClass("glyphicon-circle-arrow-down");
-                $(".iconChild"+id).removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+                $("#iconFlow"+id).removeClass("fa-angle-double-up").addClass("fa-angle-double-down");
+                $(".iconChild"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 $(".openChild"+id).attr("childOpen","off");
                 $(".childFlow"+id).hide();
                 $(".redoIndex_"+id).hide();
@@ -185,40 +185,40 @@
             </div>
 
             <div style="float: right;margin-bottom: 10px">
-                    <label for="workerId">执行器：</label>
-                    <select id="workerId" name="workerId" class="select-self" style="width: 110px;">
-                        <option value="">全部</option>
-                        <c:forEach var="d" items="${workers}">
-                            <option value="${d.workerId}" ${d.workerId eq workerId ? 'selected' : ''}>${d.name}</option>
-                        </c:forEach>
-                    </select>
-                    &nbsp;&nbsp;&nbsp;
-                    <label for="jobId">任务名称：</label>
-                    <select id="jobId" name="jobId" class="select-self" style="width: 110px;">
-                        <option value="">全部</option>
-                        <c:forEach var="t" items="${jobs}">
-                            <option value="${t.jobId}" ${t.jobId eq jobId ? 'selected' : ''}>${t.jobName}&nbsp;</option>
-                        </c:forEach>
-                    </select>
-                    &nbsp;&nbsp;&nbsp;
-                    <label for="success">执行状态：</label>
-                    <select id="success" name="success" class="select-self" style="width: 80px;">
-                        <option value="">全部</option>
-                        <option value="1" ${success eq 1 ? 'selected' : ''}>成功</option>
-                        <option value="0" ${success eq 0 ? 'selected' : ''}>失败</option>
-                        <option value="0" ${success eq 2 ? 'selected' : ''}>被杀</option>
-                    </select>
-                    &nbsp;&nbsp;&nbsp;
-                    <label for="execType">执行方式：</label>
-                    <select id="execType" name="execType" class="select-self" style="width: 80px;">
-                        <option value="">全部</option>
-                        <option value="0" ${execType eq 0 ? 'selected' : ''}>自动</option>
-                        <option value="1" ${execType eq 1 ? 'selected' : ''}>手动</option>
-                        <option value="3" ${execType eq 3 ? 'selected' : ''}>重跑</option>
-                    </select>
-                    &nbsp;&nbsp;&nbsp;
-                    <label for="queryTime">开始时间：</label>
-                    <input type="text" id="queryTime" name="queryTime" value="${queryTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd'})" class="Wdate select-self" style="width: 100px"/>
+                <label for="workerId">执行器：</label>
+                <select id="workerId" name="workerId" class="select-self" style="width: 110px;">
+                    <option value="">全部</option>
+                    <c:forEach var="d" items="${workers}">
+                        <option value="${d.workerId}" ${d.workerId eq workerId ? 'selected' : ''}>${d.name}</option>
+                    </c:forEach>
+                </select>
+                &nbsp;&nbsp;&nbsp;
+                <label for="jobId">任务名称：</label>
+                <select id="jobId" name="jobId" class="select-self" style="width: 110px;">
+                    <option value="">全部</option>
+                    <c:forEach var="t" items="${jobs}">
+                        <option value="${t.jobId}" ${t.jobId eq jobId ? 'selected' : ''}>${t.jobName}&nbsp;</option>
+                    </c:forEach>
+                </select>
+                &nbsp;&nbsp;&nbsp;
+                <label for="success">执行状态：</label>
+                <select id="success" name="success" class="select-self" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="1" ${success eq 1 ? 'selected' : ''}>成功</option>
+                    <option value="0" ${success eq 0 ? 'selected' : ''}>失败</option>
+                    <option value="0" ${success eq 2 ? 'selected' : ''}>被杀</option>
+                </select>
+                &nbsp;&nbsp;&nbsp;
+                <label for="execType">执行方式：</label>
+                <select id="execType" name="execType" class="select-self" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="0" ${execType eq 0 ? 'selected' : ''}>自动</option>
+                    <option value="1" ${execType eq 1 ? 'selected' : ''}>手动</option>
+                    <option value="3" ${execType eq 3 ? 'selected' : ''}>重跑</option>
+                </select>
+                &nbsp;&nbsp;&nbsp;
+                <label for="queryTime">开始时间：</label>
+                <input type="text" id="queryTime" name="queryTime" value="${queryTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd'})" class="Wdate select-self" style="width: 100px"/>
             </div>
         </div>
 
@@ -268,7 +268,7 @@
                                     </c:forEach>
                                 </c:if>
                                 <c:forEach var="t" items="${r.childJob}" varStatus="index">
-                                    <div class="down"><img src="/img/down.png" width="17px" height="15px"></div>${t.jobName}
+                                    <div class="down"><i class="fa fa-arrow-down" style="font-size:14px" aria-hidden="true"></i></div>${t.jobName}
                                     <c:if test="${t.redoCount ne 0}">
                                         <c:forEach var="tc" items="${t.childRecord}" varStatus="count">
                                             <div class="redoIndex_${tc.parentId} redoIndex_${r.recordId}" style="display: none">
@@ -309,12 +309,12 @@
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                 <c:if test="${r.category eq 1 and r.childJob ne null}">
                                     <a href="#" title="流程任务" id="recordFlow_${r.recordId}" childOpen="off" onclick="showChildFlow(${r.recordId},'${r.flowGroup}')">
-                                        <i class="glyphicon glyphicon-circle-arrow-down" id="iconFlow${r.recordId}"></i>
+                                        <i aria-hidden="true" class="fa fa-angle-double-down" style="font-size:15px;" id="iconFlow${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <c:if test="${r.redoCount ne 0}">
                                     <a href="#" title="重跑记录" id="record_${r.recordId}" childOpen="off" onclick="showFatherRedo('${r.recordId}','${r.flowGroup}','${fn:length(r.childRecord)}')">
-                                        <i class="glyphicon glyphicon-chevron-down" id="icon${r.recordId}"></i>
+                                        <i aria-hidden="true" class="fa fa-chevron-down" id="icon${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <a href="/record/detail?id=${r.recordId}" title="查看详情">
@@ -391,7 +391,7 @@
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                         <c:if test="${t.redoCount ne 0}">
                                             <a class="openChild${r.recordId}" href="#" title="重跑记录" id="record_${t.recordId}" childOpen="off" onclick="showChildRedo('${t.recordId}','${t.flowGroup}','${fn:length(t.childRecord)}')">
-                                                <i class="glyphicon glyphicon-chevron-down iconChild${r.recordId}" id="icon${t.recordId}"></i>
+                                                <i aria-hidden="true" class="fa fa-chevron-down iconChild${r.recordId}" id="icon${t.recordId}"></i>
                                             </a>&nbsp;&nbsp;
                                         </c:if>
                                         <a href="/record/detail?id=${t.recordId}" title="查看详情">

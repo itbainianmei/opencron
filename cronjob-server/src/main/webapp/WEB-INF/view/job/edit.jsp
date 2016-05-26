@@ -36,124 +36,6 @@
 
     <script type="text/javascript">
 
-        function showCronExp(){$(".cronExpDiv").show()}
-        function hideCronExp(){$(".cronExpDiv").hide()}
-        function showCountDiv(){$(".countDiv").show()}
-        function hideCountDiv(){$(".countDiv").hide()}
-        function showCountDiv1(){$(".countDiv1").show()}
-        function hideCountDiv1(){$(".countDiv1").hide()}
-
-        function changeTips(type){
-            if (type == "0"){
-                $("#checkcronExp").html('<b>*&nbsp;</b>请采用unix/linux的时间格式表达式,如 00 01 * * *');
-            }
-            if (type == "1"){
-                $("#checkcronExp").html('<b>*&nbsp;</b>请采用quartz框架的时间格式表达式,如 0 0 10 L * ?');
-            }
-        }
-
-        function subJob(flag){
-            if (flag=="1"){
-                $("#subJob").show();
-            }else {
-                $("#subJob").hide();
-            }
-        }
-
-        function save(){
-
-            var jobId = $("#jobId").val();
-            if (!jobId){
-                alert("页面异常，请刷新重试!");
-                return false;
-            }
-
-            var jobName = $("#jobName").val();
-            if (!jobName){
-                alert("请填写任务名称!");
-                return false;
-            }
-            if (!$("#workerId").val()){
-                alert("页面异常，请刷新重试!");
-                return false;
-            }
-            var execType = $('input[type="radio"][name="execType"]:checked').val();
-            var cronType = $('input[type="radio"][name="cronType"]:checked').val();
-            var cronExp = $("#cronExp").val();
-            if (execType == 0 && !cronExp){
-                alert("请填写时间规则!");
-                return false;
-            }
-
-            if (!$("#command").val()){
-                alert("请填写执行命令!");
-                return false;
-            }
-            var redo = $('input[type="radio"][name="redo"]:checked').val();
-            if (redo == 1){
-                if (!$("#runCount").val()){
-                    alert("请填写重跑次数!");
-                    return false;
-                }
-                if(!cronjob.testNumber($("#runCount").val())){
-                    alert("截止重跑次数必须为正整数!");
-                    return false;
-                }
-            }
-
-            if ($('input[name="category"]:checked').val()=="1"){
-                if($("#subJobDiv:has(li)").length==0) {
-                    alert("当前是流程任务,至少要添加一个子任务!");
-                    return false;
-                }
-            }
-
-            $.ajax({
-                url:"/job/checkname",
-                data:{
-                    "id":jobId,
-                    "name":jobName
-                },
-                success:function(data){
-                    if (data == "yes"){
-                        if (execType == 0 && cronExp){
-                            $.ajax({
-                                url:"/validation/cronexp",
-                                data:{
-                                    "cronType":cronType,
-                                    "cronExp":cronExp
-                                },
-                                success:function(data){
-                                    if (data == "success"){
-                                        $("#job").submit();
-                                        return false;
-                                    }else {
-                                        alert("时间规则语法错误!");
-                                        return false;
-                                    }
-                                },
-                                error : function() {
-                                    alert("网络异常，请刷新页面重试!");
-                                }
-                            });
-                            return false;
-                        }else {
-                            $("#job").submit();
-                            return false;
-                        }
-                        return false;
-                    }else {
-                        alert("任务名已存在!");
-                        return false;
-                    }
-                },
-                error : function() {
-                    alert("网络繁忙请刷新页面重试!");
-                    return false;
-                }
-            });
-
-        }
 
         $(document).ready(function(){
 
@@ -177,21 +59,21 @@
                 }
                 var jobName = $("#jobName").val();
                 if(!jobName){
-                    $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写任务名' + "</font>");
-                    return false;
-                }
+                    $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写作业名称' + "</font>");
+                    return false;}
                 $.ajax({
                     url:"/job/checkname",
                     data:{
-                        "id":jobId,
-                        "name":jobName
+                        "jobId":jobId,
+                        "name":jobName,
+                        "workerId":$("#workerId").val()
                     },
                     success:function(data){
                         if (data == "yes"){
-                            $("#checkJobName").html("<font color='green'>" + '<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;任务名可用' + "</font>");
+                            $("#checkJobName").html("<font color='green'>" + '<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;作业名称可用' + "</font>");
                             return false;
                         }else {
-                            $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;任务名已存在' + "</font>");
+                            $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;作业名称已存在' + "</font>");
                             return false;
                         }
                     },
@@ -202,7 +84,7 @@
                 });
             });
             $("#jobName").focus(function(){
-                $("#checkJobName").html('<b>*&nbsp;</b>任务名称必填');
+                $("#checkJobName").html('<b>*&nbsp;</b>作业名称必填');
             });
             $("#cronExp").focus(function(){
                 var cronType = $('input[type="radio"][name="cronType"]:checked').val();
@@ -240,16 +122,137 @@
                 });
             });
 
-            //子任务拖拽
+            //子作业拖拽
             $( "#subJobDiv" ).sortable({
                 delay: 100
             });
 
         });
 
+        function showCronExp(){$(".cronExpDiv").show()}
+        function hideCronExp(){$(".cronExpDiv").hide()}
+        function showCountDiv(){$(".countDiv").show()}
+        function hideCountDiv(){$(".countDiv").hide()}
+        function showCountDiv1(){$(".countDiv1").show()}
+        function hideCountDiv1(){$(".countDiv1").hide()}
+
+        function changeTips(type){
+            if (type == "0"){
+                $("#checkcronExp").html('<b>*&nbsp;</b>请采用unix/linux的时间格式表达式,如 00 01 * * *');
+            }
+            if (type == "1"){
+                $("#checkcronExp").html('<b>*&nbsp;</b>请采用quartz框架的时间格式表达式,如 0 0 10 L * ?');
+            }
+        }
+
+        function subJob(flag){
+            if (flag=="1"){
+                $("#subJob").show();
+            }else {
+                $("#subJob").hide();
+            }
+        }
+
+        function save(){
+
+            var jobId = $("#jobId").val();
+            if (!jobId){
+                alert("页面异常，请刷新重试!");
+                return false;
+            }
+
+            var jobName = $("#jobName").val();
+            if (!jobName){
+                alert("请填写作业名称!");
+                return false;
+            }
+            if (!$("#workerId").val()){
+                alert("页面异常，请刷新重试!");
+                return false;
+            }
+            var execType = $('input[type="radio"][name="execType"]:checked').val();
+            var cronType = $('input[type="radio"][name="cronType"]:checked').val();
+            var cronExp = $("#cronExp").val();
+            if (execType == 0 && !cronExp){
+                alert("请填写时间规则!");
+                return false;
+            }
+
+            if (!$("#command").val()){
+                alert("请填写执行命令!");
+                return false;
+            }
+            var redo = $('input[type="radio"][name="redo"]:checked').val();
+            if (redo == 1){
+                if (!$("#runCount").val()){
+                    alert("请填写重跑次数!");
+                    return false;
+                }
+                if(!cronjob.testNumber($("#runCount").val())){
+                    alert("截止重跑次数必须为正整数!");
+                    return false;
+                }
+            }
+
+            if ($('input[name="category"]:checked').val()=="1"){
+                if($("#subJobDiv:has(li)").length==0) {
+                    alert("当前是流程作业,至少要添加一个子作业!");
+                    return false;
+                }
+            }
+
+            $.ajax({
+                url:"/job/checkname",
+                data:{
+                    "jobId":jobId,
+                    "name":jobName,
+                    "workerId":$("#workerId").val()
+                },
+                success:function(data){
+                    if (data == "yes"){
+                        if (execType == 0 && cronExp){
+                            $.ajax({
+                                url:"/validation/cronexp",
+                                data:{
+                                    "cronType":cronType,
+                                    "cronExp":cronExp
+                                },
+                                success:function(data){
+                                    if (data == "success"){
+                                        $("#job").submit();
+                                        return false;
+                                    }else {
+                                        alert("时间规则语法错误!");
+                                        return false;
+                                    }
+                                },
+                                error : function() {
+                                    alert("网络异常，请刷新页面重试!");
+                                }
+                            });
+                            return false;
+                        }else {
+                            $("#job").submit();
+                            return false;
+                        }
+                        return false;
+                    }else {
+                        alert("作业名称已存在!");
+                        return false;
+                    }
+                },
+                error : function() {
+                    alert("网络繁忙请刷新页面重试!");
+                    return false;
+                }
+            });
+
+        }
+
+
         function addSubJob(){
             $("#subForm")[0].reset();
-            $("#subTitle").html("添加子任务").attr("action","add");
+            $("#subTitle").html("添加子作业").attr("action","add");
         }
 
         function closeSubJob(){
@@ -261,7 +264,7 @@
 
             var jobName = $("#jobName1").val();
             if (!jobName){
-                alert("请填写任务名称!");
+                alert("请填写作业名称!");
                 return false;
             }
 
@@ -290,17 +293,21 @@
             $.ajax({
                 url:"/job/checkname",
                 data:{
-                    "name":jobName
+                    "jobId":$("#jobId1").val(),
+                    "name":jobName,
+                    "workerId":$("#workerId1").val()
                 },
+
                 success:function(data){
                     if (data == "no"){
-                        alert("任务名已存在!");
+                        alert("作业名称已存在!");
                         return false;
                     }else {
                         //添加
                         if ( $("#subTitle").attr("action")=="add" ) {
                             var timestamp = Date.parse(new Date());
-                            var addHtml = "<li id='"+timestamp+"' ><span id='name_"+timestamp+"' onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑' '><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;"+jobName+"</a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='#' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
+                            var addHtml = "<li id='"+timestamp+"' ><span onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑'><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;<span id='name_"+timestamp+"'>"+jobName+"</span></a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='javascript:void(0)' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
+                                    "<input type='hidden' name='child.jobId' value=''>"+
                                     "<input type='hidden' name='child.jobName' value='"+jobName+"'>"+
                                     "<input type='hidden' name='child.workerId' value='"+$("#workerId1").val()+"'>"+
                                     "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
@@ -312,6 +319,10 @@
                         }else if ( $("#subTitle").attr("action") == "edit" ) {//编辑
                             var id = $("#subTitle").attr("tid");
                             $("#"+id).find("input").each(function(index,element) {
+
+                                if ($(element).attr("name") == "child.jobId"){
+                                    $(element).attr("value",$("#jobId").val());
+                                }
 
                                 if ($(element).attr("name") == "child.jobName"){
                                     $(element).attr("value",jobName);
@@ -336,7 +347,7 @@
                                 }
                             });
 
-                            $("#name_"+id).html("<a href=\"#\">"+jobName+"</a>");
+                            $("#name_"+id).html(jobName);
 
                         }
                         closeSubJob();
@@ -352,9 +363,13 @@
 
         function showSubJob(id){
 
-            $("#subTitle").html("编辑子任务").attr("action","edit").attr("tid",id);
+            $("#subTitle").html("编辑子作业").attr("action","edit").attr("tid",id);
 
             $("#"+id).find("input").each(function(index,element) {
+
+                if ($(element).attr("name") == "child.jobId"){
+                    $("#jobId1").val($(element).val());
+                }
 
                 if ($(element).attr("name") == "child.jobName"){
                     $("#jobName1").val($(element).val());
@@ -388,7 +403,7 @@
                     $("#runCount1").val($(element).val());
                 }
 
-                if ($(element).attr("name") == "child.redo"){
+                if ($(element).attr("name") == "child.command"){
                     $("#command1").val($(element).val());
                 }
 
@@ -399,7 +414,16 @@
         }
 
         function  removeSubJob(node){
-            $(node).parent().slideUp(300,function(){this.remove()});
+            swal({
+                title: "",
+                text: "您确定要删除这个子作业?",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: true,
+                confirmButtonText: "删除"
+            }, function () {
+                $(node).parent().slideUp(300,function(){this.remove()});
+            });
         }
 
     </script>
@@ -417,10 +441,10 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">CRONJOB</a></li>
-        <li><a href="">任务管理</a></li>
+        <li><a href="">CronJob</a></li>
+        <li><a href="">作业管理</a></li>
     </ol>
-    <h4 class="page-title">添加任务</h4>
+    <h4 class="page-title">添加作业</h4>
 
 
     <div style="float: right;margin-top: 5px">
@@ -435,19 +459,19 @@
                 <input type="hidden" id="workerId" name="workerId" class="input-self" value="${job.workerId}">
 
                 <div class="form-group">
-                    <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                    <label for="jobName" class="col-lab control-label"><i class="glyphicon glyphicon-tasks"></i>&nbsp;&nbsp;作业名称：</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control input-sm" value="${job.workerName}&nbsp;&nbsp;&nbsp;${job.ip}" readonly>
-                        <font color="red">&nbsp;*只读</font>
-                        <span class="tips">&nbsp;&nbsp;要执行此任务的机器名称和IP地址</span>
+                        <input type="text" class="form-control input-sm" id="jobName" name="jobName" value="${job.jobName}">
+                        <span class="tips" id="checkJobName"><b>*&nbsp;</b>作业名称必填</span>
                     </div>
                 </div><br>
 
                 <div class="form-group">
-                    <label for="jobName" class="col-lab control-label"><i class="glyphicon glyphicon-tasks"></i>&nbsp;&nbsp;任务名称：</label>
+                    <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control input-sm" id="jobName" name="jobName" value="${job.jobName}">
-                        <span class="tips" id="checkJobName"><b>*&nbsp;</b>任务名称必填</span>
+                        <input type="text" class="form-control input-sm" value="${job.workerName}&nbsp;&nbsp;&nbsp;${job.ip}" readonly>
+                        <font color="red">&nbsp;*只读</font>
+                        <span class="tips">&nbsp;&nbsp;要执行此作业的机器名称和IP地址</span>
                     </div>
                 </div><br>
 
@@ -506,11 +530,11 @@
                 </div><br>
 
                 <div class="form-group">
-                    <label class="col-lab control-label"><i class="glyphicon  glyphicon-random"></i>&nbsp;&nbsp;任务类型：</label>
+                    <label class="col-lab control-label"><i class="glyphicon  glyphicon-random"></i>&nbsp;&nbsp;作业类型：</label>
                     <div class="col-md-10">
-                        <label onclick="subJob(0)" for="category0" class="radio-label"><input type="radio" name="category" value="0" id="category0">单一任务&nbsp;&nbsp;&nbsp;</label>
-                        <label onclick="subJob(1)" for="category1" class="radio-label"><input type="radio" name="category" value="1" id="category1" checked>流程任务</label>&nbsp;&nbsp;&nbsp;
-                        <br><span class="tips"><b>*&nbsp;</b>单任务: 单一任务&nbsp;流程任务: 多个子任务组成任务</span>
+                        <label onclick="subJob(0)" for="category0" class="radio-label"><input type="radio" name="category" value="0" id="category0">单一作业&nbsp;&nbsp;&nbsp;</label>
+                        <label onclick="subJob(1)" for="category1" class="radio-label"><input type="radio" name="category" value="1" id="category1" checked>流程作业</label>&nbsp;&nbsp;&nbsp;
+                        <br><span class="tips"><b>*&nbsp;</b>单作业: 单一作业&nbsp;流程作业: 多个子作业组成作业</span>
                     </div>
                 </div><br>
 
@@ -518,17 +542,17 @@
                     <span id="subJob">
                         <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;子&nbsp;&nbsp;任&nbsp;&nbsp;务：</label>
                         <div class="col-md-10">
-                            <a data-toggle="modal" href="#jobModal" onclick="addSubJob();" class="btn btn-sm m-t-10">添加子任务</a>
+                            <a data-toggle="modal" href="#jobModal" onclick="addSubJob();" class="btn btn-sm m-t-10">添加子作业</a>
                             <ul id="subJobDiv" class="subJobUl">
                             <c:forEach var="c" items="${job.children}">
                                 <li id="${c.jobId}" >
-                                    <span id="name_${c.jobId}" onclick="showSubJob('${c.jobId}')">
-                                        <a data-toggle="modal" href="#jobModal" title="编辑"><i class="glyphicon glyphicon-pencil"></i>&nbsp;&nbsp;${c.jobName}</a>
+                                    <span  onclick="showSubJob('${c.jobId}')">
+                                        <a data-toggle="modal" href="#jobModal" title="编辑"><i class="glyphicon glyphicon-pencil"></i>&nbsp;&nbsp;<span id="name_${c.jobId}">${c.jobName}</span></a>
                                     </span>
                                     <span class='delSubJob' onclick='removeSubJob(this)'>
-                                        <a href='#' title='删除'><i class='glyphicon glyphicon-trash'></i></a>
+                                        <a href='javascript:void(0)' title='删除'><i class='glyphicon glyphicon-trash'></i></a>
                                     </span>
-
+                                    <input type="hidden" name="child.jobId" value="${c.jobId}">
                                     <input type="hidden" name="child.jobName" value="${c.jobName}">
                                     <input type="hidden" name="child.workerId" value="${c.workerId}">
                                     <input type="hidden" name="child.redo" value="${c.redo}">
@@ -557,32 +581,34 @@
         </div>
     </div>
 
-    <%--添加流程任务弹窗--%>
+    <%--添加流程作业弹窗--%>
     <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 id="subTitle" action="add" tid="" >添加子任务</h4>
+                    <h4 id="subTitle" action="add" tid="" >添加子作业</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="subForm"><br>
 
-                        <div class="form-group">
-                            <label for="jobName1" class="col-lab control-label" title="任务名称必填">任务名称：</label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control pop-sm" id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
-                            </div>
-                        </div>
+                        <input type="hidden" id="jobId1"/>&nbsp;
 
                         <div class="form-group">
-                            <label for="workerId1" class="col-lab control-label" title="要执行此任务的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <label for="workerId1" class="col-lab control-label" title="执行器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-8">
                                 <select id="workerId1" name="workerId1" class="form-control m-b-10 pop-sm">
                                     <c:forEach var="d" items="${workers}">
                                         <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
                                     </c:forEach>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jobName1" class="col-lab control-label" title="作业名称必填">作业名称：</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control pop-sm" id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
                             </div>
                         </div>
 
@@ -595,10 +621,10 @@
 
                         <div class="form-group">
                             <label class="col-lab control-label" title="执行失败时是否自动重新执行">重新执行：</label>&nbsp;&nbsp;
-                            <label onclick="showCountDiv1()" for="redo1" class="radio-label"><input type="radio" name="redo1" value="1" id="redo1" checked> 是&nbsp;&nbsp;&nbsp;</label>
-                            <label onclick="hideCountDiv1()" for="redo0" class="radio-label"><input type="radio" name="redo1" value="0" id="redo0"> 否</label><br>
+                            <label onclick="showCountDiv1()" for="redo1" class="radio-label"><input type="radio" name="redo1" value="1" id="redo1"> 是&nbsp;&nbsp;&nbsp;</label>
+                            <label onclick="hideCountDiv1()" for="redo0" class="radio-label"><input type="radio" name="redo1" value="0" id="redo0" checked> 否</label><br>
                         </div><br>
-                        <div class="form-group countDiv1">
+                        <div class="form-group countDiv1" style="display: none">
                             <label for="runCount1" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control pop-sm" id="runCount1"/>&nbsp;
@@ -606,7 +632,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="comment1" class="col-lab control-label" title="此任务内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
+                            <label for="comment1" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control pop-sm" id="comment1"/>&nbsp;
                             </div>

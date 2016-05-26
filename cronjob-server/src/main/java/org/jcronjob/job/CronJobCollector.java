@@ -23,6 +23,7 @@ package org.jcronjob.job;
 
 import it.sauronsoftware.cron4j.*;
 import org.jcronjob.base.job.CronJob;
+import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.service.ExecuteService;
 import org.jcronjob.service.JobService;
 import org.jcronjob.vo.JobVo;
@@ -30,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by benjobs on 16/3/28.
@@ -43,18 +46,62 @@ public class CronJobCollector implements TaskCollector {
     @Autowired
     private ExecuteService executeService;
 
+    private TaskTable taskTable;
+
+    private Map<Long,Integer> jobIndex = new ConcurrentHashMap<Long, Integer>(0);
+
+    /**
+     * 初始化crontab任务,记录每个任务的索引...
+     * @return
+     */
     @Override
     public TaskTable getTasks() {
-        TaskTable table = new TaskTable();
-        List<JobVo> jobs = jobService.getCrontabJob();
-        for (final JobVo job : jobs) {
-            table.add(new SchedulingPattern(job.getCronExp()), new Task() {
-                @Override
-                public void execute(TaskExecutionContext context) throws RuntimeException {
-                    executeService.executeJob(job, CronJob.ExecType.AUTO);
-                }
-            });
+        if ( taskTable==null ) {
+            taskTable = new TaskTable();
+            List<JobVo> jobs = jobService.getCrontabJob();
+            for (int index=0;index<jobs.size();index++) {
+                final JobVo job = jobs.get(index);
+                jobIndex.put(job.getJobId(),index);
+                taskTable.add(new SchedulingPattern(job.getCronExp()),new Task() {
+                    @Override
+                    public void execute(TaskExecutionContext context) throws RuntimeException {
+                        executeService.executeJob(job, CronJob.ExecType.AUTO);
+                    }
+                });
+            }
         }
-        return table;
+        return taskTable;
     }
+
+    /**
+     * 将当前的job加入到crontab定时计划,并且加入索引值
+     * @param job
+     */
+    public synchronized void addTask(final JobVo job) {
+        jobIndex.put(job.getJobId(),jobIndex.size());
+        taskTable.add(new SchedulingPattern(job.getCronExp()),new Task() {
+            @Override
+            public void execute(TaskExecutionContext context) throws RuntimeException {
+                executeService.executeJob(job, CronJob.ExecType.AUTO);
+            }
+        });
+    }
+
+    public synchronized void removeTask(Long jobId) {
+        if (CommonUtils.notEmpty(jobId,jobIndex.get(jobId))) {
+            taskTable.remove(jobIndex.get(jobId));
+            Integer index = jobIndex.remove(jobId);
+            for(Map.Entry<Long,Integer> entry:jobIndex.entrySet()){
+                Long key = entry.getKey();
+                Integer value = entry.getValue();
+                /**
+                 * 当前位置的索引已经被删除,后面的自动往前移一位...
+                 */
+                if (value > index ) {
+                    jobIndex.put(key,value-1);
+                }
+            }
+        }
+    }
+
 }

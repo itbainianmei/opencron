@@ -80,7 +80,7 @@ public class JobController {
         if (notEmpty(job.getRedo())) {
             model.addAttribute("redo", job.getRedo());
         }
-        jobService.getJobs(session, page, job);
+        jobService.getJobVos(session, page, job);
         if (request.getParameter("refresh") != null) {
             return "/job/refresh";
         }
@@ -88,8 +88,8 @@ public class JobController {
     }
 
     @RequestMapping("/checkname")
-    public void checkName(HttpServletResponse response, Long id, String name) {
-        String result = jobService.checkName(id, name);
+    public void checkName(HttpServletResponse response, Long jobId, Long workerId, String name) {
+        String result = jobService.checkName(jobId, workerId, name);
         PageIOUtils.writeHtml(response, result);
     }
 
@@ -110,110 +110,75 @@ public class JobController {
     @RequestMapping(value = "/save")
     public String save(HttpSession session, Job job, HttpServletRequest request) throws SchedulerException {
 
-        //流程任务
-        if (job.getCategory() == CronJob.JobCategory.FLOW.getCode()) {
-            Map<String, Object[]> map = request.getParameterMap();
-            Object[] jobName = map.get("child.jobName");
-            Object[] workerId = map.get("child.workerId");
-            Object[] command = map.get("child.command");
-            Object[] comment = map.get("child.comment");
-            Object[] redo = map.get("child.redo");
-            Object[] runCount = map.get("child.runCount");
+        if (job.getJobId()!=null) {
+            Job job1 = jobService.getJob(job.getJobId());
+            /**
+             * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
+             */
+            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","category");
+        }
 
-            //流程任务必须有子任务,没有的话不保存
-            if (CommonUtils.isEmpty(jobName)) {
-                return "redirect:/job/view";
-            }
-
-            if (job.getJobId() != null) {
-                jobService.dealOldFlowJob(job.getJobId());
-            }
-
-            if (job.getOperateId() == null) {
-                job.setOperateId((Long) (session.getAttribute("userId")));
-            }
-
-            job.setLastFlag(false);
+        //单任务
+        if (job.getCategory() == CronJob.JobCategory.SINGLETON.getCode()) {
+            job.setOperateId((Long) (session.getAttribute("userId")));
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
-            job.setFlowNum(0);//顶层sort是0
-            job.setFlowId(job.getJobId());//flowId
-
-            job = jobService.addOrUpdate(job);
-            syncJobTigger(job);
-
+        } else { //流程任务
+            Map<String, Object[]> map = request.getParameterMap();
+            Object[] jobName = map.get("child.jobName");
+            Object[] jobId = map.get("child.jobId");
+            Object[] workerId = map.get("child.workerId");
+            Object[] command = map.get("child.command");
+            Object[] redo = map.get("child.redo");
+            Object[] runCount = map.get("child.runCount");
+            List<Job> chindren = new ArrayList<Job>(0);
             for (int i = 0; i < jobName.length; i++) {
                 Job chind = new Job();
+                if (CommonUtils.notEmpty(jobId[i])) {
+                    //子任务修改的..
+                    Long jobid = Long.parseLong((String) jobId[i]);
+                    chind = jobService.getJob(jobid);
+                }
+
                 chind.setJobName((String) jobName[i]);
                 chind.setWorkerId(Long.parseLong((String) workerId[i]));
                 chind.setCommand((String) command[i]);
-                //chind.setComment((String) comment[i]);
-
                 chind.setRedo(Integer.parseInt((String) redo[i]));
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);
                 } else {
                     chind.setRunCount(Long.parseLong((String) runCount[i]));
                 }
-
-                if (i == jobName.length - 1) {//最后一个子任务
-                    chind.setLastFlag(true);
-                } else {
-                    chind.setLastFlag(false);
-                }
-
-                job = saveSubJob(job, chind);
+                chindren.add(chind);
             }
-        } else {//单任务
-            job.setOperateId((Long) (session.getAttribute("userId")));
-            job.setUpdateTime(new Date());
-            job = jobService.addOrUpdate(job);
-            syncJobTigger(job);
+
+            //流程任务必须有子任务,没有的话不保存
+            if (CommonUtils.isEmpty(chindren)) {
+                return "redirect:/job/view";
+            }
+
+            if (job.getOperateId() == null) {
+                job.setOperateId((Long) (session.getAttribute("userId")));
+            }
+
+            jobService.saveFlowJob(job, chindren);
         }
+
+        schedulerService.syncJobTigger(job.getJobId(),executeService);
+
         return "redirect:/job/view";
-    }
-
-    private void syncJobTigger(Job job) throws SchedulerException {
-        JobVo jobVo = new JobVo();
-        Worker worker = workerService.getWorker(job.getWorkerId());
-        BeanUtils.copyProperties(job, jobVo);
-        jobVo.setWorker(worker);
-        jobVo.setIp(worker.getIp());
-        jobVo.setPort(worker.getPort());
-        jobVo.setPassword(worker.getPassword());
-
-        //quartz表达式
-        if (job.getCronType().equals(CronJob.CronType.QUARTZ.getType())) {
-            if (job.getExecType().equals(ExecType.AUTO.getStatus())) {//自动执行
-                schedulerService.addOrModify(jobVo, executeService);
-            } else {//手动执行
-                schedulerService.remove(job.getJobId());
-            }
-        } else {//crontab表达式..
-            schedulerService.remove(job.getJobId());
-        }
-    }
-
-    private Job saveSubJob(Job parent, Job job) {
-        job.setFlowId(parent.getFlowId());
-        job.setOperateId(parent.getOperateId());
-        job.setExecType(parent.getExecType());
-        job.setUpdateTime(new Date());
-        job.setCategory(1);
-        job.setFlowNum(parent.getFlowNum() + 1);
-        return jobService.addOrUpdate(job);
     }
 
     @RequestMapping("/editsingle")
     public void editSingleJob(HttpServletResponse response, Long id) {
-        JobVo job = jobService.getJobById(id);
+        JobVo job = jobService.getJobVoById(id);
         JsonMapper json = new JsonMapper();
         PageIOUtils.writeJson(response, json.toJson(job));
     }
 
     @RequestMapping("/editflow")
     public String editFlowJob(Model model, Long id) {
-        JobVo job = jobService.getJobById(id);
+        JobVo job = jobService.getJobVoById(id);
         model.addAttribute("job", job);
         List<Worker> workers = workerService.getAll();
         model.addAttribute("workers", workers);
@@ -223,17 +188,17 @@ public class JobController {
 
     @RequestMapping("/edit")
     public void edit(HttpServletResponse response, Job job) throws SchedulerException {
-        Job befJob = jobService.queryJobById(job.getJobId());
-        befJob.setExecType(job.getExecType());
-        befJob.setCronType(job.getCronType());
-        befJob.setCronExp(job.getCronExp());
-        befJob.setCommand(job.getCommand());
-        befJob.setJobName(job.getJobName());
-        befJob.setRedo(job.getRedo());
-        befJob.setRunCount(job.getRunCount());
-        befJob.setUpdateTime(new Date());
-        jobService.addOrUpdate(befJob);
-        syncJobTigger(befJob);
+        Job jober = jobService.getJob(job.getJobId());
+        jober.setExecType(job.getExecType());
+        jober.setCronType(job.getCronType());
+        jober.setCronExp(job.getCronExp());
+        jober.setCommand(job.getCommand());
+        jober.setJobName(job.getJobName());
+        jober.setRedo(job.getRedo());
+        jober.setRunCount(job.getRunCount());
+        jober.setUpdateTime(new Date());
+        jobService.addOrUpdate(jober);
+        schedulerService.syncJobTigger(jober.getJobId(),executeService);
         PageIOUtils.writeHtml(response, "success");
     }
 
@@ -244,7 +209,7 @@ public class JobController {
 
     @RequestMapping("/execute")
     public void remoteExecute(Long id) {
-        JobVo job = jobService.getJobById(id);//找到要执行的任务
+        JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         job.setWorker(workerService.getWorker(job.getWorkerId()));
         try {
             this.executeService.executeJob(job, ExecType.OPERATOR);
@@ -255,9 +220,14 @@ public class JobController {
 
     @RequestMapping("/detail")
     public String showDetail(Model model, Long id) {
-        JobVo jobVo = jobService.getJobById(id);
+        JobVo jobVo = jobService.getJobVoById(id);
         model.addAttribute("job", jobVo);
         return "/job/detail";
+    }
+
+    @RequestMapping("/remove")
+    public void removeJob(Long jobId, HttpServletResponse response) {
+        PageIOUtils.writeHtml(response, jobService.delete(jobId) == 1 ? "true" : "false");
     }
 
 }

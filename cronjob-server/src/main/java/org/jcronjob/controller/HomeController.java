@@ -146,17 +146,10 @@ public class HomeController {
         if (isEmpty(endTime)) {
             endTime = DateUtils.formatSimpleDate(new Date());
         }
-          //成功失败折线图数据
+        //成功失败折线图数据
         JsonMapper jsonMapper = new JsonMapper();
-        List<ChartVo> voList = recordService.getDiffData(startTime, endTime);
-        if (CommonUtils.isEmpty(voList)) {
-            PageIOUtils.writeHtml(response,"null");
-        }else {
-            PageIOUtils.writeJson(response, jsonMapper.toJson(voList));
-        }
+        PageIOUtils.writeJson(response, jsonMapper.toJson(recordService.getDiffData(startTime, endTime)));
     }
-    
-    
 
     @RequestMapping("/url")
     public void port(HttpServletResponse response, Long workerId) throws Exception {

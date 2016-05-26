@@ -84,7 +84,8 @@ public class WorkerService {
     }
 
     @Transactional(readOnly = false)
-    public void updateStatus(String sql) {
+    public void updateStatus(Worker worker,int status) {
+        String sql = String.format("update worker set status=?,failTime=? where workerid=%s", status,worker.getFailTime(),worker.getWorkerId());
         queryDao.createSQLQuery(sql).executeUpdate();
         syncWorker();
     }
@@ -93,7 +94,6 @@ public class WorkerService {
         queryDao.save(worker);
         syncWorker();
     }
-
 
     public String checkName(Long id, String name) {
         String sql = "SELECT COUNT(1) FROM worker WHERE name=? ";

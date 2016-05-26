@@ -435,7 +435,6 @@
                     $("#sshModal").modal("show");
                 }else {
                     var socketUrl = url.split("?")[0];
-                    alert(socketUrl);
                     var term =  url.split("?")[1];
                     var socket = io.connect(socketUrl);
                     socket.emit('login', term ,function(data) {

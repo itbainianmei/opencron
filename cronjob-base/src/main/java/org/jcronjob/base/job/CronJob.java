@@ -35,8 +35,49 @@
  * 压入我心里的堆栈<br/>
  * 在这无尽的黑夜中<br/>
  * 我的内存里已经再也装不下别人<br/>
+ * <hr style="color:RED"/>
+ * <p>
+ * <p>
+ * <hr style="color:RED"/>
+ * 我能抽象出整个世界<br/>
+ * 但是我不能抽象出你<br/>
+ * 你在我心中是那么的具体<br/>
+ * 千万行代码怎么将你描绘<br/>
+ * 我可以重载覆盖这个世界里的任何方法<br/>
+ * 但却不能重载对你的思念<br/>
+ * 也许是命中注定<br/>
+ * 你在我的世界里永远的烙上了静态的属性<br/>
+ * 我不慎调用了爱你这个方法<br/>
+ * 当我义无返顾的把自己作为参数传进这个方法时<br/>
+ * 我才发现爱上你是一个死循环<br/>
+ * 它不停的返回对你的思念<br/>
+ * 压入我心里的堆栈<br/>
+ * 在这无尽的黑夜中<br/>
+ * 我的内存里已经再也装不下别人<br/>
+ * <hr style="color:RED"/>
+ */
+
+
+/**
  *
- *
+ <hr style="color:RED"/>
+ 我能抽象出整个世界<br/>
+ 但是我不能抽象出你<br/>
+ 你在我心中是那么的具体<br/>
+ 千万行代码怎么将你描绘<br/>
+ 我可以重载覆盖这个世界里的任何方法<br/>
+ 但却不能重载对你的思念<br/>
+ 也许是命中注定<br/>
+ 你在我的世界里永远的烙上了静态的属性<br/>
+ 我不慎调用了爱你这个方法<br/>
+ 当我义无返顾的把自己作为参数传进这个方法时<br/>
+ 我才发现爱上你是一个死循环<br/>
+ 它不停的返回对你的思念<br/>
+ 压入我心里的堆栈<br/>
+ 在这无尽的黑夜中<br/>
+ 我的内存里已经再也装不下别人<br/>
+ <hr style="color:RED"/>
+
  */
 
 package org.jcronjob.base.job;
@@ -47,8 +88,6 @@ import org.apache.thrift.scheme.StandardScheme;
 
 import org.apache.thrift.scheme.TupleScheme;
 import org.apache.thrift.protocol.TTupleProtocol;
-import org.apache.thrift.protocol.TProtocolException;
-import org.apache.thrift.EncodingUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.server.AbstractNonblockingServer.*;
@@ -59,13 +98,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.EnumMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.EnumSet;
 import java.util.Collections;
 import java.util.BitSet;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import javax.annotation.Generated;
 
 import org.slf4j.Logger;
@@ -309,6 +344,7 @@ public class CronJob implements Serializable {
             this.description = description;
         }
     }
+
 
     public interface Iface {
 

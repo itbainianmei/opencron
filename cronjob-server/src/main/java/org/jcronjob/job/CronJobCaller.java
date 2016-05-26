@@ -33,7 +33,6 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-
 /**
  *
  * agent CronJobCaller
@@ -46,7 +45,7 @@ import java.lang.reflect.Method;
 @Component
 public class CronJobCaller {
 
-   public Response call(Request request) throws Exception {
+    public Response call(Request request) throws Exception {
        TTransport transport = new TSocket(request.getHostName(),request.getPort());
        TProtocol protocol = new TBinaryProtocol(transport);
        CronJob.Client client = new CronJob.Client(protocol);
@@ -56,7 +55,7 @@ public class CronJobCaller {
        Method[] methods= client.getClass().getMethods();
        for(Method method:methods){
            if (method.getName().equals(request.getAction())) {
-               response = (Response) method.invoke(client,request);
+               response = (Response) method.invoke(client, request);
            }
        }
        transport.flush();

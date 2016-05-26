@@ -40,8 +40,14 @@
         function hideCronExp(){$(".cronExpDiv").hide()}
         function showCountDiv(){$(".countDiv").show()}
         function hideCountDiv(){$(".countDiv").hide()}
-        function showCountDiv1(){$(".countDiv1").show()}
-        function hideCountDiv1(){$(".countDiv1").hide()}
+        function showCountDiv1(){
+            itemRedo(1);
+            $(".countDiv1").show();
+        }
+        function hideCountDiv1(){
+            itemRedo(0);
+            $(".countDiv1").hide();
+        }
 
         function changeTips(type){
             if (type == "0"){
@@ -234,6 +240,16 @@
 
         function addSubJob(){
             $("#subForm")[0].reset();
+
+            $("#redo1").parent().removeClass("checked").addClass("checked");
+            $("#redo1").parent().attr("aria-checked",true);
+            $("#redo1").parent().prop("onclick","showContact()");
+            $("#redo0").parent().removeClass("checked");
+            $("#redo0").parent().attr("aria-checked",false);
+
+            showCountDiv1();
+            $('#itemRedo').val(1);//默认重跑选中..
+
             $("#subTitle").html("添加子作业").attr("action","add");
         }
 
@@ -260,7 +276,8 @@
                 return false;
             }
 
-            var redo = $('input[type="radio"][name="redo1"]:checked').val();
+            var redo = $('#itemRedo').val();
+
             var reg = /^[0-9]*[1-9][0-9]*$/;
             if (redo == 1){
                 if (!$("#runCount1").val()){
@@ -273,10 +290,14 @@
                 }
             }
 
+            /**
+             * 同一个执行器下只能有一个任务名
+             */
             $.ajax({
                 url:"/job/checkname",
                 data:{
-                    "name":jobName
+                    "name":jobName,
+                    "workerId":$("#workerId1").val()
                 },
                 success:function(data){
                     if (data == "no"){
@@ -286,11 +307,12 @@
                         //添加
                         if ( $("#subTitle").attr("action")=="add" ) {
                             var timestamp = Date.parse(new Date());
-                            var addHtml = "<li id='"+timestamp+"' ><span id='name_"+timestamp+"' onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑' '><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;"+jobName+"</a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='#' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
+                            var addHtml = "<li id='"+timestamp+"' ><span onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑'><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;<span id='name_"+timestamp+"'>"+jobName+"</span></a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='#' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
+                                    "<input type='hidden' name='child.jobId' value=''>"+
                                     "<input type='hidden' name='child.jobName' value='"+jobName+"'>"+
                                     "<input type='hidden' name='child.workerId' value='"+$("#workerId1").val()+"'>"+
                                     "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
-                                    "<input type='hidden' name='child.redo' value='"+$('input[type="radio"][name="redo1"]:checked').val()+"'>"+
+                                    "<input type='hidden' name='child.redo' value='"+$('#itemRedo').val()+"'>"+
                                     "<input type='hidden' name='child.runCount' value='"+$("#runCount1").val()+"'>"+
                                     "<input type='hidden' name='child.comment' value='"+$("#comment1").val()+"'>"
                             "</li>";
@@ -322,7 +344,7 @@
                                 }
                             });
 
-                            $("#name_"+id).html("<a href=\"#\">"+jobName+"</a>");
+                            $("#name_"+id).html(jobName);
 
                         }
                         closeSubJob();
@@ -351,30 +373,15 @@
                 if ($(element).attr("name") == "child.command"){
                     $("#command1").val($(element).val());
                 }
-                if ($(element).attr("name") == "child.redo"){
-                    if($(element).val() == "1"){
-                        $(".countDiv1").show();
-                        $("#redo1").prop("checked",true);
-                        $("#redo1").parent().removeClass("checked").addClass("checked");
-                        $("#redo1").parent().attr("aria-checked",true);
-                        $("#redo1").parent().prop("onclick","showContact()");
-                        $("#redo0").parent().removeClass("checked");
-                        $("#redo0").parent().attr("aria-checked",false);
-                    }else {
-                        $(".countDiv1").hide();
-                        $("#redo0").prop("checked",true);
-                        $("#redo0").parent().removeClass("checked").addClass("checked");
-                        $("#redo0").parent().attr("aria-checked",true);
-                        $("#redo1").parent().removeClass("checked");
-                        $("#redo1").parent().attr("aria-checked",false);
-                    }
+                if ($(element).attr("name") == "child.redo") {
+                    itemRedo($("#itemRedo").val()||$(element).val());
                 }
 
                 if ($(element).attr("name") == "child.runCount"){
                     $("#runCount1").val($(element).val());
                 }
 
-                if ($(element).attr("name") == "child.redo"){
+                if ($(element).attr("name") == "child.command"){
                     $("#command1").val($(element).val());
                 }
 
@@ -386,6 +393,27 @@
 
         function  removeSubJob(node){
             $(node).parent().slideUp(300,function(){this.remove()});
+        }
+
+
+        function itemRedo(value) {
+            $("#itemRedo").val(value);
+            if (value==1){
+                $(".countDiv1").show();
+                $("#redo1").prop("checked",true);
+                $("#redo1").parent().removeClass("checked").addClass("checked");
+                $("#redo1").parent().attr("aria-checked",true);
+                $("#redo1").parent().prop("onclick","showContact()");
+                $("#redo0").parent().removeClass("checked");
+                $("#redo0").parent().attr("aria-checked",false);
+            }else {
+                $(".countDiv1").hide();
+                $("#redo0").prop("checked",true);
+                $("#redo0").parent().removeClass("checked").addClass("checked");
+                $("#redo0").parent().attr("aria-checked",true);
+                $("#redo1").parent().removeClass("checked");
+                $("#redo1").parent().attr("aria-checked",false);
+            }
         }
 
     </script>
@@ -416,13 +444,6 @@
     <div class="block-area" id="basic">
         <div class="tile p-15">
             <form class="form-horizontal" role="form" id="job" action="/job/save" method="post"></br>
-                <div class="form-group">
-                    <label for="jobName" class="col-lab control-label"><i class="glyphicon glyphicon-tasks"></i>&nbsp;&nbsp;作业名称：</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control input-sm" id="jobName" name="jobName">
-                        <span class="tips" id="checkJobName"><b>*&nbsp;</b>作业名称必填</span>
-                    </div>
-                </div><br>
 
                 <div class="form-group">
                     <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
@@ -440,6 +461,14 @@
                             <font color="red">&nbsp;*只读</font>
                         </c:if>
                         <span class="tips">&nbsp;&nbsp;要执行此作业的机器名称和IP地址</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label for="jobName" class="col-lab control-label"><i class="glyphicon glyphicon-tasks"></i>&nbsp;&nbsp;作业名称：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="jobName" name="jobName">
+                        <span class="tips" id="checkJobName"><b>*&nbsp;</b>作业名称必填</span>
                     </div>
                 </div><br>
 
@@ -540,22 +569,22 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="subForm"><br>
+                        <input type="hidden" id="itemRedo" value="1"/>
+                        <div class="form-group">
+                            <label for="workerId1" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <div class="col-md-8">
+                                <select id="workerId1" name="workerId1" class="form-control m-b-10 pop-sm">
+                                    <c:forEach var="d" items="${workers}">
+                                        <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="jobName1" class="col-lab control-label" title="作业名称必填">作业名称：</label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control pop-sm" id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                        <label for="workerId1" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
-                            <div class="col-md-8">
-                                <select id="workerId1" name="workerId1" class="form-control m-b-10 pop-sm">
-                                <c:forEach var="d" items="${workers}">
-                                    <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
-                                </c:forEach>
-                                </select>
                             </div>
                         </div>
 
@@ -568,8 +597,8 @@
 
                         <div class="form-group">
                             <label class="col-lab control-label" title="执行失败时是否自动重新执行">重新执行：</label>&nbsp;&nbsp;
-                            <label onclick="showCountDiv1()" for="redo1" class="radio-label"><input type="radio" name="redo1" value="1" id="redo1" checked> 是&nbsp;&nbsp;&nbsp;</label>
-                            <label onclick="hideCountDiv1()" for="redo0" class="radio-label"><input type="radio" name="redo1" value="0" id="redo0"> 否</label><br>
+                            <label onclick="showCountDiv1()" for="redo1" class="radio-label"><input type="radio" name="itemRedo" id="redo1" checked> 是&nbsp;&nbsp;&nbsp;</label>
+                            <label onclick="hideCountDiv1()" for="redo0" class="radio-label"><input type="radio" name="itemRedo" id="redo0"> 否</label><br>
                         </div><br>
                         <div class="form-group countDiv1">
                             <label for="runCount1" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
