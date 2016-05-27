@@ -1,2 +1,16 @@
 
-.idea/*
+.idea/
+
+cronjob-base/target/
+
+cronjob-agent/target/
+
+cronjob-server/target/
+
+/.gitignore
+
+*.iml
+
+*.iml
+
+*.iml
