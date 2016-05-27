@@ -377,7 +377,7 @@
         function showChild(id,flowId){
             var open = $("#job_"+id).attr("childOpen");
             if (open == "off"){
-                $("#icon"+id).removeClass("glyphicon-circle-arrow-down").addClass("glyphicon-circle-arrow-up");
+                $("#icon"+id).removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
                 $(".child"+id).show();
                 $(".trGroup"+flowId).css("background-color","rgba(0,0,0,0.1)");
                 $("#job_"+id).attr("childOpen","on");
@@ -385,7 +385,7 @@
                 $(".name_"+id+"_2").show();
             }else {
                 $(".trGroup"+flowId).css("background-color","");
-                $("#icon"+id).removeClass("glyphicon-circle-arrow-up").addClass("glyphicon-circle-arrow-down");
+                $("#icon"+id).removeClass("fa-angle-double-up").addClass("fa-angle-double-down");
                 $(".child"+id).hide();
                 $("#job_"+id).attr("childOpen","off");
                 $(".name_"+id+"_2").hide();
@@ -485,7 +485,8 @@
                         <td style="display: none;" class="name_${r.flowId}_2" rowspan="${fn:length(r.children)+1}">
                                 ${r.jobName}
                             <c:forEach var="c" items="${r.children}" varStatus="index">
-                                <div class="down"><img src="/img/down.png" width="15px" height="12px"></div>${c.jobName}
+                                <div class="down">
+				<i aria-hidden="true" style="font-size:14px" class="fa fa-arrow-down"></i></div>${c.jobName}
                             </c:forEach>
                         </td>
                         <td>流程任务</td>
@@ -512,7 +513,7 @@
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                 <c:if test="${r.category eq 1}">
                                     <a href="#" title="流程任务" id="job_${r.jobId}" childOpen="off" onclick="showChild('${r.jobId}','${r.flowId}')">
-                                        <i class="glyphicon glyphicon-circle-arrow-down" id="icon${r.jobId}"></i>
+                                        <i style="font-size:14px;" class="fa fa-angle-double-down" id="icon${r.jobId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <c:if test="${r.category eq 0}">
