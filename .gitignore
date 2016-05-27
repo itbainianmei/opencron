@@ -14,3 +14,5 @@ cronjob-server/target/
 *.iml
 
 *.iml
+cronjob-agent/src/conf/logs/
+cronjob-agent/src/conf/temp/

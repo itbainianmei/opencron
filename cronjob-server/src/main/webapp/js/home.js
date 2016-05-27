@@ -38,6 +38,16 @@ var cronjobChart = {
         var networkLoad = false;
         var netChartObj = [];
 
+        /**
+         * 没有执行器
+         */
+        if(!$("#workerId").val()) {
+            window.setTimeout(function () {
+                $(".loader").remove();
+            },1000);
+            return;
+        }
+
         $.ajax({
             url: "/url",
             data: "workerId=" + $("#workerId").val(),
@@ -583,129 +593,148 @@ var cronjobChart = {
             },
             dataType: "json",
             success: function (data) {
-                //折线图
-                var dataArea = [];
-                var successSum = 0;
-                var failureSum = 0;
-                var killedSum = 0;
-                var singleton = 0;
-                var flow = 0;
-                var crontab = 0;
-                var quartz = 0;
-                var rerun=0;
-                var auto=0;
-                var operator=0;
+                if ( data!=null ) {
 
-                for (var i in data) {
-                    dataArea.push({
-                        date: data[i].date,
-                        success: data[i].success,
-                        failure: data[i].failure,
-                        killed: data[i].killed
+                    //折线图
+                    var dataArea = [];
+                    var successSum = 0;
+                    var failureSum = 0;
+                    var killedSum = 0;
+                    var singleton = 0;
+                    var flow = 0;
+                    var crontab = 0;
+                    var quartz = 0;
+                    var rerun = 0;
+                    var auto = 0;
+                    var operator = 0;
+
+                    for (var i in data) {
+                        dataArea.push({
+                            date: data[i].date,
+                            success: data[i].success,
+                            failure: data[i].failure,
+                            killed: data[i].killed
+                        });
+                        successSum += parseInt(data[i].success);
+                        failureSum += parseInt(data[i].failure);
+                        killedSum += parseInt(data[i].killed);
+
+                        singleton += parseInt(data[i].singleton);
+                        flow += parseInt(data[i].flow);
+                        crontab += parseInt(data[i].crontab);
+                        quartz += parseInt(data[i].quartz);
+                        rerun += parseInt(data[i].rerun);
+                        auto += parseInt(data[i].auto);
+                        operator += parseInt(data[i].operator);
+                    }
+
+                    $("#overview_loader").hide();
+                    $("#overview_report_div").show();
+
+                    $("#overview_report").html('');
+                    if ($.isPC()) {
+                        $("#overview_pie").html('');
+                        $("#overview_pie_div").show();
+                        $("#report_detail").show();
+
+                        var job_type = parseFloat(auto / (auto + operator)) * 100;
+                        if (isNaN(job_type)) {
+                            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+                        } else {
+                            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+                        }
+
+                        var job_category = parseFloat(singleton / (singleton + flow)) * 100;
+                        if (isNaN(job_category)) {
+                            $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
+                        } else {
+                            $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
+                        }
+
+                        var job_type = parseFloat(crontab / (crontab + quartz)) * 100;
+                        if (isNaN(job_type)) {
+                            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+                        } else {
+                            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+                        }
+
+                        var job_rerun = parseFloat((successSum + failureSum + killedSum - rerun) / (successSum + failureSum + killedSum)) * 100;
+                        if (isNaN(job_rerun)) {
+                            $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
+                        } else {
+                            $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
+                        }
+
+                        var job_status = parseFloat(successSum / (successSum + failureSum + killedSum)) * 100;
+                        if (isNaN(job_status)) {
+                            $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
+                        } else {
+                            $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
+                        }
+
+                    }
+
+                    Morris.Line({
+                        element: 'overview_report',
+                        data: dataArea,
+                        grid: true,
+                        axes: true,
+                        xkey: 'date',
+                        ykeys: ['success', 'failure', 'killed'],
+                        labels: ['成功', '失败', '被杀'],
+                        lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
+                        hoverFillColor: 'rgb(45,45,45)',
+                        lineWidth: 4,
+                        pointSize: 5,
+                        hideHover: 'auto',
+                        smooth: false,
+                        resize: true
                     });
-                    successSum += parseInt(data[i].success);
-                    failureSum += parseInt(data[i].failure);
-                    killedSum += parseInt(data[i].killed);
 
-                    singleton+=parseInt(data[i].singleton);
-                    flow+=parseInt(data[i].flow);
-                    crontab+=parseInt(data[i].crontab);
-                    quartz+=parseInt(data[i].quartz);
-                    rerun+=parseInt(data[i].rerun);
-                    auto+=parseInt(data[i].auto);
-                    operator+=parseInt(data[i].operator);
-                }
+                    if ($.isPC()) {
+                        $('#overview_pie').highcharts({
+                            chart: {
+                                backgroundColor: 'rgba(0,0,0,0)',
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: true,
+                                options3d: {
+                                    enabled: true,
+                                    alpha: 25,
+                                    beta: 0
+                                }
+                            },
+                            colors: ['rgba(255,255,255,0.45)', 'rgba(237,26,26,0.45)', 'rgba(0,0,0,0.45)'],
+                            title: {text: ''},
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: false
+                                    },
+                                    showInLegend: true,
+                                    depth: 40
+                                }
+                            },
+                            series: [{
+                                type: 'pie',
+                                name: 'Browser share',
 
-                $("#overview_loader").hide();
-                $("#overview_report_div").show();
+                                data: [
+                                    ['成功', successSum],
+                                    ['失败', failureSum],
+                                    ['被杀', killedSum]
+                                ]
 
-                $("#overview_report").html('');
-                if ($.isPC()) {
-                    $("#overview_pie").html('');
-                    $("#overview_pie_div").show();
-                    $("#report_detail").show();
-
-                    var job_type = parseFloat(auto/(auto+operator))*100;
-                    $("#job_type").attr("aria-valuenow",job_type).css("width",job_type+"%");
-
-
-                    var job_category = parseFloat(singleton/(singleton+flow))*100;
-                    $("#job_category").attr("aria-valuenow",job_category).css("width",job_category+"%");
-
-
-                    var job_type = parseFloat(crontab/(crontab+quartz))*100;
-                    $("#job_type").attr("aria-valuenow",job_type).css("width",job_type+"%");
-
-
-                    var job_rerun = parseFloat((successSum+failureSum+killedSum-rerun)/(successSum+failureSum+killedSum))*100;
-                    $("#job_rerun").attr("aria-valuenow",job_rerun).css("width",job_rerun+"%");
-
-                    var job_status = parseFloat(successSum/(successSum+failureSum+killedSum))*100;
-                    $("#job_status").attr("aria-valuenow",job_status).css("width",job_status+"%");
-
-                }
-
-                Morris.Line({
-                    element: 'overview_report',
-                    data: dataArea,
-                    grid: true,
-                    axes: true,
-                    xkey: 'date',
-                    ykeys: ['success', 'failure', 'killed'],
-                    labels: ['成功', '失败', '被杀'],
-                    lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
-                    hoverFillColor: 'rgb(45,45,45)',
-                    lineWidth: 4,
-                    pointSize: 5,
-                    hideHover: 'auto',
-                    smooth: false,
-                    resize: true
-                });
-
-                if ( $.isPC() ) {
-                    $('#overview_pie').highcharts({
-                        chart: {
-                            backgroundColor: 'rgba(0,0,0,0)',
-                            plotBackgroundColor: null,
-                            plotBorderWidth: null,
-                            plotShadow: true,
-                            options3d: {
-                                enabled: true,
-                                alpha: 25,
-                                beta: 0
-                            }
-                        },
-                        colors: ['rgba(255,255,255,0.45)', 'rgba(237,26,26,0.45)', 'rgba(0,0,0,0.45)'],
-                        title: {text: ''},
-                        tooltip: {
-                            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                        },
-                        plotOptions: {
-                            pie: {
-                                allowPointSelect: true,
-                                cursor: 'pointer',
-                                dataLabels: {
-                                    enabled: false
-                                },
-                                showInLegend: true,
-                                depth: 40
-                            }
-                        },
-                        series: [{
-                            type: 'pie',
-                            name: 'Browser share',
-
-                            data: [
-                                ['成功', successSum],
-                                ['失败', failureSum],
-                                ['被杀', killedSum]
-                            ]
-
-                        }]
-                    });
+                            }]
+                        });
+                    }
                 }
             }
-
         });
     }
 }

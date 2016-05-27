@@ -31,6 +31,7 @@ import org.jcronjob.domain.Job;
 import org.jcronjob.domain.Worker;
 import org.jcronjob.service.*;
 import org.jcronjob.tag.Page;
+import org.jcronjob.vo.ChartVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -148,7 +149,12 @@ public class HomeController {
         }
         //成功失败折线图数据
         JsonMapper jsonMapper = new JsonMapper();
-        PageIOUtils.writeJson(response, jsonMapper.toJson(recordService.getDiffData(startTime, endTime)));
+        List<ChartVo> voList = recordService.getDiffData(startTime, endTime);
+        if (isEmpty(voList)) {
+            PageIOUtils.writeJson(response, "null");
+        }else {
+            PageIOUtils.writeJson(response, jsonMapper.toJson(voList));
+        }
     }
 
     @RequestMapping("/url")
