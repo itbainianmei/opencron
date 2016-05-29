@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.dao.QueryDao;
-import org.jcronjob.session.MemcacheCache;
 import org.jcronjob.tag.Page;
 
 import static org.jcronjob.base.job.CronJob.*;
@@ -54,13 +53,8 @@ public class JobService {
     @Autowired
     private WorkerService workerService;
 
-    @Autowired
-    private MemcacheCache memcacheCache;
-
-    private final String CRONTAB_KEY = "CRONJOB_CRONTAB";
-
     public Job getJob(Long jobId) {
-        return (Job) queryDao.sqlUniqueQuery(Job.class,"SELECT * FROM job WHERE jobId=?",jobId);
+        return queryDao.get(Job.class,jobId);
     }
 
     /**
@@ -87,18 +81,8 @@ public class JobService {
         return queryDao.sqlQuery(Job.class,sql,category.getCode());
     }
 
-    public void cleanCrontabJob() {
-        this.memcacheCache.evict(this.CRONTAB_KEY);
-    }
-
-    //任务修改后同步..
-    public void syncCrontabJob() {
-        this.cleanCrontabJob();
-        memcacheCache.put(this.CRONTAB_KEY, getJobVo(CronJob.ExecType.AUTO, CronJob.CronType.CRONTAB));
-    }
-
     public List<JobVo> getCrontabJob() {
-        return memcacheCache.get(this.CRONTAB_KEY, List.class);
+        return getJobVo(CronJob.ExecType.AUTO, CronJob.CronType.CRONTAB);
     }
 
     public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {

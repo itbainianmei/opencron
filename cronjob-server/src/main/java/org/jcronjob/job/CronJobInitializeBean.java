@@ -31,7 +31,6 @@ import org.jcronjob.domain.Worker;
 import org.jcronjob.service.*;
 import org.jcronjob.vo.JobVo;
 import org.quartz.SchedulerException;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,8 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class CronJobInitializeBean implements Serializable,InitializingBean,DisposableBean {
-
+public class CronJobInitializeBean implements Serializable,InitializingBean {
     private final Logger logger = Logger.getLogger(CronJobInitializeBean.class);
 
     @Autowired
@@ -82,13 +80,6 @@ public class CronJobInitializeBean implements Serializable,InitializingBean,Disp
         }
 
         schedulerService.startCrontab();
-        workerService.syncWorker();
-    }
-
-    @Override
-    public void destroy() throws Exception {
-        jobService.cleanCrontabJob();
-        workerService.cleanWorker();
     }
 
     /**

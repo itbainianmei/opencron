@@ -196,14 +196,16 @@ public class AgentProcessor implements CronJob.Iface {
 
         Response response = Response.response(request);
         String text = CommandUtils.executeShell(Globals.CRONJOB_KILL_SHELL, request.getParams().get("pid"), EXITCODE_SCRIPT);
-        String message;
+        String message = "";
         Integer exitVal = 0;
 
-        try {
-            message = text.substring(0, text.lastIndexOf(EXITCODE_KEY));
-            exitVal = Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim());
-        } catch (Exception e) {
-            message = text;
+        if (notEmpty(text)) {
+            try {
+                message = text.substring(0, text.lastIndexOf(EXITCODE_KEY));
+                exitVal = Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim());
+            } catch (Exception e) {
+                message = text;
+            }
         }
 
         response.setExitCode(CronJob.StatusCode.ERROR_EXIT.getValue() == exitVal ? CronJob.StatusCode.ERROR_EXIT.getValue() : CronJob.StatusCode.SUCCESS_EXIT.getValue())

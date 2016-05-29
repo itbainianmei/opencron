@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.jcronjob.base.utils.CommandUtils.executeShell;
 import static org.jcronjob.base.utils.CommonUtils.toFloat;
@@ -65,13 +66,14 @@ public class AgentMonitor {
             public void onConnect(final SocketIOClient client) {
                 logger.info("[cronjob]:monitor connected:SessionId @ {},port @ {}", client.getSessionId(), port);
                 clients.put(client.getSessionId(), client);
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        client.sendEvent("monitor", monitor());
+                for(;;) {
+                    client.sendEvent("monitor", monitor());
+                    try {
+                        TimeUnit.MICROSECONDS.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                }, 1000,1000);
+                }
             }
         });
 

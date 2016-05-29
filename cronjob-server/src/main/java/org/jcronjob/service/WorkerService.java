@@ -45,32 +45,13 @@ public class WorkerService {
     @Autowired
     private ExecuteService executeService;
 
-    private final String WORKER_KEY = "CRONJOB_WORKER";
-
-    @Autowired
-    private MemcacheCache memcacheCache;
-
     public List<Worker> getAll() {
-        List<Worker> workers = (List<Worker>) memcacheCache.get(this.WORKER_KEY, List.class);
-        if (CommonUtils.isEmpty(workers)) {
-            syncWorker();
-        }
-        return (List<Worker>) memcacheCache.get(this.WORKER_KEY, List.class);
+       return queryDao.getAll(Worker.class);
     }
 
     public List<Worker> getWorkerByStatus(int status){
         String sql = "SELECT * FROM worker WHERE status=?";
         return queryDao.sqlQuery(Worker.class,sql,status);
-    }
-
-    public void cleanWorker() {
-        this.memcacheCache.evict(this.WORKER_KEY);
-    }
-
-    //任务修改后同步..
-    public void syncWorker() {
-        this.cleanWorker();
-        memcacheCache.put(this.WORKER_KEY, queryDao.getAll(Worker.class));
     }
 
     public Page getWorker(Page page) {
@@ -87,12 +68,10 @@ public class WorkerService {
     public void updateStatus(Worker worker,int status) {
         String sql = String.format("update worker set status=?,failTime=? where workerid=%s", status,worker.getFailTime(),worker.getWorkerId());
         queryDao.createSQLQuery(sql).executeUpdate();
-        syncWorker();
     }
 
     public void addOrUpdate(Worker worker) {
         queryDao.save(worker);
-        syncWorker();
     }
 
     public String checkName(Long id, String name) {
