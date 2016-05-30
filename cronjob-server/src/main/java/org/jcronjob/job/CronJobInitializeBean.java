@@ -25,7 +25,6 @@ package org.jcronjob.job;
 import org.apache.log4j.Logger;
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.base.utils.CommonUtils;
-import org.jcronjob.domain.Monitor;
 import org.jcronjob.domain.Record;
 import org.jcronjob.domain.Worker;
 import org.jcronjob.service.*;
@@ -143,7 +142,7 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
     }
 
     //@Scheduled(cron = "0 0/1 * * * ?")
-    public void monitor() throws Exception {
+  /*  public void monitor() throws Exception {
         List<Worker> workers = workerService.getAll();
 
         for (Worker worker : workers) {
@@ -161,7 +160,7 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
             Monitor monitor = new Monitor(worker.getWorkerId(), cpuUs, cpuSy, cpuId, memUsed, memFree);
             monitorService.save(monitor);
         }
-    }
+    }*/
 
 
 }

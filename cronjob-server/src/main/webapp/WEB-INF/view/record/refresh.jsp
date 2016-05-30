@@ -28,12 +28,12 @@
         <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
         <td>${ben:diffdate(r.startTime,r.endTime)}</td>
         <td>
-            <c:if test="${r.category eq 1}">流程任务</c:if>
-            <c:if test="${r.category eq 0}">单一任务</c:if>
+            <c:if test="${r.category eq 1}">流程作业</c:if>
+            <c:if test="${r.category eq 0}">单一作业</c:if>
         </td>
         <td><center>
             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                <a href="#" onclick="killJob('${r.recordId}')" title="结束">
+                <a href="#" onclick="killJob('${r.recordId}')" title="kill">
                     <i class="glyphicon glyphicon-stop"></i>
                 </a>&nbsp;&nbsp;
 

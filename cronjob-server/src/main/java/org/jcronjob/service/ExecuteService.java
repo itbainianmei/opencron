@@ -70,10 +70,6 @@ public class ExecuteService implements Job {
         }
     }
 
-    public Map<String, String> monitor(Worker worker) throws Exception {
-        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(), "monitor", worker.getPassword())).getResult();
-    }
-
     public boolean executeJob(final JobVo job, final ExecType execType) {
         if (job.getCategory() == JobCategory.FLOW.getCode()) {//流程任务..
             long flowGroup = System.currentTimeMillis();//分配一个流程组Id
@@ -260,44 +256,50 @@ public class ExecuteService implements Job {
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    public boolean killJob(final List<Record> records) {
-        if (CommonUtils.isEmpty(records)) return true;
-
-        for (final Record record : records) {
-
-            int state = record.getStatus();
-            final JobVo job = jobService.getJobVoById(record.getJobId());
-            try {
-                record.setStatus(RunStatus.STOPPING.getStatus());//停止中
-                record.setSuccess(ResultStatus.KILLED.getStatus());
-                recordService.update(record);
-
-                //正在运行中..
-                if (state == RunStatus.RUNNING.getStatus()) {
-                    cronJobCaller.call(Request.request(job.getIp(), job.getPort(), "kill", job.getPassword()).putParam("pid", record.getPid()));
-                }
-
-                record.setStatus(RunStatus.STOPED.getStatus());
-                record.setEndTime(new Date());
-                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}",job.getJobName(),job.getIp(),job.getPort(),record.getPid());
-            } catch (Exception e) {
-                record.setStatus(state);
-                noticeService.notice(job);
-                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s",job.getJobName(),job.getIp(),job.getPort(),record.getPid(),e.getMessage());
-                logger.error(errorInfo,e);
-                return false;
-            } finally {
-                recordService.update(record);
-            }
+    public boolean killJob( Record record ) {
+        Long recordId = record.getRecordId();
+        List<Record> records = Collections.emptyList();
+        //单一任务
+        if (record.getCategory() == 0) {
+            records.add(record);
+        } else if (record.getCategory() == 1) {
+            records = recordService.getRunningFlowJob(recordId);
         }
 
+        /**
+         * 零时的改成停止中...
+         */
+        for(Record cord:records){
+            cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
+            cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
+            recordService.update(cord);
+        }
+
+        /**
+         * 向远程机器发送kill指令
+         */
+        for (Record cord : records) {
+            JobVo job = jobService.getJobVoById(cord.getJobId());
+            try {
+                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()));
+                cord.setStatus(RunStatus.STOPED.getStatus());
+                cord.setEndTime(new Date());
+                recordService.update(cord);
+                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}",job.getJobName(),job.getIp(),job.getPort(),cord.getPid());
+            } catch (Exception e) {
+                noticeService.notice(job);
+                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s",job.getJobName(),job.getIp(),job.getPort(),cord.getPid(),e.getMessage());
+                logger.error(errorInfo,e);
+                return false;
+            }
+        }
         return true;
     }
 
     public boolean ping(String ip, Integer port, final String password) {
         boolean ping = false;
         try {
-            ping = cronJobCaller.call(Request.request(ip, port, "ping", password)).isSuccess();
+            ping = cronJobCaller.call(Request.request(ip, port, Action.PING, password)).isSuccess();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -316,7 +318,7 @@ public class ExecuteService implements Job {
     public boolean password(String ip, int port, final String password, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronJobCaller.call(Request.request(ip, port, "password", password).putParam("newPassword", newPassword));
+            Response response = cronJobCaller.call(Request.request(ip, port,Action.PASSWORD, password).putParam("newPassword", newPassword));
             ping = response.isSuccess();
         } catch (Exception e) {
             e.printStackTrace();
@@ -326,7 +328,7 @@ public class ExecuteService implements Job {
     }
 
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(), "execute", job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
+        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(),Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
         logger.info("[cronjob]:execute response:{}",response.toString());
         record.setReturnCode(response.getExitCode());
         record.setMessage(response.getMessage());
@@ -363,6 +365,6 @@ public class ExecuteService implements Job {
     }
 
     public Response port(Worker worker) throws Exception {
-        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(), "port", worker.getPassword()));
+        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(),Action.PORT, worker.getPassword()));
     }
 }

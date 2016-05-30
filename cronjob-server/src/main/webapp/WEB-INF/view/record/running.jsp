@@ -57,7 +57,7 @@
         function killJob(id){
             swal({
                 title: "",
-                text: "您确定要结束这个任务吗？",
+                text: "您确定要结束这个作业吗？",
                 type: "warning",
                 showCancelButton: true,
                 closeOnConfirm: false,
@@ -77,7 +77,7 @@
         function restartJob(id,jobId){
             swal({
                 title: "",
-                text: "您确定要结束并重启这个任务吗？",
+                text: "您确定要结束并重启这个作业吗？",
                 type: "warning",
                 showCancelButton: true,
                 closeOnConfirm: false,
@@ -96,7 +96,7 @@
                         }
                     }
                 });
-                alertMsg( "该任务已重启,正在执行中.");
+                alertMsg( "该作业已重启,正在执行中.");
                 return;
             });
 
@@ -120,7 +120,7 @@
         <li><a href="#">调度记录</a></li>
         <li><a href="#">正在运行</a></li>
     </ol>
-    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度任务持续进行中...</span></h4>
+    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度作业持续进行中...</span></h4>
     <div class="block-area" id="defaultStyle">
 
         <div>
@@ -144,7 +144,7 @@
                     </c:forEach>
                 </select>
                 &nbsp;&nbsp;&nbsp;
-                <label for="jobId">任务名称：</label>
+                <label for="jobId">作业名称：</label>
                 <select id="jobId" name="jobId" class="select-self" style="width: 80px;">
                     <option value="">全部</option>
                     <c:forEach var="t" items="${jobs}">
@@ -168,14 +168,14 @@
         <table class="table tile">
             <thead>
             <tr>
-                <th>任务名称</th>
+                <th>作业名称</th>
                 <th>执行器</th>
                 <th>运行状态</th>
                 <th>执行方式</th>
                 <th>执行命令</th>
                 <th>开始时间</th>
                 <th>运行时长</th>
-                <th>任务类型</th>
+                <th>作业类型</th>
                 <th><center>操作</center></th>
             </tr>
             </thead>
@@ -207,12 +207,12 @@
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                     <td>
-                        <c:if test="${r.category eq 1}">流程任务</c:if>
-                        <c:if test="${r.category eq 0}">单一任务</c:if>
+                        <c:if test="${r.category eq 1}">流程作业</c:if>
+                        <c:if test="${r.category eq 0}">单一作业</c:if>
                     </td>
                     <td><center>
                         <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                            <a href="#" onclick="killJob('${r.recordId}')" title="结束">
+                            <a href="#" onclick="killJob('${r.recordId}')" title="kill">
                                 <i class="glyphicon glyphicon-stop"></i>
                             </a>&nbsp;&nbsp;
 

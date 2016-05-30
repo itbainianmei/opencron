@@ -32,7 +32,6 @@ import org.jcronjob.base.job.Response;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  *
@@ -55,7 +54,7 @@ public class CronJobCaller {
        Response response = null;
        Method[] methods= client.getClass().getMethods();
        for(Method method:methods){
-           if (method.getName().equals(request.getAction())) {
+           if (method.getName().equalsIgnoreCase(request.getAction().name())) {
                response = (Response) method.invoke(client, request);
            }
        }

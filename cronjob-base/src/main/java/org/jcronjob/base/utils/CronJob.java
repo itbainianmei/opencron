@@ -20,31 +20,22 @@
  * <p>
  */
 
-package org.jcronjob.base.job;
+package org.jcronjob.base.utils;
 
+import org.apache.thrift.TException;
+import org.apache.thrift.async.AsyncMethodCallback;
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
-
 import org.apache.thrift.scheme.TupleScheme;
-import org.apache.thrift.protocol.TTupleProtocol;
-import org.apache.thrift.TException;
-import org.apache.thrift.async.AsyncMethodCallback;
-import org.apache.thrift.server.AbstractNonblockingServer.*;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
-import javax.annotation.Generated;
-
+import org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Generated;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * @author <a href="mailto:benjobs@qq.com">benjobs@qq.com</a>
@@ -316,45 +307,47 @@ public class CronJob implements Serializable {
 
     public interface Iface {
 
-        public Response ping(Request request) throws org.apache.thrift.TException;
+        public Response ping(Request request) throws TException;
 
-        public Response execute(Request request) throws org.apache.thrift.TException;
+        public Response execute(Request request) throws TException;
 
-        public Response password(Request request) throws org.apache.thrift.TException;
+        public Response password(Request request) throws TException;
 
-        public Response kill(Request request) throws org.apache.thrift.TException;
+        public Response kill(Request request) throws TException;
 
-        public Response port(Request request) throws org.apache.thrift.TException;
+        public Response port(Request request) throws TException;
 
     }
 
     public interface AsyncIface {
 
-        public void ping(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void ping(Request request, AsyncMethodCallback resultHandler) throws TException;
 
-        public void execute(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void execute(Request request, AsyncMethodCallback resultHandler) throws TException;
 
-        public void password(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void password(Request request, AsyncMethodCallback resultHandler) throws TException;
 
-        public void kill(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void kill(Request request, AsyncMethodCallback resultHandler) throws TException;
 
-        public void port(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void port(Request request, AsyncMethodCallback resultHandler) throws TException;
 
     }
 
     public static class Client extends org.apache.thrift.TServiceClient implements Iface {
         public static class Factory implements org.apache.thrift.TServiceClientFactory<Client> {
-            public Factory() {}
+            public Factory() {
+            }
+
             public Client getClient(org.apache.thrift.protocol.TProtocol prot) {
                 return new Client(prot);
             }
+
             public Client getClient(org.apache.thrift.protocol.TProtocol iprot, org.apache.thrift.protocol.TProtocol oprot) {
                 return new Client(iprot, oprot);
             }
         }
 
-        public Client(org.apache.thrift.protocol.TProtocol prot)
-        {
+        public Client(org.apache.thrift.protocol.TProtocol prot) {
             super(prot, prot);
         }
 
@@ -362,21 +355,18 @@ public class CronJob implements Serializable {
             super(iprot, oprot);
         }
 
-        public Response ping(Request request) throws org.apache.thrift.TException
-        {
+        public Response ping(Request request) throws TException {
             send_ping(request);
             return recv_ping();
         }
 
-        public void send_ping(Request request) throws org.apache.thrift.TException
-        {
+        public void send_ping(Request request) throws TException {
             ping_args args = new ping_args();
             args.setRequest(request);
             sendBase("ping", args);
         }
 
-        public Response recv_ping() throws org.apache.thrift.TException
-        {
+        public Response recv_ping() throws TException {
             ping_result result = new ping_result();
             receiveBase(result, "ping");
             if (result.isSetSuccess()) {
@@ -385,21 +375,18 @@ public class CronJob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "ping failed: unknown result");
         }
 
-        public Response execute(Request request) throws org.apache.thrift.TException
-        {
+        public Response execute(Request request) throws TException {
             send_execute(request);
             return recv_execute();
         }
 
-        public void send_execute(Request request) throws org.apache.thrift.TException
-        {
+        public void send_execute(Request request) throws TException {
             execute_args args = new execute_args();
             args.setRequest(request);
             sendBase("execute", args);
         }
 
-        public Response recv_execute() throws org.apache.thrift.TException
-        {
+        public Response recv_execute() throws TException {
             execute_result result = new execute_result();
             receiveBase(result, "execute");
             if (result.isSetSuccess()) {
@@ -408,21 +395,18 @@ public class CronJob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "execute failed: unknown result");
         }
 
-        public Response password(Request request) throws org.apache.thrift.TException
-        {
+        public Response password(Request request) throws TException {
             send_password(request);
             return recv_password();
         }
 
-        public void send_password(Request request) throws org.apache.thrift.TException
-        {
+        public void send_password(Request request) throws TException {
             password_args args = new password_args();
             args.setRequest(request);
             sendBase("password", args);
         }
 
-        public Response recv_password() throws org.apache.thrift.TException
-        {
+        public Response recv_password() throws TException {
             password_result result = new password_result();
             receiveBase(result, "password");
             if (result.isSetSuccess()) {
@@ -431,21 +415,18 @@ public class CronJob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "password failed: unknown result");
         }
 
-        public Response kill(Request request) throws org.apache.thrift.TException
-        {
+        public Response kill(Request request) throws TException {
             send_kill(request);
             return recv_kill();
         }
 
-        public void send_kill(Request request) throws org.apache.thrift.TException
-        {
+        public void send_kill(Request request) throws TException {
             kill_args args = new kill_args();
             args.setRequest(request);
             sendBase("kill", args);
         }
 
-        public Response recv_kill() throws org.apache.thrift.TException
-        {
+        public Response recv_kill() throws TException {
             kill_result result = new kill_result();
             receiveBase(result, "kill");
             if (result.isSetSuccess()) {
@@ -454,21 +435,18 @@ public class CronJob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "kill failed: unknown result");
         }
 
-        public Response port(Request request) throws org.apache.thrift.TException
-        {
+        public Response port(Request request) throws TException {
             send_port(request);
             return recv_port();
         }
 
-        public void send_port(Request request) throws org.apache.thrift.TException
-        {
+        public void send_port(Request request) throws TException {
             port_args args = new port_args();
             args.setRequest(request);
             sendBase("port", args);
         }
 
-        public Response recv_port() throws org.apache.thrift.TException
-        {
+        public Response recv_port() throws TException {
             port_result result = new port_result();
             receiveBase(result, "port");
             if (result.isSetSuccess()) {
@@ -478,14 +456,17 @@ public class CronJob implements Serializable {
         }
 
     }
+
     public static class AsyncClient extends org.apache.thrift.async.TAsyncClient implements AsyncIface {
         public static class Factory implements org.apache.thrift.async.TAsyncClientFactory<AsyncClient> {
             private org.apache.thrift.async.TAsyncClientManager clientManager;
             private org.apache.thrift.protocol.TProtocolFactory protocolFactory;
+
             public Factory(org.apache.thrift.async.TAsyncClientManager clientManager, org.apache.thrift.protocol.TProtocolFactory protocolFactory) {
                 this.clientManager = clientManager;
                 this.protocolFactory = protocolFactory;
             }
+
             public AsyncClient getAsyncClient(org.apache.thrift.transport.TNonblockingTransport transport) {
                 return new AsyncClient(protocolFactory, clientManager, transport);
             }
@@ -495,7 +476,7 @@ public class CronJob implements Serializable {
             super(protocolFactory, clientManager, transport);
         }
 
-        public void ping(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void ping(Request request, AsyncMethodCallback resultHandler) throws TException {
             checkReady();
             ping_call method_call = new ping_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
@@ -504,12 +485,13 @@ public class CronJob implements Serializable {
 
         public static class ping_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public ping_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+
+            public ping_call(Request request, AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
-            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("ping", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 ping_args args = new ping_args();
                 args.setRequest(request);
@@ -517,8 +499,8 @@ public class CronJob implements Serializable {
                 prot.writeMessageEnd();
             }
 
-            public Response getResult() throws org.apache.thrift.TException {
-                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+            public Response getResult() throws TException {
+                if (getState() != State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
@@ -527,7 +509,7 @@ public class CronJob implements Serializable {
             }
         }
 
-        public void execute(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void execute(Request request, AsyncMethodCallback resultHandler) throws TException {
             checkReady();
             execute_call method_call = new execute_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
@@ -536,12 +518,13 @@ public class CronJob implements Serializable {
 
         public static class execute_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public execute_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+
+            public execute_call(Request request, AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
-            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("execute", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 execute_args args = new execute_args();
                 args.setRequest(request);
@@ -549,8 +532,8 @@ public class CronJob implements Serializable {
                 prot.writeMessageEnd();
             }
 
-            public Response getResult() throws org.apache.thrift.TException {
-                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+            public Response getResult() throws TException {
+                if (getState() != State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
@@ -559,7 +542,7 @@ public class CronJob implements Serializable {
             }
         }
 
-        public void password(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void password(Request request, AsyncMethodCallback resultHandler) throws TException {
             checkReady();
             password_call method_call = new password_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
@@ -568,12 +551,13 @@ public class CronJob implements Serializable {
 
         public static class password_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public password_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+
+            public password_call(Request request, AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
-            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("password", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 password_args args = new password_args();
                 args.setRequest(request);
@@ -581,8 +565,8 @@ public class CronJob implements Serializable {
                 prot.writeMessageEnd();
             }
 
-            public Response getResult() throws org.apache.thrift.TException {
-                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+            public Response getResult() throws TException {
+                if (getState() != State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
@@ -591,7 +575,7 @@ public class CronJob implements Serializable {
             }
         }
 
-        public void kill(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void kill(Request request, AsyncMethodCallback resultHandler) throws TException {
             checkReady();
             kill_call method_call = new kill_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
@@ -600,12 +584,13 @@ public class CronJob implements Serializable {
 
         public static class kill_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public kill_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+
+            public kill_call(Request request, AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
-            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("kill", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 kill_args args = new kill_args();
                 args.setRequest(request);
@@ -613,8 +598,8 @@ public class CronJob implements Serializable {
                 prot.writeMessageEnd();
             }
 
-            public Response getResult() throws org.apache.thrift.TException {
-                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+            public Response getResult() throws TException {
+                if (getState() != State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
@@ -623,7 +608,7 @@ public class CronJob implements Serializable {
             }
         }
 
-        public void port(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void port(Request request, AsyncMethodCallback resultHandler) throws TException {
             checkReady();
             port_call method_call = new port_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
@@ -632,12 +617,13 @@ public class CronJob implements Serializable {
 
         public static class port_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public port_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+
+            public port_call(Request request, AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
-            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws TException {
                 prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("port", org.apache.thrift.protocol.TMessageType.CALL, 0));
                 port_args args = new port_args();
                 args.setRequest(request);
@@ -645,8 +631,8 @@ public class CronJob implements Serializable {
                 prot.writeMessageEnd();
             }
 
-            public Response getResult() throws org.apache.thrift.TException {
-                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+            public Response getResult() throws TException {
+                if (getState() != State.RESPONSE_READ) {
                     throw new IllegalStateException("Method call not finished!");
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
@@ -659,15 +645,16 @@ public class CronJob implements Serializable {
 
     public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
         private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class.getName());
+
         public Processor(I iface) {
             super(iface, getProcessMap(new HashMap<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>>()));
         }
 
-        protected Processor(I iface, Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
+        protected Processor(I iface, Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
             super(iface, getProcessMap(processMap));
         }
 
-        private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
+        private static <I extends Iface> Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> getProcessMap(Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
             processMap.put("ping", new ping());
             processMap.put("execute", new execute());
             processMap.put("password", new password());
@@ -689,7 +676,7 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public ping_result getResult(I iface, ping_args args) throws org.apache.thrift.TException {
+            public ping_result getResult(I iface, ping_args args) throws TException {
                 ping_result result = new ping_result();
                 result.success = iface.ping(args.request);
                 return result;
@@ -709,7 +696,7 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public execute_result getResult(I iface, execute_args args) throws org.apache.thrift.TException {
+            public execute_result getResult(I iface, execute_args args) throws TException {
                 execute_result result = new execute_result();
                 result.success = iface.execute(args.request);
                 return result;
@@ -729,7 +716,7 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public password_result getResult(I iface, password_args args) throws org.apache.thrift.TException {
+            public password_result getResult(I iface, password_args args) throws TException {
                 password_result result = new password_result();
                 result.success = iface.password(args.request);
                 return result;
@@ -749,7 +736,7 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public kill_result getResult(I iface, kill_args args) throws org.apache.thrift.TException {
+            public kill_result getResult(I iface, kill_args args) throws TException {
                 kill_result result = new kill_result();
                 result.success = iface.kill(args.request);
                 return result;
@@ -769,7 +756,7 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public port_result getResult(I iface, port_args args) throws org.apache.thrift.TException {
+            public port_result getResult(I iface, port_args args) throws TException {
                 port_result result = new port_result();
                 result.success = iface.port(args.request);
                 return result;
@@ -780,15 +767,16 @@ public class CronJob implements Serializable {
 
     public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
         private static final Logger LOGGER = LoggerFactory.getLogger(AsyncProcessor.class.getName());
+
         public AsyncProcessor(I iface) {
             super(iface, getProcessMap(new HashMap<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>>()));
         }
 
-        protected AsyncProcessor(I iface, Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
+        protected AsyncProcessor(I iface, Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> processMap) {
             super(iface, getProcessMap(processMap));
         }
 
-        private static <I extends AsyncIface> Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase,?>> getProcessMap(Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
+        private static <I extends AsyncIface> Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> getProcessMap(Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> processMap) {
             processMap.put("ping", new ping());
             processMap.put("execute", new execute());
             processMap.put("password", new password());
@@ -813,23 +801,24 @@ public class CronJob implements Serializable {
                         ping_result result = new ping_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         ping_result result = new ping_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -843,8 +832,8 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public void start(I iface, ping_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.ping(args.request,resultHandler);
+            public void start(I iface, ping_args args, AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.ping(args.request, resultHandler);
             }
         }
 
@@ -864,23 +853,24 @@ public class CronJob implements Serializable {
                         execute_result result = new execute_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         execute_result result = new execute_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -894,8 +884,8 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public void start(I iface, execute_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.execute(args.request,resultHandler);
+            public void start(I iface, execute_args args, AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.execute(args.request, resultHandler);
             }
         }
 
@@ -915,23 +905,24 @@ public class CronJob implements Serializable {
                         password_result result = new password_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         password_result result = new password_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -945,8 +936,8 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public void start(I iface, password_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.password(args.request,resultHandler);
+            public void start(I iface, password_args args, AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.password(args.request, resultHandler);
             }
         }
 
@@ -966,23 +957,24 @@ public class CronJob implements Serializable {
                         kill_result result = new kill_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         kill_result result = new kill_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -996,8 +988,8 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public void start(I iface, kill_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.kill(args.request,resultHandler);
+            public void start(I iface, kill_args args, AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.kill(args.request, resultHandler);
             }
         }
 
@@ -1017,23 +1009,24 @@ public class CronJob implements Serializable {
                         port_result result = new port_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         port_result result = new port_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1047,19 +1040,20 @@ public class CronJob implements Serializable {
                 return false;
             }
 
-            public void start(I iface, port_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.port(args.request,resultHandler);
+            public void start(I iface, port_args args, AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.port(args.request, resultHandler);
             }
         }
 
     }
 
-    public static class ping_args implements org.apache.thrift.TBase<ping_args, ping_args._Fields>, java.io.Serializable, Cloneable, Comparable<ping_args>   {
+    public static class ping_args implements org.apache.thrift.TBase<ping_args, ping_args._Fields>, Serializable, Cloneable, Comparable<ping_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ping_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new ping_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new ping_argsTupleSchemeFactory());
@@ -1069,7 +1063,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1083,7 +1077,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -1127,6 +1121,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -1139,8 +1134,7 @@ public class CronJob implements Serializable {
         }
 
         public ping_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -1193,7 +1187,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -1227,7 +1221,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof ping_args)
-                return this.equals((ping_args)that);
+                return this.equals((ping_args) that);
             return false;
         }
 
@@ -1284,11 +1278,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -1308,7 +1302,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (request != null) {
@@ -1319,7 +1313,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -1327,7 +1321,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -1340,11 +1334,10 @@ public class CronJob implements Serializable {
 
         private static class ping_argsStandardScheme extends StandardScheme<ping_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, ping_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, ping_args struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -1370,7 +1363,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, ping_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, ping_args struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -1394,7 +1387,7 @@ public class CronJob implements Serializable {
         private static class ping_argsTupleScheme extends TupleScheme<ping_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, ping_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, ping_args struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -1407,7 +1400,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, ping_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, ping_args struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -1420,12 +1413,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class ping_result implements org.apache.thrift.TBase<ping_result, ping_result._Fields>, java.io.Serializable, Cloneable, Comparable<ping_result>   {
+    public static class ping_result implements org.apache.thrift.TBase<ping_result, ping_result._Fields>, Serializable, Cloneable, Comparable<ping_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ping_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new ping_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new ping_resultTupleSchemeFactory());
@@ -1435,7 +1429,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1449,7 +1443,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -1493,6 +1487,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -1505,8 +1500,7 @@ public class CronJob implements Serializable {
         }
 
         public ping_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -1559,7 +1553,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -1593,7 +1587,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof ping_result)
-                return this.equals((ping_result)that);
+                return this.equals((ping_result) that);
             return false;
         }
 
@@ -1650,11 +1644,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -1674,7 +1668,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -1685,7 +1679,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -1693,7 +1687,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -1706,11 +1700,10 @@ public class CronJob implements Serializable {
 
         private static class ping_resultStandardScheme extends StandardScheme<ping_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, ping_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, ping_result struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -1736,7 +1729,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, ping_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, ping_result struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -1760,7 +1753,7 @@ public class CronJob implements Serializable {
         private static class ping_resultTupleScheme extends TupleScheme<ping_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, ping_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, ping_result struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -1773,7 +1766,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, ping_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, ping_result struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -1786,12 +1779,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class execute_args implements org.apache.thrift.TBase<execute_args, execute_args._Fields>, java.io.Serializable, Cloneable, Comparable<execute_args>   {
+    public static class execute_args implements org.apache.thrift.TBase<execute_args, execute_args._Fields>, Serializable, Cloneable, Comparable<execute_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("execute_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new execute_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new execute_argsTupleSchemeFactory());
@@ -1801,7 +1795,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1815,7 +1809,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -1859,6 +1853,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -1871,8 +1866,7 @@ public class CronJob implements Serializable {
         }
 
         public execute_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -1925,7 +1919,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -1959,7 +1953,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof execute_args)
-                return this.equals((execute_args)that);
+                return this.equals((execute_args) that);
             return false;
         }
 
@@ -2016,11 +2010,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -2040,7 +2034,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (request != null) {
@@ -2051,7 +2045,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2059,7 +2053,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2072,11 +2066,10 @@ public class CronJob implements Serializable {
 
         private static class execute_argsStandardScheme extends StandardScheme<execute_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, execute_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, execute_args struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2102,7 +2095,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, execute_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, execute_args struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -2126,7 +2119,7 @@ public class CronJob implements Serializable {
         private static class execute_argsTupleScheme extends TupleScheme<execute_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, execute_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, execute_args struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -2139,7 +2132,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, execute_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, execute_args struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -2152,12 +2145,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class execute_result implements org.apache.thrift.TBase<execute_result, execute_result._Fields>, java.io.Serializable, Cloneable, Comparable<execute_result>   {
+    public static class execute_result implements org.apache.thrift.TBase<execute_result, execute_result._Fields>, Serializable, Cloneable, Comparable<execute_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("execute_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new execute_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new execute_resultTupleSchemeFactory());
@@ -2167,7 +2161,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2181,7 +2175,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -2225,6 +2219,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2237,8 +2232,7 @@ public class CronJob implements Serializable {
         }
 
         public execute_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -2291,7 +2285,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -2325,7 +2319,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof execute_result)
-                return this.equals((execute_result)that);
+                return this.equals((execute_result) that);
             return false;
         }
 
@@ -2382,11 +2376,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -2406,7 +2400,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -2417,7 +2411,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2425,7 +2419,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2438,11 +2432,10 @@ public class CronJob implements Serializable {
 
         private static class execute_resultStandardScheme extends StandardScheme<execute_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, execute_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, execute_result struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2468,7 +2461,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, execute_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, execute_result struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -2492,7 +2485,7 @@ public class CronJob implements Serializable {
         private static class execute_resultTupleScheme extends TupleScheme<execute_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, execute_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, execute_result struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -2505,7 +2498,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, execute_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, execute_result struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -2518,12 +2511,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class password_args implements org.apache.thrift.TBase<password_args, password_args._Fields>, java.io.Serializable, Cloneable, Comparable<password_args>   {
+    public static class password_args implements org.apache.thrift.TBase<password_args, password_args._Fields>, Serializable, Cloneable, Comparable<password_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new password_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new password_argsTupleSchemeFactory());
@@ -2533,7 +2527,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2547,7 +2541,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -2591,6 +2585,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2603,8 +2598,7 @@ public class CronJob implements Serializable {
         }
 
         public password_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -2657,7 +2651,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -2691,7 +2685,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof password_args)
-                return this.equals((password_args)that);
+                return this.equals((password_args) that);
             return false;
         }
 
@@ -2748,11 +2742,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -2772,7 +2766,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (request != null) {
@@ -2783,7 +2777,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2791,7 +2785,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -2804,11 +2798,10 @@ public class CronJob implements Serializable {
 
         private static class password_argsStandardScheme extends StandardScheme<password_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, password_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, password_args struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2834,7 +2827,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, password_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, password_args struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -2858,7 +2851,7 @@ public class CronJob implements Serializable {
         private static class password_argsTupleScheme extends TupleScheme<password_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -2871,7 +2864,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, password_args struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -2884,12 +2877,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class password_result implements org.apache.thrift.TBase<password_result, password_result._Fields>, java.io.Serializable, Cloneable, Comparable<password_result>   {
+    public static class password_result implements org.apache.thrift.TBase<password_result, password_result._Fields>, Serializable, Cloneable, Comparable<password_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new password_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new password_resultTupleSchemeFactory());
@@ -2899,7 +2893,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2913,7 +2907,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -2957,6 +2951,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2969,8 +2964,7 @@ public class CronJob implements Serializable {
         }
 
         public password_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -3023,7 +3017,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -3057,7 +3051,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof password_result)
-                return this.equals((password_result)that);
+                return this.equals((password_result) that);
             return false;
         }
 
@@ -3114,11 +3108,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -3138,7 +3132,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -3149,7 +3143,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3157,7 +3151,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3170,11 +3164,10 @@ public class CronJob implements Serializable {
 
         private static class password_resultStandardScheme extends StandardScheme<password_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, password_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, password_result struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3200,7 +3193,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, password_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, password_result struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -3224,7 +3217,7 @@ public class CronJob implements Serializable {
         private static class password_resultTupleScheme extends TupleScheme<password_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, password_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, password_result struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -3237,7 +3230,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, password_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, password_result struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -3250,12 +3243,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class kill_args implements org.apache.thrift.TBase<kill_args, kill_args._Fields>, java.io.Serializable, Cloneable, Comparable<kill_args>   {
+    public static class kill_args implements org.apache.thrift.TBase<kill_args, kill_args._Fields>, Serializable, Cloneable, Comparable<kill_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("kill_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new kill_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new kill_argsTupleSchemeFactory());
@@ -3265,7 +3259,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3279,7 +3273,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -3323,6 +3317,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -3335,8 +3330,7 @@ public class CronJob implements Serializable {
         }
 
         public kill_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -3389,7 +3383,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -3423,7 +3417,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof kill_args)
-                return this.equals((kill_args)that);
+                return this.equals((kill_args) that);
             return false;
         }
 
@@ -3480,11 +3474,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -3504,7 +3498,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (request != null) {
@@ -3515,7 +3509,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3523,7 +3517,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3536,11 +3530,10 @@ public class CronJob implements Serializable {
 
         private static class kill_argsStandardScheme extends StandardScheme<kill_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, kill_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, kill_args struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3566,7 +3559,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, kill_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, kill_args struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -3590,7 +3583,7 @@ public class CronJob implements Serializable {
         private static class kill_argsTupleScheme extends TupleScheme<kill_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, kill_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, kill_args struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -3603,7 +3596,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, kill_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, kill_args struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -3616,12 +3609,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class kill_result implements org.apache.thrift.TBase<kill_result, kill_result._Fields>, java.io.Serializable, Cloneable, Comparable<kill_result>   {
+    public static class kill_result implements org.apache.thrift.TBase<kill_result, kill_result._Fields>, Serializable, Cloneable, Comparable<kill_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("kill_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new kill_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new kill_resultTupleSchemeFactory());
@@ -3631,7 +3625,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3645,7 +3639,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -3689,6 +3683,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -3701,8 +3696,7 @@ public class CronJob implements Serializable {
         }
 
         public kill_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -3755,7 +3749,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -3789,7 +3783,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof kill_result)
-                return this.equals((kill_result)that);
+                return this.equals((kill_result) that);
             return false;
         }
 
@@ -3846,11 +3840,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -3870,7 +3864,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -3881,7 +3875,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3889,7 +3883,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -3902,11 +3896,10 @@ public class CronJob implements Serializable {
 
         private static class kill_resultStandardScheme extends StandardScheme<kill_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, kill_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, kill_result struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3932,7 +3925,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, kill_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, kill_result struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -3956,7 +3949,7 @@ public class CronJob implements Serializable {
         private static class kill_resultTupleScheme extends TupleScheme<kill_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, kill_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, kill_result struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -3969,7 +3962,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, kill_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, kill_result struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -3982,12 +3975,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class port_args implements org.apache.thrift.TBase<port_args, port_args._Fields>, java.io.Serializable, Cloneable, Comparable<port_args>   {
+    public static class port_args implements org.apache.thrift.TBase<port_args, port_args._Fields>, Serializable, Cloneable, Comparable<port_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("port_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new port_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new port_argsTupleSchemeFactory());
@@ -3997,7 +3991,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -4011,7 +4005,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -4055,6 +4049,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -4067,8 +4062,7 @@ public class CronJob implements Serializable {
         }
 
         public port_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -4121,7 +4115,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -4155,7 +4149,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof port_args)
-                return this.equals((port_args)that);
+                return this.equals((port_args) that);
             return false;
         }
 
@@ -4212,11 +4206,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -4236,7 +4230,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (request != null) {
@@ -4247,7 +4241,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -4255,7 +4249,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -4268,11 +4262,10 @@ public class CronJob implements Serializable {
 
         private static class port_argsStandardScheme extends StandardScheme<port_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, port_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, port_args struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -4298,7 +4291,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, port_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, port_args struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -4322,7 +4315,7 @@ public class CronJob implements Serializable {
         private static class port_argsTupleScheme extends TupleScheme<port_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -4335,7 +4328,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -4348,12 +4341,13 @@ public class CronJob implements Serializable {
 
     }
 
-    public static class port_result implements org.apache.thrift.TBase<port_result, port_result._Fields>, java.io.Serializable, Cloneable, Comparable<port_result>   {
+    public static class port_result implements org.apache.thrift.TBase<port_result, port_result._Fields>, Serializable, Cloneable, Comparable<port_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("port_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new port_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new port_resultTupleSchemeFactory());
@@ -4363,7 +4357,7 @@ public class CronJob implements Serializable {
 
         /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -4377,7 +4371,7 @@ public class CronJob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -4421,6 +4415,7 @@ public class CronJob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -4433,8 +4428,7 @@ public class CronJob implements Serializable {
         }
 
         public port_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -4487,7 +4481,7 @@ public class CronJob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -4521,7 +4515,7 @@ public class CronJob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof port_result)
-                return this.equals((port_result)that);
+                return this.equals((port_result) that);
             return false;
         }
 
@@ -4578,11 +4572,11 @@ public class CronJob implements Serializable {
             return _Fields.findByThriftId(fieldId);
         }
 
-        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws TException {
             schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
         }
 
-        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws TException {
             schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
         }
 
@@ -4602,7 +4596,7 @@ public class CronJob implements Serializable {
             return sb.toString();
         }
 
-        public void validate() throws org.apache.thrift.TException {
+        public void validate() throws TException {
             // check for required fields
             // check for sub-struct validity
             if (success != null) {
@@ -4613,7 +4607,7 @@ public class CronJob implements Serializable {
         private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
             try {
                 write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -4621,7 +4615,7 @@ public class CronJob implements Serializable {
         private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
             try {
                 read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
-            } catch (org.apache.thrift.TException te) {
+            } catch (TException te) {
                 throw new java.io.IOException(te);
             }
         }
@@ -4634,11 +4628,10 @@ public class CronJob implements Serializable {
 
         private static class port_resultStandardScheme extends StandardScheme<port_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, port_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, port_result struct) throws TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -4664,7 +4657,7 @@ public class CronJob implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, port_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, port_result struct) throws TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -4688,7 +4681,7 @@ public class CronJob implements Serializable {
         private static class port_resultTupleScheme extends TupleScheme<port_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -4701,7 +4694,7 @@ public class CronJob implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -4713,5 +4706,6 @@ public class CronJob implements Serializable {
         }
 
     }
+
 
 }

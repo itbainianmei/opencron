@@ -166,13 +166,13 @@ public class HomeController {
         PageIOUtils.writeTxt(response,url);
     }
 
-    @RequestMapping("/monitor")
+   /* @RequestMapping("/monitor")
     public void monitor(HttpServletResponse response, Long workerId) throws Exception {
         Worker worker = workerService.getWorker(workerId);
         Map<String, String> data = executeService.monitor(worker);
         JsonMapper jsonMapper = new JsonMapper();
         PageIOUtils.writeJson(response, jsonMapper.toJson(data));
-    }
+    }*/
 
     @RequestMapping("/cpuchart")
     public void cpuChart(HttpServletResponse response, Model model, Long workerId) throws Exception {

@@ -139,16 +139,7 @@ public class RecordController {
     @RequestMapping("/kill")
     public void kill(HttpServletResponse response, Long recordId) {
         Record record = recordService.get(recordId);
-        Boolean flag = false;
-        //单一任务
-        if (record.getCategory() == 0) {
-            if (record.getStatus() == CronJob.RunStatus.RUNNING.getStatus()) {
-                flag = executeService.killJob(Arrays.asList(record));
-            }
-        } else if (record.getCategory() == 1) {
-            List<Record> records = recordService.getRunningFlowJob(recordId);
-            flag = executeService.killJob(records);
-        }
+        Boolean flag = executeService.killJob(record);
         PageIOUtils.writeHtml(response, flag.toString());
     }
 
