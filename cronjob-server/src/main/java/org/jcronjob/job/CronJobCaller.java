@@ -26,6 +26,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
+import org.jcronjob.base.job.Action;
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.base.job.Request;
 import org.jcronjob.base.job.Response;
@@ -46,18 +47,28 @@ import java.lang.reflect.Method;
 public class CronJobCaller {
 
     public Response call(Request request) throws Exception {
-       TTransport transport = new TSocket(request.getHostName(),request.getPort());
-       TProtocol protocol = new TBinaryProtocol(transport);
-       CronJob.Client client = new CronJob.Client(protocol);
-       transport.open();
 
-       Response response = null;
-       Method[] methods= client.getClass().getMethods();
-       for(Method method:methods){
-           if (method.getName().equalsIgnoreCase(request.getAction().name())) {
-               response = (Response) method.invoke(client, request);
-           }
-       }
+        TTransport transport = null;
+        /**
+         * ping的超时设置为5毫秒,其他默认
+         */
+        if (request.getAction().equals(Action.PING)) {
+            transport = new TSocket(request.getHostName(),request.getPort(),1000*5);
+        }else {
+            transport = new TSocket(request.getHostName(),request.getPort());
+        }
+        TProtocol protocol = new TBinaryProtocol(transport);
+        CronJob.Client client = new CronJob.Client(protocol);
+        transport.open();
+
+        Response response = null;
+        for(Method method:client.getClass().getMethods()){
+            if (method.getName().equalsIgnoreCase(request.getAction().name())) {
+                response = (Response) method.invoke(client, request);
+                break;
+            }
+        }
+
        transport.flush();
        transport.close();
        return response;

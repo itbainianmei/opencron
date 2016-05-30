@@ -25,14 +25,11 @@ package org.jcronjob.service;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.dao.QueryDao;
-import org.jcronjob.session.MemcacheCache;
 import org.jcronjob.tag.Page;
 import org.jcronjob.domain.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.jcronjob.base.utils.CommonUtils.notEmpty;
 
@@ -62,12 +59,6 @@ public class WorkerService {
 
     public Worker getWorker(Long id) {
         return queryDao.get(Worker.class, id);
-    }
-
-    @Transactional(readOnly = false)
-    public void updateStatus(Worker worker,int status) {
-        String sql = String.format("update worker set status=?,failTime=? where workerid=%s", status,worker.getFailTime(),worker.getWorkerId());
-        queryDao.createSQLQuery(sql).executeUpdate();
     }
 
     public void addOrUpdate(Worker worker) {

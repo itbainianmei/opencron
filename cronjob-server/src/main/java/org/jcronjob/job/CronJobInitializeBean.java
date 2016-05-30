@@ -107,16 +107,19 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
                             noticeService.notice(worker);
                             //记录本次任务失败的时间
                             worker.setFailTime(new Date());
-                            workerService.updateStatus(worker,0);
+                            worker.setStatus(false);
+                            workerService.addOrUpdate(worker);
                         }
 
                         if (worker.getStatus()) {
-                            workerService.updateStatus(worker,0);
+                            worker.setStatus(false);
+                            workerService.addOrUpdate(worker);
                         }
 
                     } else {
                         if (!worker.getStatus()) {
-                            workerService.updateStatus(worker,1);
+                            worker.setStatus(true);
+                            workerService.addOrUpdate(worker);
                         }
                     }
                 }
