@@ -301,7 +301,7 @@ public class ExecuteService implements Job {
         try {
             ping = cronJobCaller.call(Request.request(ip, port, Action.PING, password)).isSuccess();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[cronjob]ping error:{}",e);
         } finally {
             return ping;
         }
