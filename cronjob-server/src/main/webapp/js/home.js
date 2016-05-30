@@ -722,7 +722,7 @@ var cronjobChart = {
                             },
                             series: [{
                                 type: 'pie',
-                                name: 'Browser share',
+                                name: '比例',
 
                                 data: [
                                     ['成功', successSum],
