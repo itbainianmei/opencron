@@ -203,7 +203,7 @@ public class AgentProcessor implements CronJob.Iface {
             try {
                 message = text.substring(0, text.lastIndexOf(EXITCODE_KEY));
                 exitVal = Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim());
-            } catch (Exception e) {
+            } catch (StringIndexOutOfBoundsException e) {
                 message = text;
             }
         }

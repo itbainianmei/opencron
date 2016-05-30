@@ -1,3 +1,30 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ *
+
+ *
+ * <hr style="color:RED"/>
+ */
+
+
 package org.jcronjob.service;
 
 import com.alibaba.fastjson.JSON;
@@ -7,6 +34,7 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.base.utils.DigestUtils;
 import org.jcronjob.base.utils.HttpUtils;
 import org.jcronjob.dao.QueryDao;
@@ -22,8 +50,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+
 /**
- * Created by benjobs on 16/5/21.
+ *
+ * @author <a href="mailto:benjobs@qq.com">benjobs@qq.com</a>
+ * @name:CommonUtil
+ * @version: 1.0.0
+ * @company: org.jcronjob
+ * @description: webconsole核心类
+ * @date: 2016-05-25 10:03<br/><br/>
+ *
+ * <b style="color:RED"></b><br/><br/>
+ * 你快乐吗?<br/>
+ * 风轻轻的问我<br/>
+ * 曾经快乐过<br/>
+ * 那时的湖面<br/>
+ * 她踏着轻舟泛过<br/><br/>
+ *
+ * 你忧伤吗?<br/>
+ * 雨悄悄的问我<br/>
+ * 一直忧伤着<br/>
+ * 此时的四季<br/>
+ * 全是她的柳絮飘落<br/><br/>
+ *
+ * 你心痛吗?<br/>
+ * 泪偷偷的问我<br/>
+ * 心痛如刀割<br/>
+ * 收到记忆的包裹<br/>
+ * 都是她冰清玉洁还不曾雕琢<br/><br/>
  */
 
 @Service
@@ -46,6 +100,7 @@ public class TermService {
     }
 
     public boolean saveOrUpdate(Term term) {
+
         Term dbTerm = queryDao.sqlUniqueQuery(Term.class,"SELECT * FROM term WHERE userId=? AND host=?",term.getUserId(),term.getHost());
         if (dbTerm!=null) {
             term.setTermId(dbTerm.getTermId());

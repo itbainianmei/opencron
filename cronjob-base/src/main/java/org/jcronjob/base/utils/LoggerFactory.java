@@ -32,7 +32,7 @@ import java.io.File;
  */
 public class LoggerFactory {
 
-    public static Logger getLogger(Class clazz) {
+    public static Logger getLogger(@SuppressWarnings("rawtypes") Class clazz) {
         String currPath = LoggerFactory.class.getProtectionDomain().getCodeSource().getLocation().getFile();
         File file = new File(currPath);
         String path = file.getParentFile().getParentFile() + "/conf/log4j.properties";

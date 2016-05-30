@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CronJobInitializeBean implements Serializable,InitializingBean {
+
     private final Logger logger = Logger.getLogger(CronJobInitializeBean.class);
 
     @Autowired
@@ -80,6 +81,7 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
         }
 
         schedulerService.startCrontab();
+
     }
 
     /**

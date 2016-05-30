@@ -28,7 +28,13 @@ import org.jcronjob.agent.AgentBootstrap;
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        agent();
+        String str = "fafds";
+        try {
+            System.out.println(str.substring(0, -1));
+        }catch (StringIndexOutOfBoundsException e) {
+            System.out.println(str);
+        }
+       // agent();
     }
 
     private static void agent() throws Exception {

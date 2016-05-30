@@ -139,7 +139,6 @@ public class AgentMonitor {
 
     public  String getCpuData() {
         String cpuInfo[] = executeShell(Globals.CRONJOB_MONITOR_SHELL, "cpu").split("\\t");
-
         //cpu usage report..
         Long sysIdle = toLong(cpuInfo[0]) - toLong(cpuInfo[1]);
         Long total = toLong(cpuInfo[2]) - toLong(cpuInfo[3]);

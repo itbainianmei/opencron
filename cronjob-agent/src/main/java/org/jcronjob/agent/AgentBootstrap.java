@@ -45,7 +45,13 @@ import static org.jcronjob.base.utils.CommonUtils.notEmpty;
 
 public class AgentBootstrap implements Daemon,Serializable {
 
-    private TServer server;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
+	private TServer server;
 
     private int port;
 
