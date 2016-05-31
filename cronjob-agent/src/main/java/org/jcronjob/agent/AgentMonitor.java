@@ -37,6 +37,8 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.jcronjob.base.utils.CommandUtils.executeShell;
 import static org.jcronjob.base.utils.CommonUtils.toFloat;
@@ -153,9 +155,16 @@ public class AgentMonitor {
         //cpu detail...
         String cpuDetail[] = cpuInfo[cpuInfo.length - 1].split(",");
         for (String detail : cpuDetail) {
-            String data[] = detail.split("%");
-            String val = data[0];
-            String key = data[1];
+            String key=null,val=null;
+            Matcher valMatcher = Pattern.compile("^\\d+(\\.\\d+)?").matcher(detail);
+            if (valMatcher.find()) {
+                val = valMatcher.group();
+            }
+
+            Matcher keyMatcher = Pattern.compile("\\w+$").matcher(detail);
+            if (keyMatcher.find()) {
+                key = keyMatcher.group();
+            }
             cpuData.put(key, val);
         }
         return  JSON.toJSONString(cpuData);

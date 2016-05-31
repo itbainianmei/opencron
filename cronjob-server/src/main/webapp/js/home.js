@@ -1,5 +1,9 @@
 $(document).ready(function () {
-    cronjobChart.monitorData();
+
+    //window系统下暂时不支出监控数据
+    if($("#monitor").length>0) {
+        cronjobChart.monitorData();
+    }
     cronjobChart.executeChart();
     $("#workerId").change(cronjobChart.monitorData);
 });
@@ -96,20 +100,18 @@ var cronjobChart = {
                             }
                         } else {
                             try {
+                                var read = 0;
+                                var write = 0;
                                 $.each(eval('(' + cronjobChart.data["network"] + ')'), function (name, value) {
-                                    for (var i = 0; i < netChartObj.length; i++) {
-                                        var netname = netChartObj[i][0];
-                                        var chartObj = netChartObj[i][1];
-
-                                        if (name == netname) {
-                                            var series = chartObj.series[0];
-                                            var shift = series.data.length > 60 * 2;
-                                            chartObj.xAxis[0].categories.push(data.time);
-                                            chartObj.series[0].addPoint(parseFloat(value[0]), true, shift);
-                                            chartObj.series[1].addPoint(parseFloat(value[1]), true, shift);
-                                        }
-                                    }
+                                    read += parseFloat(value[0]);
+                                    write += parseFloat(value[1]);
                                 });
+                                var series = netChartObj.series[0];
+                                var shift = series.data.length > 60 * 2;
+                                netChartObj.xAxis[0].categories.push(data.time);
+                                netChartObj.series[0].addPoint(parseFloat(read), true, shift);
+                                netChartObj.series[1].addPoint(parseFloat(write), true, shift);
+
                             } catch (e) {
                                 alert(e.message);
                             }
@@ -456,125 +458,114 @@ var cronjobChart = {
 
     networkChart: function () {
 
-        $("#network-view").remove();
-
-        $("#network-parent").html("");
-
-        var chart = [];
-
+        var read = 0;
+        var write = 0;
         $.each(eval('(' + cronjobChart.data["network"] + ')'), function (name, value) {
-
-            var renderId = "network_" + name;
-
-            $("#network-parent").append($('<div id="' + renderId + '" class="main-chart"></div>'));
-
-            var hchart = new Highcharts.Chart({
-                chart: {
-                    type: 'spline',
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    plotBorderColor: null,
-                    plotBackgroundColor: null,
-                    plotBackgroundImage: '',
-                    plotBorderWidth: null,
-                    height: 200,
-                    renderTo: renderId
-                },
-                title: {
-                    text: name,
-                    align: 'left',
-                    style: {
-                        color: 'rgba(255,255,255,0.6)'
-                    }
-                },
-                subtitle: {
-                    text: ''
-                },
-                xAxis: {
-                    categories: [cronjobChart.data.time],
-                    boundaryGap: false,
-                    borderRadius: 2,
-                    labels: {
-                        maxStaggerLines: 1,
-                        style: {
-                            color: 'rgba(220,220,255,0.8)',
-                            fontSize: 0
-                        }
-                    },
-                    splitLine: {show: false},
-                    tickLength: 0,
-                },
-                yAxis: {
-                    title: {text: ''},
-                    min: 0,
-                    minorGridLineWidth: 0,
-                    alternateGridColor: null,
-                    gridLineWidth: 0,
-                    labels: {
-                        style: {
-                            color: 'rgba(220,220,255,0.8)'
-                        }
-                    },
-                    lineWidth: 1,
-                    lineColor: 'rgba(220,220,255,0.8)'
-                },
-                tooltip: {
-                    shared: true,
-                    borderColor: 'rgba(45,45,45,0)',
-                    backgroundColor: 'rgba(45,45,45,0.75)',
-                    borderRadius: 5,
-                    borderWidth: 2,
-                    shadow: true,
-                    animation: true,
-                    crosshairs: {
-                        width: 1,
-                        color: "rgba(255,255,255,0.5)"
-                    },
-                    formatter: function () {
-                        var tipHtml = '<b style="color:rgba(255,255,255,0.85);font-size: 12px;">监控时间 :&nbsp;' + cronjobChart.data.time + '</b>';
-                        $.each(this.points, function () {
-                            tipHtml += '<div class="tooltip-item" style="color: rgba(255,255,255,0.85)"> <span> ' + this.series.name + '&nbsp;:&nbsp;</span>' + Highcharts.numberFormat(this.y, 0) + " kb/s</div>";
-                        });
-                        return tipHtml;
-                    },
-                    useHTML: true
-                },
-
-                plotOptions: {
-                    spline: {
-                        lineWidth: 2,
-                        states: {
-                            hover: {
-                                lineWidth: 3
-                            }
-                        },
-                        marker: {
-                            enabled: false
-                        }
-                    }
-                },
-
-                series: [{
-                    name: '读取速度',
-                    data: [parseFloat(value[0])],
-                    color: 'rgba(128,128,255,0.6)'
-                }, {
-                    name: '写入速度',
-                    data: [parseFloat(value[1])],
-                    color: 'rgba(255,205,205,0.7)'
-                }]
-                ,
-                navigation: {
-                    menuItemStyle: {
-                        fontSize: '10px'
-                    }
-                }
-            });
-
-            chart.push([name, hchart]);
-
+            read += parseFloat(value[0]);
+            write += parseFloat(value[1]);
         });
 
-        return chart;
+        return new Highcharts.Chart({
+            chart: {
+                type: 'spline',
+                backgroundColor: 'rgba(0,0,0,0)',
+                plotBorderColor: null,
+                plotBackgroundColor: null,
+                plotBackgroundImage: '',
+                plotBorderWidth: null,
+                height: 200,
+                renderTo: "network-view"
+            },
+            title: {
+                text: "",
+                align: 'left',
+                style: {
+                    color: 'rgba(255,255,255,0.6)'
+                }
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: [cronjobChart.data.time],
+                boundaryGap: false,
+                borderRadius: 2,
+                labels: {
+                    maxStaggerLines: 1,
+                    style: {
+                        color: 'rgba(220,220,255,0.8)',
+                        fontSize: 0
+                    }
+                },
+                splitLine: {show: false},
+                tickLength: 0,
+            },
+            yAxis: {
+                title: {text: ''},
+                min: 0,
+                minorGridLineWidth: 0,
+                alternateGridColor: null,
+                gridLineWidth: 0,
+                labels: {
+                    style: {
+                        color: 'rgba(220,220,255,0.8)'
+                    }
+                },
+                lineWidth: 1,
+                lineColor: 'rgba(220,220,255,0.8)'
+            },
+            tooltip: {
+                shared: true,
+                borderColor: 'rgba(45,45,45,0)',
+                backgroundColor: 'rgba(45,45,45,0.75)',
+                borderRadius: 5,
+                borderWidth: 2,
+                shadow: true,
+                animation: true,
+                crosshairs: {
+                    width: 1,
+                    color: "rgba(255,255,255,0.5)"
+                },
+                formatter: function () {
+                    var tipHtml = '<b style="color:rgba(255,255,255,0.85);font-size: 12px;">监控时间 :&nbsp;' + cronjobChart.data.time + '</b>';
+                    $.each(this.points, function () {
+                        tipHtml += '<div class="tooltip-item" style="color: rgba(255,255,255,0.85)"> <span> ' + this.series.name + '&nbsp;:&nbsp;</span>' + Highcharts.numberFormat(this.y, 0) + " kb/s</div>";
+                    });
+                    return tipHtml;
+                },
+                useHTML: true
+            },
+
+            plotOptions: {
+                spline: {
+                    lineWidth: 2,
+                    states: {
+                        hover: {
+                            lineWidth: 3
+                        }
+                    },
+                    marker: {
+                        enabled: false
+                    }
+                }
+            },
+
+            series: [{
+                name: '读取速度',
+                data: [read],
+                color: 'rgba(128,128,255,0.6)'
+            }, {
+                name: '写入速度',
+                data: [write],
+                color: 'rgba(255,205,205,0.7)'
+            }]
+            ,
+            navigation: {
+                menuItemStyle: {
+                    fontSize: '10px'
+                }
+            }
+        });
     },
 
     executeChart: function () {
@@ -722,7 +713,7 @@ var cronjobChart = {
                             },
                             series: [{
                                 type: 'pie',
-                                name: '比例',
+                                name: '占比',
 
                                 data: [
                                     ['成功', successSum],
