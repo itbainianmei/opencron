@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -77,32 +77,33 @@ if [ $have_tty -eq 1 ]; then
 
 fi
 
-for (( i=1; i<= $#; i++)); do
-    arg=${!i};
-    index=$((${i}+1));
-    if [[ "$arg" =~ "-P" ]]; then
-        if [ "${arg:2}"x == ""x ];then
-          CRONJOB_PORT=${!index};
-        else
-          CRONJOB_PORT=${arg:2}
-        fi
-    fi
-
-    if [[ "$arg" =~ "-p" ]]; then
-        if [ "${arg:2}"x == ""x ];then
-          CRONJOB_PASSWORD=${!index};
-        else
-          CRONJOB_PASSWORD=${arg:2}
-        fi
-    fi
-done
-
 case "$1" in
 
     start)
+        GETOPT_ARGS=`getopt -o P:p: -al port:,password: -- "$@"`
+        eval set -- "$GETOPT_ARGS"
+        while [ -n "$1" ]
+        do
+            case "$1" in
+                -P|--port)
+                    CRONJOB_PORT=$2;
+                    shift 2;;
+                -p|--password)
+                    CRONJOB_PASSWORD=$2;
+                    shift 2;;
+                --) break ;;
+                *)
+                    echo "usage {-P\${port}|-p\${pasword}}"
+                 break ;;
+            esac
+        done
+
         if [ -z "$CRONJOB_PORT" ];then
             echo "  cronjob port must be input.."
             exit 1;
+        elif [ $CRONJOB_PORT -lt 0 ] || [ $CRONJOB_PORT -gt 65535 ];then
+            echo "port error,muse be between 0 and 65535!"
+
         fi
 
         [ -n "$CRONJOB_PASSWORD" ] && CRONJOB_PASSWORD="-pass $CRONJOB_PASSWORD";
@@ -121,7 +122,7 @@ case "$1" in
         $CRONJOB_PASSWORD
 
         echo "  cronjob Starting..."
-        sleep 2;
+        sleep 1;
         exit $?
     ;;
 

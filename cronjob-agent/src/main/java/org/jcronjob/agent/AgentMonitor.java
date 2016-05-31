@@ -123,7 +123,7 @@ public class AgentMonitor {
             monitor.setConfig( getConfig() );
 
             //iostat...
-            monitor.setIostat(  getIostat() );
+            //monitor.setIostat(  getIostat() );
 
             //time
             monitor.setTime(DateUtils.parseStringFromDate(new Date(), "HH:mm:ss"));

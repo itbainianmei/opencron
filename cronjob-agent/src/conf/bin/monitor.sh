@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright 2016 benjobs
 #
@@ -24,10 +24,6 @@ case "$1" in
         df -h
         exit $?
         ;;
-    io)
-        iostat -k -x | sed -r 's/\%//g'|sed -n '6,$p';
-        exit $?
-        ;;
     cpu)
         cpulog_1=$(cat /proc/stat | grep 'cpu ' | awk '{print $2" "$3" "$4" "$5" "$6" "$7" "$8}')
         sysidle1=$(echo $cpulog_1 | awk '{print $4}')
@@ -38,7 +34,7 @@ case "$1" in
         total2=$(echo $cpulog_2 | awk '{print $1+$2+$3+$4+$5+$6+$7}')
         cpudetail=`top -b -n 1 | grep Cpu |sed -r 's/\s+//g'|awk -F ":" '{print $2}'`
 
-        echo -e $sysidle2\\t$sysidle1\\t$total2\\t$total1\\t$cpudetail;
+        echo -e "$sysidle2\\t$sysidle1\\t$total2\\t$total1\\t$cpudetail";
         exit $?
         ;;
     mem)
@@ -49,13 +45,13 @@ case "$1" in
         free3=$(echo $loadmemory | awk '{print $4}')
 
         used=`expr $total - $free1 - $free2 - $free3`;
-        echo -e $total\\t$used
+        echo -e "$total\\t$used"
         exit $?
         ;;
     swap)
         total=$(cat /proc/meminfo |grep SwapTotal |awk '{print $2}')
         free=$(cat /proc/meminfo |grep SwapFree |awk '{print $2}')
-        echo -e $total\\t$free
+        echo -e "$total\\t$free"
         exit $?
         ;;
     load)
@@ -75,7 +71,7 @@ case "$1" in
         cpuconf="cpuinfo:{\"count\":\"$cpucount\",\"name\":\"$cpuname\",\"info\":\"$cpuinfo\"}";
 
         #to json data...
-        echo -e \{\\n"hostname":\"$hostname\",\\n"os":\"$os\",\\n"kernel":\"$kernel\",\\n"machine":\"$machine\",\\n$cpuconf\\n\};
+        echo -e "\{\\n"hostname":\"$hostname\",\\n"os":\"$os\",\\n"kernel":\"$kernel\",\\n"machine":\"$machine\",\\n$cpuconf\\n\}";
         exit $?
         ;;
     net)
@@ -97,7 +93,7 @@ case "$1" in
         exit $?
         ;;
     *)
-        echo "usage [cpu|disk|mem|swap|load|io|conf|net]"
+        echo "usage [cpu|disk|mem|swap|load|conf|net]"
         exit 1
         ;;
   esac
