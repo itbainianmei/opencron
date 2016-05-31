@@ -38,7 +38,7 @@ cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即�
      --memcached
       memcached.server=${memcached_host}:${memcached_port}
      3)maven编译完项目在cronjob-server模块下有个cronjob-server-${version}.war
-     将这个wa包发布到tomcat或者其他的web服务器启动即可.
+     将这个war包发布到tomcat或者其他的web服务器启动即可.
      
      默认初始用户名cronjob,密码cronjob
      进入到cronjob的管理端第一件要做的事情就是添加要管理的执行器.
