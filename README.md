@@ -51,6 +51,8 @@ cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即�
   ...
   
   以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
+  
+  cronjob交流群156429713,欢迎大家加入
     
     
     
