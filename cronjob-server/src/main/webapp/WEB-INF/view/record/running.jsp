@@ -120,7 +120,7 @@
         <li><a href="#">调度记录</a></li>
         <li><a href="#">正在运行</a></li>
     </ol>
-    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度作业持续进行中...</span></h4>
+    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度作业持续进行中...</span></h4>
     <div class="block-area" id="defaultStyle">
 
         <div>

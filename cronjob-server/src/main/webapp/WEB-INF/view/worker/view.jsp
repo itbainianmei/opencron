@@ -521,7 +521,7 @@
         <li><a href="">CronJob</a></li>
         <li><a href="">执行器管理</a></li>
     </ol>
-    <h4 class="page-title"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器管理&nbsp;&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;通信监测持续进行中...</span></h4>
+    <h4 class="page-title"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器管理&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;通信监测持续进行中...</span></h4>
     <div class="block-area" id="defaultStyle">
         <div>
             <div style="float: left">

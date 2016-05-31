@@ -527,7 +527,7 @@
                                     </a>
                                 </c:if>
                                 &nbsp;&nbsp;
-                                    <span id="execButton_${r.jobId}" style="display: ${r.execType eq 1 ? 'inline' : 'none'}">
+                                    <span id="execButton_${r.jobId}">
                                         <a href="#" title="执行" onclick="executeJob('${r.jobId}')">
                                            <i aria-hidden="true" class="fa fa-play-circle"></i>
                                         </a>&nbsp;&nbsp;
