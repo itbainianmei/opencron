@@ -9,31 +9,31 @@
     <ul class="browsers">
         <li>
             <a href="https://www.google.com/intl/en/chrome/browser/">
-                <img src="${pageContext.request.contextPath}/img/browsers/chrome.png" alt="">
+                <img src="${contextPath}/img/browsers/chrome.png" alt="">
                 <div>Google Chrome</div>
             </a>
         </li>
         <li>
             <a href="http://www.mozilla.org/en-US/firefox/new/">
-                <img src="${pageContext.request.contextPath}/img/browsers/firefox.png" alt="">
+                <img src="${contextPath}/img/browsers/firefox.png" alt="">
                 <div>Mozilla Firefox</div>
             </a>
         </li>
         <li>
             <a href="http://www.opera.com/computer/windows">
-                <img src="${pageContext.request.contextPath}/img/browsers/opera.png" alt="">
+                <img src="${contextPath}/img/browsers/opera.png" alt="">
                 <div>Opera</div>
             </a>
         </li>
         <li>
             <a href="http://safari.en.softonic.com/">
-                <img src="${pageContext.request.contextPath}/img/browsers/safari.png" alt="">
+                <img src="${contextPath}/img/browsers/safari.png" alt="">
                 <div>Safari</div>
             </a>
         </li>
         <li>
             <a href="http://windows.microsoft.com/en-us/internet-explorer/downloads/ie-10/worldwide-languages">
-                <img src="${pageContext.request.contextPath}/img/browsers/ie.png" alt="">
+                <img src="${contextPath}/img/browsers/ie.png" alt="">
                 <div>Internet Explorer(New)</div>
             </a>
         </li>

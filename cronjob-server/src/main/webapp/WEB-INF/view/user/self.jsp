@@ -11,7 +11,7 @@
 
         function editPwd(id){
             $.ajax({
-                url:"${pageContext.request.contextPath}/user/pwdpage",
+                url:"${contextPath}/user/pwdpage",
                 data:{"id":id},
                 success : function(obj) {
                     $("#pwdform")[0].reset();
@@ -65,7 +65,7 @@
                 return false;
             }
             $.ajax({
-                url:"${pageContext.request.contextPath}/user/editpwd",
+                url:"${contextPath}/user/editpwd",
                 data:{
                     "id":id,
                     "pwd0":calcMD5(pwd0),
@@ -98,7 +98,7 @@
         $(document).ready(function(){
             $("#size").change(function(){
                 var pageSize = $("#size").val();
-                window.location.href = "${pageContext.request.contextPath}/user/view?pageSize="+pageSize;
+                window.location.href = "${contextPath}/user/view?pageSize="+pageSize;
             });
 
             $("#pwd1").change(function(){
@@ -162,7 +162,7 @@
                 <td class="item"><i class="glyphicon glyphicon-user"></i>&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</td>
                 <td>${u.userName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="#" onclick="editPwd('${u.userId}')" title="修改密码"><i class="glyphicon glyphicon-lock"></i></a>&nbsp;&nbsp;
-                    <a href="${pageContext.request.contextPath}/user/editpage?id=${u.userId}" title="编辑资料"><i class="glyphicon glyphicon-pencil"></i></a></td>
+                    <a href="${contextPath}/user/editpage?id=${u.userId}" title="编辑资料"><i class="glyphicon glyphicon-pencil"></i></a></td>
             </tr>
 
             <tr>

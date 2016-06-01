@@ -11,7 +11,7 @@
 
         function editPwd(id){
             $.ajax({
-                url:"${pageContext.request.contextPath}/user/pwdpage",
+                url:"${contextPath}/user/pwdpage",
                 data:{"id":id},
                 success : function(obj) {
                     $("#pwdform")[0].reset();
@@ -64,7 +64,7 @@
                 return false;
             }
             $.ajax({
-                url:"${pageContext.request.contextPath}/user/editpwd",
+                url:"${contextPath}/user/editpwd",
                 data:{
                     "id":id,
                     "pwd0":calcMD5(pwd0),
@@ -97,7 +97,7 @@
         $(document).ready(function(){
             $("#size").change(function(){
                 var pageSize = $("#size").val();
-                window.location.href = "${pageContext.request.contextPath}/user/view?pageSize="+pageSize;
+                window.location.href = "${contextPath}/user/view?pageSize="+pageSize;
             });
 
             $("#pwd1").change(function(){
@@ -163,7 +163,7 @@
         </div>
 
         <div style="float: right;margin-top: -10px">
-            <a href="${pageContext.request.contextPath}/user/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
+            <a href="${contextPath}/user/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
         </div>
 
         <table class="table tile">
@@ -194,10 +194,10 @@
                             <a href="#" onclick="editPwd('${u.userId}')" title="修改密码">
                                 <i class="glyphicon glyphicon-lock"></i>
                             </a>&nbsp;&nbsp;
-                            <a href="${pageContext.request.contextPath}/user/editpage?id=${u.userId}" title="编辑资料">
+                            <a href="${contextPath}/user/editpage?id=${u.userId}" title="编辑资料">
                                 <i class="glyphicon glyphicon-pencil"></i>
                             </a>&nbsp;&nbsp;
-                            <a href="${pageContext.request.contextPath}/user/self?id=${u.userId}" title="查看详情">
+                            <a href="${contextPath}/user/self?id=${u.userId}" title="查看详情">
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </a>
                         </center>
@@ -207,7 +207,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${pageContext.request.contextPath}/user/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/user/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

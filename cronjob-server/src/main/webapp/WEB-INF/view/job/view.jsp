@@ -16,13 +16,13 @@
 
         function editSingle(id){
             $.ajax({
-                url:"${pageContext.request.contextPath}/job/canrun",
+                url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
                     if ( !eval("("+data+")") ){
 
                         $.ajax({
-                            url:"${pageContext.request.contextPath}/job/editsingle",
+                            url:"${contextPath}/job/editsingle",
                             data:{"id":id},
                             success : function(obj) {
                                 $("#jobform")[0].reset();
@@ -99,11 +99,11 @@
 
         function editFlow(id){
             $.ajax({
-                url:"${pageContext.request.contextPath}/job/canrun",
+                url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
                     if ( !eval("("+data+")") ){
-                        window.location.href = "${pageContext.request.contextPath}/job/editflow?id=" + id;
+                        window.location.href = "${contextPath}/job/editflow?id=" + id;
                     } else {
                         alert("当前任务或其子任务正在运行中,暂时不能编辑!");
                     }
@@ -172,7 +172,7 @@
             }
 
             $.ajax({
-                url:"${pageContext.request.contextPath}/validation/cronexp",
+                url:"${contextPath}/validation/cronexp",
                 data:{
                     "cronType":cronType,
                     "cronExp":cronExp
@@ -180,7 +180,7 @@
                 success:function(data){
                     if (data == "success"){
                         $.ajax({
-                            url:"${pageContext.request.contextPath}/job/checkname",
+                            url:"${contextPath}/job/checkname",
                             data:{
                                 "id":jobId,
                                 "name":jobName
@@ -188,7 +188,7 @@
                             success:function(data){
                                 if (data == "yes"){
                                     $.ajax({
-                                        url:"${pageContext.request.contextPath}/job/edit",
+                                        url:"${contextPath}/job/edit",
                                         data:{
                                             "jobId":jobId,
                                             "cronType":cronType,
@@ -281,7 +281,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"${pageContext.request.contextPath}/job/checkname",
+                    url:"${contextPath}/job/checkname",
                     data:{
                         "id":$("#id").val(),
                         "name":$("#jobName").val()
@@ -314,7 +314,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"${pageContext.request.contextPath}/validation/cronexp",
+                    url:"${contextPath}/validation/cronexp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp
@@ -340,12 +340,12 @@
             var workerId = $("#workerId").val();
             var execType = $("#execType").val();
             var redo = $("#redo").val();
-            window.location.href = "${pageContext.request.contextPath}/job/view?workerId="+workerId+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/job/view?workerId="+workerId+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
         }
 
         function executeJob(id){
             $.ajax({
-                url:"${pageContext.request.contextPath}/job/canrun",
+                url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
                     if ( !eval("("+data+")") ){
@@ -358,7 +358,7 @@
                             confirmButtonText: "执行"
                         }, function() {
                             $.ajax({
-                                url:"${pageContext.request.contextPath}/job/execute",
+                                url:"${contextPath}/job/execute",
                                 data:{"id":id}
                             });
                             alertMsg( "该任务已启动,正在执行中.");
@@ -450,7 +450,7 @@
                     <option value="0" ${redo eq 0 ? 'selected' : ''}>否</option>
                 </select>
 
-                <a href="${pageContext.request.contextPath}/job/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
+                <a href="${contextPath}/job/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
             </div>
         </div>
 
@@ -491,8 +491,8 @@
                         </td>
                         <td>流程任务</td>
                     </c:if>
-                    <td><a href="${pageContext.request.contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
-                    <c:if test="${permission eq true}"><td><a href="${pageContext.request.contextPath}/user/self?id=${r.operateId}">${r.operateUname}</a></td></c:if>
+                    <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
+                    <c:if test="${permission eq true}"><td><a href="${contextPath}/user/self?id=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td id="cronType_${r.jobId}">
                         <c:if test="${r.cronType eq 0}">crontab</c:if>
@@ -532,7 +532,7 @@
                                            <i aria-hidden="true" class="fa fa-play-circle"></i>
                                         </a>&nbsp;&nbsp;
                                     </span>
-                                <a href="${pageContext.request.contextPath}/job/detail?id=${r.jobId}" title="查看详情">
+                                <a href="${contextPath}/job/detail?id=${r.jobId}" title="查看详情">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </a>
                             </div>
@@ -544,8 +544,8 @@
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
                             <td>流程任务</td>
-                            <td><a href="${pageContext.request.contextPath}/worker/detail?id=${c.workerId}">${c.workerName}</a></td>
-                            <c:if test="${permission eq true}"><td><a href="${pageContext.request.contextPath}/user/self?id=${c.operateId}">${c.operateUname}</a></td></c:if>
+                            <td><a href="${contextPath}/worker/detail?id=${c.workerId}">${c.workerName}</a></td>
+                            <c:if test="${permission eq true}"><td><a href="${contextPath}/user/self?id=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>
@@ -564,7 +564,7 @@
                             <td>
                                 <center>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                        <a href="${pageContext.request.contextPath}/job/detail?id=${c.jobId}" title="查看详情">
+                                        <a href="${contextPath}/job/detail?id=${c.jobId}" title="查看详情">
                                             <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>
                                     </div>
@@ -577,7 +577,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${pageContext.request.contextPath}/job/view?workerId=${workerId}&execType=${execType}&redo=${redo}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/job/view?workerId=${workerId}&execType=${execType}&redo=${redo}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

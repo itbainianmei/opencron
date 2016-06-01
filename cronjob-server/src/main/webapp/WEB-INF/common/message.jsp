@@ -14,7 +14,7 @@
 
         </div>
         <div class="media text-center whiter l-100">
-            <i class="glyphicon glyphicon-eye-open"></i>&nbsp;<a href="${pageContext.request.contextPath}/notice/view">查看全部</a>
+            <i class="glyphicon glyphicon-eye-open"></i>&nbsp;<a href="${contextPath}/notice/view">查看全部</a>
         </div>
     </div>
 </div>

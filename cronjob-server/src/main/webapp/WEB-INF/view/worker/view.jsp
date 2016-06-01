@@ -7,7 +7,7 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
-    <script type="text/javascript" src="${pageContext.request.contextPath}/js/socket/socket.io.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/socket/socket.io.js"></script>
 
     <script type="text/javascript">
 
@@ -17,7 +17,7 @@
     $(document).ready(function(){
         $("#size").change(function(){
             var pageSize = $("#size").val();
-            window.location.href = "${pageContext.request.contextPath}/worker/view?pageSize="+pageSize;
+            window.location.href = "${contextPath}/worker/view?pageSize="+pageSize;
         });
 
         setInterval(function(){
@@ -27,7 +27,7 @@
             });
 
             $.ajax({
-                url:"${pageContext.request.contextPath}/worker/view",
+                url:"${contextPath}/worker/view",
                 data:{
                     "refresh":1,
                     "pageNo":${page.pageNo},
@@ -37,7 +37,7 @@
                 success:function(data){
                     //解决子页面登录失联,不能跳到登录页面的bug
                     if(data.indexOf("login")>-1){
-                        window.location.href="${pageContext.request.contextPath}";
+                        window.location.href="${contextPath}";
                     }else {
                         $("#tableContent").html(data);
                     }
@@ -63,7 +63,7 @@
                 return false;
             }
             $.ajax({
-                url:"${pageContext.request.contextPath}/worker/checkname",
+                url:"${contextPath}/worker/checkname",
                 data:{
                     "id":$("#id").val(),
                     "name":$("#name").val()
@@ -101,7 +101,7 @@
 
     function edit(id){
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/editpage",
+            url:"${contextPath}/worker/editpage",
             data:{"id":id},
             success : function(obj) {
                 $("#workerform")[0].reset();
@@ -215,7 +215,7 @@
             return false;
         }
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/checkname",
+            url:"${contextPath}/worker/checkname",
             data:{
                 "id":id,
                 "name":name
@@ -224,7 +224,7 @@
                 if (data == "yes"){
                     if (status == 1){
                         $.ajax({
-                            url:"${pageContext.request.contextPath}/validation/ping",
+                            url:"${contextPath}/validation/ping",
                             data:{
                                 "ip":ip,
                                 "port":port,
@@ -260,7 +260,7 @@
 
     function canSave(id,name,port,warning,mobiles,email){
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/edit",
+            url:"${contextPath}/worker/edit",
             data:{
                 "workerId":id,
                 "name":name,
@@ -294,7 +294,7 @@
 
     function editPwd(id){
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/pwdpage",
+            url:"${contextPath}/worker/pwdpage",
             data:{"id":id},
             success : function(obj) {
                 $("#pwdform")[0].reset();
@@ -338,7 +338,7 @@
             return false;
         }
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/editpwd",
+            url:"${contextPath}/worker/editpwd",
             data:{
                 "id":id,
                 "pwd0":pwd0,
@@ -398,10 +398,10 @@
             return false;
         }
 
-        $("#pingResult").html("<img src='${pageContext.request.contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
+        $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
 
         $.ajax({
-            url:"${pageContext.request.contextPath}/validation/ping",
+            url:"${contextPath}/validation/ping",
             data:{
                 "ip":ip,
                 "port":port,
@@ -425,7 +425,7 @@
 
     function ssh(workerId,ip,type) {
         $.ajax({
-            url:"${pageContext.request.contextPath}/term/ssh",
+            url:"${contextPath}/term/ssh",
             data:"workerId="+workerId+"&ip="+ip,
             dataType: "html",
             success:function (url) {
@@ -476,7 +476,7 @@
         var ip = $("#sship").val();
         var worker = $("#sshworker").val();
         $.ajax({
-            url:"${pageContext.request.contextPath}/term/save",
+            url:"${contextPath}/term/save",
             type:"post",
             data:{
                 "user":user,
@@ -521,7 +521,7 @@
         <li><a href="">CronJob</a></li>
         <li><a href="">执行器管理</a></li>
     </ol>
-    <h4 class="page-title"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器管理&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='${pageContext.request.contextPath}/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;通信监测持续进行中...</span></h4>
+    <h4 class="page-title"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器管理&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='${contextPath}/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;通信监测持续进行中...</span></h4>
     <div class="block-area" id="defaultStyle">
         <div>
             <div style="float: left">
@@ -536,7 +536,7 @@
             </div>
             <c:if test="${permission eq true}">
             <div style="float: right;margin-top: -10px">
-                <a href="${pageContext.request.contextPath}/worker/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
+                <a href="${contextPath}/worker/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
             </div>
             </c:if>
         </div>
@@ -579,7 +579,7 @@
                                     <i aria-hidden="true" class="fa fa-desktop"></i>
                                 </a>&nbsp;&nbsp;
 
-                                <a href="${pageContext.request.contextPath}/job/addpage?id=${w.workerId}" title="新任务">
+                                <a href="${contextPath}/job/addpage?id=${w.workerId}" title="新任务">
                                     <i aria-hidden="true" class="fa fa-plus-square"></i>
                                 </a>&nbsp;&nbsp;
                                 <c:if test="${permission eq true}">
@@ -590,7 +590,7 @@
                                         <i aria-hidden="true" class="fa fa-lock"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
-                                <a href="${pageContext.request.contextPath}/worker/detail?id=${w.workerId}" title="查看详情">
+                                <a href="${contextPath}/worker/detail?id=${w.workerId}" title="查看详情">
                                     <i aria-hidden="true" class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -602,7 +602,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${pageContext.request.contextPath}/worker/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/worker/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

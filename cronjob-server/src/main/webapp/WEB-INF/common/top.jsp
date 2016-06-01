@@ -33,7 +33,7 @@
 		});
 
 		$.ajax({
-			url: "${pageContext.request.contextPath}/notice/info",
+			url: "${contextPath}/notice/info",
 			dataType: "html",
 			success: function (data) {
 				$("#msgList").html(data);
@@ -45,7 +45,7 @@
 <body id="skin-blur-night">
 <header id="header" class="media">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a class="logo pull-left" href="${pageContext.request.contextPath}/home" id="log1">CronJob V1.0.0</a>
+	<a class="logo pull-left" href="${contextPath}/home" id="log1">CronJob V1.0.0</a>
 	<div class="media-body">
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">
 			<div class="pull-left tm-icon" id="msg-icon">
@@ -74,13 +74,13 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" data-toggle="dropdown">
-					<img class="profile-pic animated" src="${pageContext.request.contextPath}/img/profile-pic.jpg" alt="">
+					<img class="profile-pic animated" src="${contextPath}/img/profile-pic.jpg" alt="">
 				</a>
 				<h4 class="m-0">${user}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="${pageContext.request.contextPath}/user/self">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="${pageContext.request.contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="${pageContext.request.contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/user/self">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>
 			</div>
 
@@ -94,17 +94,17 @@
 		<!-- Side Menu -->
 		<ul class="list-unstyled side-menu">
 			<li class="<c:if test="${fn:contains(uri,'/home')}">active</c:if>">
-				<a href="${pageContext.request.contextPath}/home">
+				<a href="${contextPath}/home">
 					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">效果报告</span>
 				</a>
 			</li>
 			<li class="<c:if test="${fn:contains(uri,'/worker')}">active</c:if>">
-				<a  href="${pageContext.request.contextPath}/worker/view">
+				<a  href="${contextPath}/worker/view">
 					<i aria-hidden="true" class="fa fa-desktop"></i><span class="menu-item">执行器管理</span>
 				</a>
 			</li>
 			<li class="<c:if test="${fn:contains(uri,'/job')}">active</c:if>">
-				<a href="${pageContext.request.contextPath}/job/view">
+				<a href="${contextPath}/job/view">
 					<i aria-hidden="true" class="fa fa-tasks"></i><span class="menu-item">任务管理</span>
 				</a>
 			</li>
@@ -115,22 +115,22 @@
 				</a>
 				<ul class="list-unstyled menu-item">
 					<li class="<c:if test="${fn:contains(uri,'/running')}">active</c:if>">
-						<a href="${pageContext.request.contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
+						<a href="${contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
 					</li>
 					<li>
-						<a href="${pageContext.request.contextPath}/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
+						<a href="${contextPath}/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
 					</li>
 				</ul>
 			</li>
 
 			<c:if test="${permission eq true}">
 			<li class="<c:if test="${fn:contains(uri,'/user')}">active</c:if>">
-				<a href="${pageContext.request.contextPath}/user/view">
+				<a href="${contextPath}/user/view">
 					<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
 				</a>
 			</li>
 			<li class="<c:if test="${fn:contains(uri,'/config')}">active</c:if>">
-				<a href="${pageContext.request.contextPath}/config/view">
+				<a href="${contextPath}/config/view">
 					<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
 				</a>
 			</li>

@@ -11,29 +11,26 @@
     <title>CronJob!Let's crontab easy</title>
 
     <!-- CSS -->
-    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/form.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/animate.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/css/generics.css" rel="stylesheet">
+    <link href="${contextPath}/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${contextPath}/css/form.css" rel="stylesheet">
+    <link href="${contextPath}/css/style.css" rel="stylesheet">
+    <link href="${contextPath}/css/animate.css" rel="stylesheet">
+    <link href="${contextPath}/css/generics.css" rel="stylesheet">
 
 
     <!-- Javascript Libraries -->
     <!-- jQuery -->
-    <script src="${pageContext.request.contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
+    <script src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
 
     <!-- Bootstrap -->
-    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+    <script src="${contextPath}/js/bootstrap.min.js"></script>
 
     <!--  Form Related -->
-    <script src="${pageContext.request.contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
+    <script src="${contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
 
-    <!-- All JS functions -->
-    <script src="${pageContext.request.contextPath}/js/functions.js"></script>
+    <script src="${contextPath}/js/jquery.cookie.js"></script>
 
-    <script src="${pageContext.request.contextPath}/js/jquery.cookie.js"></script>
-
-    <script src="${pageContext.request.contextPath}/js/md5.js"></script>
+    <script src="${contextPath}/js/md5.js"></script>
 
     <script type="text/javascript">
 
@@ -375,7 +372,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "${pageContext.request.contextPath}/login",
+                url: "${contextPath}/login",
                 data: data,
                 success: function (data) {
                     if(data.msg){
@@ -387,7 +384,7 @@
                         }else {
                             loginCookie.clean(username);
                         }
-                        window.location.href = "${pageContext.request.contextPath}"+data.successUrl;
+                        window.location.href = "${contextPath}"+data.successUrl;
                     }
                     return false;
                 },
@@ -439,31 +436,31 @@
     <ul class="browsers">
         <li>
             <a href="https://www.google.com/intl/en/chrome/browser/">
-                <img src="${pageContext.request.contextPath}/img/browsers/chrome.png" alt="">
+                <img src="${contextPath}/img/browsers/chrome.png" alt="">
                 <div>Google Chrome</div>
             </a>
         </li>
         <li>
             <a href="http://www.mozilla.org/en-US/firefox/new/">
-                <img src="${pageContext.request.contextPath}/img/browsers/firefox.png" alt="">
+                <img src="${contextPath}/img/browsers/firefox.png" alt="">
                 <div>Mozilla Firefox</div>
             </a>
         </li>
         <li>
             <a href="http://www.opera.com/computer/windows">
-                <img src="${pageContext.request.contextPath}/img/browsers/opera.png" alt="">
+                <img src="${contextPath}/img/browsers/opera.png" alt="">
                 <div>Opera</div>
             </a>
         </li>
         <li>
             <a href="http://safari.en.softonic.com/">
-                <img src="${pageContext.request.contextPath}/img/browsers/safari.png" alt="">
+                <img src="${contextPath}/img/browsers/safari.png" alt="">
                 <div>Safari</div>
             </a>
         </li>
         <li>
             <a href="http://windows.microsoft.com/en-us/internet-explorer/downloads/ie-10/worldwide-languages">
-                <img src="${pageContext.request.contextPath}/img/browsers/ie.png" alt="">
+                <img src="${contextPath}/img/browsers/ie.png" alt="">
                 <div>Internet Explorer(New)</div>
             </a>
         </li>

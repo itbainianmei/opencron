@@ -58,14 +58,14 @@
             }
         }
         $.ajax({
-            url:"${pageContext.request.contextPath}/worker/checkname",
+            url:"${contextPath}/worker/checkname",
             data:{
                 "name":name
             },
             success:function(data){
                 if (data == "yes"){
                     $.ajax({
-                        url:"${pageContext.request.contextPath}/validation/ping",
+                        url:"${contextPath}/validation/ping",
                         data:{
                             "ip":ip,
                             "port":port,
@@ -121,9 +121,9 @@
             alert("请填写正确的端口号!");
             return false;
         }
-        $("#pingResult").html("<img src='${pageContext.request.contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
+        $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
         $.ajax({
-            url:"${pageContext.request.contextPath}/validation/ping",
+            url:"${contextPath}/validation/ping",
             data:{
                 "ip":ip,
                 "port":port,
@@ -153,7 +153,7 @@
                 return false;
             }
             $.ajax({
-                url:"${pageContext.request.contextPath}/worker/checkname",
+                url:"${contextPath}/worker/checkname",
                 data:{
                     "name":$("#name").val()
                 },
@@ -217,7 +217,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form  class="form-horizontal" role="form"  id="worker" action="${pageContext.request.contextPath}/worker/add" method="post"></br>
+            <form  class="form-horizontal" role="form"  id="worker" action="${contextPath}/worker/add" method="post"></br>
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执行器名：</label>
                     <div class="col-md-10">

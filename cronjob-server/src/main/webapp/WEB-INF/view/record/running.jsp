@@ -17,7 +17,7 @@
                 });
 
                 $.ajax({
-                    url:"${pageContext.request.contextPath}/record/running",
+                    url:"${contextPath}/record/running",
                     data:{
                         "refresh":1,
                         "size":"${size}",
@@ -32,7 +32,7 @@
                     success:function(data){
                         //解决子页面登录失联,不能跳到登录页面的bug
                         if(data.indexOf("login")>-1){
-                            window.location.href="${pageContext.request.contextPath}";
+                            window.location.href="${contextPath}";
                         }else {
                             $("#tableContent").html(data);
                         }
@@ -51,7 +51,7 @@
             var workerId = $("#workerId").val();
             var jobId = $("#jobId").val();
             var execType = $("#execType").val();
-            window.location.href = "${pageContext.request.contextPath}/record/running?queryTime=" + queryTime + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
+            window.location.href = "${contextPath}/record/running?queryTime=" + queryTime + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
         function killJob(id){
@@ -65,7 +65,7 @@
             }, function() {
                 $("#process_"+id).html("停止中");
                 $.ajax({
-                    url:"${pageContext.request.contextPath}/record/kill",
+                    url:"${contextPath}/record/kill",
                     data:{"recordId":id}
                 });
                 alertMsg("结束请求已发送");
@@ -85,12 +85,12 @@
             }, function() {
                 $("#process_"+id).html("停止中");
                 $.ajax({
-                    url:"${pageContext.request.contextPath}/record/kill",
+                    url:"${contextPath}/record/kill",
                     data:{"recordId":id},
                     success:function(result){
                         if (result == "true"){
                             $.ajax({
-                                url:"${pageContext.request.contextPath}/job/execute",
+                                url:"${contextPath}/job/execute",
                                 data:{"id":jobId}
                             });
                         }
@@ -120,7 +120,7 @@
         <li><a href="#">调度记录</a></li>
         <li><a href="#">正在运行</a></li>
     </ol>
-    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='${pageContext.request.contextPath}/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度作业持续进行中...</span></h4>
+    <h4 class="page-title"><i aria-hidden="true" class="fa fa-play-circle"></i>&nbsp;正在运行&nbsp;&nbsp;<span id="highlight" style="font-size: 14px"><img src='${contextPath}/img/icon-loader.gif' style="width: 14px;height: 14px">&nbsp;调度作业持续进行中...</span></h4>
     <div class="block-area" id="defaultStyle">
 
         <div>
@@ -184,8 +184,8 @@
 
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tr>
-                    <td><a href="${pageContext.request.contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></td>
-                    <td><a href="${pageContext.request.contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
+                    <td><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></td>
+                    <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
                     <td>
                         <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
                             <div style="width:100%;height: 100%;" class="progress-bar">
@@ -228,7 +228,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${pageContext.request.contextPath}/record/running?queryTime=${queryTime}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/record/running?queryTime=${queryTime}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

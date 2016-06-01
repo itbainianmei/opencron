@@ -10,68 +10,68 @@
 
 
 <!-- CSS -->
-<link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/animate.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/font-awesome-ie7.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/form.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/calendar.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/icons.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/css/generics.css" rel="stylesheet">
-<link href='${pageContext.request.contextPath}/css/sweetalert.css' rel='stylesheet'>
-<link href='${pageContext.request.contextPath}/css/cronjob.css' rel='stylesheet'>
-<link href='${pageContext.request.contextPath}/css/loading.css' rel='stylesheet'>
-<link href='${pageContext.request.contextPath}/css/morris.css' rel='stylesheet'>
-<link href='${pageContext.request.contextPath}/css/prettify.min.css' rel='stylesheet'>
+<link href="${contextPath}/css/bootstrap.min.css" rel="stylesheet">
+<link href="${contextPath}/css/animate.min.css" rel="stylesheet">
+<link href="${contextPath}/css/font-awesome.min.css" rel="stylesheet">
+<link href="${contextPath}/css/font-awesome-ie7.min.css" rel="stylesheet">
+<link href="${contextPath}/css/form.css" rel="stylesheet">
+<link href="${contextPath}/css/calendar.css" rel="stylesheet">
+<link href="${contextPath}/css/style.css" rel="stylesheet">
+<link href="${contextPath}/css/icons.css" rel="stylesheet">
+<link href="${contextPath}/css/generics.css" rel="stylesheet">
+<link href='${contextPath}/css/sweetalert.css' rel='stylesheet'>
+<link href='${contextPath}/css/cronjob.css' rel='stylesheet'>
+<link href='${contextPath}/css/loading.css' rel='stylesheet'>
+<link href='${contextPath}/css/morris.css' rel='stylesheet'>
+<link href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
 
 <!-- Javascript Libraries -->
 <!-- jQuery -->
-<script src="${pageContext.request.contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
-<script src="${pageContext.request.contextPath}/js/jquery-ui.min.js"></script> <!-- jQuery UI -->
-<script src="${pageContext.request.contextPath}/js/jquery.easing.1.3.js"></script> <!-- jQuery Easing - Requirred for Lightbox + Pie Charts-->
+<script src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
+<script src="${contextPath}/js/jquery-ui.min.js"></script> <!-- jQuery UI -->
+<script src="${contextPath}/js/jquery.easing.1.3.js"></script> <!-- jQuery Easing - Requirred for Lightbox + Pie Charts-->
 
 <!-- Bootstrap -->
-<script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+<script src="${contextPath}/js/bootstrap.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/js/easypiechart.js"></script> <!-- EasyPieChart - Animated Pie Charts -->
+<script src="${contextPath}/js/easypiechart.js"></script> <!-- EasyPieChart - Animated Pie Charts -->
 
 <!--  Form Related -->
-<script src="${pageContext.request.contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
+<script src="${contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
 
-<script src="${pageContext.request.contextPath}/js/select.min.js"></script> <!-- Custom Select -->
+<script src="${contextPath}/js/select.min.js"></script> <!-- Custom Select -->
 
 <!-- UX -->
-<script src="${pageContext.request.contextPath}/js/scroll.min.js"></script> <!-- Custom Scrollbar -->
+<script src="${contextPath}/js/scroll.min.js"></script> <!-- Custom Scrollbar -->
 
 <!-- Other -->
-<script src="${pageContext.request.contextPath}/js/calendar.min.js"></script> <!-- Calendar -->
-<script src="${pageContext.request.contextPath}/js/feeds.min.js"></script> <!-- News Feeds -->
+<script src="${contextPath}/js/calendar.min.js"></script> <!-- Calendar -->
+<script src="${contextPath}/js/feeds.min.js"></script> <!-- News Feeds -->
 
-<script src="${pageContext.request.contextPath}/js/raphael.2.1.2-min.js"></script>
+<script src="${contextPath}/js/raphael.2.1.2-min.js"></script>
 
-<script src="${pageContext.request.contextPath}/js/prettify.min.js"></script>
+<script src="${contextPath}/js/prettify.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/js/morris.min.js"></script>
+<script src="${contextPath}/js/morris.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/js/jquery.sparkline.min.js"></script>
+<script src="${contextPath}/js/jquery.sparkline.min.js"></script>
 
 <!-- All JS functions -->
-<script id="themeFunctions" src="${pageContext.request.contextPath}/js/functions.js?${pageContext.request.contextPath}"></script>
+<script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}"></script>
 
 <!--flot-->
-<script src="${pageContext.request.contextPath}/js/flot/jquery.flot.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/flot/jquery.flot.resize.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/flot/jquery.flot.spline.min.js"></script>
+<script src="${contextPath}/js/flot/jquery.flot.min.js"></script>
+<script src="${contextPath}/js/flot/jquery.flot.resize.min.js"></script>
+<script src="${contextPath}/js/flot/jquery.flot.spline.min.js"></script>
 
-<script src="${pageContext.request.contextPath}/js/testdevice.js"></script>
+<script src="${contextPath}/js/testdevice.js"></script>
 
 <!-- MD5 -->
-<script src="${pageContext.request.contextPath}/js/md5.js"></script>
-<script src="${pageContext.request.contextPath}/js/html5.js"></script>
-<script src="${pageContext.request.contextPath}/js/gauge.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery.cookie.js"></script>
-<script src="${pageContext.request.contextPath}/js/My97DatePicker/WdatePicker.js"></script>
-<script src="${pageContext.request.contextPath}/js/sweetalert.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/cronjob.js"></script>
+<script src="${contextPath}/js/md5.js"></script>
+<script src="${contextPath}/js/html5.js"></script>
+<script src="${contextPath}/js/gauge.js"></script>
+<script src="${contextPath}/js/jquery.cookie.js"></script>
+<script src="${contextPath}/js/My97DatePicker/WdatePicker.js"></script>
+<script src="${contextPath}/js/sweetalert.min.js"></script>
+<script src="${contextPath}/js/cronjob.js"></script>
 

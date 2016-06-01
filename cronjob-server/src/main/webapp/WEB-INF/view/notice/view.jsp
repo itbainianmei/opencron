@@ -16,7 +16,7 @@
             var workerId = $("#workerId").val();
             var sendTime = $("#sendTime").val();
             var pageSize = $("#size").val();
-            window.location.href = "${pageContext.request.contextPath}/notice/view?workerId="+workerId+"&sendTime="+sendTime+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/notice/view?workerId="+workerId+"&sendTime="+sendTime+"&pageSize="+pageSize;
         }
 
     </script>
@@ -94,7 +94,7 @@
                     <td>${log.sendTime}</td>
                     <td>
                         <center>
-                            <a href="${pageContext.request.contextPath}/notice/detail?logId=${log.logId}" title="查看详情">
+                            <a href="${contextPath}/notice/detail?logId=${log.logId}" title="查看详情">
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </a>
                         </center>
@@ -104,7 +104,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${pageContext.request.contextPath}/notice/view?workerId=${workerId}&sendTime=${sendTime}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/notice/view?workerId=${workerId}&sendTime=${sendTime}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

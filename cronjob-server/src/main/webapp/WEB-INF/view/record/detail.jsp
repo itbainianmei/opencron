@@ -31,18 +31,18 @@
             <tbody id="tableContent">
             <tr>
                 <td><i class="glyphicon glyphicon-tasks"></i>&nbsp;任务名称</td>
-                <td><a href="${pageContext.request.contextPath}/job/detail?id=${record.jobId}">${record.jobName}</a></td>
+                <td><a href="${contextPath}/job/detail?id=${record.jobId}">${record.jobName}</a></td>
                 <td><i class="glyphicon glyphicon-th-large"></i>&nbsp;执行命令</td>
                 <td>${record.command}</td>
             </tr>
 
             <tr>
                 <td><i class="glyphicon glyphicon-leaf"></i>&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器</td>
-                <td><a href="${pageContext.request.contextPath}/worker/detail?id=${record.workerId}">${record.workerName}</a></td>
+                <td><a href="${contextPath}/worker/detail?id=${record.workerId}">${record.workerName}</a></td>
 
                 <td><i class="glyphicon glyphicon-user"></i>&nbsp;任&nbsp;&nbsp;务&nbsp;&nbsp;人</td>
                 <td>
-                    <c:if test="${permission eq true}"><a href="${pageContext.request.contextPath}/user/self?id=${record.operateId}">${record.operateUname}</a></c:if>
+                    <c:if test="${permission eq true}"><a href="${contextPath}/user/self?id=${record.operateId}">${record.operateUname}</a></c:if>
                     <c:if test="${permission eq false}">${record.operateUname}</c:if></td>
             </tr>
             <tr>

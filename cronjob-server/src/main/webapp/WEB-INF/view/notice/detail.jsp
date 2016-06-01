@@ -18,7 +18,7 @@
             padding: 165px 115px 100px 100px;
             width: 1256px !important;
             margin-top: 5px;
-            background: url(${pageContext.request.contextPath}/img/bg-mob.png) no-repeat 0 -1249px;
+            background: url(${contextPath}/img/bg-mob.png) no-repeat 0 -1249px;
         }
         .email-title{
             height: 126px;
@@ -47,7 +47,7 @@
             margin: 0 auto;
             padding: 125px 25px 159px 25px;
             margin-top: 20px;
-            background: url(${pageContext.request.contextPath}/img/bg-mob.png) no-repeat 0 -2217px;
+            background: url(${contextPath}/img/bg-mob.png) no-repeat 0 -2217px;
         }
         .mobile-in{
             background-color: rgba(255, 255, 255, 0.30);
