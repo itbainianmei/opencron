@@ -71,7 +71,7 @@ case "$1" in
         cpuconf="cpuinfo:{\"count\":\"$cpucount\",\"name\":\"$cpuname\",\"info\":\"$cpuinfo\"}";
 
         #to json data...
-        echo -e "\{\\n"hostname":\"$hostname\",\\n"os":\"$os\",\\n"kernel":\"$kernel\",\\n"machine":\"$machine\",\\n$cpuconf\\n\}";
+        echo -e "{\\n"hostname":\"$hostname\",\\n"os":\"$os\",\\n"kernel":\"$kernel\",\\n"machine":\"$machine\",\\n$cpuconf\\n}";
         exit $?
         ;;
     net)
