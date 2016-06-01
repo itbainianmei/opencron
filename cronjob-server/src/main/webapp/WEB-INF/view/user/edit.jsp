@@ -75,7 +75,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form class="form-horizontal" role="form"  id="user" action="/user/edit" method="post"><br>
+            <form class="form-horizontal" role="form"  id="user" action="${pageContext.request.contextPath}/user/edit" method="post"><br>
                 <input type="hidden" id="userId" name="userId" value="${u.userId}">
                 <div class="form-group">
                     <label for="userName" class="col-lab control-label"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</label>

@@ -62,7 +62,7 @@
             }
             $("#password").val(calcMD5(password));
             $.ajax({
-                url:"/user/checkname",
+                url:"${pageContext.request.contextPath}/user/checkname",
                 data:{
                     "name":name
                 },
@@ -90,7 +90,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"/user/checkname",
+                    url:"${pageContext.request.contextPath}/user/checkname",
                     data:{
                         "name":$("#name").val()
                     },
@@ -164,7 +164,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form class="form-horizontal" role="form" id="user" action="/user/add" method="post"><br>
+            <form class="form-horizontal" role="form" id="user" action="${pageContext.request.contextPath}/user/add" method="post"><br>
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</label>
                     <div class="col-md-10">

@@ -55,7 +55,7 @@
             var workerId = $("#workerId").val();
             var jobId = $("#jobId").val();
             var execType = $("#execType").val();
-            window.location.href = "/record/done?queryTime=" + queryTime + "&success=" + success + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
+            window.location.href = "${pageContext.request.contextPath}/record/done?queryTime=" + queryTime + "&success=" + success + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
         function showChild(id){
@@ -317,7 +317,7 @@
                                         <i aria-hidden="true" class="fa fa-chevron-down" id="icon${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
-                                <a href="/record/detail?id=${r.recordId}" title="查看详情">
+                                <a href="${pageContext.request.contextPath}/record/detail?id=${r.recordId}" title="查看详情">
                                     <i class="glyphicon glyphicon-eye-open"></i>
                                 </a>&nbsp;&nbsp;
                             </div>
@@ -351,7 +351,7 @@
                             <td>
                                 <center>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                        <a href="/record/detail?id=${rc.recordId}" title="查看详情">
+                                        <a href="${pageContext.request.contextPath}/record/detail?id=${rc.recordId}" title="查看详情">
                                             <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>&nbsp;&nbsp;
                                     </div>
@@ -394,7 +394,7 @@
                                                 <i aria-hidden="true" class="fa fa-chevron-down iconChild${r.recordId}" id="icon${t.recordId}"></i>
                                             </a>&nbsp;&nbsp;
                                         </c:if>
-                                        <a href="/record/detail?id=${t.recordId}" title="查看详情">
+                                        <a href="${pageContext.request.contextPath}/record/detail?id=${t.recordId}" title="查看详情">
                                             <i class="glyphicon glyphicon-eye-open"></i>
                                         </a>&nbsp;&nbsp;
                                     </div>
@@ -425,7 +425,7 @@
                                     <td>
                                         <center>
                                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                                <a href="/record/detail?id=${tc.recordId}" title="查看详情">
+                                                <a href="${pageContext.request.contextPath}/record/detail?id=${tc.recordId}" title="查看详情">
                                                     <i class="glyphicon glyphicon-eye-open"></i>
                                                 </a>&nbsp;&nbsp;
                                             </div>
@@ -439,7 +439,7 @@
             </c:forEach>
             </tbody>
         </table>
-        <ben:pager href="/record/done?queryTime=${queryTime}&success=${success}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${pageContext.request.contextPath}/record/done?queryTime=${queryTime}&success=${success}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
     </div>
 
 </section>

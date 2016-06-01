@@ -109,7 +109,7 @@
             }
 
             $.ajax({
-                url:"/job/checkname",
+                url:"${pageContext.request.contextPath}/job/checkname",
                 data:{
                     "name":jobName
                 },
@@ -117,7 +117,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
-                                url:"/validation/cronexp",
+                                url:"${pageContext.request.contextPath}/validation/cronexp",
                                 data:{
                                     "cronType":cronType,
                                     "cronExp":cronExp
@@ -173,7 +173,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"/job/checkname",
+                    url:"${pageContext.request.contextPath}/job/checkname",
                     data:{
                         "name":$("#jobName").val()
                     },
@@ -211,7 +211,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"/validation/cronexp",
+                    url:"${pageContext.request.contextPath}/validation/cronexp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp
@@ -294,7 +294,7 @@
              * 同一个执行器下只能有一个任务名
              */
             $.ajax({
-                url:"/job/checkname",
+                url:"${pageContext.request.contextPath}/job/checkname",
                 data:{
                     "name":jobName,
                     "workerId":$("#workerId1").val()
@@ -443,7 +443,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form class="form-horizontal" role="form" id="job" action="/job/save" method="post"></br>
+            <form class="form-horizontal" role="form" id="job" action="${pageContext.request.contextPath}/job/save" method="post"></br>
 
                 <div class="form-group">
                     <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>

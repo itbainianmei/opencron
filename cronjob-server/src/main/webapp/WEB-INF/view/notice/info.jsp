@@ -10,7 +10,7 @@
         </div>
         <div class="media-body">
             <small class="text-muted">cronjob告警 - <fmt:formatDate value="${m.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></small><br>
-            <a class="t-overflow" href="/notice/detail?logId=${m.logId}">${m.message}</a>
+            <a class="t-overflow" href="${pageContext.request.contextPath}/notice/detail?logId=${m.logId}">${m.message}</a>
         </div>
     </div>
 

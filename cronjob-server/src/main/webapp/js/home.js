@@ -1,14 +1,6 @@
-$(document).ready(function () {
-
-    //window系统下暂时不支出监控数据
-    if($("#monitor").length>0) {
-        cronjobChart.monitorData();
-    }
-    cronjobChart.executeChart();
-    $("#workerId").change(cronjobChart.monitorData);
-});
 
 var cronjobChart = {
+    path:"/",
     intervalId: null,
     intervalTime: 2000,
     gauge: null,
@@ -53,7 +45,7 @@ var cronjobChart = {
         }
 
         $.ajax({
-            url: "/url",
+            url: cronjobChart.path+"/url",
             data: "workerId=" + $("#workerId").val(),
             dataType: "html",
             success: function (url) {
@@ -62,7 +54,7 @@ var cronjobChart = {
                     $(".loader").remove();
                     //解决子页面登录失联,不能跳到登录页面的bug
                     if (data.toString().indexOf("login") > -1) {
-                        window.location.href = "/";
+                        window.location.href = cronjobChart.path;
                     } else {
                         cronjobChart.data = data;
                         if (!diskLoad) {
@@ -577,7 +569,7 @@ var cronjobChart = {
         }
 
         $.ajax({
-            url: "/diffchart",
+            url: cronjobChart.path+"/diffchart",
             data: {
                 "startTime": $("#startTime").val(),
                 "endTime": $("#endTime").val()

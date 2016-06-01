@@ -62,7 +62,7 @@
                     $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写作业名称' + "</font>");
                     return false;}
                 $.ajax({
-                    url:"/job/checkname",
+                    url:"${pageContext.request.contextPath}/job/checkname",
                     data:{
                         "jobId":jobId,
                         "name":jobName,
@@ -102,7 +102,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"/validation/cronexp",
+                    url:"${pageContext.request.contextPath}/validation/cronexp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp
@@ -202,7 +202,7 @@
             }
 
             $.ajax({
-                url:"/job/checkname",
+                url:"${pageContext.request.contextPath}/job/checkname",
                 data:{
                     "jobId":jobId,
                     "name":jobName,
@@ -212,7 +212,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
-                                url:"/validation/cronexp",
+                                url:"${pageContext.request.contextPath}/validation/cronexp",
                                 data:{
                                     "cronType":cronType,
                                     "cronExp":cronExp
@@ -291,7 +291,7 @@
             }
 
             $.ajax({
-                url:"/job/checkname",
+                url:"${pageContext.request.contextPath}/job/checkname",
                 data:{
                     "jobId":$("#jobId1").val(),
                     "name":jobName,
@@ -453,7 +453,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form class="form-horizontal" role="form" id="job" action="/job/save" method="post"><br>
+            <form class="form-horizontal" role="form" id="job" action="${pageContext.request.contextPath}/job/save" method="post"><br>
                 <input type="hidden" id="jobId" name="jobId" value="${job.jobId}">
                 <input type="hidden" name="operateId" value="${job.operateId}">
                 <input type="hidden" id="workerId" name="workerId" class="input-self" value="${job.workerId}">

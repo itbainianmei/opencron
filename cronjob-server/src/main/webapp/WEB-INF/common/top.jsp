@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%request.setAttribute("uri",request.getRequestURI());%>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 
@@ -32,7 +33,7 @@
 		});
 
 		$.ajax({
-			url: "/notice/info",
+			url: "${pageContext.request.contextPath}/notice/info",
 			dataType: "html",
 			success: function (data) {
 				$("#msgList").html(data);
@@ -44,7 +45,7 @@
 <body id="skin-blur-night">
 <header id="header" class="media">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a class="logo pull-left" href="/home" id="log1">CronJob V1.0.0</a>
+	<a class="logo pull-left" href="${pageContext.request.contextPath}/home" id="log1">CronJob V1.0.0</a>
 	<div class="media-body">
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">
 			<div class="pull-left tm-icon" id="msg-icon">
@@ -73,13 +74,13 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" data-toggle="dropdown">
-					<img class="profile-pic animated" src="/img/profile-pic.jpg" alt="">
+					<img class="profile-pic animated" src="${pageContext.request.contextPath}/img/profile-pic.jpg" alt="">
 				</a>
 				<h4 class="m-0">${user}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="/user/self">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${pageContext.request.contextPath}/user/self">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${pageContext.request.contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${pageContext.request.contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>
 			</div>
 
@@ -92,44 +93,44 @@
 
 		<!-- Side Menu -->
 		<ul class="list-unstyled side-menu">
-			<li class="<c:if test="${fn:contains(uri,'home')}">active</c:if>">
-				<a href="/home">
+			<li class="<c:if test="${fn:contains(uri,'/home')}">active</c:if>">
+				<a href="${pageContext.request.contextPath}/home">
 					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">效果报告</span>
 				</a>
 			</li>
-			<li class="<c:if test="${fn:contains(uri,'worker')}">active</c:if>">
-				<a  href="/worker/view">
+			<li class="<c:if test="${fn:contains(uri,'/worker')}">active</c:if>">
+				<a  href="${pageContext.request.contextPath}/worker/view">
 					<i aria-hidden="true" class="fa fa-desktop"></i><span class="menu-item">执行器管理</span>
 				</a>
 			</li>
-			<li class="<c:if test="${fn:contains(uri,'job')}">active</c:if>">
-				<a href="/job/view">
+			<li class="<c:if test="${fn:contains(uri,'/job')}">active</c:if>">
+				<a href="${pageContext.request.contextPath}/job/view">
 					<i aria-hidden="true" class="fa fa-tasks"></i><span class="menu-item">任务管理</span>
 				</a>
 			</li>
 
-			<li class="dropdown <c:if test="${fn:contains(uri,'record')}">active</c:if>">
+			<li class="dropdown <c:if test="${fn:contains(uri,'/record')}">active</c:if>">
 				<a href="#">
 					<i class="fa fa-print" aria-hidden="true"></i><span class="menu-item">调度记录</span>
 				</a>
 				<ul class="list-unstyled menu-item">
-					<li class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">
-						<a href="/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
+					<li class="<c:if test="${fn:contains(uri,'/running')}">active</c:if>">
+						<a href="${pageContext.request.contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
 					</li>
 					<li>
-						<a href="/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
+						<a href="${pageContext.request.contextPath}/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
 					</li>
 				</ul>
 			</li>
 
 			<c:if test="${permission eq true}">
-			<li class="<c:if test="${fn:contains(uri,'user')}">active</c:if>">
-				<a href="/user/view">
+			<li class="<c:if test="${fn:contains(uri,'/user')}">active</c:if>">
+				<a href="${pageContext.request.contextPath}/user/view">
 					<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
 				</a>
 			</li>
-			<li class="<c:if test="${fn:contains(uri,'config')}">active</c:if>">
-				<a href="/config/view">
+			<li class="<c:if test="${fn:contains(uri,'/config')}">active</c:if>">
+				<a href="${pageContext.request.contextPath}/config/view">
 					<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
 				</a>
 			</li>

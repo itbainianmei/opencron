@@ -2,7 +2,8 @@ $(document).ready(function(){
     /* --------------------------------------------------------
 	Template Settings
     -----------------------------------------------------------*/
-    
+	var fusrc = document.getElementById('themeFunctions').src;
+	var contextPath=fusrc.substr(fusrc.indexOf("?")+1);
     var settings =  '<a id="settings" href="#changeSkin" data-toggle="modal">' +
 			'<i aria-hidden="true" class="fa fa-photo"></i> 主题更换' +
 		    '</a>' +   
@@ -16,61 +17,61 @@ $(document).ready(function(){
 				'<div class="modal-body">' +
 				    '<div class="row template-skins">' +
 					'<a data-skin="skin-blur-violate" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-violate.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-violate.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-lights" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-lights.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-lights.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-orange" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-orange.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-orange.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-2" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-2.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-2.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-3" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-3.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-3.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-4" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-4.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-4.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-5" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-5.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-5.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-6" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="/img/skin-6.jpg" alt="">' +
+						'<img src="'+contextPath+'/img/skin-6.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-city" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-city.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-city.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-greenish" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-greenish.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-greenish.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-night" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-night.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-night.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-blue" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-blue.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-blue.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-sunny" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-sunny.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-sunny.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-cloth" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-cloth.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-cloth.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-chrome" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-chrome.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-chrome.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-ocean" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-ocean.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-ocean.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-sunset" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-sunset.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-sunset.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-yellow" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-yellow.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-yellow.jpg" alt="">' +
 					'</a>' +
 					'<a  data-skin="skin-blur-kiwi"class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="/img/skin-kiwi.jpg" alt="">' +
+					    '<img src="'+contextPath+'/img/skin-kiwi.jpg" alt="">' +
 					'</a>' +
 				    '</div>' +
 				'</div>' +

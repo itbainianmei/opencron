@@ -7,18 +7,14 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
-    <script src="/js/echarts.min.js"></script>
-
-    <script src="/js/highcharts/js/highcharts.js"></script>
-    <script src="/js/highcharts/js/highcharts-more.js"></script>
-    <script src="/js/highcharts/js/highcharts-3d.js"></script>
-    <script src="/js/highcharts/js/modules/exporting.js"></script>
-
-    <script src="/js/socket/socket.io.js"></script>
-    <!--websocket-->
-    <script src="/js/socket/websocket.js"></script>
-
-    <script src="/js/home.js"></script>
+    <script src="${pageContext.request.contextPath}/js/echarts.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/highcharts/js/highcharts.js"></script>
+    <script src="${pageContext.request.contextPath}/js/highcharts/js/highcharts-more.js"></script>
+    <script src="${pageContext.request.contextPath}/js/highcharts/js/highcharts-3d.js"></script>
+    <script src="${pageContext.request.contextPath}/js/highcharts/js/modules/exporting.js"></script>
+    <script src="${pageContext.request.contextPath}/js/socket/socket.io.js"></script>
+    <script src="${pageContext.request.contextPath}/js/socket/websocket.js"></script>
+    <script src="${pageContext.request.contextPath}/js/home.js"></script>
 
     <style type="text/css">
 
@@ -110,6 +106,11 @@
                 $("#no_number").text(no_number).attr("data-value",no_number);
                 $("#no_number_prop").attr("data-percentage",no_number+"%").css("width",no_number+"%");
             }
+
+            cronjobChart.path = "${pageContext.request.contextPath}";
+            cronjobChart.monitorData();
+            cronjobChart.executeChart();
+            $("#workerId").change(cronjobChart.monitorData);
 
         });
     </script>
@@ -329,7 +330,6 @@
     </div>
 
     <h4 class="page-title" ><i class="icon">&#61881;</i> &nbsp;监控概况</h4>
-
     <!-- Main Widgets -->
     <div class="block-area" id="monitor" style="margin-top: 0px">
 
