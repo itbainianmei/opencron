@@ -254,16 +254,19 @@ public class AgentMonitor {
         return JSON.toJSONString(disks);
     }
 
-    public  String getNetwork() {
-        Map<String, List<String>> newWork = new HashMap<String, List<String>>(0);
+     public  String getNetwork() {
+        Map<String,Float> newWork = new HashMap<String, Float>(0);
         String network = executeShell(Globals.CRONJOB_MONITOR_SHELL, "net");
         Scanner scan = new Scanner(network);
+        float read = 0;
+        float write = 0;
         while (scan.hasNextLine()) {
             String[] dataArr = scan.nextLine().split("\\t");
-            String key = dataArr[0];
-            List<String> data = Arrays.asList( CommonUtils.arrayRemoveIndex(dataArr,0) );
-            newWork.put(key, data );
+            read+=Float.parseFloat(dataArr[0]);
+            write+=Float.parseFloat(dataArr[1]);
         }
+        newWork.put("read", read);
+        newWork.put("write", write);
         scan.close();
         return JSON.toJSONString(newWork);
     }
