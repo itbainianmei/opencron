@@ -101,7 +101,6 @@ var cronjobChart = {
                                 netChartObj.series[0].addPoint(parseFloat(read), true, shift);
                                 netChartObj.series[1].addPoint(parseFloat(write), true, shift);
                             } catch (e) {
-                                alert(e.message);
                             }
                         }
 
