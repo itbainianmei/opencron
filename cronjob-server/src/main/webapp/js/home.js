@@ -92,18 +92,14 @@ var cronjobChart = {
                             }
                         } else {
                             try {
-                                var read = 0;
-                                var write = 0;
-                                $.each(eval('(' + cronjobChart.data["network"] + ')'), function (name, value) {
-                                    read += parseFloat(value[0]);
-                                    write += parseFloat(value[1]);
-                                });
+                                var network = '(' + cronjobChart.data["network"] + ')';
+                                var read = network.read;
+                                var write = network.write;
                                 var series = netChartObj.series[0];
                                 var shift = series.data.length > 60 * 2;
                                 netChartObj.xAxis[0].categories.push(data.time);
                                 netChartObj.series[0].addPoint(parseFloat(read), true, shift);
                                 netChartObj.series[1].addPoint(parseFloat(write), true, shift);
-
                             } catch (e) {
                                 alert(e.message);
                             }
@@ -190,7 +186,7 @@ var cronjobChart = {
         });
 
         //config...
-        $.each(eval('(' + cronjobChart.data.config + ')'), function (name, value) {
+        $.each( eval('(' + cronjobChart.data.config + ')'),function(name,value){
             var css = {
                 "font-size": "15px",
                 "font-weight": "900",
@@ -449,13 +445,9 @@ var cronjobChart = {
     },
 
     networkChart: function () {
-
-        var read = 0;
-        var write = 0;
-        $.each(eval('(' + cronjobChart.data["network"] + ')'), function (name, value) {
-            read += parseFloat(value[0]);
-            write += parseFloat(value[1]);
-        });
+        var network = '(' + cronjobChart.data["network"] + ')';
+        var read = network.read;
+        var write = network.write;
 
         return new Highcharts.Chart({
             chart: {
@@ -721,4 +713,3 @@ var cronjobChart = {
         });
     }
 }
-    
