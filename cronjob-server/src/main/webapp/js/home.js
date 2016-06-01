@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    //window系统下暂时不支出监控数据
+    //window系统下暂时不支持监控数据
     if($("#monitor").length>0) {
         cronjobChart.monitorData();
     }
