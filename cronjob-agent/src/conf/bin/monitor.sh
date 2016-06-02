@@ -88,7 +88,7 @@ case "$1" in
 
             rx=$(echo $rx | awk '{print $1*8/1024}');
             tx=$(echo $tx | awk '{print $1*8/1024}');
-            echo -e "$net\t$rx\t$tx";
+            echo -e "$rx\t$tx";
         done
         exit $?
         ;;
