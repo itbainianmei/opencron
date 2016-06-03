@@ -77,7 +77,7 @@ case "$1" in
         ;;
     net)
         netarr=$(cat /proc/net/dev | grep : |tr : " "|awk '{print $1}');
-	    netstr="";
+	netstr="";
         for net in ${netarr[@]}
         do
             rxpre=$(cat /proc/net/dev | grep $net | tr : " " | awk '{print $2}')
@@ -91,9 +91,9 @@ case "$1" in
             tx=$(echo $tx | awk '{print $1*8/1024}');
             netstr=${netstr}"{name:\"$net\",read:$rx,write:$tx},";
         done
-	    netstr=`echo $netstr|sed 's/.$//'`
+	netstr=`echo $netstr|sed 's/.$//'`
         echo $netstr
-	    exit $?
+	exit $?
         ;;
     all)
         net=`bash +x $0 net`;
