@@ -91,9 +91,9 @@ case "$1" in
             tx=$(echo $tx | awk '{print $1*8/1024}');
             netstr=${netstr}"{name:\"$net\",read:$rx,write:$tx},";
         done
-	netstr=`echo $netstr|sed 's/.$//'`
+	    netstr=`echo $netstr|sed 's/.$//'`
         echo $netstr
-	exit $?
+	    exit $?
         ;;
     all)
         net=`bash +x $0 net`;
