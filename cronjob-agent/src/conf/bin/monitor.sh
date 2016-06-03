@@ -59,9 +59,10 @@ case "$1" in
         exit $?
         ;;
     conf)
-        hostname=`hostname`;
-        os=`head -n 1 /etc/issue`;
-        kernel=`uname -r`
+        #修复ubuntu系统下os名存在\n \l导致解析失败的bug
+        hostname=$(echo `hostname`|sed 's/\\.//g');
+        os=$(echo `head -n 1 /etc/issue`|sed 's/\\.//g');
+        kernel=`uname -r`;
         machine=`uname -m`;
 
         #get cpudata and trim...
@@ -76,7 +77,7 @@ case "$1" in
         ;;
     net)
         netarr=$(cat /proc/net/dev | grep : |tr : " "|awk '{print $1}');
-	netstr="";
+	    netstr="";
         for net in ${netarr[@]}
         do
             rxpre=$(cat /proc/net/dev | grep $net | tr : " " | awk '{print $2}')
@@ -86,14 +87,13 @@ case "$1" in
             txnext=$(cat /proc/net/dev | grep $net | tr : " " | awk '{print $10}')
             rx=$((${rxnext}-${rxpre}))
             tx=$((${txnext}-${txpre}))
-
             rx=$(echo $rx | awk '{print $1*8/1024}');
             tx=$(echo $tx | awk '{print $1*8/1024}');
             netstr=${netstr}"{name:\"$net\",read:$rx,write:$tx},";
         done
-	netstr=`echo $netstr|sed 's/.$//'`
+	    netstr=`echo $netstr|sed 's/.$//'`
         echo $netstr
-	exit $?
+	    exit $?
         ;;
     all)
         net=`bash +x $0 net`;
