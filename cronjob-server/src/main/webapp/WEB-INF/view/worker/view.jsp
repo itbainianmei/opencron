@@ -722,14 +722,14 @@
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshuser" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;帐&nbsp;&nbsp;号&nbsp;&nbsp;：</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control pop-sm" id="sshuser" placeholder="root">&nbsp;&nbsp;<label id="sshuser_lab"></label>
+                                <input type="text" class="form-control pop-sm" id="sshuser" placeholder="请输入账户">&nbsp;&nbsp;<label id="sshuser_lab"></label>
                             </div>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshport" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;端&nbsp;&nbsp;口&nbsp;&nbsp;：</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control pop-sm" id="sshport" placeholder="22">&nbsp;&nbsp;<label id="sshport_lab"></label>
+                                <input type="text" class="form-control pop-sm" id="sshport" placeholder="请输入端口">&nbsp;&nbsp;<label id="sshport_lab"></label>
                             </div>
                         </div>
 

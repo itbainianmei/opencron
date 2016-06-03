@@ -31,6 +31,7 @@ import org.jcronjob.base.job.Monitor;
 import org.jcronjob.base.utils.*;
 import org.slf4j.Logger;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
@@ -39,10 +40,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static org.jcronjob.base.utils.CommonUtils.*;
 
 import static org.jcronjob.base.utils.CommandUtils.executeShell;
-import static org.jcronjob.base.utils.CommonUtils.toFloat;
-import static org.jcronjob.base.utils.CommonUtils.toLong;
 
 /**
  * Created by benjobs on 16/4/7.
@@ -101,28 +101,33 @@ public class AgentMonitor {
     public  Monitor monitor() {
 
         try {
+
             Monitor monitor = new Monitor();
 
-            //cpu
-            monitor.setCpuData(getCpuData());
+            String monitorString = executeShell(Globals.CRONJOB_MONITOR_SHELL, "all");
 
-            //内存
-            monitor.setMemUsage(setMemUsage());
-
-            //磁盘
-            monitor.setDiskUsage(getDiskUsage());
-
-            //网卡
-            monitor.setNetwork(getNetwork());
-
-            //swap
-            monitor.setSwap(getSwap());
-
-            //load(负载)
-            monitor.setLoad(getLoad());
+            Info info = JSON.parseObject(monitorString,Info.class);
 
             //config...
-            monitor.setConfig( getConfig() );
+            monitor.setConfig( info.getConf() );
+
+            //cpu
+            monitor.setCpuData(getCpuData(info));
+
+            //内存
+            monitor.setMemUsage(setMemUsage(info));
+
+            //磁盘
+            monitor.setDiskUsage(getDiskUsage(info));
+
+            //网卡
+            monitor.setNetwork(getNetwork(info));
+
+            //swap
+            monitor.setSwap(getSwap(info));
+
+            //load(负载)
+            monitor.setLoad(getLoad(info));
 
             //iostat...
             //monitor.setIostat(  getIostat() );
@@ -139,13 +144,12 @@ public class AgentMonitor {
     }
 
 
-    public  String getCpuData() {
-        String cpuInfo[] = executeShell(Globals.CRONJOB_MONITOR_SHELL, "cpu").split("\\t");
+    public  String getCpuData(Info info) {
         //cpu usage report..
-        Long sysIdle = toLong(cpuInfo[0]) - toLong(cpuInfo[1]);
-        Long total = toLong(cpuInfo[2]) - toLong(cpuInfo[3]);
+        Long sysIdle = toLong(info.getCpu().getId2()) - toLong(info.getCpu().getId1());
+        Long total = toLong(info.getCpu().getTotal2())- toLong(info.getCpu().getTotal1());
 
-        float sysUsage = (sysIdle.floatValue() / total.floatValue()) * 100;
+        float sysUsage = (sysIdle.floatValue()/ total.floatValue()) * 100;
         float sysRate = 100 - sysUsage;
 
         Map<String, String> cpuData = new HashMap<String, String>(0);
@@ -153,7 +157,7 @@ public class AgentMonitor {
         cpuData.put("usage", new DecimalFormat("##0.00").format(sysRate));
 
         //cpu detail...
-        String cpuDetail[] = cpuInfo[cpuInfo.length - 1].split(",");
+        String cpuDetail[] = info.getCpu().getDetail().split(",");
         for (String detail : cpuDetail) {
             String key=null,val=null;
             Matcher valMatcher = Pattern.compile("^\\d+(\\.\\d+)?").matcher(detail);
@@ -171,14 +175,14 @@ public class AgentMonitor {
     }
 
 
-    private  String getDiskUsage() throws Exception {
+    private  String getDiskUsage(Info info) throws Exception {
 
         /**
          * get info...
          */
         Map<String, String> map = new HashMap<String, String>(0);
 
-        Scanner scanner = new Scanner(CommandUtils.executeShell(Globals.CRONJOB_MONITOR_SHELL, "disk"));
+        Scanner scanner = new Scanner(info.getDisk());
         List<String> tmpArray = new ArrayList<String>(0);
 
         int usedIndex = 0, availIndex = 0, mountedIndex = 0, len;
@@ -226,7 +230,6 @@ public class AgentMonitor {
 
         }
         scanner.close();
-
         //set detail....
         List<Map<String, String>> disks = new ArrayList<Map<String, String>>();
         Double usedTotal = 0D;
@@ -254,39 +257,29 @@ public class AgentMonitor {
         return JSON.toJSONString(disks);
     }
 
-     public  String getNetwork() {
-        Map<String,Float> newWork = new HashMap<String, Float>(0);
-        String network = executeShell(Globals.CRONJOB_MONITOR_SHELL, "net");
-        Scanner scan = new Scanner(network);
+    public  String getNetwork(Info info) {
+        Map<String,Float> newWork = new HashMap<String, Float>();
         float read = 0;
         float write = 0;
-        while (scan.hasNextLine()) {
-            String[] dataArr = scan.nextLine().split("\\t");
-            read+=Float.parseFloat(dataArr[0]);
-            write+=Float.parseFloat(dataArr[1]);
+        for(Net net:info.getNet()){
+            read += net.getRead();
+            write += net.getWrite();
         }
         newWork.put("read", read);
         newWork.put("write", write);
-        scan.close();
         return JSON.toJSONString(newWork);
     }
 
-    public  String getSwap() {
-        String swap[] = executeShell(Globals.CRONJOB_MONITOR_SHELL, "swap").split("\\t");
-        return format.format(((toFloat(swap[0]) - toFloat(swap[1])) / toFloat(swap[0])) * 100);
+    public  String getSwap(Info info) {
+        return format.format( ((info.getSwap().getTotal() - info.getSwap().getFree() ) / info.getSwap().getTotal() ) * 100);
     }
 
-    public  List<String> getLoad() {
-        return Arrays.asList( executeShell(Globals.CRONJOB_MONITOR_SHELL, "load").split(",") );
+    public  List<String> getLoad(Info info) {
+        return Arrays.asList(info.getLoad().split(","));
     }
 
-    private  String setMemUsage() {
-        String memUsage[] = CommandUtils.executeShell(Globals.CRONJOB_MONITOR_SHELL, "mem").split("\\s+");
-        return format.format((toFloat(memUsage[1]) / toFloat(memUsage[0])) * 100);
-    }
-
-    private  String getConfig() {
-        return CommandUtils.executeShell(Globals.CRONJOB_MONITOR_SHELL, "conf");
+    private  String setMemUsage( Info info) {
+        return format.format( (info.getMem().getUsed() / info.getMem().getTotal() ) * 100);
     }
 
     public  List<String> getIostat() throws Exception {
@@ -400,6 +393,238 @@ public class AgentMonitor {
         return stop;
     }
 
+    public static class Info implements Serializable {
+        private List<Net> net = new ArrayList<Net>();
+        private String disk;
+        private Mem mem;
+        private Swap swap;
+        private Cpu cpu;
+        private String load;
+        private String conf;
+
+        public List<Net> getNet() {
+            return net;
+        }
+
+        public void setNet(List<Net> net) {
+            this.net = net;
+        }
+
+        public String getDisk() {
+            return disk;
+        }
+
+        public void setDisk(String disk) {
+            this.disk = disk;
+        }
+
+        public Mem getMem() {
+            return mem;
+        }
+
+        public void setMem(Mem mem) {
+            this.mem = mem;
+        }
+
+        public Swap getSwap() {
+            return swap;
+        }
+
+        public void setSwap(Swap swap) {
+            this.swap = swap;
+        }
+
+        public Cpu getCpu() {
+            return cpu;
+        }
+
+        public void setCpu(Cpu cpu) {
+            this.cpu = cpu;
+        }
+
+        public String getLoad() {
+            return load;
+        }
+
+        public void setLoad(String load) {
+            this.load = load;
+        }
+
+        public String getConf() {
+            return conf;
+        }
+
+        public void setConf(String conf) {
+            this.conf = conf;
+        }
+    }
+
+    public static class Conf implements Serializable {
+        private String hostname;
+        private String os;
+        private String kernel;
+        private String machine;
+        private String cpuinfo;
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public void setHostname(String hostname) {
+            this.hostname = hostname;
+        }
+
+        public String getOs() {
+            return os;
+        }
+
+        public void setOs(String os) {
+            this.os = os;
+        }
+
+        public String getKernel() {
+            return kernel;
+        }
+
+        public void setKernel(String kernel) {
+            this.kernel = kernel;
+        }
+
+        public String getMachine() {
+            return machine;
+        }
+
+        public void setMachine(String machine) {
+            this.machine = machine;
+        }
+
+        public String getCpuinfo() {
+            return cpuinfo;
+        }
+
+        public void setCpuinfo(String cpuinfo) {
+            this.cpuinfo = cpuinfo;
+        }
+    }
+
+    public static class Cpu implements Serializable {
+        private String id2;
+        private String id1;
+        private String total2;
+        private String total1;
+        private String detail;
 
 
+        public String getId2() {
+            return id2;
+        }
+
+        public void setId2(String id2) {
+            this.id2 = id2;
+        }
+
+        public String getId1() {
+            return id1;
+        }
+
+        public void setId1(String id1) {
+            this.id1 = id1;
+        }
+
+        public String getTotal2() {
+            return total2;
+        }
+
+        public void setTotal2(String total2) {
+            this.total2 = total2;
+        }
+
+        public String getTotal1() {
+            return total1;
+        }
+
+        public void setTotal1(String total1) {
+            this.total1 = total1;
+        }
+
+        public String getDetail() {
+            return detail;
+        }
+
+        public void setDetail(String detail) {
+            this.detail = detail;
+        }
+    }
+
+    public static class Mem implements Serializable {
+        private float total;
+        private float used;
+
+        public float getTotal() {
+            return total;
+        }
+
+        public void setTotal(float total) {
+            this.total = total;
+        }
+
+        public float getUsed() {
+            return used;
+        }
+
+        public void setUsed(float used) {
+            this.used = used;
+        }
+    }
+
+    public static class Net implements Serializable {
+        private String name;
+        private float read;
+        private float write;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public float getRead() {
+            return read;
+        }
+
+        public void setRead(float read) {
+            this.read = read;
+        }
+
+        public float getWrite() {
+            return write;
+        }
+
+        public void setWrite(float write) {
+            this.write = write;
+        }
+    }
+
+    public static class Swap implements Serializable {
+        private float total;
+        private float free;
+
+        public float getTotal() {
+            return total;
+        }
+
+        public void setTotal(float total) {
+            this.total = total;
+        }
+
+        public float getFree() {
+            return free;
+        }
+
+        public void setFree(float free) {
+            this.free = free;
+        }
+    }
 }

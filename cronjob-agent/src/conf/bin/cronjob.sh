@@ -103,7 +103,7 @@ case "$1" in
             exit 1;
         elif [ $CRONJOB_PORT -lt 0 ] || [ $CRONJOB_PORT -gt 65535 ];then
             echo "port error,muse be between 0 and 65535!"
-            exit 1;
+
         fi
 
         [ -n "$CRONJOB_PASSWORD" ] && CRONJOB_PASSWORD="-pass $CRONJOB_PASSWORD";

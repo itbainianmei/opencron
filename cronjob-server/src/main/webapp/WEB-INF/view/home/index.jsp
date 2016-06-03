@@ -14,7 +14,7 @@
     <script src="${contextPath}/js/highcharts/js/modules/exporting.js"></script>
     <script src="${contextPath}/js/socket/socket.io.js"></script>
     <script src="${contextPath}/js/socket/websocket.js"></script>
-    <script src="${contextPath}/js/home.js"></script>
+    <script src="${contextPath}/js/home.js?${contextPath}" id="homejs"></script>
 
     <style type="text/css">
 
@@ -106,12 +106,6 @@
                 $("#no_number").text(no_number).attr("data-value",no_number);
                 $("#no_number_prop").attr("data-percentage",no_number+"%").css("width",no_number+"%");
             }
-
-            cronjobChart.path = "${contextPath}";
-            cronjobChart.monitorData();
-            cronjobChart.executeChart();
-            $("#workerId").change(cronjobChart.monitorData);
-
         });
     </script>
 

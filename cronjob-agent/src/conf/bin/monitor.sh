@@ -34,7 +34,7 @@ case "$1" in
         total2=$(echo $cpulog_2 | awk '{print $1+$2+$3+$4+$5+$6+$7}')
         cpudetail=`top -b -n 1 | grep Cpu |sed -r 's/\s+//g'|awk -F ":" '{print $2}'`
 
-        echo -e "$sysidle2\\t$sysidle1\\t$total2\\t$total1\\t$cpudetail";
+        echo -e "{id2:\"$sysidle2\",id1:\"$sysidle1\",total2:\"$total2\",total1:\"$total1\",detail:\"$cpudetail\"}";
         exit $?
         ;;
     mem)
@@ -45,17 +45,17 @@ case "$1" in
         free3=$(echo $loadmemory | awk '{print $4}')
 
         used=`expr $total - $free1 - $free2 - $free3`;
-        echo -e "$total\\t$used"
+        echo -e "{total:$total,used:$used}"
         exit $?
         ;;
     swap)
         total=$(cat /proc/meminfo |grep SwapTotal |awk '{print $2}')
         free=$(cat /proc/meminfo |grep SwapFree |awk '{print $2}')
-        echo -e "$total\\t$free"
+        echo -e "{total:$total,free:$free}"
         exit $?
         ;;
     load)
-        cat /proc/loadavg |awk '{print $1"  "$2"  " $3}'
+        cat /proc/loadavg |awk '{print $1","$2","$3}'
         exit $?
         ;;
     conf)
@@ -76,6 +76,7 @@ case "$1" in
         ;;
     net)
         netarr=$(cat /proc/net/dev | grep : |tr : " "|awk '{print $1}');
+	    netstr="";
         for net in ${netarr[@]}
         do
             rxpre=$(cat /proc/net/dev | grep $net | tr : " " | awk '{print $2}')
@@ -88,14 +89,26 @@ case "$1" in
 
             rx=$(echo $rx | awk '{print $1*8/1024}');
             tx=$(echo $tx | awk '{print $1*8/1024}');
-            echo -e "$net\t$rx\t$tx";
+            netstr=${netstr}"{name:\"$net\",read:$rx,write:$tx},";
         done
+	netstr=`echo $netstr|sed 's/.$//'`
+        echo $netstr
+	exit $?
+        ;;
+    all)
+        net=`bash +x $0 net`;
+        disk=`bash +x $0 disk`;
+        mem=`bash +x $0 mem`;
+        swap=`bash +x $0 swap`;
+        load=`bash +x $0 load`;
+        conf=`bash +x $0 conf`;
+        cpu=`bash +x $0 cpu`;
+        echo -e "{\\ncpu:$cpu,\\ndisk:\"$disk\",\\nmem:$mem,\\nnet:[\\n$net\\n],\\nswap:$swap,\\nload:\"$load\",\\nconf:$conf\\n}"
         exit $?
         ;;
     *)
-        echo "usage [cpu|disk|mem|swap|load|conf|net]"
+        echo "usage [cpu|disk|mem|net|swap|load|conf|all]"
         exit 1
         ;;
   esac
 exit 0;
-

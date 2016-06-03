@@ -14,29 +14,28 @@ public final class Globals {
     /**
      * Name of the system property containing
      */
-    public static final String CRONJOB_HOME_PROP = "cronjob.home";
-
+    public static final String CRONJOB_BASE = "cronjob.base";
 
     /**
      * Name of the system property containing
      */
-    public static final String CRONJOB_BASE_PROP = "cronjob.base";
+    public static final String CRONJOB_HOME = "cronjob.home";
 
     /**
      * password file
      */
-    public static File CRONJOB_PASSWORD_FILE = new File(System.getProperty("cronjob.home") + File.separator + ".password");
+    public static File CRONJOB_PASSWORD_FILE = new File(System.getProperty(CRONJOB_HOME) + File.separator + ".password");
 
 
     /**
      * monitor file
      */
-    public static File CRONJOB_MONITOR_SHELL = new File(System.getProperty("cronjob.home") + "/bin/monitor.sh");
+    public static File CRONJOB_MONITOR_SHELL = new File(System.getProperty(CRONJOB_HOME) + "/bin/monitor.sh");
 
     /**
      * kill file
      */
-    public static File CRONJOB_KILL_SHELL = new File(System.getProperty("cronjob.home") + "/bin/kill.sh");
+    public static File CRONJOB_KILL_SHELL = new File(System.getProperty(CRONJOB_HOME) + "/bin/kill.sh");
 
 
 
