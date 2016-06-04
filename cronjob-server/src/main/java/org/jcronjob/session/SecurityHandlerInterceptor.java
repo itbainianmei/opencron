@@ -46,9 +46,6 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         HttpSession session = request.getSession();
         String requestURI = request.getContextPath() + request.getServletPath();
 
-        String contextPath = request.getContextPath();
-        session.setAttribute("contextPath",contextPath.equals("/")?"":contextPath);
-
         //静态资源,页面
         if (requestURI.contains("/css/")
                 || requestURI.contains("/fonts/")
