@@ -3,6 +3,13 @@
 <%@ taglib prefix="ben"  uri="ben-taglib"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
+<%
+    String path = request.getContextPath();
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    pageContext.setAttribute("contextPath",contextPath);
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

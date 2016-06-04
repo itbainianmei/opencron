@@ -59,7 +59,7 @@ case "$1" in
         exit $?
         ;;
     conf)
-        #修复ubuntu系统下os名存在\n \l导致解析失败的bug
+        #fix ubuntn osname have \n \l
         hostname=$(echo `hostname`|sed 's/\\.//g');
         os=$(echo `head -n 1 /etc/issue`|sed 's/\\.//g');
         kernel=`uname -r`;

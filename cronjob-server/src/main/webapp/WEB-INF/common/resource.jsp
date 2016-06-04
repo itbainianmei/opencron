@@ -1,5 +1,11 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String path = request.getContextPath();
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    pageContext.setAttribute("contextPath",contextPath);
+%>
+
 
 <title>CronJob linux job system</title>
 <meta name="format-detection" content="telephone=no">
@@ -7,7 +13,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="keywords" content="cronjob,crontab,a better crontab,Let's crontab easy">
 <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
-
 
 <!-- CSS -->
 <link href="${contextPath}/css/bootstrap.min.css" rel="stylesheet">

@@ -1,6 +1,12 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%
+    String path = request.getContextPath();
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    pageContext.setAttribute("contextPath",contextPath);
+%>
+
 <!-- Older IE Message -->
 <!--[if lt IE 9]>
 <div class="ie-block">
