@@ -109,8 +109,6 @@
                 }
             }
 
-
-
         });
 
         var loginCookie = {
@@ -419,22 +417,25 @@
     <div class="clearfix"></div>
 
     <!-- Login -->
-    <form class="box tile animated active" id="box-login">
+    <%--<div style="margin-left:210px;margin-top: 8px;  position: absolute;z-index:999"><img width="80px" height="80px;" src="${contextPath}/img/logo.png"></div>
+--%>
+    <form id="box-login" class="box tile animated active" style="margin-top:52px;">
         <h2 class="m-t-0 m-b-15">登录</h2>
-        <input type="text" class="login-control m-b-10"  id="username" placeholder="请输入用户名">
-        <input type="password" class="login-control" id="password" placeholder="请输入密码">
+        <input type="text" placeholder="请输入用户名" id="username" class="login-control m-b-10">
+        <input type="password" placeholder="请输入密码" id="password" class="login-control">
         <div class="checkbox m-b-20">
             <label>
                 <input type="checkbox" id="remember">
                 记住密码
             </label>
         </div>
-        <button type="button" class="btn btn-sm m-r-5" id="btnLogin">登录</button>
+        <button id="btnLogin" class="btn btn-sm m-r-5" type="button">登录</button>
         <span id="error_msg">
             请输入您的用户名和密码进行登陆
         </span>
     </form>
 </section>
+
 
 <!-- Older IE Message -->
 <!--[if lt IE 9]>

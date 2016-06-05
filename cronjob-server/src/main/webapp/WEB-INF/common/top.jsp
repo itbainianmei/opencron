@@ -1,6 +1,7 @@
-﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+﻿﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <%
 	String path = request.getContextPath();
 	String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
@@ -48,9 +49,13 @@
 </script>
 
 <body id="skin-blur-night">
-<header id="header" class="media">
+<header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a class="logo pull-left" href="${contextPath}/home" id="log1">CronJob V1.0.0</a>
+	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float:left;width: 45px;height:45px;margin-left:20px;margin-top:-4px;opacity:0.9">
+		<img src="${contextPath}/img/logo.png">
+	</div>
+		<span style="font-size:19px;margin-left:-5px;">CronJob V1.0</span>
+	</a>
 	<div class="media-body">
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">
 			<div class="pull-left tm-icon" id="msg-icon">
@@ -129,16 +134,16 @@
 			</li>
 
 			<c:if test="${permission eq true}">
-			<li class="<c:if test="${fn:contains(uri,'/user')}">active</c:if>">
-				<a href="${contextPath}/user/view">
-					<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
-				</a>
-			</li>
-			<li class="<c:if test="${fn:contains(uri,'/config')}">active</c:if>">
-				<a href="${contextPath}/config/view">
-					<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
-				</a>
-			</li>
+				<li class="<c:if test="${fn:contains(uri,'/user')}">active</c:if>">
+					<a href="${contextPath}/user/view">
+						<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
+					</a>
+				</li>
+				<li class="<c:if test="${fn:contains(uri,'/config')}">active</c:if>">
+					<a href="${contextPath}/config/view">
+						<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
+					</a>
+				</li>
 			</c:if>
 		</ul>
 	</aside>

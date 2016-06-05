@@ -29,6 +29,7 @@
 <link href='${contextPath}/css/loading.css' rel='stylesheet'>
 <link href='${contextPath}/css/morris.css' rel='stylesheet'>
 <link href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
+<link rel="shortcut icon" type="image/ico" href="/favicon.ico">
 
 <!-- Javascript Libraries -->
 <!-- jQuery -->

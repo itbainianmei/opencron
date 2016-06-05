@@ -47,13 +47,11 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         String requestURI = request.getContextPath() + request.getServletPath();
 
         //静态资源,页面
-        if (requestURI.contains("/css/")
+        if ( requestURI.contains("/css/")
                 || requestURI.contains("/fonts/")
                 || requestURI.contains("/img/")
                 || requestURI.contains("/js/")
-                || requestURI.contains("/media/")
-                || requestURI.contains("/lib/")
-                || requestURI.contains("/WEB-INF")) {
+                || requestURI.contains("/WEB-INF") ) {
             return super.preHandle(request, response, handler);
         }
 

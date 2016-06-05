@@ -130,9 +130,10 @@
 
     <!-- Breadcrumb -->
     <ol class="breadcrumb hidden-xs">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Library</a></li>
-        <li class="active">Data</li>
+        <li class="icon">&#61753;</li>
+        当前位置：
+        <li><a href="">CronJob</a></li>
+        <li><a href="">首页</a></li>
     </ol>
 
     <h4 class="page-title" ><i class="fa fa-tachometer" aria-hidden="true" style="font-style: 30px;"></i>&nbsp;效果报告</h4>

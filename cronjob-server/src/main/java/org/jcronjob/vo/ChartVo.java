@@ -113,4 +113,36 @@ public class ChartVo implements Serializable {
     public void setKilled(Integer killed) {
         this.killed = killed;
     }
+
+    public Integer getSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(Integer singleton) {
+        this.singleton = singleton;
+    }
+
+    public Integer getFlow() {
+        return flow;
+    }
+
+    public void setFlow(Integer flow) {
+        this.flow = flow;
+    }
+
+    public Integer getCrontab() {
+        return crontab;
+    }
+
+    public void setCrontab(Integer crontab) {
+        this.crontab = crontab;
+    }
+
+    public Integer getQuartz() {
+        return quartz;
+    }
+
+    public void setQuartz(Integer quartz) {
+        this.quartz = quartz;
+    }
 }

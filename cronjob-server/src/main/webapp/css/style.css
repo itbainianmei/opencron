@@ -260,9 +260,9 @@ blockquote small {
 /* Header */
 #header {
     border-bottom: 1px solid rgba(255,255,255,0.15);
-    min-height: 50px;
+    min-height: 60px;
     position: relative;
-    padding-right: 7px;
+    margin-top:-17px;
 }
 
 #header, #header > .media-body, #header #top-menu {
@@ -272,7 +272,7 @@ blockquote small {
 /* Logo */
 .logo {
     width: 233px;
-    height: 50px;
+    height: 60px;
     text-align: center;
     padding: 14px 0 12px 40px;
     font-size: 16px;
@@ -286,9 +286,9 @@ blockquote small {
 }
 
 #top-menu .tm-icon > a {
-    padding: 0 8px 0 0;
+    padding:6px 12px 0 0;
     white-space: nowrap;
-    height:50px;
+    height:60px;
     float: left;
 }
 
@@ -318,13 +318,12 @@ blockquote small {
 #top-menu > .media-body {
     padding: 7px 7px 6px 5px;
     min-height: 49px;
-    height: 49px\0/;
+    height: 59px\0/;
 }
 
 #top-menu #time {
     font-size: 20px;
-    padding-top: 10px;
-    margin-right: 4px;
+    padding-top: 16px;
 }
 
 .drawer {
@@ -360,7 +359,7 @@ blockquote small {
 
 #menu-toggle {
     width: 45px;
-    height: 49px;
+    height: 59px;
     float: left;
     position: absolute;
     left: 0;
@@ -370,11 +369,11 @@ blockquote small {
 
 #menu-toggle i{
     font-size: 25px;
-    padding: 5px 8px 13px;
+    padding: 12px 8px 13px;
 }
 
 .side-menu i{
-    font-size: 24px;
+    font-size: 28px;
 }
 
 .side-menu li{
@@ -788,6 +787,7 @@ hr {
 .listview-header {
     background: rgba(0, 0, 0, 0.2);
     padding: 10px 15px;
+
 }
 
 .list-mass-actions {
@@ -2487,32 +2487,6 @@ a.list-group-item.active > .badge,
 .card-container .card .front .progress-list .progress {
     margin-bottom: 0;
 }
-
-
-/*
-
-.card-container .card.card-redbrown .front {
-    background-color: #d9544f;
-    color: white;
-}
-.card-container .card.card-slategray .front {
-    background-color: #3f4e62;
-    color: white;
-}
-.card-container .card.card-blue .front {
-    background-color: #418bca;
-    color: white;
-}
-
-.card-container .card.card-greensea .front {
-    background-color: #16a085;
-    color: white;
-}
-
-.card-container .card .front .progress-list .progress {
-    margin-bottom: 0;
-}
-*/
 
 
 
