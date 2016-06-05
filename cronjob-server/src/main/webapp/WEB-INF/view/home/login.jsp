@@ -2,7 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    String path = request.getContextPath();
+    String path = request.getContextPath().replaceAll("\\/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
@@ -416,9 +416,6 @@
 
     <div class="clearfix"></div>
 
-    <!-- Login -->
-    <%--<div style="margin-left:210px;margin-top: 8px;  position: absolute;z-index:999"><img width="80px" height="80px;" src="${contextPath}/img/logo.png"></div>
---%>
     <form id="box-login" class="box tile animated active" style="margin-top:52px;">
         <h2 class="m-t-0 m-b-15">登录</h2>
         <input type="text" placeholder="请输入用户名" id="username" class="login-control m-b-10">

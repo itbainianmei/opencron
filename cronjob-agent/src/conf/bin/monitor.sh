@@ -21,7 +21,7 @@
 
 case "$1" in
     disk)
-        df -h
+        df -h|sed -r 's/\s+/ /g'|sed -r 's/Mounted\s+on/Mounted/g'|sed -r 's/%//g'|awk '{print $3,$4,$6}';
         exit $?
         ;;
     cpu)
@@ -59,7 +59,7 @@ case "$1" in
         exit $?
         ;;
     conf)
-        #fix ubuntn osname have \n \l
+        #修复ubuntu系统下os名存在\n \l导致解析失败的bug
         hostname=$(echo `hostname`|sed 's/\\.//g');
         os=$(echo `head -n 1 /etc/issue`|sed 's/\\.//g');
         kernel=`uname -r`;
@@ -77,7 +77,7 @@ case "$1" in
         ;;
     net)
         netarr=$(cat /proc/net/dev | grep : |tr : " "|awk '{print $1}');
-	netstr="";
+	    netstr="";
         for net in ${netarr[@]}
         do
             rxpre=$(cat /proc/net/dev | grep $net | tr : " " | awk '{print $2}')
@@ -91,9 +91,9 @@ case "$1" in
             tx=$(echo $tx | awk '{print $1*8/1024}');
             netstr=${netstr}"{name:\"$net\",read:$rx,write:$tx},";
         done
-	netstr=`echo $netstr|sed 's/.$//'`
+	    netstr=`echo $netstr|sed 's/.$//'`
         echo $netstr
-	exit $?
+	    exit $?
         ;;
     all)
         net=`bash +x $0 net`;

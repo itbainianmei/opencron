@@ -185,19 +185,22 @@ public class AgentMonitor {
         Scanner scanner = new Scanner(info.getDisk());
         List<String> tmpArray = new ArrayList<String>(0);
 
-        int usedIndex = 0, availIndex = 0, mountedIndex = 0, len;
+        int usedIndex = 0,useIndex = 0, availIndex = 0, mountedIndex = 0;
         /**
          * title index....
          */
         String title = scanner.nextLine();
-        List<String> strArray = Arrays.asList(title.split("\\s+"));
-        len = strArray.size() - 1;//Mounted on...
+        List<String> strArray = Arrays.asList(title.split("\\s"));
         /**
-         * Size Used Avail Use% Mounted
+         * Used Avail Use Mounted
          */
         for (int i = 0; i < strArray.size(); i++) {
             String key = strArray.get(i);
             if (key.equals("Used")) {
+                usedIndex = i;
+            }
+
+            if (key.equals("Use")) {
                 usedIndex = i;
             }
             if (key.equals("Avail")) {
@@ -211,42 +214,30 @@ public class AgentMonitor {
         /**
          * data.....
          */
-        while (scanner.hasNextLine()) {
-            String content = scanner.nextLine();
-            strArray = Arrays.asList(content.split("\\s+"));
-            if (strArray.size() == len) {
-                map.put(strArray.get(mountedIndex), strArray.get(usedIndex) + "," + strArray.get(availIndex));
-            } else if (strArray.size() < len) {
-                if (tmpArray.isEmpty()) {
-                    tmpArray = new ArrayList<String>(strArray);
-                } else {
-                    tmpArray.addAll(strArray);
-                    if (tmpArray.size() == len) {
-                        map.put(tmpArray.get(mountedIndex), tmpArray.get(usedIndex) + "," + tmpArray.get(availIndex));
-                        tmpArray = Collections.emptyList();
-                    }
-                }
-            }
 
-        }
-        scanner.close();
-        //set detail....
         List<Map<String, String>> disks = new ArrayList<Map<String, String>>();
         Double usedTotal = 0D;
         Double freeTotal = 0D;
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            Map<String, String> disk = new HashMap<String, String>();
 
-            Double used = generateDiskSpace(entry.getValue().split(",")[0]);
-            Double free = generateDiskSpace(entry.getValue().split(",")[1]);
+        //set detail....
+        while (scanner.hasNextLine()) {
+            String content = scanner.nextLine();
+            strArray = Arrays.asList(content.split("\\s+"));
+
+            Double used = generateDiskSpace(strArray.get(usedIndex));
+            Double free = generateDiskSpace(strArray.get(availIndex));
 
             usedTotal += used;
             freeTotal += free;
-            disk.put("disk", entry.getKey());
+
+            Map<String, String> disk = new HashMap<String, String>();
+            disk.put("disk",strArray.get(mountedIndex));
             disk.put("used", format.format(used));
             disk.put("free", format.format(free));
             disks.add(disk);
         }
+        scanner.close();
+        //set total....
 
         Map<String, String> disk = new HashMap<String, String>();
         disk.put("disk", "usage");

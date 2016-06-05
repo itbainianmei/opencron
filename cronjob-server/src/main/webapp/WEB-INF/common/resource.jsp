@@ -1,11 +1,13 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String path = request.getContextPath();
+    String path = request.getContextPath().replaceAll("\\/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    if (contextPath.endsWith("/")) {
+        contextPath = contextPath.substring(0,contextPath.length()-1);
+    }
     pageContext.setAttribute("contextPath",contextPath);
 %>
-
 
 <title>CronJob linux job system</title>
 <meta name="format-detection" content="telephone=no">
@@ -29,7 +31,7 @@
 <link href='${contextPath}/css/loading.css' rel='stylesheet'>
 <link href='${contextPath}/css/morris.css' rel='stylesheet'>
 <link href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
-<link rel="shortcut icon" type="image/ico" href="/favicon.ico">
+<link href="${contextPath}/favicon.ico" rel="shortcut icon" type="image/ico">
 
 <!-- Javascript Libraries -->
 <!-- jQuery -->

@@ -616,11 +616,11 @@ var cronjobChart = {
                             $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
                         }
 
-                        var job_type = parseFloat(crontab / (crontab + quartz)) * 100;
-                        if (isNaN(job_type)) {
-                            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+                        var job_model = parseFloat(crontab / (crontab + quartz)) * 100;
+                        if (isNaN(job_model)) {
+                            $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
                         } else {
-                            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+                            $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
                         }
 
                         var job_rerun = parseFloat((successSum + failureSum + killedSum - rerun) / (successSum + failureSum + killedSum)) * 100;
