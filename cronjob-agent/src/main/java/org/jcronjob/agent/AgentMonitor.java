@@ -180,23 +180,26 @@ public class AgentMonitor {
         /**
          * get info...
          */
-        Scanner scanner = new Scanner(info.getDisk());
+        Map<String, String> map = new HashMap<String, String>(0);
 
-        int usedIndex = 0,availIndex = 0, mountedIndex = 0;
+        Scanner scanner = new Scanner(info.getDisk());
+        List<String> tmpArray = new ArrayList<String>(0);
+
+        int usedIndex = 0, availIndex = 0, mountedIndex = 0, len;
         /**
          * title index....
          */
         String title = scanner.nextLine();
-        List<String> strArray = Arrays.asList(title.split("\\s"));
+        List<String> strArray = Arrays.asList(title.split("\\s+"));
+        len = strArray.size();//注意shell脚本中已经删除了Mounted on中的空格.
         /**
-         * Used Avail Use Mounted
+         * Size Used Avail Use% Mounted
          */
         for (int i = 0; i < strArray.size(); i++) {
             String key = strArray.get(i);
             if (key.equals("Used")) {
                 usedIndex = i;
             }
-
             if (key.equals("Avail")) {
                 availIndex = i;
             }
@@ -207,31 +210,50 @@ public class AgentMonitor {
 
         /**
          * data.....
+         *
+         * 注意:当Filesystem的值太长,导致本来一行的数据换行问题.
+         *
          */
-
-        List<Map<String, String>> disks = new ArrayList<Map<String, String>>();
-        Double usedTotal = 0D;
-        Double freeTotal = 0D;
-
-        //set detail....
         while (scanner.hasNextLine()) {
             String content = scanner.nextLine();
             strArray = Arrays.asList(content.split("\\s+"));
+            if (strArray.size() == len) {
+                map.put(strArray.get(mountedIndex), strArray.get(usedIndex) + "," + strArray.get(availIndex));
+            } else if (strArray.size() < len) {//某个字段对应的值太长,导致本来一行的数据换行问题.
+                if (tmpArray.isEmpty()) {
+                    tmpArray = new ArrayList<String>(strArray);
+                } else {
+                    tmpArray.addAll(strArray);
+                    if (tmpArray.size() == len) {
+                        /**
+                         * 合并后的一行数据
+                         */
+                        map.put(tmpArray.get(mountedIndex), tmpArray.get(usedIndex) + "," + tmpArray.get(availIndex));
+                        tmpArray = Collections.emptyList();
+                    }
+                }
+            }
 
-            Double used = generateDiskSpace(strArray.get(usedIndex));
-            Double free = generateDiskSpace(strArray.get(availIndex));
+        }
+        scanner.close();
+
+        //set detail....
+        List<Map<String, String>> disks = new ArrayList<Map<String, String>>();
+        Double usedTotal = 0D;
+        Double freeTotal = 0D;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            Map<String, String> disk = new HashMap<String, String>();
+
+            Double used = generateDiskSpace(entry.getValue().split(",")[0]);
+            Double free = generateDiskSpace(entry.getValue().split(",")[1]);
 
             usedTotal += used;
             freeTotal += free;
-
-            Map<String, String> disk = new HashMap<String, String>();
-            disk.put("disk",strArray.get(mountedIndex));
+            disk.put("disk", entry.getKey());
             disk.put("used", format.format(used));
             disk.put("free", format.format(free));
             disks.add(disk);
         }
-        scanner.close();
-        //set total....
 
         Map<String, String> disk = new HashMap<String, String>();
         disk.put("disk", "usage");
