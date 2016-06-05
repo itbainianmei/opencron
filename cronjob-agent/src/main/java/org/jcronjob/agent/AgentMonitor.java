@@ -180,12 +180,9 @@ public class AgentMonitor {
         /**
          * get info...
          */
-        Map<String, String> map = new HashMap<String, String>(0);
-
         Scanner scanner = new Scanner(info.getDisk());
-        List<String> tmpArray = new ArrayList<String>(0);
 
-        int usedIndex = 0,useIndex = 0, availIndex = 0, mountedIndex = 0;
+        int usedIndex = 0,availIndex = 0, mountedIndex = 0;
         /**
          * title index....
          */
@@ -200,9 +197,6 @@ public class AgentMonitor {
                 usedIndex = i;
             }
 
-            if (key.equals("Use")) {
-                usedIndex = i;
-            }
             if (key.equals("Avail")) {
                 availIndex = i;
             }
