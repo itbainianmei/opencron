@@ -373,7 +373,7 @@ blockquote small {
 }
 
 .side-menu i{
-    font-size: 28px;
+    font-size: 22px;
 }
 
 .side-menu li{
@@ -425,8 +425,7 @@ blockquote small {
     position: relative;
     z-index: 10;
     font-size: 12px;
-    height: 42px;
-    margin-bottom: -4px;
+    height: 35px;
     text-align: center;
     opacity: 0.55;
 }
@@ -444,7 +443,7 @@ blockquote small {
 
 .side-menu span.menu-item {
     top: 0;
-    padding: 13px 15px 13px 8px;
+    padding: 8px 15px 9px 9px;
     font-weight: 600;
     text-transform: uppercase;
 }

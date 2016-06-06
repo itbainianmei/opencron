@@ -258,7 +258,7 @@ public class ExecuteService implements Job {
 
     public boolean killJob( Record record ) {
         Long recordId = record.getRecordId();
-        List<Record> records = Collections.emptyList();
+        List<Record> records = new ArrayList<Record>(0);
         //单一任务
         if (record.getCategory() == 0) {
             records.add(record);
