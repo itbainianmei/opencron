@@ -502,13 +502,21 @@ public class CommonUtils implements Serializable {
         return Arrays.copyOf(arrayList.toArray(array), arrayList.size());
     }
 
-    public static void  main(String[] args) {
-        String[] arr = new String[]{"a","b","c"};
-        String xx[] = arrayRemoveIndex(arr,0);
-        System.out.println(xx.length);
-        for(String x:xx){
-            System.out.println(x);
+    public static String uuid() {
+        return UUID.randomUUID().toString().replaceAll("-","");
+    }
+
+    /**
+     * 生成指定长度的uuid
+     * @param len
+     * @return
+     */
+    public static String uuid(int len) {
+        StringBuffer sb = new StringBuffer();
+        while (sb.length()<len) {
+            sb.append(uuid());
         }
+        return sb.toString().substring(0,len);
     }
 
 }
