@@ -53,7 +53,8 @@ CREATE TABLE log (
   receiver varchar(500) NOT NULL COMMENT '收件人',
   message varchar(1000) NOT NULL COMMENT '发送信息',
   result varchar(1000) DEFAULT NULL,
-  sendTime datetime NOT NULL
+  sendTime datetime NOT NULL,
+  isread int(10) NOT NULL COMMENT '消息是否已读取,0:未读,1:已读(只针对站内信)'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 
