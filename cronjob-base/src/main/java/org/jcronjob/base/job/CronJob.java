@@ -313,6 +313,35 @@ public class CronJob implements Serializable {
         }
     }
 
+    public enum  MsgType {
+        EMAIL(0,"邮件"),
+        SMS(1,"短信"),
+        WEBSITE(2,"站内信");
+
+        private int value;
+        private String desc;
+
+        MsgType(int value,String desc){
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
 
     public interface Iface {
 

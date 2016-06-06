@@ -44,8 +44,6 @@ public class Monitor implements Serializable {
     //system config..
     private String config;
 
-    private List<String> iostat = new ArrayList<String>(0);
-
     private String cpuData;
 
     //get...set..
@@ -116,13 +114,6 @@ public class Monitor implements Serializable {
     }
 
 
-    public List getIostat() {
-        return iostat;
-    }
-
-    public void setIostat(List<String> iostat) {
-        this.iostat = iostat;
-    }
 
     @Override
     public String toString() {
@@ -135,7 +126,6 @@ public class Monitor implements Serializable {
                 ", diskUsage=" + diskUsage +
                 ", network=" + network +
                 ", config=" + config +
-                ", iostat=" + iostat +
                 '}';
     }
 
