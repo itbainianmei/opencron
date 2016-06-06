@@ -52,6 +52,8 @@ public class Log implements Serializable {
 
     private Date sendTime;
 
+    private int isread;
+
     public Long getLogId() {
         return logId;
     }
@@ -106,5 +108,13 @@ public class Log implements Serializable {
 
     public void setSendTime(Date sendTime) {
         this.sendTime = sendTime;
+    }
+
+    public int getIsread() {
+        return isread;
+    }
+
+    public void setIsread(int isread) {
+        this.isread = isread;
     }
 }

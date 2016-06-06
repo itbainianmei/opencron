@@ -21,6 +21,9 @@
 
 package org.jcronjob.domain;
 
+import org.hibernate.annotations.SQLUpdate;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -39,6 +42,8 @@ public class Config implements Serializable {
     private String password;
     private String sendUrl;
     private Integer spaceTime;
+
+    @Column(updatable=false)
     private String aeskey;
     private String template;
     private String smtpHost;

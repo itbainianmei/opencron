@@ -94,14 +94,23 @@ public class HomeService {
         return page;
     }
 
-    public List<LogVo> getMsg(HttpSession session) {
-        String sql = "SELECT * FROM log L WHERE 1=1 ";
+    public List<LogVo> getUnReadMessage(HttpSession session) {
+        String sql = "SELECT * FROM log L WHERE isread=0 and type=2 ";
         if (!(Boolean) session.getAttribute("permission")) {
             sql += " and L.receiverId = " + session.getAttribute("userId");
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
     }
+
+    public Long getUnReadCount(HttpSession session) {
+        String sql = "SELECT count(1) FROM log L WHERE isread=0 and type=2 ";
+        if (!(Boolean) session.getAttribute("permission")) {
+            sql += " and L.receiverId = " + session.getAttribute("userId");
+        }
+        return queryDao.getCountBySql(sql);
+    }
+
 
     public void saveLog(Log log) {
         queryDao.save(log);

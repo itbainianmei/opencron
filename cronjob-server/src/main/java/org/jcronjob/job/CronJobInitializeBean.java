@@ -64,9 +64,6 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
     @Autowired
     private SchedulerService schedulerService;
 
-    @Autowired
-    private MonitorService monitorService;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         //quartz job
@@ -82,6 +79,7 @@ public class CronJobInitializeBean implements Serializable,InitializingBean {
         schedulerService.startCrontab();
 
     }
+
 
     /**
      * 执行器通信监控,每10秒通信一次

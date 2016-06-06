@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.dao.QueryDao;
+import org.jcronjob.domain.Worker;
 import org.jcronjob.tag.Page;
 
 import static org.jcronjob.base.job.CronJob.*;
@@ -64,6 +65,18 @@ public class JobService {
     public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
         String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
+        if (CommonUtils.notEmpty(jobs)) {
+            for (JobVo job : jobs) {
+                job.setWorker(workerService.getWorker(job.getWorkerId()));
+                job.setChildren(queryChildren(job));
+            }
+        }
+        return jobs;
+    }
+
+    public List<JobVo> getJobVoByWorkerId(Worker worker,ExecType execType, CronType cronType) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t INNER JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.workerId=? ";
+        List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),worker.getWorkerId());
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
                 job.setWorker(workerService.getWorker(job.getWorkerId()));
@@ -139,6 +152,8 @@ public class JobService {
     public List<Job> getAll() {
         return queryDao.getAll(Job.class);
     }
+
+
 
     public List<JobVo> getJobByWorkerId(Long workerId) {
         String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +

@@ -63,7 +63,7 @@ public class TermController {
         }
         String termUrl = termService.getTermUrl(request,worker);
         String json = JSON.toJSONString(term);
-        String data = DigestUtils.aesEncrypt(configService.getSysConfig().getAeskey(),json);
+        String data = DigestUtils.aesEncrypt(configService.getAeskey(),json);
         PageIOUtils.writeHtml(response, termUrl+"?"+data);
     }
 

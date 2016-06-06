@@ -67,7 +67,13 @@ public final class SchedulerService {
         return scheduler.checkExists(JobKey.jobKey(jobId.toString()));
     }
 
-    public boolean addOrModify(JobVo job, Job jobBean) throws SchedulerException {
+    public void addOrModify(List<JobVo> jobs, Job jobBean) throws SchedulerException {
+        for(JobVo jobVo:jobs){
+            addOrModify(jobVo,jobBean);
+        }
+    }
+
+    public void addOrModify(JobVo job, Job jobBean) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId().toString());
 
         if (checkExists(job.getJobId())) {
@@ -84,19 +90,17 @@ public final class SchedulerService {
         }
         logger.info("cronjob: add success,cronTrigger:{}", cronTrigger, date);
 
-        return true;
     }
 
-    public boolean remove(Long jobId) throws SchedulerException {
+    public void remove(Long jobId) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         if (checkExists(jobId)) {
             boolean result = scheduler.unscheduleJob(triggerKey);
             logger.info("cronjob: removed, triggerKey:{}, result [{}]", triggerKey, result);
         }
-        return true;
     }
 
-    public boolean pause(Long jobId) throws SchedulerException {
+    public void pause(Long jobId) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
 
         boolean result = false;
@@ -105,18 +109,14 @@ public final class SchedulerService {
             result = true;
         } else {
         }
-        return result;
     }
 
-    public boolean resume(Long jobId) throws SchedulerException {
+    public void resume(Long jobId) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
-        boolean result = false;
         if (checkExists(jobId)) {
             scheduler.resumeTrigger(triggerKey);
-            result = true;
         } else {
         }
-        return result;
     }
 
     public void startCrontab() {

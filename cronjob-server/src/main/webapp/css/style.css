@@ -334,7 +334,6 @@ blockquote small {
 }
 
 .drawer.toggled {
-    height: 308px;
     margin-bottom: 15px !important;
     display: block;
     -webkit-animation-name: flipInX;

@@ -38,13 +38,32 @@
 			});
 		});
 
+
 		$.ajax({
-			url: "${contextPath}/notice/info",
+			url: "${contextPath}/notice/uncount",
 			dataType: "html",
 			success: function (data) {
-				$("#msgList").html(data);
+				if (data != "0"){
+					$(".n-count").text(data);
+					$("#msg-icon").show();
+					$.ajax({
+						url: "${contextPath}/notice/unread",
+						dataType: "html",
+						success: function (data) {
+							$("#msgList").html(data);
+						}
+					});
+				}else {
+					$("#messages").remove();
+					$(".n-count").remove();
+					$("#msg-icon").click(function () {
+						window.location.href="${contextPath}/notice/view";
+					})
+					$("#msg-icon").show();
+				}
 			}
 		});
+
 	});
 </script>
 
@@ -58,7 +77,7 @@
 	</a>
 	<div class="media-body">
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">
-			<div class="pull-left tm-icon" id="msg-icon">
+			<div class="pull-left tm-icon" id="msg-icon" style="display: none;">
 				<a  class="drawer-toggle" data-drawer="messages" id="toggle_message" href="#">
 					<i class="sa-top-message icon" style="background-image:none;font-size: 32px; background-size: 25px 17px;">&#61710;</i>
 					<i class="n-count">5</i>
@@ -124,7 +143,7 @@
 					<i class="fa fa-print" aria-hidden="true"></i><span class="menu-item">调度记录</span>
 				</a>
 				<ul class="list-unstyled menu-item">
-					<li class="<c:if test="${fn:contains(uri,'/running')}">active</c:if>">
+					<li <c:if test="${fn:contains(uri,'/running')}">class="active"</c:if>>
 						<a href="${contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
 					</li>
 					<li>
@@ -134,12 +153,12 @@
 			</li>
 
 			<c:if test="${permission eq true}">
-				<li class="<c:if test="${fn:contains(uri,'/user')}">active</c:if>">
+				<li <c:if test="${fn:contains(uri,'/user')}">class="active"</c:if>>
 					<a href="${contextPath}/user/view">
 						<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
 					</a>
 				</li>
-				<li class="<c:if test="${fn:contains(uri,'/config')}">active</c:if>">
+				<li <c:if test="${fn:contains(uri,'/config')}">class="active"</c:if>>
 					<a href="${contextPath}/config/view">
 						<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
 					</a>

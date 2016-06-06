@@ -21,10 +21,13 @@
 
 package org.jcronjob.service;
 
+import org.jcronjob.base.utils.CommandUtils;
+import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.dao.QueryDao;
 import org.jcronjob.domain.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by ChenHui on 2016/2/17.
@@ -38,6 +41,19 @@ public class ConfigService {
     public Config getSysConfig() {
         return queryDao.sqlUniqueQuery(Config.class, "select * from config where configId = 1");
     }
+
+    @Transactional(readOnly = false)
+    public String getAeskey() {
+        Config config = getSysConfig();
+        if ( CommonUtils.isEmpty(config.getAeskey()) ) {
+            String aeskey = CommonUtils.uuid(18);
+            config.setAeskey(aeskey);
+            queryDao.createSQLQuery("update config set aeskey=? where configId = 1",aeskey).executeUpdate();
+            queryDao.save(config);
+        }
+        return config.getAeskey();
+    }
+
 
     public void update(Config config) {
         queryDao.save(config);

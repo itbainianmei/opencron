@@ -25,9 +25,12 @@ package org.jcronjob.service;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jcronjob.base.job.CronJob;
 import org.jcronjob.dao.QueryDao;
 import org.jcronjob.tag.Page;
 import org.jcronjob.domain.Worker;
+import org.jcronjob.vo.JobVo;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +44,12 @@ public class WorkerService {
 
     @Autowired
     private ExecuteService executeService;
+
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private SchedulerService schedulerService;
 
     public List<Worker> getAll() {
        return queryDao.getAll(Worker.class);
@@ -62,7 +71,38 @@ public class WorkerService {
     }
 
     public void addOrUpdate(Worker worker) {
-        queryDao.save(worker);
+        /**
+         * 修改过worker
+         */
+        boolean update = false;
+        if (worker.getWorkerId()!=null) {
+            update = true;
+        }
+
+        /**
+         * fix bug.....
+         * 修改了worker要刷新所有在任务队列里对应的作业,
+         * 否则一段端口改变了,任务队列里的还是更改前的连接端口,
+         * 当作业执行的时候就会连接失败...
+         *
+         */
+        if (update) {
+            queryDao.save(worker);
+            /**
+             * 获取该执行器下所有的自动执行,并且是quartz类型的作业
+             */
+            List<JobVo> jobVos = jobService.getJobVoByWorkerId(worker, CronJob.ExecType.AUTO, CronJob.CronType.QUARTZ);
+            try {
+                schedulerService.addOrModify(jobVos,this.executeService);
+            } catch (SchedulerException e) {
+                /**
+                 * 创新任务列表失败,抛出异常,整个事务回滚...
+                 */
+                throw new RuntimeException(e.getCause());
+            }
+        }else {
+            queryDao.save(worker);
+        }
     }
 
     public String checkName(Long id, String name) {

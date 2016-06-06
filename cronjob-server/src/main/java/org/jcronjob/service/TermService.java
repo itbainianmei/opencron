@@ -137,7 +137,7 @@ public class TermService {
                     /**
                      * 确保安全性,从数据库获取解密的私key,进行AES解密
                      */
-                    String key = configService.getSysConfig().getAeskey();
+                    String key = configService.getAeskey();
                     String jsonTerm = DigestUtils.aesDecrypt(key,str);
                     Term term = JSON.parseObject(jsonTerm,Term.class);
                     Session jschSession = createJschSession(term);

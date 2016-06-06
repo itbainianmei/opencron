@@ -78,7 +78,7 @@ public class HomeController {
     private JobService jobService;
 
     @RequestMapping("/home")
-    public String index(Model model) {
+    public String index(Model model,HttpSession session) {
 
         /**
          * agent...
@@ -219,9 +219,22 @@ public class HomeController {
         return "notice/view";
     }
 
-    @RequestMapping("/notice/info")
-    public String log(HttpSession session, Model model) {
-        model.addAttribute("message",homeService.getMsg(session));
+
+    @RequestMapping("/notice/uncount")
+    public void uncount(HttpSession session, HttpServletResponse response) {
+         Long count = homeService.getUnReadCount(session);
+         PageIOUtils.writeHtml(response,count.toString());
+    }
+
+    /**
+     * 未读取的站类信
+     * @param session
+     * @param model
+     * @return
+     */
+    @RequestMapping("/notice/unread")
+    public String nuread(HttpSession session, Model model) {
+        model.addAttribute("message",homeService.getUnReadMessage(session));
         return "notice/info";
     }
 

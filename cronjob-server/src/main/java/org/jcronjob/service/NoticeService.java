@@ -25,6 +25,8 @@ package org.jcronjob.service;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.mail.HtmlEmail;
+import org.jcronjob.base.job.CronJob;
+import org.jcronjob.base.utils.CommonUtils;
 import org.jcronjob.base.utils.DateUtils;
 import org.jcronjob.base.utils.HttpUtils;
 import org.jcronjob.domain.Config;
@@ -48,6 +50,8 @@ import static org.jcronjob.base.utils.CommonUtils.notEmpty;
  */
 @Service
 public class NoticeService {
+
+
 
     private Config config;
 
@@ -107,7 +111,26 @@ public class NoticeService {
     }
 
     public void sendMessage(Long receiverId,Long workId, String emailAddress, String mobiles, String content) {
+        Log log = new Log();
+        log.setWorkerId(workId);
+        log.setMessage(content);
+        //手机号和邮箱都为空则发送站内信
+        if ( CommonUtils.isEmpty(emailAddress,mobiles) ) {
+            log.setType(CronJob.MsgType.WEBSITE.getValue());
+            log.setSendTime(new Date());
+            log.setIsread(0);
+            homeService.saveLog(log);
+
+            return;
+        }
+
+        /**
+         * 发送邮件并且记录发送日志
+         */
+        boolean emailSuccess = false;
+        boolean mobileSuccess = false;
         try {
+            log.setType(CronJob.MsgType.EMAIL.getValue());
             HtmlEmail email = new HtmlEmail();
             email.setCharset("UTF-8");
             email.setHostName(config.getSmtpHost());
@@ -115,20 +138,25 @@ public class NoticeService {
             email.setAuthentication(config.getSenderEmail(), config.getPassword());
             email.setFrom(config.getSenderEmail());
             email.setSubject("cronjob监控告警");
-            email.setHtmlMsg(msgToHtml(receiverId,content));
+            email.setHtmlMsg(msgToHtml(receiverId, content));
             email.addTo(emailAddress.split(","));
             email.send();
+            emailSuccess = true;
+            /**
+             * 记录邮件发送记录
+             */
+            log.setReceiver(emailAddress);
+            log.setSendTime(new Date());
+            homeService.saveLog(log);
+        }catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
 
-            Log log = new Log();
-            log.setType(0);
-            log.setWorkerId(workId);
-            log.setMessage(content);
-            for (String receiver : emailAddress.split(",")) {
-                log.setReceiver(receiver);
-                log.setSendTime(new Date());
-                homeService.saveLog(log);
-            }
-            log.setType(1);
+        /**
+         * 发送短信并且记录发送日志
+         */
+        try {
+            log.setType(CronJob.MsgType.SMS.getValue());
             for (String mobile : mobiles.split(",")) {
                 //发送POST请求
                 String sendUrl = String.format(config.getSendUrl(), mobile, String.format(config.getTemplate(), content));
@@ -142,10 +170,20 @@ public class NoticeService {
                 log.setSendTime(new Date());
                 homeService.saveLog(log);
                 logger.info(message);
-
+                mobileSuccess = true;
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);
+        }
+
+        /**
+         * 短信和邮件都发送失败,则发送站内信
+         */
+        if( !mobileSuccess && !emailSuccess ){
+            log.setType(CronJob.MsgType.WEBSITE.getValue());
+            log.setSendTime(new Date());
+            log.setIsread(0);
+            homeService.saveLog(log);
         }
 
     }
@@ -163,5 +201,6 @@ public class NoticeService {
         template.process(root, writer);
         return writer.toString();
     }
+
 
 }
