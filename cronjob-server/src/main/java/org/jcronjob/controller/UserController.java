@@ -55,11 +55,11 @@ public class UserController {
         return "/user/view";
     }
 
-    @RequestMapping("/self")
-    public String querySelf(HttpSession session, Model model) {
-        User user = userService.queryUserById((Long) session.getAttribute("userId"));
+    @RequestMapping("/detail")
+    public String detail(Long userId,HttpSession session, Model model) {
+        User user = userService.queryUserById(userId);
         model.addAttribute("u", user);
-        return "/user/self";
+        return "/user/detail";
     }
 
     @RequestMapping("addpage")
@@ -79,7 +79,7 @@ public class UserController {
     public String editPage(HttpSession session,Model model, Long id) {
         if (!(Boolean) session.getAttribute("permission")
                 && Long.parseLong(session.getAttribute("userId").toString()) != id){
-            return "redirect:/user/self";
+            return "redirect:/user/detail";
         }
         User user = userService.queryUserById(id);
         List<Role> role = userService.getRoleGroup();

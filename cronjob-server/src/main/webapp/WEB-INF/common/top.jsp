@@ -105,9 +105,9 @@
 				<a href="" data-toggle="dropdown">
 					<img class="profile-pic animated" src="${contextPath}/img/profile-pic.jpg" alt="">
 				</a>
-				<h4 class="m-0">${user}</h4>
+				<h4 class="m-0">${user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="${contextPath}/user/self">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/user/detail?userId=${user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>

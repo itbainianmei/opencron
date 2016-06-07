@@ -3,9 +3,6 @@
 <%
     String path = request.getContextPath().replaceAll("\\/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
-    if (contextPath.endsWith("/")) {
-        contextPath = contextPath.substring(0,contextPath.length()-1);
-    }
     pageContext.setAttribute("contextPath",contextPath);
 %>
 
@@ -31,7 +28,7 @@
 <link href='${contextPath}/css/loading.css' rel='stylesheet'>
 <link href='${contextPath}/css/morris.css' rel='stylesheet'>
 <link href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
-<link href="${contextPath}/favicon.ico" rel="shortcut icon" type="image/ico">
+<link href="${contextPath}/img/favicon.ico" rel="shortcut icon" type="image/ico">
 
 <!-- Javascript Libraries -->
 <!-- jQuery -->

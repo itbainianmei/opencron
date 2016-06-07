@@ -204,7 +204,7 @@
                             <a href="${contextPath}/user/editpage?id=${u.userId}" title="编辑资料">
                                 <i class="glyphicon glyphicon-pencil"></i>
                             </a>&nbsp;&nbsp;
-                            <a href="${contextPath}/user/self?id=${u.userId}" title="查看详情">
+                            <a href="${contextPath}/user/detail?userId=${u.userId}" title="查看详情">
                                 <i class="glyphicon glyphicon-eye-open"></i>
                             </a>
                         </center>

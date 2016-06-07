@@ -65,8 +65,7 @@ public class HomeService {
         Long count = queryDao.getCountBySql(sql, username, password);
 
         if (count == 1L) {
-            httpSession.setAttribute("userId", user.getUserId());
-            httpSession.setAttribute("user", username);
+            httpSession.setAttribute("user", user);
             if (user.getRoleId() == 999L) {
                 httpSession.setAttribute("permission", true);
             } else {

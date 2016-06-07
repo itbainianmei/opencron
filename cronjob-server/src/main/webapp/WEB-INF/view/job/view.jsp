@@ -499,7 +499,7 @@
                         <td>流程任务</td>
                     </c:if>
                     <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
-                    <c:if test="${permission eq true}"><td><a href="${contextPath}/user/self?id=${r.operateId}">${r.operateUname}</a></td></c:if>
+                    <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td id="cronType_${r.jobId}">
                         <c:if test="${r.cronType eq 0}">crontab</c:if>
@@ -552,7 +552,7 @@
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
                             <td>流程任务</td>
                             <td><a href="${contextPath}/worker/detail?id=${c.workerId}">${c.workerName}</a></td>
-                            <c:if test="${permission eq true}"><td><a href="${contextPath}/user/self?id=${c.operateId}">${c.operateUname}</a></td></c:if>
+                            <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>

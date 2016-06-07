@@ -23,6 +23,7 @@
 package org.jcronjob.session;
 
 
+import org.jcronjob.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -60,8 +61,8 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        String login = (String) session.getAttribute("user");
-        if (login == null) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
             logger.info(request.getRequestURL().toString());
             //跳到登陆页面
             response.sendRedirect("/");
