@@ -576,13 +576,12 @@
                 </div><br>
 
                 <div class="form-group" id="runModel">
-                    <span>
-                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>运行模式</label>
-                        <div class="col-md-10">
-                            <label for="runModel" class="radio-label"><input type="radio" name="runModel" value="0" id="runModel0" ${job.runModel eq 0 ? 'checked' : ''}>串行&nbsp;&nbsp;&nbsp;</label>
-                            <label for="runModel" class="radio-label"><input type="radio" name="runModel" value="1" id="runModel1" ${job.runModel eq 1 ? 'checked' : ''}>并行</label>&nbsp;&nbsp;&nbsp;
-                        </div>
-                    </span>
+                    <label class="col-lab control-label"><i class="glyphicon  glyphicon-sort-by-attributes"></i>&nbsp;&nbsp;运行顺序</label>
+                    <div class="col-md-10">
+                        <label for="runModel0" class="radio-label" style="margin-left: 14px;"><input type="radio" name="runModel" value="0" id="runModel0">串行&nbsp;&nbsp;&nbsp;</label>
+                        <label for="runModel1" class="radio-label"><input type="radio" name="runModel" value="1" id="runModel1" checked>并行</label>&nbsp;&nbsp;&nbsp;
+                        <br><span class="tips"><b>*&nbsp;</b>串行: 按顺序依次执行&nbsp;并行: 同时执行</span>
+                    </div>
                 </div><br>
 
                 <div class="form-group">

@@ -116,7 +116,7 @@ public class JobController {
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
-            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","category");
+            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","category","runModel");
         }
 
         //单任务
@@ -136,17 +136,16 @@ public class JobController {
             for (int i = 0; i < jobName.length; i++) {
                 Job chind = new Job();
 
-                /**
-                 * 新增并行和串行,子任务和最顶层的父任务一样
-                 */
-                chind.setRunModel(job.getRunModel());
-
                 if (CommonUtils.notEmpty(jobId[i])) {
                     //子任务修改的..
                     Long jobid = Long.parseLong((String) jobId[i]);
                     chind = jobService.getJob(jobid);
                 }
 
+                /**
+                 * 新增并行和串行,子任务和最顶层的父任务一样
+                 */
+                chind.setRunModel(job.getRunModel());
                 chind.setJobName((String) jobName[i]);
                 chind.setWorkerId(Long.parseLong((String) workerId[i]));
                 chind.setCommand((String) command[i]);
