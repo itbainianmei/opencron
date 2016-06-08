@@ -22,13 +22,9 @@
 
 package org.jcronjob.service;
 
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import static org.jcronjob.base.job.CronJob.*;
-
-import org.jcronjob.base.job.*;
-import org.jcronjob.base.utils.CommonUtils;
+import org.jcronjob.base.job.Action;
+import org.jcronjob.base.job.Request;
+import org.jcronjob.base.job.Response;
 import org.jcronjob.domain.Record;
 import org.jcronjob.domain.Worker;
 import org.jcronjob.job.CronJobCaller;
@@ -40,6 +36,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import static org.jcronjob.base.job.CronJob.*;
 
 @Service
 public class ExecuteService implements Job {
@@ -66,24 +70,40 @@ public class ExecuteService implements Job {
             ExecuteService executeService = (ExecuteService) jobExecutionContext.getJobDetail().getJobDataMap().get("jobBean");
             executeService.executeJob(jobVo, ExecType.getByStatus(jobVo.getExecType()));
         } catch (Exception e) {
-            logger.error(e.getLocalizedMessage(),e);
+            logger.error(e.getLocalizedMessage(), e);
         }
     }
 
     public boolean executeJob(final JobVo job, final ExecType execType) {
         if (job.getCategory() == JobCategory.FLOW.getCode()) {//流程任务..
-            long flowGroup = System.currentTimeMillis();//分配一个流程组Id
+            final long flowGroup = System.currentTimeMillis();//分配一个流程组Id
             /**
              * 一个指定大小的job队列
              */
-            job.getChildren().add(0,job);
+            job.getChildren().add(0, job);
             Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
-            for(JobVo jobVo:jobQueue){
-                if (!executeFlowJob(jobVo, execType, flowGroup)) {
-                    return false;
+
+            final List<Boolean> result = new ArrayList<Boolean>(0);
+            for (final JobVo jobVo : jobQueue) {
+                //如果子任务是并行(则启动多线程,所有子任务同时执行)
+                if (job.getRunModel().equals(RunModel.SAMETIME.getValue())) {
+                    new Thread(new Runnable() {
+                        public void run() {
+                            result.add(executeFlowJob(jobVo, execType, flowGroup));
+                        }
+                    }).start();
+                } else {//串行,按顺序执行
+                    if (!executeFlowJob(jobVo, execType, flowGroup)) {
+                        return false;
+                    }
                 }
             }
-            return true;
+
+            /**
+             * 并行任务中有失败的...
+             */
+            return !result.contains(false);
+
         }
 
         Record record = new Record(job, execType);
@@ -108,15 +128,15 @@ public class ExecuteService implements Job {
             recordService.update(record);
 
             if (record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus())) {
-                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:",job.getJobName(),job.getJobId(),job.getIp(),job.getPort());
+                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
             } else {
                 noticeService.notice(job);
-                logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:",job.getJobName(),job.getJobId(),job.getIp(),job.getPort(),record.getMessage());
+                logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), record.getMessage());
             }
         } catch (Exception e) {
             noticeService.notice(job);
-            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s",job.getJobName(),job.getJobId(),job.getIp(),job.getPort(),e.getMessage());
-            logger.error(errorInfo,e);
+            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
+            logger.error(errorInfo, e);
         }
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
@@ -171,14 +191,14 @@ public class ExecuteService implements Job {
             return result.isSuccess();
         } catch (Exception e) {
             noticeService.notice(job);
-            String errorInfo = String.format("execute failed(flow job):jobName:%s,,jobId:%d,,ip:%s,port:%d,info:%s",job.getJobName(),job.getJobId(),job.getIp(),job.getPort(),e.getMessage());
+            String errorInfo = String.format("execute failed(flow job):jobName:%s,,jobId:%d,,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
             record.setSuccess(ResultStatus.FAILED.getStatus());//程序调用失败
             record.setReturnCode(StatusCode.ERROR_EXEC.getValue());
             record.setEndTime(new Date());
             record.setMessage(errorInfo);
             recordService.update(record);
             success = false;
-            logger.error(errorInfo,e);
+            logger.error(errorInfo, e);
             return false;
         } finally {
             if (!success) {
@@ -245,18 +265,18 @@ public class ExecuteService implements Job {
                 recordService.update(parentRecord);
             }
             recordService.update(record);
-            logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}",job.getJobName(),job.getJobId(),job.getIp(),job.getPort());
+            logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
         } catch (Exception e) {
             noticeService.notice(job);
-            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s",job.getJobName(),job.getJobId(),job.getIp(),job.getPort(),e.getMessage());
+            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
             errorExec(record, errorInfo);
-            logger.error(errorInfo,e);
+            logger.error(errorInfo, e);
         }
 
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    public boolean killJob( Record record ) {
+    public boolean killJob(Record record) {
         Long recordId = record.getRecordId();
         List<Record> records = new ArrayList<Record>(0);
         //单一任务
@@ -269,7 +289,7 @@ public class ExecuteService implements Job {
         /**
          * 零时的改成停止中...
          */
-        for(Record cord:records){
+        for (Record cord : records) {
             cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
             cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
             recordService.update(cord);
@@ -285,11 +305,11 @@ public class ExecuteService implements Job {
                 cord.setStatus(RunStatus.STOPED.getStatus());
                 cord.setEndTime(new Date());
                 recordService.update(cord);
-                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}",job.getJobName(),job.getIp(),job.getPort(),cord.getPid());
+                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
             } catch (Exception e) {
                 noticeService.notice(job);
-                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s",job.getJobName(),job.getIp(),job.getPort(),cord.getPid(),e.getMessage());
-                logger.error(errorInfo,e);
+                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
+                logger.error(errorInfo, e);
                 return false;
             }
         }
@@ -301,7 +321,7 @@ public class ExecuteService implements Job {
         try {
             ping = cronJobCaller.call(Request.request(ip, port, Action.PING, password)).isSuccess();
         } catch (Exception e) {
-            logger.error("[cronjob]ping failed,host:{},port:{}",ip,port);
+            logger.error("[cronjob]ping failed,host:{},port:{}", ip, port);
         } finally {
             return ping;
         }
@@ -309,6 +329,7 @@ public class ExecuteService implements Job {
 
     /**
      * 修改密码
+     *
      * @param ip
      * @param port
      * @param password
@@ -318,7 +339,7 @@ public class ExecuteService implements Job {
     public boolean password(String ip, int port, final String password, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronJobCaller.call(Request.request(ip, port,Action.PASSWORD, password).putParam("newPassword", newPassword));
+            Response response = cronJobCaller.call(Request.request(ip, port, Action.PASSWORD, password).putParam("newPassword", newPassword));
             ping = response.isSuccess();
         } catch (Exception e) {
             e.printStackTrace();
@@ -328,8 +349,8 @@ public class ExecuteService implements Job {
     }
 
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(),Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
-        logger.info("[cronjob]:execute response:{}",response.toString());
+        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
+        logger.info("[cronjob]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
         record.setMessage(response.getMessage());
         record.setSuccess(response.isSuccess() ? ResultStatus.SUCCESSFUL.getStatus() : ResultStatus.FAILED.getStatus());
@@ -365,6 +386,6 @@ public class ExecuteService implements Job {
     }
 
     public Response port(Worker worker) throws Exception {
-        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(),Action.PORT, worker.getPassword()));
+        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(), Action.PORT, worker.getPassword()));
     }
 }

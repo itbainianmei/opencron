@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%
-    String path = request.getContextPath().replaceAll("\\/$","");
+    String path = request.getContextPath().replaceAll("/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>

@@ -23,6 +23,7 @@ package org.jcronjob.controller;
 
 import java.util.*;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.base.job.CronJob.ExecType;
 import org.jcronjob.tag.Page;
@@ -134,6 +135,12 @@ public class JobController {
             List<Job> chindren = new ArrayList<Job>(0);
             for (int i = 0; i < jobName.length; i++) {
                 Job chind = new Job();
+
+                /**
+                 * 新增并行和串行,子任务和最顶层的父任务一样
+                 */
+                chind.setRunModel(job.getRunModel());
+
                 if (CommonUtils.notEmpty(jobId[i])) {
                     //子任务修改的..
                     Long jobid = Long.parseLong((String) jobId[i]);
@@ -216,6 +223,12 @@ public class JobController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @RequestMapping("/goexec")
+    public String goExec(Model model) {
+        model.addAttribute("workers", workerService.getAll());
+        return "/job/exec";
     }
 
     @RequestMapping("/detail")

@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
-	String path = request.getContextPath().replaceAll("\\/$","");
+	String path = request.getContextPath().replaceAll("/$","");
 	String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 	pageContext.setAttribute("contextPath",contextPath);
 %>
@@ -132,10 +132,18 @@
 					<i aria-hidden="true" class="fa fa-desktop"></i><span class="menu-item">执行器管理</span>
 				</a>
 			</li>
-			<li class="<c:if test="${fn:contains(uri,'/job')}">active</c:if>">
-				<a href="${contextPath}/job/view">
-					<i aria-hidden="true" class="fa fa-tasks"></i><span class="menu-item">任务管理</span>
+			<li class="dropdown <c:if test="${fn:contains(uri,'/job')}">active</c:if>">
+				<a href="#">
+					<i aria-hidden="true" class="fa fa-tasks" aria-hidden="true"></i><span class="menu-item">作业管理</span>
 				</a>
+				<ul class="list-unstyled menu-item">
+					<li <c:if test="${fn:contains(uri,'/job/view')}">class="active"</c:if>>
+						<a href="${contextPath}/job/view" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">作业列表</a>
+					</li>
+					<li <c:if test="${fn:contains(uri,'/job/goexec')}">class="active"</c:if>>
+						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">现场执行</a>
+					</li>
+				</ul>
 			</li>
 
 			<li class="dropdown <c:if test="${fn:contains(uri,'/record')}">active</c:if>">
@@ -146,7 +154,7 @@
 					<li <c:if test="${fn:contains(uri,'/running')}">class="active"</c:if>>
 						<a href="${contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
 					</li>
-					<li>
+					<li <c:if test="${fn:contains(uri,'/done')}">class="active"</c:if>>
 						<a href="${contextPath}/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
 					</li>
 				</ul>

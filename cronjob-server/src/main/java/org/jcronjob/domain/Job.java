@@ -54,6 +54,8 @@ public class Job implements Serializable {
 
     private Integer flowNum;
 
+    private Integer runModel;//0:串行|1:并行
+
     //是否为流程任务的最后一个子任务
     private Boolean lastFlag;
 
@@ -184,5 +186,13 @@ public class Job implements Serializable {
 
     public void setLastFlag(Boolean lastFlag) {
         this.lastFlag = lastFlag;
+    }
+
+    public Integer getRunModel() {
+        return runModel;
+    }
+
+    public void setRunModel(Integer runModel) {
+        this.runModel = runModel;
     }
 }

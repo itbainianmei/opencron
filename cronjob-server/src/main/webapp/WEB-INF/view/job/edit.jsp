@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <%
-    String path = request.getContextPath().replaceAll("\\/$","");
+    String path = request.getContextPath().replaceAll("/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
@@ -156,8 +156,11 @@
         function subJob(flag){
             if (flag=="1"){
                 $("#subJob").show();
+                $("#runModel").show();
+
             }else {
                 $("#subJob").hide();
+                $("#runModel").hide();
             }
         }
 
@@ -546,9 +549,9 @@
                     </div>
                 </div><br>
 
-                <div class="form-group">
-                    <span id="subJob">
-                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;子&nbsp;&nbsp;任&nbsp;&nbsp;务：</label>
+                <div class="form-group" id="subJob">
+                    <span>
+                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;子&nbsp;&nbsp;作&nbsp;&nbsp;业：</label>
                         <div class="col-md-10">
                             <a data-toggle="modal" href="#jobModal" onclick="addSubJob();" class="btn btn-sm m-t-10">添加子作业</a>
                             <ul id="subJobDiv" class="subJobUl">
@@ -568,6 +571,16 @@
                                     <input type="hidden" name="child.command" value="${c.command}">
                                 </li>
                             </c:forEach>
+                        </div>
+                    </span>
+                </div><br>
+
+                <div class="form-group" id="runModel">
+                    <span>
+                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>运行模式</label>
+                        <div class="col-md-10">
+                            <label for="runModel" class="radio-label"><input type="radio" name="runModel" value="0" id="runModel0" ${job.runModel eq 0 ? 'checked' : ''}>串行&nbsp;&nbsp;&nbsp;</label>
+                            <label for="runModel" class="radio-label"><input type="radio" name="runModel" value="1" id="runModel1" ${job.runModel eq 1 ? 'checked' : ''}>并行</label>&nbsp;&nbsp;&nbsp;
                         </div>
                     </span>
                 </div><br>

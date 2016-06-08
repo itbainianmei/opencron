@@ -42,6 +42,7 @@ public class JobVo implements Serializable {
     private Date updateTime;
     private Integer redo;
     private Long runCount;
+    private Integer runModel;
 
     /**
      * 0:单一任务
@@ -266,4 +267,11 @@ public class JobVo implements Serializable {
         this.lastFlag = lastFlag;
     }
 
+    public Integer getRunModel() {
+        return runModel;
+    }
+
+    public void setRunModel(Integer runModel) {
+        this.runModel = runModel;
+    }
 }

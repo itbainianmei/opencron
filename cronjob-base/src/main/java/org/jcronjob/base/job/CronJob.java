@@ -343,6 +343,34 @@ public class CronJob implements Serializable {
         }
     }
 
+    public enum RunModel{
+        SEQUENCE(0,"串行"),
+        SAMETIME(1,"并行");
+        private int value;
+        private String desc;
+
+        RunModel(int value,String desc){
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
     public interface Iface {
 
         public Response ping(Request request) throws org.apache.thrift.TException;

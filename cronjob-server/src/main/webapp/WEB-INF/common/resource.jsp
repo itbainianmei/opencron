@@ -1,7 +1,7 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-    String path = request.getContextPath().replaceAll("\\/$","");
+    String path = request.getContextPath().replaceAll("/$","");
     String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
@@ -38,12 +38,10 @@
 
 <!-- Bootstrap -->
 <script src="${contextPath}/js/bootstrap.min.js"></script>
-
 <script src="${contextPath}/js/easypiechart.js"></script> <!-- EasyPieChart - Animated Pie Charts -->
 
 <!--  Form Related -->
 <script src="${contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
-
 <script src="${contextPath}/js/select.min.js"></script> <!-- Custom Select -->
 
 <!-- UX -->
@@ -52,15 +50,10 @@
 <!-- Other -->
 <script src="${contextPath}/js/calendar.min.js"></script> <!-- Calendar -->
 <script src="${contextPath}/js/feeds.min.js"></script> <!-- News Feeds -->
-
 <script src="${contextPath}/js/raphael.2.1.2-min.js"></script>
-
 <script src="${contextPath}/js/prettify.min.js"></script>
-
 <script src="${contextPath}/js/morris.min.js"></script>
-
 <script src="${contextPath}/js/jquery.sparkline.min.js"></script>
-
 <!-- All JS functions -->
 <script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}"></script>
 
