@@ -138,10 +138,10 @@
 				</a>
 				<ul class="list-unstyled menu-item">
 					<li <c:if test="${fn:contains(uri,'/job/view')}">class="active"</c:if>>
-						<a href="${contextPath}/job/view" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">作业列表</a>
+						<a href="${contextPath}/job/view" class="<c:if test="${fn:contains(uri,'/job/view')}">active</c:if>">作业列表</a>
 					</li>
 					<li <c:if test="${fn:contains(uri,'/job/goexec')}">class="active"</c:if>>
-						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">现场执行</a>
+						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'goexec')}">active</c:if>">现场执行</a>
 					</li>
 				</ul>
 			</li>
