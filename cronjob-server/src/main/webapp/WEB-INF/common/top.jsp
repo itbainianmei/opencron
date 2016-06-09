@@ -6,8 +6,8 @@
 	String path = request.getContextPath().replaceAll("/$","");
 	String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 	pageContext.setAttribute("contextPath",contextPath);
+	request.setAttribute("uri",request.getRequestURI());
 %>
-<%request.setAttribute("uri",request.getRequestURI());%>
 
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -140,8 +140,8 @@
 					<li <c:if test="${fn:contains(uri,'/job/view')}">class="active"</c:if>>
 						<a href="${contextPath}/job/view" class="<c:if test="${fn:contains(uri,'/job/view')}">active</c:if>">作业列表</a>
 					</li>
-					<li <c:if test="${fn:contains(uri,'/job/goexec')}">class="active"</c:if>>
-						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'goexec')}">active</c:if>">现场执行</a>
+					<li <c:if test="${fn:contains(uri,'/exec')}">class="active"</c:if>>
+						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'/exec')}">active</c:if>">现场执行</a>
 					</li>
 				</ul>
 			</li>
