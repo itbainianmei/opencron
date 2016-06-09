@@ -68,8 +68,11 @@
         function subJob(flag){
             if (flag=="1"){
                 $("#subJob").show();
+                $("#runModel").show();
+
             }else {
                 $("#subJob").hide();
+                $("#runModel").hide();
             }
         }
 
@@ -549,6 +552,15 @@
                     </span>
                 </div><br>
 
+                <div class="form-group" id="runModel" style="display:none">
+                    <label class="col-lab control-label"><i class="glyphicon  glyphicon-sort-by-attributes"></i>&nbsp;&nbsp;运行顺序</label>
+                    <div class="col-md-10">
+                        <label for="runModel0" class="radio-label" style="margin-left: 14px;"><input type="radio" name="runModel" value="0" id="runModel0">串行&nbsp;&nbsp;&nbsp;</label>
+                        <label for="runModel1" class="radio-label"><input type="radio" name="runModel" value="1" id="runModel1" checked>并行</label>&nbsp;&nbsp;&nbsp;
+                        <br><span class="tips"><b>*&nbsp;</b>串行: 按顺序依次执行&nbsp;并行: 同时执行</span>
+                    </div>
+                </div><br>
+
                 <div class="form-group">
                     <label for="comment" class="col-lab control-label"><i class="glyphicon glyphicon-magnet"></i>&nbsp;&nbsp;描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
                     <div class="col-md-10">
@@ -613,6 +625,8 @@
                                 <input type="text" class="form-control pop-sm" id="runCount1"/>&nbsp;
                             </div>
                         </div>
+
+
 
                         <div class="form-group">
                             <label for="comment1" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
