@@ -31,6 +31,7 @@
         <li class="icon">&#61753;</li>
         当前位置：
         <li><a href="">CronJob</a></li>
+        <li><a href="">作业管理</a></li>
         <li><a href="">现场执行</a></li>
     </ol>
     <h4 class="page-title"><i class="fa fa-play-circle" aria-hidden="true"></i>&nbsp;现场执行</h4>

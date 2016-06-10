@@ -416,8 +416,9 @@
         当前位置：
         <li><a href="">CronJob</a></li>
         <li><a href="">作业管理</a></li>
+        <li><a href="">作业列表</a></li>
     </ol>
-    <h4 class="page-title"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;作业管理</h4>
+    <h4 class="page-title"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;作业列表</h4>
 
     <!-- Deafult Table -->
     <div class="block-area" id="defaultStyle">
