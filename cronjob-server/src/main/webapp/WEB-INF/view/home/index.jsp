@@ -414,12 +414,12 @@
                 <!-- CPU -->
                 <div class="tile" id="cpu">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-line-chart"></i>&nbsp;CPU使用率</h2>
-                    <p style="margin-left: 10px;margin-right: 10px;color: rgb(222,222,222)">
+                   <%-- <p style="margin-left: 10px;margin-right: 10px;color: rgb(222,222,222)">
                         &nbsp;&nbsp;&nbsp;&nbsp;CPU利用率分为<span class="labact">用户态</span>，<span class="labact">系统态</span>和<span class="labact">空闲态</span>
                         分别表示CPU处于<span class="labact">用户态执行的时间</span>，<span class="labact">系统内核执行的时间</span>，和<span class="labact">空闲系统进程执行的时间</span>
                         这里的CPU利用率是指：CPU执行非系统空闲进程的时间 / CPU总的执行时间<br>
                         服务器的CPU利用率高,则表明服务器很繁忙。如果前台响应时间越来越大，而后台CPU利用率始终上不去，说明在某个地方有瓶颈了,系统需要调优
-                    </p>
+                    </p>--%>
                     <div class="p-t-10 p-r-5 p-b-5">
                         <div style="height: 200px; padding: 0px; position: relative;" id="cpu-chart">
                             <div class="loader">

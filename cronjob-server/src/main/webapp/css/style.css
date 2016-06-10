@@ -262,6 +262,7 @@ blockquote small {
     border-bottom: 1px solid rgba(255,255,255,0.15);
     min-height: 60px;
     position: relative;
+    margin-top:-17px;
 }
 
 #header, #header > .media-body, #header #top-menu {
@@ -307,7 +308,7 @@ blockquote small {
 }
 
 #top-menu .tm-icon:hover span, #top-menu .tm-icon.open span, .drawer-toggle.open span {
-    width: 70px !important;
+    width: 60px !important;
 }
 
 #top-menu .tm-icon:hover, #top-menu .tm-icon.open {
