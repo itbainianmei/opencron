@@ -549,8 +549,7 @@ var cronjobChart = {
         var html='<tr>'+
             '<td class="noborder" title="进程ID">PID</td>'+
             '<td class="noborder" title="进程所属的用户">USER</td>'+
-            '<td class="noborder" title="优先权">RP</td>'+
-            '<td class="noborder" title="进程需要的虚拟内存">VIRI</td>'+
+            '<td class="noborder" title="虚拟内存">VIRI</td>'+
             '<td class="noborder" title="常驻内存">RES</td>'+
             '<td class="noborder" title="CPU使用占比">CPU</td>'+
             '<td class="noborder" title="内存使用占比">MEM</td>'+

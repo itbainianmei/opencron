@@ -72,10 +72,10 @@ public class AgentMonitor {
                 for(;;) {
                     client.sendEvent("monitor", monitor());
                     try {
-                        TimeUnit.MICROSECONDS.sleep(1000);
+                        TimeUnit.MICROSECONDS.sleep(1500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
+                    
                 }
             }
         });

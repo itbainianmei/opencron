@@ -493,7 +493,6 @@ public class Monitor implements Serializable {
 
         private String pid;
         private String user;
-        private String pr;
         private String virt;
         private String res;
         private String cpu;
@@ -515,14 +514,6 @@ public class Monitor implements Serializable {
 
         public void setUser(String user) {
             this.user = user;
-        }
-
-        public String getPr() {
-            return pr;
-        }
-
-        public void setPr(String pr) {
-            this.pr = pr;
         }
 
         public String getVirt() {
@@ -578,7 +569,6 @@ public class Monitor implements Serializable {
             return "Top{" +
                     "pid='" + pid + '\'' +
                     ", user='" + user + '\'' +
-                    ", pr='" + pr + '\'' +
                     ", virt='" + virt + '\'' +
                     ", res='" + res + '\'' +
                     ", cpu='" + cpu + '\'' +
