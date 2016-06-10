@@ -75,6 +75,14 @@
             margin-bottom: 15px;
         }
 
+
+        .noborder{
+            border-top:0px solid rgba(255,255,255,0.55)
+        }
+        #top table td{
+            border-top:1px solid rgba(255,255,255,0.55)
+        }
+
     </style>
 
     <script type="text/javascript">
@@ -374,6 +382,36 @@
                     </div>
                 </div>
 
+                <div class="tile" id="top" style="min-height: 250px">
+                    <h2 class="tile-title"><i aria-hidden="true" class="fa fa-line-chart"></i>&nbsp;CPU使用率</h2>
+                    <div style="margin-left: 15px;margin-right: 15px;">
+                    <table class="table tile table-custom table-sortable " style="font-size: 13px;background-color: rgba(0,0,0,0);">
+                        <tbody id="topbody">
+                            <div class="loader" >
+                                <div class="loader-inner">
+                                    <div class="loader-line-wrap">
+                                        <div class="loader-line"></div>
+                                    </div>
+                                    <div class="loader-line-wrap">
+                                        <div class="loader-line"></div>
+                                    </div>
+                                    <div class="loader-line-wrap">
+                                        <div class="loader-line"></div>
+                                    </div>
+                                    <div class="loader-line-wrap">
+                                        <div class="loader-line"></div>
+                                    </div>
+                                    <div class="loader-line-wrap">
+                                        <div class="loader-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+
+
                 <!-- CPU -->
                 <div class="tile" id="cpu">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-line-chart"></i>&nbsp;CPU使用率</h2>
@@ -411,7 +449,12 @@
                     </div>
                 </div>
 
-                <!--network-->
+
+
+
+
+
+               <%-- <!--network-->
                 <div class="tile" id="network">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-dribbble"></i>&nbsp;网卡IO监控</h2>
                     <p style="margin-left: 10px;margin-right: 10px;">
@@ -442,7 +485,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
+                <div class="clearfix"></div>--%>
+
             </div>
             <!--config-->
             <div class="col-md-4" id="info">

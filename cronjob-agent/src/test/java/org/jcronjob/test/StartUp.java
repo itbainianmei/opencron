@@ -21,15 +21,16 @@
 package org.jcronjob.test;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.jcronjob.agent.AgentBootstrap;
-import org.jcronjob.agent.AgentMonitor;
+import org.jcronjob.agent.Globals;
+import org.jcronjob.base.job.Monitor;
+import org.jcronjob.base.utils.CommandUtils;
+import org.jcronjob.base.utils.ReflectUitls;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.jcronjob.base.utils.CommandUtils.executeShell;
-import static org.jcronjob.base.utils.CommonUtils.toLong;
 
 /**
  * Created by benjobs on 16/3/4.
@@ -37,21 +38,59 @@ import static org.jcronjob.base.utils.CommonUtils.toLong;
 public class StartUp {
 
     public static void main(String[] args) throws Exception {
-        int[] xx = new int[]{1,2,3,4};
-        for(final int x : xx) {
-            Thread t = new Thread(new Runnable() {
-                public void run() {
-                    System.out.println("beg:==>"+x);
-                    try {
-                        Thread.sleep(10000);
-                        System.out.println("after:===>"+x);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+       String str = " PID USER PR NI VIRT RES SHR S %CPU %MEM TIME+ COMMAND\n" +
+               " 1 root 20 0 19336 240 84 S 0.0 0.0 2:45.89 init\n" +
+               " 2 root 20 0 0 0 0 S 0.0 0.0 0:05.39 kthreadd\n" +
+               " 3 root RT 0 0 0 0 S 0.0 0.0 7:25.88 migration/0\n" +
+               " 4 root 20 0 0 0 0 S 0.0 0.0 14:07.25 ksoftirqd/0\n" +
+               " 5 root RT 0 0 0 0 S 0.0 0.0 0:00.00 migration/0\n" +
+               " 6 root RT 0 0 0 0 S 0.0 0.0 0:34.87 watchdog/0\n" +
+               " 7 root RT 0 0 0 0 S 0.0 0.0 6:58.41 migration/1\n" +
+               " 8 root RT 0 0 0 0 S 0.0 0.0 0:00.00 migration/1\n" +
+               " 9 root 20 0 0 0 0 S 0.0 0.0 13:37.90 ksoftirqd/1\n" +
+               " 10 root RT 0 0 0 0 S 0.0 0.0 0:29.13 watchdog/1\n" +
+               " 11 root RT 0 0 0 0 S 0.0 0.0 5:45.59 migration/2\n" +
+               " 12 root RT 0 0 0 0 S 0.0 0.0 0:00.00 migration/2\n" +
+               " 13 root 20 0 0 0 0 S 0.0 0.0 18:51.35 ksoftirqd/2\n" +
+               " 14 root RT 0 0 0 0 S 0.0 0.0 0:29.24 watchdog/2\n" +
+               " 15 root RT 0 0 0 0 S 0.0 0.0 4:50.77 migration/3 ";
+
+        Map<Integer, String> index = new HashMap<Integer, String>(0);
+
+        List<Field> fields = Arrays.asList(Monitor.Top.class.getDeclaredFields());
+
+        List<String> topList = new ArrayList<String>(0);
+
+        String result = str;
+
+        Scanner scan = new Scanner(result);
+        boolean isFirst = true;
+        while (scan.hasNextLine()) {
+            String text = scan.nextLine().trim();
+            String data[] = text.split("\\s+");
+            if (isFirst) {
+                for (int i = 0; i < data.length; i++) {
+                    for (Field f : fields) {
+                        if (f.getName().equalsIgnoreCase(data[i].replaceAll("%|\\+", ""))) {
+                            index.put(i, f.getName());
+                        }
                     }
                 }
-            });
-            t.start();
+                isFirst = false;
+            } else {
+                Monitor.Top top = new Monitor.Top();
+                for (Map.Entry<Integer, String> entry : index.entrySet()) {
+                    Method setMethod = ReflectUitls.setter(Monitor.Top.class, entry.getValue());
+                    setMethod.invoke(top, data[entry.getKey()]);
+                }
+                topList.add( JSON.toJSONString(top, SerializerFeature.SortField) );
+            }
+
         }
+        scan.close();
+
+        System.out.println(JSON.toJSONString(topList));
+
     }
 
 

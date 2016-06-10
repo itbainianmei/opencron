@@ -21,8 +21,12 @@
 
 package org.jcronjob.base.job;
 
+import com.alibaba.fastjson.annotation.JSONType;
+
 import java.io.Serializable;
 import java.util.*;
+
+import static com.alibaba.fastjson.serializer.SerializerFeature.SortField;
 
 /**
  * Created by benjobs on 16/4/7.
@@ -39,12 +43,11 @@ public class Monitor implements Serializable {
 
     private String diskUsage;
 
-    private String network;
-
-    //system config..
     private String config;
 
     private String cpuData;
+
+    private String top;
 
     //get...set..
 
@@ -96,15 +99,6 @@ public class Monitor implements Serializable {
         this.diskUsage = diskUsage;
     }
 
-    public String getNetwork() {
-        return network;
-    }
-
-    public void setNetwork(String network) {
-        this.network = network;
-    }
-
-
     public String getConfig() {
         return config;
     }
@@ -114,6 +108,13 @@ public class Monitor implements Serializable {
     }
 
 
+    public String getTop() {
+        return top;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
+    }
 
     @Override
     public String toString() {
@@ -124,88 +125,86 @@ public class Monitor implements Serializable {
                 ", load=" + load.toString() +
                 ", cpuData=" + cpuData +
                 ", diskUsage=" + diskUsage +
-                ", network=" + network +
+                ", top=" + top +
                 ", config=" + config +
                 '}';
     }
 
-    public static class Cpuinfo implements Serializable{
-        private int count;
-        private String name;
-        private String info;
+    public static class Info implements Serializable {
+        private List<Net> net = new ArrayList<Net>();
+        private String disk;
+        private Mem mem;
+        private Swap swap;
+        private Cpu cpu;
+        private String load;
+        private String conf;
+        private String top;
 
-        public int getCount() {
-            return count;
+        public List<Net> getNet() {
+            return net;
         }
 
-        public void setCount(int count) {
-            this.count = count;
+        public void setNet(List<Net> net) {
+            this.net = net;
         }
 
-        public String getName() {
-            return name;
+        public String getDisk() {
+            return disk;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setDisk(String disk) {
+            this.disk = disk;
         }
 
-        public String getInfo() {
-            return info;
+        public Mem getMem() {
+            return mem;
         }
 
-        public void setInfo(String info) {
-            this.info = info;
-        }
-    }
-
-    public static class Config implements Serializable{
-        private String hostname;
-        private String os;
-        private String kernel;
-        private String machine;
-        private Cpuinfo cpuinfo;
-
-        public String getHostname() {
-            return hostname;
+        public void setMem(Mem mem) {
+            this.mem = mem;
         }
 
-        public void setHostname(String hostname) {
-            this.hostname = hostname;
+        public Swap getSwap() {
+            return swap;
         }
 
-        public String getOs() {
-            return os;
+        public void setSwap(Swap swap) {
+            this.swap = swap;
         }
 
-        public void setOs(String os) {
-            this.os = os;
+        public Cpu getCpu() {
+            return cpu;
         }
 
-        public String getKernel() {
-            return kernel;
+        public void setCpu(Cpu cpu) {
+            this.cpu = cpu;
         }
 
-        public void setKernel(String kernel) {
-            this.kernel = kernel;
+        public String getLoad() {
+            return load;
         }
 
-        public String getMachine() {
-            return machine;
+        public void setLoad(String load) {
+            this.load = load;
         }
 
-        public void setMachine(String machine) {
-            this.machine = machine;
+        public String getConf() {
+            return conf;
         }
 
-        public Cpuinfo getCpuinfo() {
-            return cpuinfo;
+        public void setConf(String conf) {
+            this.conf = conf;
         }
 
-        public void setCpuinfo(Cpuinfo cpuinfo) {
-            this.cpuinfo = cpuinfo;
+        public String getTop() {
+            return top;
+        }
+
+        public void setTop(String top) {
+            this.top = top;
         }
     }
+
 
     public static class Iostat implements Serializable {
         private String device;// device: 设备
@@ -315,6 +314,278 @@ public class Monitor implements Serializable {
 
         public void setUtil(String util) {
             this.util = util;
+        }
+    }
+
+
+
+    public static class Conf implements Serializable {
+        private String hostname;
+        private String os;
+        private String kernel;
+        private String machine;
+        private String cpuinfo;
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public void setHostname(String hostname) {
+            this.hostname = hostname;
+        }
+
+        public String getOs() {
+            return os;
+        }
+
+        public void setOs(String os) {
+            this.os = os;
+        }
+
+        public String getKernel() {
+            return kernel;
+        }
+
+        public void setKernel(String kernel) {
+            this.kernel = kernel;
+        }
+
+        public String getMachine() {
+            return machine;
+        }
+
+        public void setMachine(String machine) {
+            this.machine = machine;
+        }
+
+        public String getCpuinfo() {
+            return cpuinfo;
+        }
+
+        public void setCpuinfo(String cpuinfo) {
+            this.cpuinfo = cpuinfo;
+        }
+    }
+
+    public static class Cpu implements Serializable {
+        private String id2;
+        private String id1;
+        private String total2;
+        private String total1;
+        private String detail;
+
+
+        public String getId2() {
+            return id2;
+        }
+
+        public void setId2(String id2) {
+            this.id2 = id2;
+        }
+
+        public String getId1() {
+            return id1;
+        }
+
+        public void setId1(String id1) {
+            this.id1 = id1;
+        }
+
+        public String getTotal2() {
+            return total2;
+        }
+
+        public void setTotal2(String total2) {
+            this.total2 = total2;
+        }
+
+        public String getTotal1() {
+            return total1;
+        }
+
+        public void setTotal1(String total1) {
+            this.total1 = total1;
+        }
+
+        public String getDetail() {
+            return detail;
+        }
+
+        public void setDetail(String detail) {
+            this.detail = detail;
+        }
+    }
+
+    public static class Mem implements Serializable {
+        private float total;
+        private float used;
+
+        public float getTotal() {
+            return total;
+        }
+
+        public void setTotal(float total) {
+            this.total = total;
+        }
+
+        public float getUsed() {
+            return used;
+        }
+
+        public void setUsed(float used) {
+            this.used = used;
+        }
+    }
+
+    public static class Net implements Serializable {
+        private String name;
+        private float read;
+        private float write;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public float getRead() {
+            return read;
+        }
+
+        public void setRead(float read) {
+            this.read = read;
+        }
+
+        public float getWrite() {
+            return write;
+        }
+
+        public void setWrite(float write) {
+            this.write = write;
+        }
+    }
+
+    public static class Swap implements Serializable {
+        private float total;
+        private float free;
+
+        public float getTotal() {
+            return total;
+        }
+
+        public void setTotal(float total) {
+            this.total = total;
+        }
+
+        public float getFree() {
+            return free;
+        }
+
+        public void setFree(float free) {
+            this.free = free;
+        }
+    }
+
+    @JSONType(orders={"pid","user","pr","virt","res","cpu","mem","time","command"})
+    public static class Top implements Serializable {
+
+        private String pid;
+        private String user;
+        private String pr;
+        private String virt;
+        private String res;
+        private String cpu;
+        private String mem;
+        private String time;
+        private String command;
+
+        public String getPid() {
+            return pid;
+        }
+
+        public void setPid(String pid) {
+            this.pid = pid;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
+        }
+
+        public String getPr() {
+            return pr;
+        }
+
+        public void setPr(String pr) {
+            this.pr = pr;
+        }
+
+        public String getVirt() {
+            return virt;
+        }
+
+        public void setVirt(String virt) {
+            this.virt = virt;
+        }
+
+        public String getRes() {
+            return res;
+        }
+
+        public void setRes(String res) {
+            this.res = res;
+        }
+
+        public String getCpu() {
+            return cpu;
+        }
+
+        public void setCpu(String cpu) {
+            this.cpu = cpu;
+        }
+
+        public String getMem() {
+            return mem;
+        }
+
+        public void setMem(String mem) {
+            this.mem = mem;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
+        }
+
+        public String getCommand() {
+            return command;
+        }
+
+        public void setCommand(String command) {
+            this.command = command;
+        }
+
+        @Override
+        public String toString() {
+            return "Top{" +
+                    "pid='" + pid + '\'' +
+                    ", user='" + user + '\'' +
+                    ", pr='" + pr + '\'' +
+                    ", virt='" + virt + '\'' +
+                    ", res='" + res + '\'' +
+                    ", cpu='" + cpu + '\'' +
+                    ", mem='" + mem + '\'' +
+                    ", time='" + time + '\'' +
+                    ", command='" + command + '\'' +
+                    '}';
         }
     }
 }

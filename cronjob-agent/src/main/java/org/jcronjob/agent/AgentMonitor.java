@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.Format;
@@ -106,7 +107,9 @@ public class AgentMonitor {
 
             String monitorString = executeShell(Globals.CRONJOB_MONITOR_SHELL, "all");
 
-            Info info = JSON.parseObject(monitorString,Info.class);
+            Monitor.Info info = JSON.parseObject(monitorString,Monitor.Info.class);
+
+            monitor.setTop( getTop(info.getTop()) );
 
             //config...
             monitor.setConfig( info.getConf() );
@@ -119,9 +122,6 @@ public class AgentMonitor {
 
             //磁盘
             monitor.setDiskUsage(getDiskUsage(info));
-
-            //网卡
-            monitor.setNetwork(getNetwork(info));
 
             //swap
             monitor.setSwap(getSwap(info));
@@ -143,8 +143,42 @@ public class AgentMonitor {
         return null;
     }
 
+    private String getTop(String str) throws Exception {
+        Map<Integer, String> index = new HashMap<Integer, String>(0);
+        List<Field> fields = Arrays.asList(Monitor.Top.class.getDeclaredFields());
+        List<String> topList = new ArrayList<String>(0);
 
-    public  String getCpuData(Info info) {
+        Scanner scan = new Scanner(str);
+        boolean isFirst = true;
+        while (scan.hasNextLine()) {
+            String text = scan.nextLine().trim();
+            String data[] = text.split("\\s+");
+            if (isFirst) {
+                for (int i = 0; i < data.length; i++) {
+                    for (Field f : fields) {
+                        if (f.getName().equalsIgnoreCase(data[i].replaceAll("%|\\+", ""))) {
+                            index.put(i, f.getName());
+                        }
+                    }
+                }
+                isFirst = false;
+            } else {
+                Monitor.Top top = new Monitor.Top();
+                for (Map.Entry<Integer, String> entry : index.entrySet()) {
+                    Method setMethod = ReflectUitls.setter(Monitor.Top.class, entry.getValue());
+                    setMethod.invoke(top, data[entry.getKey()]);
+                }
+                topList.add( JSON.toJSONString(top) );
+            }
+
+        }
+        scan.close();
+
+        return  JSON.toJSONString(topList);
+    }
+
+
+    public  String getCpuData(Monitor.Info info) {
         //cpu usage report..
         Long sysIdle = toLong(info.getCpu().getId2()) - toLong(info.getCpu().getId1());
         Long total = toLong(info.getCpu().getTotal2())- toLong(info.getCpu().getTotal1());
@@ -175,7 +209,7 @@ public class AgentMonitor {
     }
 
 
-    private  String getDiskUsage(Info info) throws Exception {
+    private  String getDiskUsage(Monitor.Info info) throws Exception {
 
         /**
          * get info...
@@ -264,11 +298,11 @@ public class AgentMonitor {
         return JSON.toJSONString(disks);
     }
 
-    public  String getNetwork(Info info) {
+    public  String getNetwork(Monitor.Info info) {
         Map<String,Float> newWork = new HashMap<String, Float>();
         float read = 0;
         float write = 0;
-        for(Net net:info.getNet()){
+        for(Monitor.Net net:info.getNet()){
             read += net.getRead();
             write += net.getWrite();
         }
@@ -277,15 +311,15 @@ public class AgentMonitor {
         return JSON.toJSONString(newWork);
     }
 
-    public  String getSwap(Info info) {
+    public  String getSwap(Monitor.Info info) {
         return format.format( ((info.getSwap().getTotal() - info.getSwap().getFree() ) / info.getSwap().getTotal() ) * 100);
     }
 
-    public  List<String> getLoad(Info info) {
+    public  List<String> getLoad(Monitor.Info info) {
         return Arrays.asList(info.getLoad().split(","));
     }
 
-    private  String setMemUsage( Info info) {
+    private  String setMemUsage( Monitor.Info info) {
         return format.format( (info.getMem().getUsed() / info.getMem().getTotal() ) * 100);
     }
 
@@ -400,238 +434,5 @@ public class AgentMonitor {
         return stop;
     }
 
-    public static class Info implements Serializable {
-        private List<Net> net = new ArrayList<Net>();
-        private String disk;
-        private Mem mem;
-        private Swap swap;
-        private Cpu cpu;
-        private String load;
-        private String conf;
 
-        public List<Net> getNet() {
-            return net;
-        }
-
-        public void setNet(List<Net> net) {
-            this.net = net;
-        }
-
-        public String getDisk() {
-            return disk;
-        }
-
-        public void setDisk(String disk) {
-            this.disk = disk;
-        }
-
-        public Mem getMem() {
-            return mem;
-        }
-
-        public void setMem(Mem mem) {
-            this.mem = mem;
-        }
-
-        public Swap getSwap() {
-            return swap;
-        }
-
-        public void setSwap(Swap swap) {
-            this.swap = swap;
-        }
-
-        public Cpu getCpu() {
-            return cpu;
-        }
-
-        public void setCpu(Cpu cpu) {
-            this.cpu = cpu;
-        }
-
-        public String getLoad() {
-            return load;
-        }
-
-        public void setLoad(String load) {
-            this.load = load;
-        }
-
-        public String getConf() {
-            return conf;
-        }
-
-        public void setConf(String conf) {
-            this.conf = conf;
-        }
-    }
-
-    public static class Conf implements Serializable {
-        private String hostname;
-        private String os;
-        private String kernel;
-        private String machine;
-        private String cpuinfo;
-
-        public String getHostname() {
-            return hostname;
-        }
-
-        public void setHostname(String hostname) {
-            this.hostname = hostname;
-        }
-
-        public String getOs() {
-            return os;
-        }
-
-        public void setOs(String os) {
-            this.os = os;
-        }
-
-        public String getKernel() {
-            return kernel;
-        }
-
-        public void setKernel(String kernel) {
-            this.kernel = kernel;
-        }
-
-        public String getMachine() {
-            return machine;
-        }
-
-        public void setMachine(String machine) {
-            this.machine = machine;
-        }
-
-        public String getCpuinfo() {
-            return cpuinfo;
-        }
-
-        public void setCpuinfo(String cpuinfo) {
-            this.cpuinfo = cpuinfo;
-        }
-    }
-
-    public static class Cpu implements Serializable {
-        private String id2;
-        private String id1;
-        private String total2;
-        private String total1;
-        private String detail;
-
-
-        public String getId2() {
-            return id2;
-        }
-
-        public void setId2(String id2) {
-            this.id2 = id2;
-        }
-
-        public String getId1() {
-            return id1;
-        }
-
-        public void setId1(String id1) {
-            this.id1 = id1;
-        }
-
-        public String getTotal2() {
-            return total2;
-        }
-
-        public void setTotal2(String total2) {
-            this.total2 = total2;
-        }
-
-        public String getTotal1() {
-            return total1;
-        }
-
-        public void setTotal1(String total1) {
-            this.total1 = total1;
-        }
-
-        public String getDetail() {
-            return detail;
-        }
-
-        public void setDetail(String detail) {
-            this.detail = detail;
-        }
-    }
-
-    public static class Mem implements Serializable {
-        private float total;
-        private float used;
-
-        public float getTotal() {
-            return total;
-        }
-
-        public void setTotal(float total) {
-            this.total = total;
-        }
-
-        public float getUsed() {
-            return used;
-        }
-
-        public void setUsed(float used) {
-            this.used = used;
-        }
-    }
-
-    public static class Net implements Serializable {
-        private String name;
-        private float read;
-        private float write;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public float getRead() {
-            return read;
-        }
-
-        public void setRead(float read) {
-            this.read = read;
-        }
-
-        public float getWrite() {
-            return write;
-        }
-
-        public void setWrite(float write) {
-            this.write = write;
-        }
-    }
-
-    public static class Swap implements Serializable {
-        private float total;
-        private float free;
-
-        public float getTotal() {
-            return total;
-        }
-
-        public void setTotal(float total) {
-            this.total = total;
-        }
-
-        public float getFree() {
-            return free;
-        }
-
-        public void setFree(float free) {
-            this.free = free;
-        }
-    }
 }

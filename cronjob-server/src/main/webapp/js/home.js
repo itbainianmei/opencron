@@ -75,7 +75,9 @@ var cronjobChart = {
                             cronjobChart.gauge.setOption(cronjobChart.gaugeOption, true);
                         }
 
-                        if ( !cronjobChart.refresh && !networkLoad ) {
+                        cronjobChart.topData();
+
+                        /*if ( !cronjobChart.refresh && !networkLoad ) {
                             networkLoad = true;
                             netChartObj = cronjobChart.networkChart();
                             cronjobChart.refresh = true;
@@ -88,7 +90,7 @@ var cronjobChart = {
                             netChartObj.xAxis[0].categories.push(data.time);
                             netChartObj.series[0].addPoint(parseFloat(read), true, shift);
                             netChartObj.series[1].addPoint(parseFloat(write), true, shift);
-                        }
+                        }*/
 
                     }
                 });
@@ -540,6 +542,38 @@ var cronjobChart = {
                 }
             }
         });
+    },
+
+    topData:function () {
+        //title
+        var html='<tr>'+
+            '<td class="noborder" title="进程ID">PID</td>'+
+            '<td class="noborder" title="进程所属的用户">USER</td>'+
+            '<td class="noborder" title="优先权">RP</td>'+
+            '<td class="noborder" title="进程需要的虚拟内存">VIRI</td>'+
+            '<td class="noborder" title="常驻内存">RES</td>'+
+            '<td class="noborder" title="CPU使用占比">CPU</td>'+
+            '<td class="noborder" title="内存使用占比">MEM</td>'+
+            '<td class="noborder" title="持续时长">TIME</td>'+
+            '<td class="noborder" title="所执行的命令">COMMAND</td>'+
+            '</tr>';
+        $.each( eval('(' + cronjobChart.data.top + ')') , function (i, data) {
+            var text = "<tr>";
+            var obj = eval('('+data+')');
+            for (var k in obj) {
+                if ('cpu' === k || 'mem' === k) {
+                    var cpu = '<td><div class="progress progress-small progress-white">'+
+                        '<div class="progress-bar progress-bar-white" role="progressbar" data-percentage="'+obj[k]+'%" style="width:'+obj[k]+'%" aria-valuemin="0" aria-valuemax="100"></div>'+
+                        '</div></td>';
+                    text += cpu;
+                }else {
+                    text += ("<td>"+obj[k]+"</td>");
+                }
+            }
+            text+='</tr>';
+            html+=text;
+        });
+        $("#topbody").html(html);
     },
 
     executeChart: function () {
