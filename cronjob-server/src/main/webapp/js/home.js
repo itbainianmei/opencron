@@ -1,5 +1,4 @@
 var cronjobChart = {
-    refresh:false,
     path:"/",
     intervalId: null,
     intervalTime: 2000,
@@ -16,23 +15,11 @@ var cronjobChart = {
     ],
 
     monitorData: function () {
-
-        /**
-         * 关闭上一个websocket
-         */
-        if (this.socket) {
-            this.socket.close();
-            this.socket = null;
-        }
-
         var diskLoad = false;
         var cpuLoad = false;
         var cpuChartObj = null;
         var cpuX = [];
         var cpuY = [];
-
-        var networkLoad = false;
-        var netChartObj = [];
 
         /**
          * 没有执行器
@@ -42,6 +29,13 @@ var cronjobChart = {
                 $(".loader").remove();
             },1000);
             return;
+        }
+        /**
+         * 关闭上一个websocket
+         */
+        if( this.socket ){
+            this.socket.close();
+            this.socket = null;
         }
 
         $.ajax({
@@ -77,21 +71,6 @@ var cronjobChart = {
 
                         cronjobChart.topData();
 
-                        /*if ( !cronjobChart.refresh && !networkLoad ) {
-                            networkLoad = true;
-                            netChartObj = cronjobChart.networkChart();
-                            cronjobChart.refresh = true;
-                        } else {
-                            var network = eval('(' + cronjobChart.data.network + ')');
-                            var read = network.read;
-                            var write = network.write;
-                            var series = netChartObj.series[0];
-                            var shift = series.data.length > 60 * 2;
-                            netChartObj.xAxis[0].categories.push(data.time);
-                            netChartObj.series[0].addPoint(parseFloat(read), true, shift);
-                            netChartObj.series[1].addPoint(parseFloat(write), true, shift);
-                        }*/
-
                     }
                 });
                 cronjobChart.socket.on("disconnect",function () {
@@ -101,7 +80,6 @@ var cronjobChart = {
                     cpuChartObj = null;
                     cpuX = [];
                     cpuY = [];
-                    networkLoad = false;
                 });
             }
         });
@@ -759,7 +737,6 @@ $(document).ready(function () {
 
     $("#workerId").change(
         function(){
-            cronjobChart.refresh = false;
             cronjobChart.monitorData();
         }
     );
