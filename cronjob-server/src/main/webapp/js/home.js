@@ -546,6 +546,7 @@ var cronjobChart = {
 
     topData:function () {
         //title
+        //    @JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
         var html='<tr>'+
             '<td class="noborder" title="进程ID">PID</td>'+
             '<td class="noborder" title="进程所属的用户">USER</td>'+

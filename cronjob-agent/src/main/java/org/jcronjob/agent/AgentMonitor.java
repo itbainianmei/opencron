@@ -129,9 +129,6 @@ public class AgentMonitor {
             //load(负载)
             monitor.setLoad(getLoad(info));
 
-            //iostat...
-            //monitor.setIostat(  getIostat() );
-
             //time
             monitor.setTime(DateUtils.parseStringFromDate(new Date(), "HH:mm:ss"));
 
