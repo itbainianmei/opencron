@@ -77,10 +77,9 @@
 
 
         .noborder{
-            border-top:0px solid rgba(255,255,255,0.55)
-        }
-        #top table td{
-            border-top:1px solid rgba(255,255,255,0.55)
+            font-family: "Roboto","Arial",sans-serif;
+            color: rgba(192, 192, 192,0.9);
+            font-weight: lighter;
         }
 
     </style>
@@ -167,7 +166,7 @@
                             <div class="status pull-right bg-transparent-black-1">
                                 <span data-animation-duration="1500" data-value="" class="animate-number" id="agent_number" ></span>%
                             </div>
-                            <div class="progress progress-little progress-transparent-black">
+                            <div class="progress progress-sm progress-transparent-black">
                                 <div data-percentage="0%" class="progress-bar animate-progress-bar" id="agent_number_prop"></div>
                             </div>
                         </div>
@@ -193,7 +192,7 @@
                             <div class="status pull-right bg-transparent-black-1">
                                 <span data-animation-duration="1500" data-value="" class="animate-number" id="job_number"></span>%
                             </div>
-                            <div class="progress progress-little progress-transparent-black">
+                            <div class="progress progress-sm progress-transparent-black">
                                 <div data-percentage="0%" class="progress-bar animate-progress-bar" id="job_number_prop"></div>
                             </div>
                         </div>
@@ -220,7 +219,7 @@
                             <div class="status pull-right bg-transparent-black-1">
                                 <span data-animation-duration="1500" data-value="" class="animate-number" id="ok_number"></span>%
                             </div>
-                            <div class="progress progress-little progress-transparent-black">
+                            <div class="progress progress-sm progress-transparent-black">
                                 <div data-percentage="0%" class="progress-bar animate-progress-bar" id="ok_number_prop"></div>
                             </div>
                         </div>
@@ -246,7 +245,7 @@
                             <div class="status pull-right bg-transparent-black-1">
                                 <span data-animation-duration="1500" data-value="" class="animate-number" id="no_number"></span>%
                             </div>
-                            <div class="progress progress-little progress-transparent-black">
+                            <div class="progress progress-sm progress-transparent-black">
                                 <div data-percentage="0%" class="progress-bar animate-progress-bar" id="no_number_prop"></div>
                             </div>
                         </div>
@@ -383,10 +382,10 @@
                 </div>
 
                 <div class="tile" id="top" style="min-height: 250px">
-                    <h2 class="tile-title"><i aria-hidden="true" class="fa fa-line-chart"></i>&nbsp;CPU使用率</h2>
+                    <h2 class="tile-title"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;进程监控</h2>
                     <div style="margin-left: 15px;margin-right: 15px;">
                     <table class="table tile table-custom table-sortable " style="font-size: 13px;background-color: rgba(0,0,0,0);">
-                        <tbody id="topbody">
+                        <tbody id="topbody" style="color: #fafafa;font-size:12px;">
                             <div class="loader" >
                                 <div class="loader-inner">
                                     <div class="loader-line-wrap">
@@ -423,7 +422,6 @@
                     </p>
                     <div class="p-t-10 p-r-5 p-b-5">
                         <div style="height: 200px; padding: 0px; position: relative;" id="cpu-chart">
-
                             <div class="loader">
                                 <div class="loader-inner">
                                     <div class="loader-line-wrap">
@@ -443,49 +441,9 @@
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-               <%-- <!--network-->
-                <div class="tile" id="network">
-                    <h2 class="tile-title"><i aria-hidden="true" class="fa fa-dribbble"></i>&nbsp;网卡IO监控</h2>
-                    <p style="margin-left: 10px;margin-right: 10px;">
-
-                    <div class="p-t-10 p-r-5 p-b-5" id="network-parent">
-                        <div id="network-view" class="main-chart" style="height: 200px;">
-
-                            <div class="loader">
-                                <div class="loader-inner">
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="clearfix"></div>--%>
 
             </div>
             <!--config-->

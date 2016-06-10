@@ -552,8 +552,8 @@ var cronjobChart = {
             '<td class="noborder" title="进程所属的用户">USER</td>'+
             '<td class="noborder" title="虚拟内存">VIRI</td>'+
             '<td class="noborder" title="常驻内存">RES</td>'+
-            '<td class="noborder" title="CPU使用占比">CPU</td>'+
-            '<td class="noborder" title="内存使用占比">MEM</td>'+
+            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>'+
+            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>'+
             '<td class="noborder" title="持续时长">TIME</td>'+
             '<td class="noborder" title="所执行的命令">COMMAND</td>'+
             '</tr>';
@@ -562,8 +562,21 @@ var cronjobChart = {
             var obj = eval('('+data+')');
             for (var k in obj) {
                 if ('cpu' === k || 'mem' === k) {
-                    var cpu = '<td><div class="progress progress-small progress-white">'+
-                        '<div class="progress-bar progress-bar-white" role="progressbar" data-percentage="'+obj[k]+'%" style="width:'+obj[k]+'%" aria-valuemin="0" aria-valuemax="100"></div>'+
+
+                    var val  = obj[k];
+                    var colorCss = "";
+                    if (val < 60) {
+                        colorCss = "progress-bar-success";
+                    } else if (val < 80) {
+                        colorCss = "progress-bar-warning";
+                    } else {
+                        colorCss = "progress-bar-danger";
+                    }
+                    var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">'+
+                        '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">'+val+'</span>%'+
+                        '</div>'+
+                        '<div class="progress progress-small progress-white">'+
+                        '<div class="progress-bar '+colorCss+'" role="progressbar" data-percentage="'+val+'%" style="width:'+val+'%" aria-valuemin="0" aria-valuemax="100"></div>'+
                         '</div></td>';
                     text += cpu;
                 }else {

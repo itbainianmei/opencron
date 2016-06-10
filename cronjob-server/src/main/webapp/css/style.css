@@ -712,6 +712,13 @@ hr {
     height: 4px;
 }
 
+.progress-sm{
+    height: 6px;
+}
+
+.bg-transparent-black-1 {
+    margin-left: 5px;
+}
 .progress-alt {
     padding: 2px;
 }
