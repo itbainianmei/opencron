@@ -69,7 +69,7 @@
                 </select>
                 &nbsp;
                 <label for="sendTime">发送时间：</label>
-                <input type="text" id="sendTime" name="sendTime" value="${sendTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd'})" class="Wdate select-self" style="width: 100px"/>
+                <input type="text" id="sendTime" name="sendTime" value="${sendTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd',skin:'twoer'})" class="Wdate select-self" style="width: 100px"/>
                 
                 <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61740;</i>&nbsp;返回</button>
             </div>

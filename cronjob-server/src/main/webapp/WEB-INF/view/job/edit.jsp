@@ -455,7 +455,10 @@
         <li><a href="">CronJob</a></li>
         <li><a href="">作业管理</a></li>
     </ol>
-    <h4 class="page-title">添加作业</h4>
+    <h4 class="page-title">
+        <i class="fa fa-edit" aria-hidden="true"></i>
+        编辑作业
+    </h4>
 
 
     <div style="float: right;margin-top: 5px">

@@ -225,7 +225,7 @@
                 </select>
                 &nbsp;&nbsp;&nbsp;
                 <label for="queryTime">开始时间：</label>
-                <input type="text" id="queryTime" name="queryTime" value="${queryTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd'})" class="Wdate select-self" style="width: 100px"/>
+                <input type="text" id="queryTime" name="queryTime" value="${queryTime}" onfocus="WdatePicker({onpicked:function(){doUrl(); },dateFmt:'yyyy-MM-dd',skin:'twoer'})" class="Wdate select-self" style="width: 100px"/>
             </div>
         </div>
 
