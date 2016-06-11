@@ -155,7 +155,7 @@ public class CronJob implements Serializable {
 
         public static ExecType getByStatus(Integer status) {
             for (ExecType execType : ExecType.values()) {
-                if (execType.getStatus() == status) {
+                if (execType.getStatus().equals(status)) {
                     return execType;
                 }
             }
@@ -204,7 +204,7 @@ public class CronJob implements Serializable {
 
         public static CronType getByType(Integer type) {
             for (CronType cronType : CronType.values()) {
-                if (cronType.getType() == type) {
+                if (cronType.getType().equals(type)) {
                     return cronType;
                 }
             }
