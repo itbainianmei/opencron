@@ -56,7 +56,7 @@ public class Response implements org.apache.thrift.TBase<Response, Response._Fie
      */
     public Action action; // required
     public Map<String,String> result; // required
-    public Integer exitCode; // required
+    public int exitCode; // required
     public boolean success; // required
     public long startTime; // required
     public long endTime; // required
@@ -304,7 +304,7 @@ public class Response implements org.apache.thrift.TBase<Response, Response._Fie
         }
     }
 
-    public Integer getExitCode() {
+    public int getExitCode() {
         return this.exitCode;
     }
 

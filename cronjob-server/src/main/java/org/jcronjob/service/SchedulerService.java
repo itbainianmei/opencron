@@ -31,7 +31,6 @@ import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -102,12 +101,8 @@ public final class SchedulerService {
 
     public void pause(Long jobId) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
-
-        boolean result = false;
         if (checkExists(jobId)) {
             scheduler.pauseTrigger(triggerKey);
-            result = true;
-        } else {
         }
     }
 

@@ -52,7 +52,7 @@ public class Log implements Serializable {
 
     private Date sendTime;
 
-    private int isread;
+    private Integer isread;
 
     public Long getLogId() {
         return logId;
@@ -110,11 +110,11 @@ public class Log implements Serializable {
         this.sendTime = sendTime;
     }
 
-    public int getIsread() {
+    public Integer getIsread() {
         return isread;
     }
 
-    public void setIsread(int isread) {
+    public void setIsread(Integer isread) {
         this.isread = isread;
     }
 }

@@ -156,7 +156,7 @@ public class AgentProcessor implements CronJob.Iface {
             } else {
                 response.setExitCode(exitValue);
             }
-            response.setSuccess(response.getExitCode().equals(CronJob.StatusCode.SUCCESS_EXIT.getValue())).end();
+            response.setSuccess(response.getExitCode() == CronJob.StatusCode.SUCCESS_EXIT.getValue()).end();
             if (shellFile != null) {
                 shellFile.delete();//删除文件
             }
