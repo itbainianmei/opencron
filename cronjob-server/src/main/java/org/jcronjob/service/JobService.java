@@ -126,7 +126,7 @@ public class JobService {
     }
 
     private List<JobVo> queryChildren(JobVo job) {
-        if (job.getCategory() == 1) {
+        if (job.getCategory().equals(JobCategory.FLOW.getCode())) {
             String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname" +
                     " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u " +
                     " ON t.operateId = u.userId WHERE t.status=1 AND t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";

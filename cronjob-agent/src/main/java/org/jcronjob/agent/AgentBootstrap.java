@@ -82,12 +82,12 @@ public class AgentBootstrap implements Daemon,Serializable {
         port = Integer.valueOf(Integer.parseInt(cmd.getOptionValue("port").toString()));
         String inputPwd = cmd.getOptionValue("pass");
 
-        File passfile = new File(System.getProperty("cronjob.home"));
+        File passfile = new File(System.getProperty(Globals.CRONJOB_HOME));
         if (!passfile.exists()) {
             passfile.mkdirs();
         }
 
-        passfile = new File(passfile.getAbsolutePath() + File.separator + ".password");
+        passfile = Globals.CRONJOB_PASSWORD_FILE;
 
         if (notEmpty(inputPwd)) {
             this.password = DigestUtils.md5Hex(inputPwd).toLowerCase();

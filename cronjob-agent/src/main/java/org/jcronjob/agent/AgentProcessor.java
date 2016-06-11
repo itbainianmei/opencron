@@ -127,7 +127,7 @@ public class AgentProcessor implements CronJob.Iface {
             } else {
                 exitValue = CronJob.StatusCode.ERROR_EXEC.getValue();
             }
-            if (exitValue == CronJob.StatusCode.KILL.getValue()) {
+            if (CronJob.StatusCode.KILL.getValue().equals(exitValue)) {
                 logger.info("[cronjob]:job has be killed!at pid :{}", request.getParams().get("pid"));
             } else {
                 logger.info("[cronjob]:job execute error:{}", e.getCause().getMessage());
@@ -156,7 +156,7 @@ public class AgentProcessor implements CronJob.Iface {
             } else {
                 response.setExitCode(exitValue);
             }
-            response.setSuccess(response.getExitCode() == CronJob.StatusCode.SUCCESS_EXIT.getValue()).end();
+            response.setSuccess(response.getExitCode().equals(CronJob.StatusCode.SUCCESS_EXIT.getValue())).end();
             if (shellFile != null) {
                 shellFile.delete();//删除文件
             }
@@ -208,7 +208,7 @@ public class AgentProcessor implements CronJob.Iface {
             }
         }
 
-        response.setExitCode(CronJob.StatusCode.ERROR_EXIT.getValue() == exitVal ? CronJob.StatusCode.ERROR_EXIT.getValue() : CronJob.StatusCode.SUCCESS_EXIT.getValue())
+        response.setExitCode(CronJob.StatusCode.ERROR_EXIT.getValue().equals(exitVal) ? CronJob.StatusCode.ERROR_EXIT.getValue() : CronJob.StatusCode.SUCCESS_EXIT.getValue())
                 .setMessage(message)
                 .end();
 

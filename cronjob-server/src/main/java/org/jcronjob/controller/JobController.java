@@ -23,7 +23,6 @@ package org.jcronjob.controller;
 
 import java.util.*;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.jcronjob.base.job.CronJob;
 import org.jcronjob.base.job.CronJob.ExecType;
 import org.jcronjob.tag.Page;
@@ -120,7 +119,7 @@ public class JobController {
         }
 
         //单任务
-        if (job.getCategory() == CronJob.JobCategory.SINGLETON.getCode()) {
+        if ( CronJob.JobCategory.SINGLETON.getCode().equals(job.getCategory()) ) {
             job.setOperateId((Long) (session.getAttribute("userId")));
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);

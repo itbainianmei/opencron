@@ -119,21 +119,21 @@ public class CronJob implements Serializable {
         RERUN(2, "rerun", "重跑模式"),
         RERUN_DONE(3, "rerun_done", "重跑完成");
 
-        private int status;
+        private Integer status;
         private String name;
         private String description;
 
-        ExecType(int status, String name, String description) {
+        ExecType(Integer status, String name, String description) {
             this.status = status;
             this.name = name;
             this.description = description;
         }
 
-        public int getStatus() {
+        public Integer getStatus() {
             return status;
         }
 
-        public void setStatus(int status) {
+        public void setStatus(Integer status) {
             this.status = status;
         }
 
@@ -168,21 +168,21 @@ public class CronJob implements Serializable {
         CRONTAB(0, "crontab", "crontab表达式"),
         QUARTZ(1, "quartz", "quartz表达式");
 
-        private int type;
+        private Integer type;
         private String name;
         private String description;
 
-        CronType(int type, String name, String description) {
+        CronType(Integer type, String name, String description) {
             this.type = type;
             this.name = name;
             this.description = description;
         }
 
-        public int getType() {
+        public Integer getType() {
             return type;
         }
 
-        public void setType(int type) {
+        public void setType(Integer type) {
             this.type = type;
         }
 
@@ -217,19 +217,19 @@ public class CronJob implements Serializable {
         SUCCESSFUL(1, "成功"),
         KILLED(2, "被杀");
 
-        private int status;
+        private Integer status;
         private String description;
 
-        ResultStatus(int status, String description) {
+        ResultStatus(Integer status, String description) {
             this.status = status;
             this.description = description;
         }
 
-        public int getStatus() {
+        public Integer getStatus() {
             return status;
         }
 
-        public void setStatus(int status) {
+        public void setStatus(Integer status) {
             this.status = status;
         }
 
@@ -249,21 +249,21 @@ public class CronJob implements Serializable {
         STOPED(3, "stoped", "已停止"),
         FLOW_DONE(4, "flowdone", "流程任务的一个节点任务完成");
 
-        private int status;
+        private Integer status;
         private String name;
         private String description;
 
-        RunStatus(int status, String name, String description) {
+        RunStatus(Integer status, String name, String description) {
             this.status = status;
             this.name = name;
             this.description = description;
         }
 
-        public int getStatus() {
+        public Integer getStatus() {
             return status;
         }
 
-        public void setStatus(int status) {
+        public void setStatus(Integer status) {
             this.status = status;
         }
 
@@ -288,19 +288,19 @@ public class CronJob implements Serializable {
         SINGLETON(0, "单一任务"),
         FLOW(1, "流程任务");
 
-        private int code;
+        private Integer code;
         private String description;
 
-        JobCategory(int code, String description) {
+        JobCategory(Integer code, String description) {
             this.code = code;
             this.description = description;
         }
 
-        public int getCode() {
+        public Integer getCode() {
             return code;
         }
 
-        public void setCode(int code) {
+        public void setCode(Integer code) {
             this.code = code;
         }
 
@@ -318,19 +318,19 @@ public class CronJob implements Serializable {
         SMS(1,"短信"),
         WEBSITE(2,"站内信");
 
-        private int value;
+        private Integer value;
         private String desc;
 
-        MsgType(int value,String desc){
+        MsgType(Integer value,String desc){
             this.value = value;
             this.desc = desc;
         }
 
-        public int getValue() {
+        public Integer getValue() {
             return value;
         }
 
-        public void setValue(int value) {
+        public void setValue(Integer value) {
             this.value = value;
         }
 
@@ -346,19 +346,19 @@ public class CronJob implements Serializable {
     public enum RunModel{
         SEQUENCE(0,"串行"),
         SAMETIME(1,"并行");
-        private int value;
+        private Integer value;
         private String desc;
 
-        RunModel(int value,String desc){
+        RunModel(Integer value,String desc){
             this.value = value;
             this.desc = desc;
         }
 
-        public int getValue() {
+        public Integer getValue() {
             return value;
         }
 
-        public void setValue(int value) {
+        public void setValue(Integer value) {
             this.value = value;
         }
 

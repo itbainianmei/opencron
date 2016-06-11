@@ -68,14 +68,18 @@ public class ExecuteService implements Job {
         JobVo jobVo = (JobVo) jobExecutionContext.getJobDetail().getJobDataMap().get(key);
         try {
             ExecuteService executeService = (ExecuteService) jobExecutionContext.getJobDetail().getJobDataMap().get("jobBean");
-            executeService.executeJob(jobVo, ExecType.getByStatus(jobVo.getExecType()));
+            boolean success = executeService.executeJob(jobVo, ExecType.getByStatus(jobVo.getExecType()));
+            logger.info("[cronjob] job:{} at {}:{},execute:{}", jobVo.getJobName(),jobVo.getWorker().getIp(),jobVo.getWorker().getPort(), success?"successful":"failed");
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
     }
 
     public boolean executeJob(final JobVo job, final ExecType execType) {
-        if (job.getCategory() == JobCategory.FLOW.getCode()) {//流程任务..
+
+        //流程作业..
+        if ( job.getCategory().equals(JobCategory.FLOW.getCode()) ) {
+
             final long flowGroup = System.currentTimeMillis();//分配一个流程组Id
             /**
              * 一个指定大小的job队列
@@ -83,29 +87,47 @@ public class ExecuteService implements Job {
             job.getChildren().add(0, job);
             Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
 
-            final List<Boolean> result = new ArrayList<Boolean>(0);
-            for (final JobVo jobVo : jobQueue) {
-                //如果子任务是并行(则启动多线程,所有子任务同时执行)
-                if (job.getRunModel().equals(RunModel.SAMETIME.getValue())) {
-                    new Thread(new Runnable() {
+            /**
+             * 并行任务
+             */
+            if ( RunModel.SAMETIME.getValue().equals(job.getRunModel()) ) {
+                final List<Boolean> result = new ArrayList<Boolean>(0);
+                List<Thread> threads = new ArrayList<Thread>();
+                for (final JobVo jobVo : jobQueue) {
+                    //如果子任务是并行(则启动多线程,所有子任务同时执行)
+                    Thread thread = new Thread(new Runnable() {
                         public void run() {
                             result.add(executeFlowJob(jobVo, execType, flowGroup));
                         }
-                    }).start();
-                } else {//串行,按顺序执行
+                    });
+                    threads.add(thread);
+                    thread.start();
+                }
+
+                /**
+                 * 确保所有的现场执行作业都全部执行完毕,拿到返回的执行结果。检查并行任务中有是否失败的...
+                 */
+                for(Thread thread:threads){
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        logger.error("[cronjob] job rumModel with SAMETIME error:{}",e.getMessage());
+                    }
+                }
+                return !result.contains(false);
+            }else {//串行,按顺序执行
+                for (JobVo jobVo : jobQueue) {
                     if (!executeFlowJob(jobVo, execType, flowGroup)) {
                         return false;
                     }
                 }
+                return true;
             }
-
-            /**
-             * 并行任务中有失败的...
-             */
-            return !result.contains(false);
-
         }
 
+        /**
+         * 单一作业...
+         */
         Record record = new Record(job, execType);
         record.setCategory(JobCategory.SINGLETON.getCode());//单一任务
         //执行前先保存
@@ -119,7 +141,7 @@ public class ExecuteService implements Job {
             /**
              * 被kill
              */
-            if (response.getExitCode() == StatusCode.KILL.getValue()) {
+            if ( StatusCode.KILL.getValue().equals(response.getExitCode()) ) {
                 record.setStatus(RunStatus.STOPED.getStatus());
                 record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
             } else {//非kill
@@ -168,7 +190,7 @@ public class ExecuteService implements Job {
             /**
              * 被kill,直接退出
              */
-            if (result.getExitCode() == StatusCode.KILL.getValue()) {
+            if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
                 record.setStatus(RunStatus.STOPED.getStatus());
                 record.setSuccess(ResultStatus.KILLED.getStatus());
                 recordService.update(record);
@@ -252,7 +274,7 @@ public class ExecuteService implements Job {
             /**
              * 被kill
              */
-            if (result.getExitCode() == StatusCode.KILL.getValue()) {
+            if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
                 record.setStatus(RunStatus.STOPED.getStatus());
                 record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
             } else {
@@ -260,7 +282,7 @@ public class ExecuteService implements Job {
             }
 
             //本次重跑的执行成功,则父记录执行完毕
-            if (parentRecord.getExecType() == ExecType.RERUN_DONE.getStatus()) {
+            if ( ExecType.RERUN_DONE.getStatus().equals(parentRecord.getExecType()) ) {
                 parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
                 recordService.update(parentRecord);
             }

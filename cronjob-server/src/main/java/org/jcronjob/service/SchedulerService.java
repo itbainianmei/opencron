@@ -142,7 +142,7 @@ public final class SchedulerService {
              */
             cronJobCollector.removeTask(job.getJobId());
 
-            if (job.getExecType().equals(CronJob.ExecType.AUTO.getStatus())) {//自动执行
+            if ( CronJob.ExecType.AUTO.getStatus().equals(job.getExecType()) ) {//自动执行
                 addOrModify(job, executeService);
             } else {//手动执行
                 remove(job.getJobId());
@@ -156,7 +156,7 @@ public final class SchedulerService {
             /**
              * 将作业加到crontab任务计划
              */
-            if (job.getExecType().equals(CronJob.ExecType.AUTO.getStatus())) {//自动执行
+            if ( CronJob.ExecType.AUTO.getStatus().equals(job.getExecType()) ) {//自动执行
                 cronJobCollector.addTask(job); //手动执行
             }else {
                 cronJobCollector.removeTask(job.getJobId());
