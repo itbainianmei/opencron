@@ -39,6 +39,7 @@ CREATE TABLE job (
   flowNum smallint(10) DEFAULT NULL,
   status smallint(2) DEFAULT '1' COMMENT '1:有效,0:无效,2:',
   lastFlag smallint(2) DEFAULT '0' COMMENT '是否为流程作业的最后一个子作业',
+  runModel smallint(2) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)'
   KEY INX_WORKER (workerId),
   KEY INX_QUERY (category,cronType,execType,status)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
