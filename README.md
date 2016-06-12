@@ -9,7 +9,23 @@ redrain分为两个redrain-server端和redrain-agent端，redrain-server端即�
 #redrain-agent 安装步骤:
     1)下载编译源码，在redrain-agent的target下会生成一个在redrain-agent-${version}.tar.gz的包
     
-    2)部署agent，将redrain-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包:
+    2)部署agent，将redrain-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
+     ---bin/
+         |  startup.sh         #agent的启动脚本,调用的是redrain.sh来完成
+         |  shutdown.sh        #agent停止脚本，调用的是redrain.sh来完成
+         |  redrain.sh         #agent控制启动|停止的脚本
+         |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
+         |  kill.sh            #kill任务时需要的脚本,由系统调度
+     ---conf/
+         | log4j.properties    #答应log4j配置文件
+     ---lib/
+         | *.jar               #项目运行需要的jar文件
+         | jsvc                #agent以服务的方式启动需要的文件
+     ---temp/
+         | *.sh                #用于存放项目生成的零时文件的目录
+     ---logs
+         | redrain.out         #项目启动会产生的Log文件
+     
      > tar -xzvf redrain-agent-${version}.tar.gz
     3)启动redrain-agent 进入redrain-agent/bin
      > cd redrain-agent/bin
