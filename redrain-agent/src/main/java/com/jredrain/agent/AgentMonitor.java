@@ -71,12 +71,12 @@ public class AgentMonitor {
                 logger.info("[redrain]:monitor connected:SessionId @ {},port @ {}", sessionId, port);
                 clients.put(sessionId, client);
                 /**
-                 * 端口连接就不在推送数据
+                 * 断开连接就不在推送数据
                  */
                 while ( clients.get(sessionId) !=null ) {
                     client.sendEvent("monitor", monitor());
                     try {
-                        TimeUnit.MICROSECONDS.sleep(2000);
+                        TimeUnit.MICROSECONDS.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -88,7 +88,7 @@ public class AgentMonitor {
             @Override
             public void onDisconnect(SocketIOClient client) {
                 /**
-                 * 一旦客户端端口连接,立即将该连接实例移除...
+                 * 一旦客户端断开连接,立即将该连接实例移除...
                  */
                 clients.remove(client.getSessionId());
                 logger.info("[redrain]:monitor disconnect:SessionId @ {},port @ {} ", client.getSessionId(), port);
