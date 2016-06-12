@@ -112,7 +112,7 @@ public class AgentMonitor {
 
             Monitor monitor = new Monitor();
 
-            String monitorString = executeShell(Globals.REDRAIN_MONITOR_SHELL, "all");
+            String monitorString = executeShell(Globals.REDRAIN_MONITOR_SHELL);
 
             Monitor.Info info = JSON.parseObject(monitorString,Monitor.Info.class);
 
