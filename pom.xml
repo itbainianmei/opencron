@@ -5,20 +5,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.jcronjob</groupId>
-    <artifactId>cronjob</artifactId>
+    <groupId>org.redrain</groupId>
+    <artifactId>redrain</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>cronjob-base</module>
-        <module>cronjob-server</module>
-        <module>cronjob-agent</module>
+        <module>redrain-base</module>
+        <module>redrain-server</module>
+        <module>redrain-agent</module>
     </modules>
     <packaging>pom</packaging>
 
     <scm>
-        <url>scm:git:git@github.com:wolfboys/cronjob.git</url>
-        <connection>scm:git:git@github.com:wolfboys/cronjob.git</connection>
-        <developerConnection>scm:git:git@github.com:wolfboys/cronjob.git</developerConnection>
+        <url>scm:git:git@github.com:wolfboys/redrain.git</url>
+        <connection>scm:git:git@github.com:wolfboys/redrain.git</connection>
+        <developerConnection>scm:git:git@github.com:wolfboys/redrain.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -26,16 +26,16 @@
         <license>
             <name>Apache v2</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>cronjob</distribution>
+            <distribution>redrain</distribution>
         </license>
     </licenses>
 
     <developers>
         <developer>
-            <id>cronjob</id>
+            <id>redrain</id>
             <name>benjobs</name>
             <email>benjobs@qq.com</email>
-            <url>http://www.jcronjob.org</url>
+            <url>http://www.jredrain.com</url>
             <roles>
                 <role>Architect</role>
                 <role>Developer</role>
@@ -65,20 +65,20 @@
         <dependencies>
 
             <dependency>
-                <groupId>org.jcronjob</groupId>
-                <artifactId>cronjob-base</artifactId>
+                <groupId>org.redrain</groupId>
+                <artifactId>redrain-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.jcronjob</groupId>
-                <artifactId>cronjob-server</artifactId>
+                <groupId>org.redrain</groupId>
+                <artifactId>redrain-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.jcronjob</groupId>
-                <artifactId>cronjob-agent</artifactId>
+                <groupId>org.redrain</groupId>
+                <artifactId>redrain-agent</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

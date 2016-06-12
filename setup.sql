@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS cronjob;
+CREATE DATABASE IF NOT EXISTS redrain;
 
-USE cronjob;
+USE redrain;
 
 DROP TABLE IF EXISTS config;
 CREATE TABLE config (
@@ -17,7 +17,7 @@ CREATE TABLE config (
 
 
 LOCK TABLES config WRITE;
-INSERT INTO config VALUES (1,'you_mail_name','smtp.exmail.qq.com',465,'your_mail_pwd','http://your_url',30,'','benjobs@Kcronjob');
+INSERT INTO config VALUES (1,'you_mail_name','smtp.exmail.qq.com',465,'your_mail_pwd','http://your_url',30,'',NULL);
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS job;
@@ -39,7 +39,6 @@ CREATE TABLE job (
   flowNum smallint(10) DEFAULT NULL,
   status smallint(2) DEFAULT '1' COMMENT '1:有效,0:无效,2:',
   lastFlag smallint(2) DEFAULT '0' COMMENT '是否为流程作业的最后一个子作业',
-  runModel smallint(2) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)'
   KEY INX_WORKER (workerId),
   KEY INX_QUERY (category,cronType,execType,status)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -139,7 +138,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 INSERT INTO `user`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
-VALUES (999,'cronjob','016b85818bdc68ba65d6a41e3d8054e693778dee','ece2bae9d384582b','蓝光','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
+VALUES (999,'redrain','016b85818bdc68ba65d6a41e3d8054e693778dee','ece2bae9d384582b','蓝光','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
 UNLOCK TABLES;
 
 

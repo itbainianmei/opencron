@@ -1,0 +1,231 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
+package com.jredrain.service;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import com.jredrain.base.job.RedRain;
+import com.jredrain.dao.QueryDao;
+import com.jredrain.domain.Worker;
+import com.jredrain.tag.Page;
+
+import static com.jredrain.base.job.RedRain.*;
+
+import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.domain.Job;
+import com.jredrain.vo.JobVo;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpSession;
+
+import static com.jredrain.base.utils.CommonUtils.notEmpty;
+
+@Service
+public class JobService {
+
+    @Autowired
+    private QueryDao queryDao;
+
+    @Autowired
+    private WorkerService workerService;
+
+    public Job getJob(Long jobId) {
+        return queryDao.get(Job.class,jobId);
+    }
+
+    /**
+     * 获取将要执行的任务
+     * @return
+     */
+    public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
+        List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
+        if (CommonUtils.notEmpty(jobs)) {
+            for (JobVo job : jobs) {
+                job.setWorker(workerService.getWorker(job.getWorkerId()));
+                job.setChildren(queryChildren(job));
+            }
+        }
+        return jobs;
+    }
+
+    public List<JobVo> getJobVoByWorkerId(Worker worker,ExecType execType, CronType cronType) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t INNER JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.workerId=? ";
+        List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),worker.getWorkerId());
+        if (CommonUtils.notEmpty(jobs)) {
+            for (JobVo job : jobs) {
+                job.setWorker(workerService.getWorker(job.getWorkerId()));
+                job.setChildren(queryChildren(job));
+            }
+        }
+        return jobs;
+    }
+
+    public List<Job> getJobsByCategory(JobCategory category){
+        String sql = "SELECT * FROM job WHERE status=1 AND category=?";
+        if (JobCategory.FLOW.equals(category)) {
+            sql +=" AND flownum=0";
+        }
+        return queryDao.sqlQuery(Job.class,sql,category.getCode());
+    }
+
+    public List<JobVo> getCrontabJob() {
+        return getJobVo(RedRain.ExecType.AUTO, RedRain.CronType.CRONTAB);
+    }
+
+    public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user as u ON t.operateId = u.userId WHERE IFNULL(flowNum,0)=0 AND t.status=1 ";
+        if (job != null) {
+            if (notEmpty(job.getWorkerId())) {
+                sql += " AND t.workerId=" + job.getWorkerId();
+            }
+            if (notEmpty(job.getExecType())) {
+                sql += " AND t.execType=" + job.getExecType();
+            }
+            if (notEmpty(job.getRedo())) {
+                sql += " AND t.redo=" + job.getRedo();
+            }
+            if (!(Boolean) session.getAttribute("permission")) {
+                sql += " AND t.operateId = " + session.getAttribute("userId");
+            }
+        }
+        page = queryDao.getPageBySql(page, JobVo.class, sql);
+        List<JobVo> parentJobs = page.getResult();
+
+        for (JobVo parentJob : parentJobs) {
+            queryChildren(parentJob);
+        }
+        page.setResult(parentJobs);
+        return page;
+    }
+
+    private List<JobVo> queryChildren(JobVo job) {
+        if (job.getCategory().equals(JobCategory.FLOW.getCode())) {
+            String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname" +
+                    " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u " +
+                    " ON t.operateId = u.userId WHERE t.status=1 AND t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
+            List<JobVo> childJobs = queryDao.sqlQuery(JobVo.class, sql, job.getFlowId());
+            job.setChildren(childJobs);
+            return childJobs;
+        }
+        return Collections.emptyList();
+    }
+
+    public Job addOrUpdate(Job job) {
+        return (Job)queryDao.save(job);
+    }
+
+    public JobVo getJobVoById(Long id) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u ON t.operateId = u.userId WHERE t.jobId =?";
+        JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
+        queryChildren(job);
+        return job;
+    }
+
+    public List<Job> getAll() {
+        return queryDao.getAll(Job.class);
+    }
+
+
+
+    public List<JobVo> getJobByWorkerId(Long workerId) {
+        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job t LEFT JOIN user u ON t.operateId = u.userId LEFT JOIN worker d ON t.workerId = d.workerId WHERE t.workerId =?";
+        return queryDao.sqlQuery(JobVo.class, sql, workerId);
+    }
+
+    public String checkName(Long jobId,Long workerId, String name) {
+        String sql = "SELECT COUNT(1) FROM job WHERE workerId=? AND status=1 AND jobName=? ";
+        if (notEmpty(jobId)) {
+            sql += " AND jobId != " + jobId + " AND flowId != " + jobId;
+        }
+        return (queryDao.getCountBySql(sql, workerId,name)) > 0L ? "no" : "yes";
+    }
+
+    @Transactional(readOnly = false)
+    public int delete(Long jobId) {
+        return queryDao.createSQLQuery("update job set status=0 WHERE jobId = " + jobId).executeUpdate();
+    }
+
+    @Transactional(readOnly = false)
+    public void saveFlowJob(Job job, List<Job> children) throws SchedulerException {
+        job.setLastFlag(false);
+        job.setUpdateTime(new Date());
+        job.setFlowNum(0);//顶层sort是0
+
+        /**
+         * 保存最顶层的父级任务
+         */
+        if (job.getJobId()!=null) {
+            addOrUpdate(job);
+            /**
+             * 当前作业已有的子作业
+             */
+            JobVo jobVo = new JobVo();
+            jobVo.setCategory(JobCategory.FLOW.getCode());
+            jobVo.setFlowId(job.getFlowId());
+            List<JobVo> childrenx = queryChildren(jobVo);
+            top:for(JobVo jobVo1:childrenx){
+                for(Job job1:children){
+                    if ( job1.getJobId()!=null && job1.getJobId().equals(jobVo1.getJobId()) ) {
+                        continue top;
+                    }
+                }
+                /**
+                 * 已有的子作业被删除的,则做删除操作...
+                 */
+                delete(jobVo1.getJobId());
+            }
+        }else {
+            Job job1 = addOrUpdate(job);
+            job1.setFlowId(job1.getJobId());//flowId
+            addOrUpdate(job1);
+            job.setJobId(job1.getJobId());
+
+        }
+
+        for (int i=0;i<children.size();i++) {
+            Job chind = children.get(i);
+            /**
+             * 子作业的流程编号都为顶层父任务的jobId
+             */
+            chind.setFlowId(job.getJobId());
+            chind.setOperateId(job.getOperateId());
+            chind.setExecType(job.getExecType());
+            chind.setUpdateTime(new Date());
+            chind.setCategory(1);
+            chind.setFlowNum(i+1);
+            chind.setLastFlag(chind.getFlowNum()==children.size());
+            addOrUpdate(chind);
+        }
+    }
+
+
+}
