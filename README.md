@@ -51,13 +51,13 @@ redrain分为两个redrain-server端和redrain-agent端，redrain-server端即�
      可能有一下即可原因:
      1):agent端启动失败,检查logs,查看详情
      2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
-  ...
-  注意:
-    redrain-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
-    >vi startup.sh
-    然后查看当前脚本的字符集
-    :set ff 回车  #命令模式下,会显示:fileformat=unix或者其他,出问题都是非unix的字符集，然后将字符集改成unix即可
-    :set ff=unix 回车#保存退出即可...
+  
+#注意:
+      redrain-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
+      >vi startup.sh
+      然后查看当前脚本的字符集
+      :set ff 回车  #命令模式下,会显示:fileformat=unix或者其他,出问题都是非unix的字符集，然后将字符集改成unix即可
+      :set ff=unix 回车#保存退出即可...
     
   以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
   
