@@ -99,14 +99,16 @@ case "$1" in
         done
 
         if [ -z "$REDRAIN_PORT" ];then
-            echo "  redrain port must be input.."
-            exit 1;
+            REDRAIN_PORT=1577;
+            echo "redrain port not input,will be used port:1577"
         elif [ $REDRAIN_PORT -lt 0 ] || [ $REDRAIN_PORT -gt 65535 ];then
             echo "port error,muse be between 0 and 65535!"
-
         fi
 
-        [ -n "$REDRAIN_PASSWORD" ] && REDRAIN_PASSWORD="-pass $REDRAIN_PASSWORD";
+        if [ -z "$REDRAIN_PASSWORD" ];then
+            REDRAIN_PASSWORD=redrain;
+            echo "redrain password not input,will be used password:redrain"
+        fi
 
         "$JSVC" $JSVC_OPTS \
         -java-home "$JAVA_HOME" \
@@ -119,7 +121,7 @@ case "$1" in
         -Djava.io.tmpdir="$REDRAIN_TMPDIR" \
         $REDRAIN_MAIN \
         -port $REDRAIN_PORT \
-        $REDRAIN_PASSWORD
+        -pass $REDRAIN_PASSWORD
 
         echo "  redrain Starting..."
         sleep 1;
