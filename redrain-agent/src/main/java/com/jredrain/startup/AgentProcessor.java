@@ -20,7 +20,7 @@
  */
 
 
-package com.jredrain.agent;
+package com.jredrain.startup;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.exec.*;
@@ -59,7 +59,7 @@ public class AgentProcessor implements RedRain.Iface {
 
     private AgentMonitor agentMonitor;
 
-    public AgentProcessor(String password,Integer agentPort) {
+    public AgentProcessor(String password, Integer agentPort) {
         this.password = password;
         this.agentPort = agentPort;
     }

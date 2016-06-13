@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.jredrain.agent;
+package com.jredrain.startup;
 
 /**
  * Created by benjobs on 16/3/3.
@@ -26,8 +26,6 @@ package com.jredrain.agent;
 import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.commons.daemon.Daemon;
-import org.apache.commons.daemon.DaemonContext;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
@@ -40,47 +38,73 @@ import java.io.File;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.InvocationTargetException;
 
+import static com.jredrain.base.utils.CommonUtils.isEmpty;
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
 
-public class AgentBootstrap implements Daemon,Serializable {
+public class Bootstrap implements Serializable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
-	private TServer server;
+    private static Bootstrap daemon ;
 
+    private TServer server;
+
+    /**
+     * agent port
+     */
     private int port;
 
-    private String password = "123456";
+    /**
+     * agent password
+     */
+    private String password;
 
     private final String CHARSET = "UTF-8";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static Logger logger = LoggerFactory.getLogger(Bootstrap.class);
+
+
+    public static void main(String[] args) {
+        if (daemon == null) {
+            daemon = new Bootstrap();
+        }
+        try {
+            if (isEmpty(args)) {
+                logger.warn("Bootstrap: error,usage start|stop");
+            }else {
+                String command = args[0];
+                if ("start".equals(command)) {
+                    daemon.init();
+                    daemon.start();
+                }else if("stop".equals(command)){
+                    daemon.stop();
+                }else {
+                    logger.warn("Bootstrap: command \"" + command + "\" does not exist.");
+                }
+            }
+        } catch (Throwable t) {
+            if (t instanceof InvocationTargetException && t.getCause() != null) {
+                t = t.getCause();
+            }
+            handleThrowable(t);
+            t.printStackTrace();
+            System.exit(1);
+        }
+    }
 
     /**
      * init start........
-     *
-     * @param context
      * @throws Exception
      */
+    public void init() throws Exception {
 
-    @Override
-    public void init(DaemonContext context) throws Exception {
-        String[] args = context.getArguments();
-
-        Options options = new Options();
-        options.addOption("port", "port", true, "start port");
-        options.addOption("pass", "password", true, "input password!");
-
-        CommandLineParser parser = new BasicParser();
-        CommandLine cmd = parser.parse(options, args);
-
-        port = Integer.valueOf(Integer.parseInt(cmd.getOptionValue("port").toString()));
-        String inputPwd = cmd.getOptionValue("pass");
+        port = Integer.valueOf(Integer.parseInt( Globals.REDRAIN_PORT ));
+        String inputPwd = Globals.REDRAIN_PASSWORD;
 
         File passfile = new File(System.getProperty(Globals.REDRAIN_HOME));
         if (!passfile.exists()) {
@@ -109,7 +133,6 @@ public class AgentBootstrap implements Daemon,Serializable {
         start();
     }
 
-    @Override
     public void start() throws Exception {
         try {
             TServerSocket serverTransport = new TServerSocket(port);
@@ -121,6 +144,11 @@ public class AgentBootstrap implements Daemon,Serializable {
             arg.processor(processor);
             this.server = new TThreadPoolServer(arg);
             logger.info("[redrain]agent started @ port:{},pid:{}",port,getPid());
+            /**
+             * 写入pid文件
+             */
+            IOUtils.writeFile(Globals.REDRAIN_PID_FILE,getPid()+"",CHARSET);
+
             this.server.serve();
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,6 +158,10 @@ public class AgentBootstrap implements Daemon,Serializable {
     private void stopServer() {
         if (this.server != null && this.server.isServing()) {
             this.server.stop();
+            /**
+             * 删除Pid文件
+             */
+            Globals.REDRAIN_PID_FILE.deleteOnExit();
         }
     }
 
@@ -139,6 +171,15 @@ public class AgentBootstrap implements Daemon,Serializable {
 
     public void stop() throws Exception {
         stopServer();
+    }
+
+    private static void handleThrowable(Throwable t) {
+        if (t instanceof ThreadDeath) {
+            throw (ThreadDeath) t;
+        }
+        if (t instanceof VirtualMachineError) {
+            throw (VirtualMachineError) t;
+        }
     }
 
     private static int getPid() {

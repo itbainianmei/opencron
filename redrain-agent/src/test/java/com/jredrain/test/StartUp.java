@@ -22,10 +22,8 @@ package com.jredrain.test;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.jredrain.agent.AgentBootstrap;
-import com.jredrain.agent.Globals;
+import com.jredrain.startup.RedRainAgent;
 import com.jredrain.base.job.Monitor;
-import com.jredrain.base.utils.CommandUtils;
 import com.jredrain.base.utils.ReflectUitls;
 
 import java.lang.reflect.Field;
@@ -96,7 +94,7 @@ public class StartUp {
 
 
     private static void agent() throws Exception {
-        AgentBootstrap bootstrap = new AgentBootstrap();
+        RedRainAgent bootstrap = new RedRainAgent();
         bootstrap.start(12009,"cronjob123!@#");
     }
 

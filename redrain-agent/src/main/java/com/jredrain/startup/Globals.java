@@ -1,4 +1,4 @@
-package com.jredrain.agent;
+package com.jredrain.startup;
 
 
 import java.io.File;
@@ -6,25 +6,31 @@ import java.io.File;
 public final class Globals {
 
     /**
-     * Default domain for MBeans if none can be determined
-     */
-    public static final String DEFAULT_MBEAN_DOMAIN = "Redrain";
-
-
-    /**
-     * Name of the system property containing
-     */
-    public static final String REDRAIN_BASE = "redrain.base";
-
-    /**
      * Name of the system property containing
      */
     public static final String REDRAIN_HOME = "redrain.home";
 
     /**
+     * port
+     */
+    public static String REDRAIN_PORT = System.getProperty("redrain.port");
+
+    /**
+     * password
+     */
+    public static String REDRAIN_PASSWORD =System.getProperty("redrain.password");
+
+    /**
      * password file
      */
+
     public static File REDRAIN_PASSWORD_FILE = new File(System.getProperty(REDRAIN_HOME) + File.separator + ".password");
+
+
+    /**
+     * pid
+     */
+    public static File REDRAIN_PID_FILE = new File(System.getProperty(REDRAIN_HOME) + File.separator + "redrain.pid");
 
 
     /**

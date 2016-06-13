@@ -1,7 +1,0 @@
-#! /bin/sh
-#
-# Created by configure
-
-"./configure" \
-"--with-java=/usr/java/jdk1.7.0_45" \
-"$@"
