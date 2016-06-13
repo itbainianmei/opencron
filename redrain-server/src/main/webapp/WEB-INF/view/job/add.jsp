@@ -511,7 +511,7 @@
                 <div class="form-group">
                     <label for="command" class="col-lab control-label"><i class="glyphicon glyphicon-th-large"></i>&nbsp;&nbsp;执行命令：</label>
                     <div class="col-md-10">
-                        <textarea class="form-control input-sm" id="command" name="command"></textarea>
+                        <textarea class="form-control input-sm" id="command" name="command" style="height: 100px;"></textarea>
                         <span class="tips"><b>*&nbsp;</b>请采用unix/linux的shell支持的命令</span>
                     </div>
                 </div><br>
@@ -564,7 +564,7 @@
                 <div class="form-group">
                     <label for="comment" class="col-lab control-label"><i class="glyphicon glyphicon-magnet"></i>&nbsp;&nbsp;描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
                     <div class="col-md-10">
-                        <textarea class="form-control input-sm" id="comment" name="comment"></textarea>
+                        <textarea class="form-control input-sm" id="comment" name="comment" style="height: 80px;"></textarea>
                     </div>
                 </div><br>
 

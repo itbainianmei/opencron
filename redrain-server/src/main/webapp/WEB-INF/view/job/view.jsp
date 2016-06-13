@@ -603,13 +603,13 @@
                         <input type="hidden" name="workerId" id="mworkerId">
                         <div class="form-group">
                             <label for="worker" class="col-lab control-label" title="要执行此任务的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="worker" readonly>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="jobName" class="col-lab control-label" title="任务名称必填">任务名称：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
                             </div>
                         </div>
@@ -625,14 +625,14 @@
                         </div><br>
                         <div class="form-group cronExpDiv">
                             <label for="cronExp" class="col-lab control-label" title="请采用对应类型的时间格式表达式">时间规则：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="cronExp"/>&nbsp;&nbsp;<label id="checkcronExp"></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="cmd" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
-                            <div class="col-md-8">
-                                <textarea class="form-control pop-sm" id="cmd" name="cmd"></textarea>&nbsp;
+                            <div class="col-md-9">
+                                <textarea class="form-control pop-sm" id="cmd" name="cmd" style="height: 100px;"></textarea>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">
@@ -642,7 +642,7 @@
                         </div><br>
                         <div class="form-group countDiv">
                             <label for="runCount" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="runCount"/>&nbsp;
                             </div>
                         </div>
