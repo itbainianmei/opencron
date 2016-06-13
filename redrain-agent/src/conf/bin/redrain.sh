@@ -23,80 +23,23 @@
 #   Do not set the variables in this script. Instead put them into a script
 #   setenv.sh in REDRAIN_BASE/bin to keep your customizations separate.
 #
-#   REDRAIN_HOME   May point at your Catalina "build" directory.
+#   REDRAIN_HOME   May point at your Redrain "build" directory.
 #
 #   REDRAIN_BASE   (Optional) Base directory for resolving dynamic portions
-#                   of a Catalina installation.  If not present, resolves to
+#                   of a Redrain installation.  If not present, resolves to
 #                   the same directory that REDRAIN_HOME points to.
 #
 #   REDRAIN_OUT    (Optional) Full path to a file where stdout and stderr
 #                   will be redirected.
 #                   Default is $REDRAIN_BASE/logs/redrain.out
 #
-#   REDRAIN_OPTS   (Optional) Java runtime options used when the "start",
-#                   "run" or "debug" command is executed.
-#                   Include here and not in JAVA_OPTS all options, that should
-#                   only be used by RedRain itself, not by the stop process,
-#                   the version command etc.
-#                   Examples are heap size, GC logging, JMX ports etc.
-#
 #   REDRAIN_TMPDIR (Optional) Directory path location of temporary directory
 #                   the JVM should use (java.io.tmpdir).  Defaults to
 #                   $REDRAIN_BASE/temp.
 #
-#   JAVA_HOME       Must point at your Java Development Kit installation.
-#                   Required to run the with the "debug" argument.
-#
-#   JRE_HOME        Must point at your Java Runtime installation.
-#                   Defaults to JAVA_HOME if empty. If JRE_HOME and JAVA_HOME
-#                   are both set, JRE_HOME is used.
-#
-#   JAVA_OPTS       (Optional) Java runtime options used when any command
-#                   is executed.
-#                   Include here and not in REDRAIN_OPTS all options, that
-#                   should be used by RedRain and also by the stop process,
-#                   the version command etc.
-#                   Most options should go into REDRAIN_OPTS.
-#
-#   JAVA_ENDORSED_DIRS (Optional) Lists of of colon separated directories
-#                   containing some jars in order to allow replacement of APIs
-#                   created outside of the JCP (i.e. DOM and SAX from W3C).
-#                   It can also be used to update the XML parser implementation.
-#                   Defaults to $REDRAIN_HOME/endorsed.
-#
-#   JPDA_TRANSPORT  (Optional) JPDA transport used when the "jpda start"
-#                   command is executed. The default is "dt_socket".
-#
-#   JPDA_ADDRESS    (Optional) Java runtime options used when the "jpda start"
-#                   command is executed. The default is localhost:8000.
-#
-#   JPDA_SUSPEND    (Optional) Java runtime options used when the "jpda start"
-#                   command is executed. Specifies whether JVM should suspend
-#                   execution immediately after startup. Default is "n".
-#
-#   JPDA_OPTS       (Optional) Java runtime options used when the "jpda start"
-#                   command is executed. If used, JPDA_TRANSPORT, JPDA_ADDRESS,
-#                   and JPDA_SUSPEND are ignored. Thus, all required jpda
-#                   options MUST be specified. The default is:
-#
-#                   -agentlib:jdwp=transport=$JPDA_TRANSPORT,
-#                       address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND
-#
-#   JSSE_OPTS       (Optional) Java runtime options used to control the TLS
-#                   implementation when JSSE is used. Default is:
-#                   "-Djdk.tls.ephemeralDHKeySize=2048"
-#
 #   REDRAIN_PID    (Optional) Path of the file which should contains the pid
 #                   of the redrain startup java process, when start (fork) is
 #                   used
-#
-#   LOGGING_CONFIG  (Optional) Override RedRain's logging config file
-#                   Example (all one line)
-#                   LOGGING_CONFIG="-Djava.util.logging.config.file=$REDRAIN_BASE/conf/logging.properties"
-#
-#   LOGGING_MANAGER (Optional) Override RedRain's logging manager
-#                   Example (all one line)
-#                   LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
 # -----------------------------------------------------------------------------
 
 # OS specific support.  $var _must_ be set to either true or false.
@@ -199,7 +142,7 @@ if [ -z "$REDRAIN_OUT" ] ; then
 fi
 
 if [ -z "$REDRAIN_TMPDIR" ] ; then
-  # Define the java.io.tmpdir to use for Catalina
+  # Define the java.io.tmpdir to use for Redrain
   REDRAIN_TMPDIR="$REDRAIN_BASE"/temp
 fi
 
