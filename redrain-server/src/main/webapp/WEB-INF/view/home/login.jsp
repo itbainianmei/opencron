@@ -43,7 +43,7 @@
     <script type="text/javascript">
 
         $(document).ready(function(){
-            var skin = $.cookie("cronjob_skin");
+            var skin = $.cookie("redrain_skin");
             if(skin) {
                 $('body').attr('id', skin);
             }
@@ -407,7 +407,7 @@
 
 
 </head>
-<body id="skin-blur-blue">
+<body id="skin-blur-violate">
 <section id="login">
     <header>
         <h1>RedRain</h1>
