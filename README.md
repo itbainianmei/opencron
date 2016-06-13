@@ -20,7 +20,6 @@ redrain分为两个redrain-server端和redrain-agent端，redrain-server端即�
          | log4j.properties    #log4j配置文件
      ---lib/
          | *.jar               #agent运行需要的jar文件
-         | jsvc                #agent以服务的方式启动需要的文件
      ---temp/
          | *.sh                #用于存放项目生成的零时文件的目录
      ---logs
