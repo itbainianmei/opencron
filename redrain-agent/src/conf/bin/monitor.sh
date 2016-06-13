@@ -46,7 +46,7 @@ total=$(echo $loadmemory | awk '{print $1}')
 free1=$(echo $loadmemory | awk '{print $2}')
 free2=$(echo $loadmemory | awk '{print $3}')
 free3=$(echo $loadmemory | awk '{print $4}')
-used=`expr $total - $free1 - $free2 - $free3`;
+used=$[$total - $free1 - $free2 - $free3];
 mem=`echo -e "{total:$total,used:$used}"`;
 
 #conf
