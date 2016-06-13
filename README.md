@@ -29,11 +29,15 @@ redrain分为两个redrain-server端和redrain-agent端，redrain-server端即�
      > tar -xzvf redrain-agent-${version}.tar.gz
     3)启动redrain-agent 进入redrain-agent/bin
      > cd redrain-agent/bin
+     > sh startup.sh
+     这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:redrain
+     如要指定参数启动命令如下:
      > sh startup.sh -P10001 -p123456
      参数说明:
       -P (大写的p)为agent启动的端口，必填
       -p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是123456
-       启动完后会看到有一个redrain.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/redrain.out
+    启动完后会看到有一个redrain.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/redrain.out
+       
     4)停止redrain-agent 进入redrain-agent/bin 执行：
       > cd redrain-agent/bin
       > sh shutdown.sh
