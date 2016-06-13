@@ -22,7 +22,6 @@ package com.jredrain.test;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.jredrain.startup.RedRainAgent;
 import com.jredrain.base.job.Monitor;
 import com.jredrain.base.utils.ReflectUitls;
 

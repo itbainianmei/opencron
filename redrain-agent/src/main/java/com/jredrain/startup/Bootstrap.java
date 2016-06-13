@@ -23,7 +23,6 @@ package com.jredrain.startup;
  * Created by benjobs on 16/3/3.
  */
 
-import org.apache.commons.cli.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
@@ -34,7 +33,6 @@ import com.jredrain.base.utils.IOUtils;
 import com.jredrain.base.utils.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -45,13 +43,20 @@ import static com.jredrain.base.utils.CommonUtils.notEmpty;
 
 public class Bootstrap implements Serializable {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = 20150614L;
+
+
+    private static Logger logger = LoggerFactory.getLogger(Bootstrap.class);
+
+    /**
+     *启动实例
+     */
     private static Bootstrap daemon ;
 
+    /**
+     * thrift server
+     */
     private TServer server;
 
     /**
@@ -64,10 +69,10 @@ public class Bootstrap implements Serializable {
      */
     private String password;
 
+    /**
+     * charset...
+     */
     private final String CHARSET = "UTF-8";
-
-    private static Logger logger = LoggerFactory.getLogger(Bootstrap.class);
-
 
     public static void main(String[] args) {
         if (daemon == null) {
@@ -102,27 +107,18 @@ public class Bootstrap implements Serializable {
      * @throws Exception
      */
     public void init() throws Exception {
-
         port = Integer.valueOf(Integer.parseInt( Globals.REDRAIN_PORT ));
         String inputPwd = Globals.REDRAIN_PASSWORD;
-
-        File passfile = new File(System.getProperty(Globals.REDRAIN_HOME));
-        if (!passfile.exists()) {
-            passfile.mkdirs();
-        }
-
-        passfile = Globals.REDRAIN_PASSWORD_FILE;
-
         if (notEmpty(inputPwd)) {
             this.password = DigestUtils.md5Hex(inputPwd).toLowerCase();
-            passfile.delete();
-            IOUtils.writeFile(passfile, this.password, CHARSET);
+            Globals.REDRAIN_PASSWORD_FILE.deleteOnExit();
+            IOUtils.writeFile(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
         } else {
-            if (!passfile.exists()) {
+            if (!Globals.REDRAIN_PASSWORD_FILE.exists()) {
                 this.password = DigestUtils.md5Hex(this.password).toLowerCase();
-                IOUtils.writeFile(passfile, this.password, CHARSET);
+                IOUtils.writeFile(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
             } else {
-                password = IOUtils.readFile(passfile, CHARSET).trim().toLowerCase();
+                password = IOUtils.readFile(Globals.REDRAIN_PASSWORD_FILE, CHARSET).trim().toLowerCase();
             }
         }
     }
