@@ -626,19 +626,19 @@
                         <input type="hidden" id="id" name="id"><input type="hidden" id="password" name="password"><input type="hidden" id="status" name="status">
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="ip" class="col-lab control-label" title="执行器IP地址只能为点分十进制方式表示">机&nbsp;&nbsp;器&nbsp;&nbsp;IP：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="ip" readonly>&nbsp;
                             </div>
                         </div>
                         <div class="form-group" style="">
                             <label for="name" class="col-lab control-label" title="执行器名称必填">执行器名：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="name">&nbsp;&nbsp;<label id="checkName"></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="port" class="col-lab control-label" title="执行器端口号只能是数字,且不超过4位">端&nbsp;&nbsp;口&nbsp;&nbsp;号：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="port" style="margin-bottom: 5px;"/>&nbsp;&nbsp;<a href="#" onclick="pingCheck()">
                                 <i class="glyphicon glyphicon-signal"></i>&nbsp;检测通信</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label id="pingResult"></label>
                             </div>
@@ -650,13 +650,13 @@
                         </div>
                         <div class="form-group contact">
                             <label for="mobiles" class="col-lab control-label" title="执行器通信不正常时将发送短信给此手机">报警手机：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="mobiles"/>&nbsp;
                             </div>
                         </div>
                         <div class="form-group contact">
                             <label for="email" class="col-lab control-label" title="执行器通信不正常时将发送报告给此邮箱">报警邮箱：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="email"/>&nbsp;
                             </div>
                         </div>
@@ -685,19 +685,19 @@
                         <input type="hidden" id="workerId">
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="pwd0" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;原&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="password" class="form-control pop-sm" id="pwd0" placeholder="请输入原密码">&nbsp;&nbsp;<label id="oldpwd"></label>
                             </div>
                         </div>
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label for="pwd1" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;新&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="password" class="form-control pop-sm" id="pwd1" placeholder="请输入新密码">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="pwd2" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;确认密码：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="password" class="form-control pop-sm" id="pwd2" placeholder="请输入确认密码"/>&nbsp;&nbsp;<label id="checkpwd"></label>
                             </div>
                         </div>
@@ -728,21 +728,21 @@
                         <input type="hidden" id="sshworker"/>
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshuser" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;帐&nbsp;&nbsp;号&nbsp;&nbsp;：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="sshuser" placeholder="请输入账户">&nbsp;&nbsp;<label id="sshuser_lab"></label>
                             </div>
                         </div>
 
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshport" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;端&nbsp;&nbsp;口&nbsp;&nbsp;：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="sshport" placeholder="请输入端口">&nbsp;&nbsp;<label id="sshport_lab"></label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="sshpwd" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;密&nbsp;&nbsp;码&nbsp;&nbsp;：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="password" class="form-control pop-sm" id="sshpwd" placeholder="请输入密码"/>&nbsp;&nbsp;<label id="sshpwd_lab"></label>
                             </div>
                         </div>

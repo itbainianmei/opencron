@@ -591,7 +591,7 @@
                         <input type="hidden" id="itemRedo" value="1"/>
                         <div class="form-group">
                             <label for="workerId1" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <select id="workerId1" name="workerId1" class="form-control m-b-10 pop-sm">
                                     <c:forEach var="d" items="${workers}">
                                         <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
@@ -602,14 +602,14 @@
 
                         <div class="form-group">
                             <label for="jobName1" class="col-lab control-label" title="作业名称必填">作业名称：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
                             </div>
                         </div>
 
                         <div class="form-group contact">
                             <label for="command1" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="command1"/>&nbsp;
                             </div>
                         </div>
@@ -621,7 +621,7 @@
                         </div><br>
                         <div class="form-group countDiv1">
                             <label for="runCount1" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="runCount1"/>&nbsp;
                             </div>
                         </div>
@@ -630,7 +630,7 @@
 
                         <div class="form-group">
                             <label for="comment1" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="comment1"/>&nbsp;
                             </div>
                         </div>
