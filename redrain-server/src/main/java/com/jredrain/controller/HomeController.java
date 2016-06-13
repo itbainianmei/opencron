@@ -75,7 +75,7 @@ public class HomeController {
     private JobService jobService;
 
     @RequestMapping("/home")
-    public String index(Model model,HttpSession session) {
+    public String index(Model model) {
 
         /**
          * agent...

@@ -22,6 +22,8 @@
 
 package com.jredrain.session;
 
+import com.jredrain.base.utils.CommandUtils;
+import com.jredrain.base.utils.CommonUtils;
 import org.apache.commons.lang.StringUtils;
 import com.jredrain.base.utils.CookieUtils;
 import org.slf4j.Logger;
@@ -153,7 +155,7 @@ public class HttpSessionFilter extends OncePerRequestFilter implements Filter {
         Cookie sessionIdCookie;
         String sid = null;
         if (StringUtils.isBlank(sid)) {
-            sid = generateUUID();
+            sid = CommonUtils.uuid();
         }
         sessionIdCookie = new Cookie(sessionIdCookieName, sid);
 
@@ -168,8 +170,4 @@ public class HttpSessionFilter extends OncePerRequestFilter implements Filter {
         return sessionIdCookie;
     }
 
-    private String generateUUID() {
-        String uuid = UUID.randomUUID().toString();
-        return org.springframework.util.StringUtils.replace(uuid, "-", "");
-    }
 }
