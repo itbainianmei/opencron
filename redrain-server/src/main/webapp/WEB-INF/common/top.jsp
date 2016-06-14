@@ -70,10 +70,9 @@
 <body id="skin-blur-violate">
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float:left;width: 45px;height:45px;margin-left:20px;margin-top:-4px;opacity:0.9">
-		<img src="${contextPath}/img/logo.png">
+	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float:left;width: 145px;margin-left:24px;margin-top:4px;">
+		<img src="${contextPath}/img/redrain.png">
 	</div>
-		<span style="font-size:19px;margin-left:30px;">RedRain</span>
 	</a>
 	<div class="media-body">
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">

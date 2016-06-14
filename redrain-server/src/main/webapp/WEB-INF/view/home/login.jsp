@@ -410,11 +410,11 @@
 <body id="skin-blur-violate">
 <section id="login">
     <header>
-        <h1>RedRain</h1>
+        <h1 style="width: 200px;">
+            <img src="${contextPath}/img/redrain.png">
+        </h1>
         <h4 style="margin-top: 5px;">Welcome to RedRain,Let's crontab easy</h4>
     </header>
-
-    <div class="clearfix"></div>
 
     <form id="box-login" class="box tile animated active" style="margin-top:52px;">
         <h2 class="m-t-0 m-b-15">登录</h2>
