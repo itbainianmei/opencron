@@ -20,7 +20,7 @@
 # under the License.
 
 #disk
-disk=$(df -h|sed -r 's/\s+/ /g'|sed -r 's/Mounted\s+on/Mounted/g'|sed -r 's/%//g'|awk '{print $3,$4,$6}');
+disk=$(df -h|sed -r 's/\s+/ /g'|sed -r 's/Mounted\s+on/Mounted/g'|sed -r 's/%//g');
 
 #load
 load=$(cat /proc/loadavg |awk '{print $1","$2","$3}');

@@ -151,12 +151,16 @@ if [ ! -z "$CLASSPATH" ] ; then
   CLASSPATH="$CLASSPATH":
 fi
 
+if [ -z "$REDRAIN_PID" ] ; then
+  REDRAIN_PID="$REDRAIN_BASE"/redrain.pid;
+fi
+
 # Add bootstrap.jar to classpath
 # bootstrap can be over-ridden per instance
 if [ -r "$REDRAIN_BASE/lib/redrain-agent-1.0-SNAPSHOT.jar" ] ; then
-  CLASSPATH=$CLASSPATH:$REDRAIN_BASE/lib/redrain-agent-1.0-SNAPSHOT.jar
+  CLASSPATH=$CLASSPATH$REDRAIN_BASE/lib/redrain-agent-1.0-SNAPSHOT.jar
 else
-   CLASSPATH=$CLASSPATH:$REDRAIN_BASE/lib/redrain-agent-1.0-SNAPSHOT.jar
+   CLASSPATH=$CLASSPATH$REDRAIN_BASE/lib/redrain-agent-1.0-SNAPSHOT.jar
 fi
 
 # Bugzilla 37848: When no TTY is available, don't output to console
@@ -287,8 +291,8 @@ case "$1" in
       ;;
 
     stop)
-       shift
-          SLEEP=5
+       shift;
+          SLEEP=2
           if [ ! -z "$1" ]; then
             echo $1 | grep "[^0-9]" >/dev/null 2>&1
             if [ $? -gt 0 ]; then
@@ -303,9 +307,13 @@ case "$1" in
             FORCE=1
           fi
 
+          # $REDRAIN_PID is not empty
           if [ ! -z "$REDRAIN_PID" ]; then
+            #pid file exist
             if [ -f "$REDRAIN_PID" ]; then
+              #pid file exist and not empty
               if [ -s "$REDRAIN_PID" ]; then
+                #kill..
                 kill -0 `cat "$REDRAIN_PID"` >/dev/null 2>&1
                 if [ $? -gt 0 ]; then
                   echo "PID file found but no matching process was found. Stop aborted."
@@ -320,7 +328,7 @@ case "$1" in
             fi
           fi
 
-          eval "\"$RUNJAVA\""
+          eval "\"$RUNJAVA\"" \
             -classpath "\"$CLASSPATH\"" \
             -Dredrain.home="\"$REDRAIN_HOME\"" \
              com.jredrain.startup.Bootstrap "$@" stop
