@@ -48,7 +48,7 @@
                 <td><i class="glyphicon glyphicon-leaf"></i>&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器</td>
                 <td><a href="${contextPath}/worker/detail?id=${record.workerId}">${record.workerName}</a></td>
 
-                <td><i class="glyphicon glyphicon-user"></i>&nbsp;任&nbsp;&nbsp;务&nbsp;&nbsp;人</td>
+                <td><i class="glyphicon glyphicon-user"></i>&nbsp;作&nbsp;&nbsp;业&nbsp;&nbsp;人</td>
                 <td>
                     <c:if test="${permission eq true}"><a href="${contextPath}/user/detail?userId=${record.operateId}">${record.operateUname}</a></c:if>
                     <c:if test="${permission eq false}">${record.operateUname}</c:if></td>

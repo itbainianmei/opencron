@@ -95,7 +95,7 @@
                             }
                         });
                     } else {
-                        alert("当前任务正在运行中,暂时不能编辑!");
+                        alert("当前作业正在运行中,暂时不能编辑!");
                     }
                 },
                 error : function() {
@@ -112,7 +112,7 @@
                     if ( !eval("("+data+")") ){
                         window.location.href = "${contextPath}/job/editflow?id=" + id;
                     } else {
-                        alert("当前任务或其子任务正在运行中,暂时不能编辑!");
+                        alert("当前作业或其子作业正在运行中,暂时不能编辑!");
                     }
                 },
                 error : function() {
@@ -124,7 +124,7 @@
         function save(){
             var jobName = $("#jobName").val();
             if (!jobName){
-                alert("请填写任务名称!");
+                alert("请填写作业名称!");
                 return false;
             }
             var jobId = $("#id").val();
@@ -217,10 +217,8 @@
                                                 $("#cronExp_"+jobId).html(cronExp);
                                                 if (execType == "0"){
                                                     $("#execType_"+jobId).html('<font color="green">自动</font>');
-                                                    $("#execButton_"+jobId).hide();
                                                 }else {
                                                     $("#execType_"+jobId).html('<font color="red">手动</font>');
-                                                    $("#execButton_"+jobId).show();
                                                 }
                                                 if (redo == "0"){
                                                     $("#redo_"+jobId).html('<font color="green">否</font>');
@@ -240,7 +238,7 @@
                                     });
                                     return false;
                                 }else {
-                                    alert("任务名已存在!");
+                                    alert("作业名已存在!");
                                     return false;
                                 }
                             },
@@ -284,7 +282,7 @@
 
             $("#jobName").blur(function(){
                 if(!$("#jobName").val()){
-                    $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写任务名称' + "</font>");
+                    $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写作业名称' + "</font>");
                     return false;
                 }
                 $.ajax({
@@ -295,10 +293,10 @@
                     },
                     success:function(data){
                         if (data == "yes"){
-                            $("#checkJobName").html("<font color='green'>" + '<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;任务名称可用' + "</font>");
+                            $("#checkJobName").html("<font color='green'>" + '<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;作业名称可用' + "</font>");
                             return false;
                         }else {
-                            $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;任务名称已存在' + "</font>");
+                            $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;作业名称已存在' + "</font>");
                             return false;
                         }
                     },
@@ -358,7 +356,7 @@
                     if ( !eval("("+data+")") ){
                         swal({
                             title: "",
-                            text: "您确定要执行这个任务吗？",
+                            text: "您确定要执行这个作业吗？",
                             type: "warning",
                             showCancelButton: true,
                             closeOnConfirm: false,
@@ -368,10 +366,10 @@
                                 url:"${contextPath}/job/execute",
                                 data:{"id":id}
                             });
-                            alertMsg( "该任务已启动,正在执行中.");
+                            alertMsg( "该作业已启动,正在执行中.");
                         });
                     } else {
-                        alert("当前任务已在运行中,不能重复执行!");
+                        alert("当前作业已在运行中,不能重复执行!");
                     }
                 },
                 error : function() {
@@ -468,7 +466,7 @@
                 <th>名称</th>
                 <th>类型</th>
                 <th>执行器</th>
-                <th>任务人</th>
+                <th>作业人</th>
                 <th>规则类型</th>
                 <th>时间规则</th>
                 <th>模式</th>
@@ -481,12 +479,12 @@
             </tr>
             </thead>
             <tbody>
-            <%--父任务--%>
+            <%--父作业--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tr class="trGroup${r.flowId}">
                     <c:if test="${r.category eq 0}">
                         <td id="jobName_${r.jobId}">${r.jobName}</td>
-                        <td>单一任务</td>
+                        <td>单一作业</td>
                     </c:if>
                     <c:if test="${r.category eq 1}">
                         <td  class="name_${r.flowId}_1">${r.jobName}</td>
@@ -497,7 +495,7 @@
 				<i aria-hidden="true" style="font-size:14px" class="fa fa-arrow-down"></i></div>${c.jobName}
                             </c:forEach>
                         </td>
-                        <td>流程任务</td>
+                        <td>流程作业</td>
                     </c:if>
                     <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
@@ -520,7 +518,7 @@
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                 <c:if test="${r.category eq 1}">
-                                    <a href="#" title="流程任务" id="job_${r.jobId}" childOpen="off" onclick="showChild('${r.jobId}','${r.flowId}')">
+                                    <a href="#" title="流程作业" id="job_${r.jobId}" childOpen="off" onclick="showChild('${r.jobId}','${r.flowId}')">
                                         <i style="font-size:14px;" class="fa fa-angle-double-down" id="icon${r.jobId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
@@ -547,11 +545,11 @@
                         </center>
                     </td>
                 </tr>
-                <%--子任务--%>
+                <%--子作业--%>
                 <c:if test="${r.category eq 1}">
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
-                            <td>流程任务</td>
+                            <td>流程作业</td>
                             <td><a href="${contextPath}/worker/detail?id=${c.workerId}">${c.workerName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
@@ -589,26 +587,26 @@
 
     </div>
 
-    <!-- 修改任务弹窗 -->
+    <!-- 修改作业弹窗 -->
     <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4>修改任务</h4>
+                    <h4>修改作业</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="jobform">
                         <input type="hidden" id="id">
                         <input type="hidden" name="workerId" id="mworkerId">
                         <div class="form-group">
-                            <label for="worker" class="col-lab control-label" title="要执行此任务的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <label for="worker" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="worker" readonly>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="jobName" class="col-lab control-label" title="任务名称必填">任务名称：</label>
+                            <label for="jobName" class="col-lab control-label" title="作业名称必填">作业名称：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control pop-sm" id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
                             </div>
@@ -636,7 +634,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-lab control-label" title="任务失败后是否重新执行此任务">重新执行：</label>&nbsp;&nbsp;
+                            <label class="col-lab control-label" title="作业失败后是否重新执行此作业">重新执行：</label>&nbsp;&nbsp;
                             <label for="redo1" onclick="showCountDiv()" class="radio-label"><input type="radio" name="redo" value="1" id="redo1"> 是&nbsp;&nbsp;&nbsp;</label>
                             <label for="redo0" onclick="hideCountDiv()" class="radio-label"><input type="radio" name="redo" value="0" id="redo0"> 否</label>
                         </div><br>

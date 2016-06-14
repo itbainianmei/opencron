@@ -270,8 +270,6 @@ case "$1" in
            fi
         fi
 
-        shift;
-
         touch "$REDRAIN_OUT"
         eval "\"$RUNJAVA\"" \
         -classpath "\"$CLASSPATH\"" \
@@ -280,7 +278,7 @@ case "$1" in
         -Djava.io.tmpdir="$REDRAIN_TMPDIR" \
         -Dredrain.port="$REDRAIN_PORT" \
         -Dredrain.password="$REDRAIN_PASSWORD" \
-        com.jredrain.startup.Bootstrap "$@" start \
+        com.jredrain.startup.Bootstrap start \
         >> "$REDRAIN_OUT" 2>&1 "&";
 
       if [ ! -z "$REDRAIN_PID" ]; then
@@ -331,7 +329,7 @@ case "$1" in
           eval "\"$RUNJAVA\"" \
             -classpath "\"$CLASSPATH\"" \
             -Dredrain.home="\"$REDRAIN_HOME\"" \
-             com.jredrain.startup.Bootstrap "$@" stop
+             com.jredrain.startup.Bootstrap stop
 
           # stop failed. Shutdown port disabled? Try a normal kill.
           if [ $? != 0 ]; then

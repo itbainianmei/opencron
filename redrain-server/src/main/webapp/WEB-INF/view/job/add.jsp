@@ -544,7 +544,7 @@
 
                 <div class="form-group">
                     <span id="subJob" style="display: none">
-                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;子&nbsp;&nbsp;任&nbsp;&nbsp;务：</label>
+                        <label class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;子&nbsp;&nbsp;作&nbsp;&nbsp;业：</label>
                         <div class="col-md-10">
                             <a data-toggle="modal" href="#jobModal" onclick="addSubJob();" class="btn btn-sm m-t-10">添加子作业</a>
                             <ul id="subJobDiv" class="subJobUl"></ul>
