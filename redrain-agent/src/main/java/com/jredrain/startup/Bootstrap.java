@@ -74,7 +74,7 @@ public class Bootstrap implements Serializable {
      */
     private final String CHARSET = "UTF-8";
     /**
-     * 启动实例
+     * bootstrap instance....
      */
     private static Bootstrap daemon;
 
@@ -177,10 +177,11 @@ public class Bootstrap implements Serializable {
             arg.processor(processor);
             this.server = new TThreadPoolServer(arg);
             /**
-             * 写入pid文件
+             * write pid to pidfile...
              */
             IOUtils.writeFile(Globals.REDRAIN_PID_FILE, getPid() + "", CHARSET);
 
+            //new thread to start for thrift server
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -194,7 +195,7 @@ public class Bootstrap implements Serializable {
     }
 
     private void await() throws Exception {
-        // Negative values - don't wait on port - tomcat is embedded or we just don't like ports
+        // Negative values - don't wait on port - redrain is embedded or we just don't like ports
         if (port == -2) {
             return;
         }
@@ -309,7 +310,6 @@ public class Bootstrap implements Serializable {
     }
 
     /**
-     * 向soket发送关闭请求...
      *
      * @throws Exception
      */
@@ -341,7 +341,7 @@ public class Bootstrap implements Serializable {
         if (this.server != null && this.server.isServing()) {
             this.server.stop();
             /**
-             * 删除Pid文件
+             * delete pid file...
              */
             Globals.REDRAIN_PID_FILE.deleteOnExit();
         }
