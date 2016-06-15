@@ -5,10 +5,10 @@
 
 <%
     String path = request.getContextPath().replaceAll("/$","");
-    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    String port = request.getServerPort() == 80 ? "" : request.getServerPort()+"";
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -82,6 +82,10 @@
             font-weight: lighter;
         }
 
+        .pull-left i {
+            color: rgba(225,225,225,0.9);
+        }
+
     </style>
 
     <script type="text/javascript">
@@ -152,7 +156,7 @@
                 <div class="card hover">
                     <div class="front">
                         <div class="media">
-                            <span class="pull-left"><i aria-hidden="true" class="fa fa-desktop"></i></span>
+                            <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
                                 <small>执行器</small>
                                 <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${fn:length(workers)}</h2>
@@ -178,7 +182,7 @@
                 <div class="card hover">
                     <div class="front">
                         <div class="media">
-                            <span class="pull-left"><i aria-hidden="true" class="fa fa-tasks"></i></span>
+                            <span class="pull-left"><i style="font-size: 60px;margin-top: 1px;" aria-hidden="true" class="fa fa-tasks"></i></span>
                             <div class="media-body">
                                 <small>作业数</small>
                                 <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${job}</h2>
@@ -205,7 +209,7 @@
                 <div class="card hover">
                     <div class="front">
                         <div class="media">
-                            <span class="pull-left"><i aria-hidden="true" class="fa fa-thumbs-up" style="font-size: 65px;margin-top: -5px;"></i></span>
+                            <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>
                             <div class="media-body">
                                 <small>成功作业</small>
                                 <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${successRecord}</h2>
@@ -231,7 +235,7 @@
                 <div class="card hover">
                     <div class="front">
                         <div class="media">
-                            <span class="pull-left"><i aria-hidden="true" class="fa fa-thumbs-down" style="font-size: 65px;margin-top: -5px;"></i></span>
+                            <span class="pull-left"><i style="font-size: 60px;margin-top: -3px;" class="fa fa-thumbs-o-down" aria-hidden="true"></i></span>
                             <div class="media-body">
                                 <small>失败作业</small>
                                 <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${failedRecord}</h2>

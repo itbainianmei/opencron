@@ -5,7 +5,8 @@
 
 <%
     String path = request.getContextPath().replaceAll("/$","");
-    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    String port = request.getServerPort() == 80 ? "" : request.getServerPort()+"";
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
 
@@ -456,7 +457,7 @@
                     <option value="0" ${redo eq 0 ? 'selected' : ''}>否</option>
                 </select>
 
-                <a href="${contextPath}/job/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
+                <a href="${contextPath}/job/addpage" class="btn btn-sm m-t-10" style="margin-left: 20px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
             </div>
         </div>
 

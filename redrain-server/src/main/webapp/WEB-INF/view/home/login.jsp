@@ -3,7 +3,8 @@
 
 <%
     String path = request.getContextPath().replaceAll("/$","");
-    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    String port = request.getServerPort() == 80 ? "" : request.getServerPort()+"";
+    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
 
