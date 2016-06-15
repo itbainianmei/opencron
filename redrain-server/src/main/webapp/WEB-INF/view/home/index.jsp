@@ -126,8 +126,6 @@
             }
         });
     </script>
-
-
 </head>
 
 <jsp:include page="/WEB-INF/common/top.jsp"/>

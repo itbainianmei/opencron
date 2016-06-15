@@ -7,6 +7,7 @@
 	String path = request.getContextPath().replaceAll("/$","");
 	String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
 	pageContext.setAttribute("contextPath",contextPath);
+	request.setAttribute("uri",request.getRequestURI());
 %>
 
 <script type="text/javascript">
