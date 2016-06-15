@@ -315,6 +315,9 @@ public class Bootstrap implements Serializable {
      */
 
     private void shutdown() throws Exception {
+        /**
+         * connect to startup socket and send stop command。。。。。。
+         */
         Socket socket = new Socket("localhost",RedrainProperties.getInt("redrain.socket"));
         OutputStream os = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(os);
