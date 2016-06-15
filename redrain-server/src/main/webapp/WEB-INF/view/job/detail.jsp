@@ -4,12 +4,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <%
+    String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
     String path = request.getContextPath().replaceAll("/$","");
-    String port = request.getServerPort() == 80 ? "" : ":"+request.getServerPort();
     String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
-
 
 <!DOCTYPE html>
 <html lang="en">

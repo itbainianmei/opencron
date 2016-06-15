@@ -2,8 +2,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
+    String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
     String path = request.getContextPath().replaceAll("/$","");
-    String port = request.getServerPort() == 80 ? "" : ":"+request.getServerPort();
     String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
