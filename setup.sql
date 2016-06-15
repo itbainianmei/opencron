@@ -52,7 +52,7 @@ CREATE TABLE log (
   receiverId bigint(20) DEFAULT NULL,
   type smallint(1) NOT NULL COMMENT '0:邮件,1:短信',
   receiver varchar(500) NOT NULL COMMENT '收件人',
-  message varchar(1000) NOT NULL COMMENT '发送信息',
+  message varchar(1000) DEFAULT NULL COMMENT '发送信息',
   result varchar(1000) DEFAULT NULL,
   sendTime datetime NOT NULL,
   isread int(10) NOT NULL COMMENT '消息是否已读取,0:未读,1:已读(只针对站内信)'
@@ -152,9 +152,9 @@ CREATE TABLE `worker` (
   password varchar(50) DEFAULT NULL,
   failTime datetime DEFAULT NULL COMMENT '检查通信上一次失败的时间',
   name varchar(100) NOT NULL COMMENT 'daemon版本名',
-  warning tinyint(1) DEFAULT NULL COMMENT 'bool.是否失去联络通信的通知email报警',
+  warning smallint(1) DEFAULT '0' COMMENT 'bool.是否失去联络通信的通知email报警',
   mobiles varchar(255) DEFAULT NULL COMMENT '接收通知的手机号',
-  emailAddress varchar(1000) NOT NULL COMMENT '失去联络通信的报警email,#隔开',
-  comment text NOT NULL COMMENT '简介',
+  emailAddress varchar(1000) DEFAULT NULL COMMENT '失去联络通信的报警email,#隔开',
+  comment text DEFAULT NULL COMMENT '简介',
   updateTime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
