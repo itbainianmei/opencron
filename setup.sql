@@ -30,7 +30,7 @@ CREATE TABLE job (
   cronExp varchar(16) DEFAULT NULL COMMENT 'crontab表达式',
   command varchar(1000) DEFAULT NULL COMMENT '运行的命令,原始命令,未替换参数前',
   execType tinyint(1) NOT NULL COMMENT '0-自动模式,由系统自动调用,1-手动模式(手动执行)',
-  comment text COMMENT '简介',
+  comment text DEFAULT NULL COMMENT '简介',
   operateId bigint(20) DEFAULT '-1' COMMENT '操作人的id号',
   updateTime datetime DEFAULT NULL COMMENT '修改日期',
   redo tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此作业,1--重新执行此作业',
