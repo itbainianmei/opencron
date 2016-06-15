@@ -2,11 +2,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String path = request.getContextPath().replaceAll("/$","");
-    String port = request.getServerPort() == 80 ? "" : request.getServerPort()+"";
-    String contextPath = request.getScheme()+"://"+request.getServerName()+":"+port+path;
+    String port = request.getServerPort() == 80 ? "" : ":"+request.getServerPort();
+    String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
-
 <title>RedRain linux job system</title>
 <meta name="format-detection" content="telephone=no">
 <meta name="description" content="RedRain">
