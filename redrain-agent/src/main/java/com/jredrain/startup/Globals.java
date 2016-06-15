@@ -26,6 +26,12 @@ public final class Globals {
 
     public static File REDRAIN_PASSWORD_FILE = new File(System.getProperty(REDRAIN_HOME) + File.separator + ".password");
 
+    /**
+     *
+     * conf file
+     */
+
+    public static File REDRAIN_CONF_FILE = new File(System.getProperty(REDRAIN_HOME) + File.separator + "/conf/redrain.properties");
 
     /**
      * pid
@@ -42,7 +48,5 @@ public final class Globals {
      * kill file
      */
     public static File REDRAIN_KILL_SHELL = new File(System.getProperty(REDRAIN_HOME) + "/bin/kill.sh");
-
-
 
 }

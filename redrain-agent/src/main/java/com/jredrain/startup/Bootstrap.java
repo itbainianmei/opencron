@@ -23,20 +23,25 @@ package com.jredrain.startup;
  * Created by benjobs on 16/3/3.
  */
 
+import com.jredrain.base.job.RedRain;
+import com.jredrain.base.utils.IOUtils;
+import com.jredrain.base.utils.LoggerFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.IOUtils;
-import com.jredrain.base.utils.LoggerFactory;
 import org.slf4j.Logger;
 
-import java.io.Serializable;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.InvocationTargetException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.security.AccessControlException;
+import java.util.Random;
 
 import static com.jredrain.base.utils.CommonUtils.isEmpty;
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
@@ -48,11 +53,6 @@ public class Bootstrap implements Serializable {
 
 
     private static Logger logger = LoggerFactory.getLogger(Bootstrap.class);
-
-    /**
-     *启动实例
-     */
-    private static Bootstrap daemon ;
 
     /**
      * thrift server
@@ -73,22 +73,58 @@ public class Bootstrap implements Serializable {
      * charset...
      */
     private final String CHARSET = "UTF-8";
+    /**
+     * 启动实例
+     */
+    private static Bootstrap daemon;
+
+    /**
+     * Thread that currently is inside our await() method.
+     */
+    private volatile Thread awaitThread = null;
+
+
+    private volatile boolean stopAwait = false;
+
+    /**
+     * Server socket that is used to wait for the shutdown command.
+     */
+    private volatile ServerSocket awaitSocket = null;
+
+    /**
+     * The shutdown command string we are looking for.
+     */
+    private String shutdown = "stop";
+
+    /**
+     * A random number generator that is <strong>only</strong> used if
+     * the shutdown command string is longer than 1024 characters.
+     */
+    private Random random = null;
+
 
     public static void main(String[] args) {
+
         if (daemon == null) {
             daemon = new Bootstrap();
         }
+
         try {
             if (isEmpty(args)) {
                 logger.warn("Bootstrap: error,usage start|stop");
-            }else {
+            } else {
                 String command = args[0];
                 if ("start".equals(command)) {
                     daemon.init();
                     daemon.start();
-                }else if("stop".equals(command)){
-                    daemon.stop();
-                }else {
+                    /**
+                     * await for shundown
+                     */
+                    daemon.await();
+                    daemon.stopServer();
+                } else if ("stop".equals(command)) {
+                    daemon.shutdown();
+                } else {
                     logger.warn("Bootstrap: command \"" + command + "\" does not exist.");
                 }
             }
@@ -104,10 +140,11 @@ public class Bootstrap implements Serializable {
 
     /**
      * init start........
+     *
      * @throws Exception
      */
     public void init() throws Exception {
-        port = Integer.valueOf(Integer.parseInt( Globals.REDRAIN_PORT ));
+        port = Integer.valueOf(Integer.parseInt(Globals.REDRAIN_PORT));
         String inputPwd = Globals.REDRAIN_PASSWORD;
         if (notEmpty(inputPwd)) {
             this.password = DigestUtils.md5Hex(inputPwd).toLowerCase();
@@ -132,23 +169,169 @@ public class Bootstrap implements Serializable {
     public void start() throws Exception {
         try {
             TServerSocket serverTransport = new TServerSocket(port);
-            AgentProcessor agentProcessor = new AgentProcessor(password,port);
+            AgentProcessor agentProcessor = new AgentProcessor(password, port);
             RedRain.Processor processor = new RedRain.Processor(agentProcessor);
             TBinaryProtocol.Factory protFactory = new TBinaryProtocol.Factory(true, true);
             TThreadPoolServer.Args arg = new TThreadPoolServer.Args(serverTransport);
             arg.protocolFactory(protFactory);
             arg.processor(processor);
             this.server = new TThreadPoolServer(arg);
-            logger.info("[redrain]agent started @ port:{},pid:{}",port,getPid());
             /**
              * 写入pid文件
              */
-            IOUtils.writeFile(Globals.REDRAIN_PID_FILE,getPid()+"",CHARSET);
+            IOUtils.writeFile(Globals.REDRAIN_PID_FILE, getPid() + "", CHARSET);
 
-            this.server.serve();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    server.serve();
+                }
+            }).start();
+            logger.info("[redrain]agent started @ port:{},pid:{}", port, getPid());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void await() throws Exception {
+        // Negative values - don't wait on port - tomcat is embedded or we just don't like ports
+        if (port == -2) {
+            return;
+        }
+        if (port == -1) {
+            try {
+                awaitThread = Thread.currentThread();
+                while (!stopAwait) {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        // continue and check the flag
+                    }
+                }
+            } finally {
+                awaitThread = null;
+            }
+            return;
+        }
+
+        // Set up a server socket to wait on
+        try {
+            awaitSocket = new ServerSocket(RedrainProperties.getInt("redrain.socket"));
+        } catch (IOException e) {
+            logger.error("[redrain] agent .await: create[{}] ", RedrainProperties.getInt("redrain.socket"), e);
+            return;
+        }
+
+        try {
+            awaitThread = Thread.currentThread();
+            // Loop waiting for a connection and a valid command
+            while (!stopAwait) {
+                ServerSocket serverSocket = awaitSocket;
+                if (serverSocket == null) {
+                    break;
+                }
+                // Wait for the next connection
+                Socket socket = null;
+                StringBuilder command = new StringBuilder();
+                try {
+                    InputStream stream;
+                    long acceptStartTime = System.currentTimeMillis();
+                    try {
+                        socket = serverSocket.accept();
+                        socket.setSoTimeout(10 * 1000);  // Ten seconds
+                        stream = socket.getInputStream();
+                    } catch (SocketTimeoutException ste) {
+                        // This should never happen but bug 56684 suggests that
+                        // it does.
+                        logger.warn("[redrain] agentServer accept.timeout", Long.valueOf(System.currentTimeMillis() - acceptStartTime), ste);
+                        continue;
+                    } catch (AccessControlException ace) {
+                        logger.warn("[redrain] agentServer .accept security exception: {}", ace.getMessage(), ace);
+                        continue;
+                    } catch (IOException e) {
+                        if (stopAwait) {
+                            break;
+                        }
+                        logger.error("[redrain] agent .await: accept: ", e);
+                        break;
+                    }
+
+                    // Read a set of characters from the socket
+                    int expected = 1024; // Cut off to avoid DoS attack
+                    while (expected < shutdown.length()) {
+                        if (random == null) {
+                            random = new Random();
+                        }
+                        expected += (random.nextInt() % 1024);
+                    }
+                    while (expected > 0) {
+                        int ch = -1;
+                        try {
+                            ch = stream.read();
+                        } catch (IOException e) {
+                            logger.warn("[redrain] agent .await: read: ", e);
+                            ch = -1;
+                        }
+                        if (ch < 32)  // Control character or EOF terminates loop
+                            break;
+                        command.append((char) ch);
+                        expected--;
+                    }
+                } finally {
+                    try {
+                        if (socket != null) {
+                            socket.close();
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+                boolean match = command.toString().equals(shutdown);
+                if (match) {
+                    break;
+                } else {
+                    logger.warn("[redrain] agent .await: Invalid command '" + command.toString() + "' received");
+                }
+            }
+        } finally {
+            ServerSocket serverSocket = awaitSocket;
+            awaitThread = null;
+            awaitSocket = null;
+            // Close the server socket and return
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    // Ignore
+                }
+            }
+        }
+
+    }
+
+    /**
+     * 向soket发送关闭请求...
+     *
+     * @throws Exception
+     */
+
+    private void shutdown() throws Exception {
+        Socket socket = new Socket("localhost",RedrainProperties.getInt("redrain.socket"));
+        OutputStream os = socket.getOutputStream();
+        PrintWriter pw = new PrintWriter(os);
+        InputStream is = socket.getInputStream();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        pw.write(shutdown);
+        pw.flush();
+        socket.shutdownOutput();
+        String reply = null;
+        while (!((reply = br.readLine()) == null)) {
+            logger.info("[redrain]shutdown:{}" + reply);
+        }
+        br.close();
+        is.close();
+        pw.close();
+        os.close();
+        socket.close();
     }
 
     private void stopServer() {
@@ -159,14 +342,6 @@ public class Bootstrap implements Serializable {
              */
             Globals.REDRAIN_PID_FILE.deleteOnExit();
         }
-    }
-
-    public void destroy() {
-        stopServer();
-    }
-
-    public void stop() throws Exception {
-        stopServer();
     }
 
     private static void handleThrowable(Throwable t) {
