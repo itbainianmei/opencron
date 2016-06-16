@@ -24,7 +24,7 @@
     <link href="${contextPath}/css/style.css" rel="stylesheet">
     <link href="${contextPath}/css/animate.css" rel="stylesheet">
     <link href="${contextPath}/css/generics.css" rel="stylesheet">
-
+    <link href="${contextPath}/img/favicon.ico" rel="shortcut icon" type="image/ico">
 
     <!-- Javascript Libraries -->
     <!-- jQuery -->

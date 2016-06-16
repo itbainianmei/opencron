@@ -78,7 +78,7 @@
 		<div class="media" id="top-menu" style="float:right;margin-right:15px;">
 			<div class="pull-left tm-icon" id="msg-icon" style="display: none;">
 				<a  class="drawer-toggle" data-drawer="messages" id="toggle_message" href="#">
-					<i class="sa-top-message icon" style="background-image:none;font-size: 32px; background-size: 25px 17px;">&#61710;</i>
+					<i class="sa-top-message icon" style="background-image:none;font-size: 30px; background-size: 25px;">&#61710;</i>
 					<i class="n-count">5</i>
 				</a>
 			</div>
