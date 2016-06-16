@@ -521,7 +521,7 @@
                 <div class="form-group">
                     <label for="command" class="col-lab control-label"><i class="glyphicon glyphicon-th-large"></i>&nbsp;&nbsp;执行命令：</label>
                     <div class="col-md-10">
-                        <textarea class="form-control input-sm" id="command" name="command" style="height: 100px;">${job.command}</textarea>
+                        <textarea class="form-control input-sm" id="command" name="command" style="height:80px;">${job.command}</textarea>
                         <span class="tips"><b>*&nbsp;</b>请采用unix/linux的shell支持的命令</span>
                     </div>
                 </div><br>
@@ -572,6 +572,7 @@
                                     <input type="hidden" name="child.redo" value="${c.redo}">
                                     <input type="hidden" name="child.runCount" value="${c.runCount}">
                                     <input type="hidden" name="child.command" value="${c.command}">
+                                    <input type="hidden" name="child.comment" value="${c.comment}">
                                 </li>
                             </c:forEach>
                         </div>
@@ -620,7 +621,7 @@
                         <div class="form-group">
                             <label for="workerId1" class="col-lab control-label" title="执行器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
-                                <select id="workerId1" name="workerId1" class="form-control m-b-10 pop-sm">
+                                <select id="workerId1" name="workerId1" class="form-control m-b-10 ">
                                     <c:forEach var="d" items="${workers}">
                                         <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
                                     </c:forEach>
@@ -631,14 +632,14 @@
                         <div class="form-group">
                             <label for="jobName1" class="col-lab control-label" title="作业名称必填">作业名称：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
+                                <input type="text" class="form-control " id="jobName1">&nbsp;&nbsp;<label id="checkJobName1"></label>
                             </div>
                         </div>
 
                         <div class="form-group contact">
                             <label for="command1" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
                             <div class="col-md-9">
-                                <input type="text" style="height: 100px;" class="form-control pop-sm" id="command1"/>&nbsp;
+                                <textarea style="height:80px;" class="form-control " id="command1"></textarea>&nbsp;
                             </div>
                         </div>
 
@@ -650,14 +651,14 @@
                         <div class="form-group countDiv1" style="display: none">
                             <label for="runCount1" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="runCount1"/>&nbsp;
+                                <input type="text" class="form-control " id="runCount1"/>&nbsp;
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="comment1" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="comment1"/>&nbsp;
+                                <textarea style="height: 50px;" name="comment1" id="comment1" class="form-control"></textarea>&nbsp;
                             </div>
                         </div>
                     </form>

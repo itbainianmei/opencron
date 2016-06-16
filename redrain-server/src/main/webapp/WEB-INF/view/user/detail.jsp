@@ -213,19 +213,19 @@
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="pwd0" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;原&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control pop-sm" id="pwd0" placeholder="请输入原密码">&nbsp;&nbsp;<label id="oldpwd"></label>
+                                <input type="password" class="form-control " id="pwd0" placeholder="请输入原密码">&nbsp;&nbsp;<label id="oldpwd"></label>
                             </div>
                         </div>
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label for="pwd1" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;新&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control pop-sm" id="pwd1" placeholder="请输入新密码">
+                                <input type="password" class="form-control " id="pwd1" placeholder="请输入新密码">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="pwd2" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;确认密码：</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control pop-sm" id="pwd2" placeholder="请输入确认密码"/>&nbsp;&nbsp;<label id="checkpwd"></label>
+                                <input type="password" class="form-control " id="pwd2" placeholder="请输入确认密码"/>&nbsp;&nbsp;<label id="checkpwd"></label>
                             </div>
                         </div>
                     </form>

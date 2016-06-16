@@ -206,7 +206,8 @@
                                             "execType":execType,
                                             "jobName":jobName,
                                             "redo":redo,
-                                            "runCount":runCount
+                                            "runCount":runCount,
+                                            "comment":$("#comment").val()
                                         },
                                         success:function(data){
                                             if (data == "success"){
@@ -603,13 +604,13 @@
                         <div class="form-group">
                             <label for="worker" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="worker" readonly>&nbsp;
+                                <input type="text" class="form-control " id="worker" readonly>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="jobName" class="col-lab control-label" title="作业名称必填">作业名称：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
+                                <input type="text" class="form-control " id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
                             </div>
                         </div>
                         <div class="form-group">
@@ -625,13 +626,13 @@
                         <div class="form-group cronExpDiv">
                             <label for="cronExp" class="col-lab control-label" title="请采用对应类型的时间格式表达式">时间规则：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="cronExp"/>&nbsp;&nbsp;<label id="checkcronExp"></label>
+                                <input type="text" class="form-control " id="cronExp"/>&nbsp;&nbsp;<label id="checkcronExp"></label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="cmd" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
                             <div class="col-md-9">
-                                <textarea class="form-control pop-sm" id="cmd" name="cmd" style="height: 100px;"></textarea>&nbsp;
+                                <textarea class="form-control " id="cmd" name="cmd" style="height: 80px;"></textarea>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">
@@ -642,9 +643,17 @@
                         <div class="form-group countDiv">
                             <label for="runCount" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="runCount"/>&nbsp;
+                                <input type="text" class="form-control " id="runCount"/>&nbsp;
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label for="comment" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
+                            <div class="col-md-9">
+                                <textarea style="height: 50px;" name="comment" id="comment" class="form-control"></textarea>&nbsp;
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">

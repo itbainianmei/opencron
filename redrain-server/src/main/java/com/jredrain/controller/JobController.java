@@ -131,6 +131,7 @@ public class JobController {
             Object[] command = map.get("child.command");
             Object[] redo = map.get("child.redo");
             Object[] runCount = map.get("child.runCount");
+            Object[] comment = map.get("child.comment");
             List<Job> chindren = new ArrayList<Job>(0);
             for (int i = 0; i < jobName.length; i++) {
                 Job chind = new Job();
@@ -148,6 +149,7 @@ public class JobController {
                 chind.setJobName((String) jobName[i]);
                 chind.setWorkerId(Long.parseLong((String) workerId[i]));
                 chind.setCommand((String) command[i]);
+                chind.setComment((String) comment[i]);
                 chind.setRedo(Integer.parseInt((String) redo[i]));
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);
