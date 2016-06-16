@@ -149,6 +149,7 @@ public class JobController {
                 chind.setJobName((String) jobName[i]);
                 chind.setWorkerId(Long.parseLong((String) workerId[i]));
                 chind.setCommand((String) command[i]);
+                chind.setCronExp(job.getCronExp());
                 chind.setComment((String) comment[i]);
                 chind.setRedo(Integer.parseInt((String) redo[i]));
                 if (chind.getRedo() == 0) {

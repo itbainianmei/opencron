@@ -24,6 +24,9 @@ package com.jredrain.service;
 
 import java.util.List;
 
+import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.job.Globals;
+import com.jredrain.session.MemcacheCache;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.dao.QueryDao;
@@ -51,8 +54,25 @@ public class WorkerService {
     @Autowired
     private SchedulerService schedulerService;
 
+
+    @Autowired
+    private MemcacheCache memcacheCache;
+
+
     public List<Worker> getAll() {
-       return queryDao.getAll(Worker.class);
+
+        List<Worker> workers = memcacheCache.get(Globals.CACHED_WORKER_ID,List.class);
+
+        if (CommonUtils.isEmpty(workers)) {
+            flushWorker();
+        }
+
+       return memcacheCache.get(Globals.CACHED_WORKER_ID,List.class);
+    }
+
+    private void flushWorker(){
+        memcacheCache.evict(Globals.CACHED_WORKER_ID);
+        memcacheCache.put(Globals.CACHED_WORKER_ID,queryDao.getAll(Worker.class));
     }
 
     public List<Worker> getWorkerByStatus(int status){
@@ -103,6 +123,12 @@ public class WorkerService {
         }else {
             queryDao.save(worker);
         }
+
+        /**
+         * 同步缓存...
+         */
+        flushWorker();
+
     }
 
     public String checkName(Long id, String name) {

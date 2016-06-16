@@ -22,6 +22,7 @@
 
 package com.jredrain.job;
 
+import com.jredrain.session.MemcacheCache;
 import org.apache.log4j.Logger;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.utils.CommonUtils;
@@ -29,18 +30,17 @@ import com.jredrain.domain.Record;
 import com.jredrain.domain.Worker;
 import com.jredrain.service.*;
 import com.jredrain.vo.JobVo;
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class RedRainInitializeBean implements Serializable,InitializingBean {
+public class RedRainInitiator implements Serializable {
 
-    private final Logger logger = Logger.getLogger(RedRainInitializeBean.class);
+    private final Logger logger = Logger.getLogger(RedRainInitiator.class);
 
     @Autowired
     private WorkerService workerService;
@@ -63,22 +63,15 @@ public class RedRainInitializeBean implements Serializable,InitializingBean {
     @Autowired
     private SchedulerService schedulerService;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        //quartz job
-        List<JobVo> jobs = jobService.getJobVo(RedRain.ExecType.AUTO, RedRain.CronType.QUARTZ);
-        for (JobVo job : jobs) {
-            try {
-                schedulerService.addOrModify(job,executeService);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
-        }
+    @Autowired
+    private MemcacheCache memcacheCache;
 
+    @PostConstruct
+    public void init() throws Exception {
+        clearCache();
+        schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();
-
     }
-
 
     /**
      * 执行器通信监控,每10秒通信一次
@@ -87,7 +80,6 @@ public class RedRainInitializeBean implements Serializable,InitializingBean {
     @Scheduled(cron = "0/5 * * * * ?")
     public void ping() {
         logger.info("[redrain]:checking Worker connection...");
-
         List<Worker> workers = workerService.getAll();
         for (final Worker worker : workers) {
             Runnable runnable = new Runnable() {
@@ -127,6 +119,7 @@ public class RedRainInitializeBean implements Serializable,InitializingBean {
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void redoJob() {
+        logger.info("[redrain] redojob running...");
         List<Record> records = recordService.getReExecuteRecord();
         for (final Record record : records) {
             JobVo jobVo = jobService.getJobVoById(record.getJobId());
@@ -140,6 +133,13 @@ public class RedRainInitializeBean implements Serializable,InitializingBean {
             }
         }
     }
+
+
+    private void clearCache() {
+        memcacheCache.evict(Globals.CACHED_WORKER_ID);
+        memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
+    }
+
 
     //@Scheduled(cron = "0 0/1 * * * ?")
   /*  public void monitor() throws Exception {

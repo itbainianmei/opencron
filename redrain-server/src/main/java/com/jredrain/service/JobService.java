@@ -29,6 +29,8 @@ import java.util.List;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.Worker;
+import com.jredrain.job.Globals;
+import com.jredrain.session.MemcacheCache;
 import com.jredrain.tag.Page;
 
 import static com.jredrain.base.job.RedRain.*;
@@ -37,6 +39,8 @@ import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.domain.Job;
 import com.jredrain.vo.JobVo;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +57,11 @@ public class JobService {
 
     @Autowired
     private WorkerService workerService;
+
+    @Autowired
+    private MemcacheCache memcacheCache;
+
+    private Logger logger = LoggerFactory.getLogger(JobService.class);
 
     public Job getJob(Long jobId) {
         return queryDao.get(Job.class,jobId);
@@ -95,7 +104,13 @@ public class JobService {
     }
 
     public List<JobVo> getCrontabJob() {
+        logger.info("[redrain] init quartzJob...");
         return getJobVo(RedRain.ExecType.AUTO, RedRain.CronType.CRONTAB);
+    }
+
+    private void flushCronjob(){
+        memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
+        memcacheCache.put(Globals.CACHED_CRONTAB_JOB,getJobVo(RedRain.ExecType.AUTO, RedRain.CronType.CRONTAB));
     }
 
     public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {
@@ -138,7 +153,9 @@ public class JobService {
     }
 
     public Job addOrUpdate(Job job) {
-        return (Job)queryDao.save(job);
+        Job saveJob = (Job)queryDao.save(job);
+        flushCronjob();
+        return saveJob;
     }
 
     public JobVo getJobVoById(Long id) {
@@ -171,7 +188,9 @@ public class JobService {
 
     @Transactional(readOnly = false)
     public int delete(Long jobId) {
-        return queryDao.createSQLQuery("update job set status=0 WHERE jobId = " + jobId).executeUpdate();
+        int count = queryDao.createSQLQuery("update job set status=0 WHERE jobId = " + jobId).executeUpdate();
+        flushCronjob();
+        return count;
     }
 
     @Transactional(readOnly = false)

@@ -159,4 +159,16 @@ public final class SchedulerService {
         }
     }
 
+    public void initQuartz(Job jobExecutor) {
+        //quartz job
+        logger.info("[redrain] init quartzJob...");
+        List<JobVo> jobs = jobService.getJobVo(RedRain.ExecType.AUTO, RedRain.CronType.QUARTZ);
+        for (JobVo job : jobs) {
+            try {
+                addOrModify(job,jobExecutor);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
