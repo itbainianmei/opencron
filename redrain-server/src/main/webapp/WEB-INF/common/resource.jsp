@@ -6,7 +6,7 @@
     String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
-<title>RedRain linux job system</title>
+<title>RedRain</title>
 <meta name="format-detection" content="telephone=no">
 <meta name="description" content="RedRain">
 <meta name="viewport" content="width=device-width, initial-scale=1">

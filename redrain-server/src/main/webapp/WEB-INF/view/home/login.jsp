@@ -16,30 +16,8 @@
     <meta name="keywords" content="redrain,crontab,a better crontab,Let's crontab easy">
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
-    <title>RedRain!Let's crontab easy</title>
-
-    <!-- CSS -->
-    <link href="${contextPath}/css/bootstrap.min.css" rel="stylesheet">
-    <link href="${contextPath}/css/form.css" rel="stylesheet">
-    <link href="${contextPath}/css/style.css" rel="stylesheet">
-    <link href="${contextPath}/css/animate.css" rel="stylesheet">
-    <link href="${contextPath}/css/generics.css" rel="stylesheet">
-    <link href="${contextPath}/img/favicon.ico" rel="shortcut icon" type="image/ico">
-
-    <!-- Javascript Libraries -->
-    <!-- jQuery -->
-    <script src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
-
-    <!-- Bootstrap -->
-    <script src="${contextPath}/js/bootstrap.min.js"></script>
-
-    <!--  Form Related -->
-    <script src="${contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
-
-    <script src="${contextPath}/js/jquery.cookie.js"></script>
-
-    <script src="${contextPath}/js/md5.js"></script>
-
+    <title>RedRain</title>
+    <jsp:include page="/WEB-INF/common/resource.jsp"/>
     <script type="text/javascript">
 
         $(document).ready(function(){
@@ -405,9 +383,10 @@
 
     </script>
 
-
 </head>
 <body id="skin-blur-violate">
+
+
 <section id="login">
     <header>
         <h1 style="width: 200px;">
@@ -416,21 +395,22 @@
         <h4 style="margin-top: 5px;">Welcome to RedRain,Let's crontab easy</h4>
     </header>
 
-    <form id="box-login" class="box tile animated active" style="margin-top:30px;">
+    <div id="box-login" class="box tile animated active" style="margin-top:30px;">
         <h2 class="m-t-0 m-b-15">登录</h2>
         <input type="text" placeholder="请输入用户名" id="username" class="login-control m-b-10">
         <input type="password" placeholder="请输入密码" id="password" class="login-control">
         <div class="checkbox m-b-20">
-            <label>
-                <input type="checkbox" id="remember">
+            <label style="color: rgb(192,192,192)">
+                <input type="checkbox" id="remember" style="opacity: 1">
                 记住密码
             </label>
         </div>
+
         <button id="btnLogin" class="btn btn-sm m-r-5" type="button">登录</button>
-        <span id="error_msg">
+        <span id="error_msg" style=" color: rgb(192,192,192)">
             请输入您的用户名和密码进行登陆
         </span>
-    </form>
+    </div>
 </section>
 
 
