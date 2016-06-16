@@ -191,17 +191,23 @@ public class JobService {
             JobVo jobVo = new JobVo();
             jobVo.setCategory(JobCategory.FLOW.getCode());
             jobVo.setFlowId(job.getFlowId());
-            List<JobVo> childrenx = queryChildren(jobVo);
-            top:for(JobVo jobVo1:childrenx){
-                for(Job job1:children){
-                    if ( job1.getJobId()!=null && job1.getJobId().equals(jobVo1.getJobId()) ) {
+
+            /**
+             * 取差集..
+             */
+            List<JobVo> hasChildren = queryChildren(jobVo);
+            //数据库里已经存在的子集合..
+            top:for(JobVo hasChild:hasChildren) {
+                //当前页面提交过来的子集合...
+                for(Job child:children){
+                    if ( child.getJobId()!=null && child.getJobId().equals(hasChild.getJobId()) ) {
                         continue top;
                     }
                 }
                 /**
                  * 已有的子作业被删除的,则做删除操作...
                  */
-                delete(jobVo1.getJobId());
+                delete(hasChild.getJobId());
             }
         }else {
             Job job1 = addOrUpdate(job);
@@ -220,7 +226,7 @@ public class JobService {
             chind.setOperateId(job.getOperateId());
             chind.setExecType(job.getExecType());
             chind.setUpdateTime(new Date());
-            chind.setCategory(1);
+            chind.setCategory(JobCategory.FLOW.getCode());
             chind.setFlowNum(i+1);
             chind.setLastFlag(chind.getFlowNum()==children.size());
             addOrUpdate(chind);

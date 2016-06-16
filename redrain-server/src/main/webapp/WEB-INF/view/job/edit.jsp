@@ -332,7 +332,7 @@
                             $("#"+id).find("input").each(function(index,element) {
 
                                 if ($(element).attr("name") == "child.jobId"){
-                                    $(element).attr("value",$("#jobId").val());
+                                    $(element).attr("value",$("#jobId1").val());
                                 }
 
                                 if ($(element).attr("name") == "child.jobName"){
@@ -638,7 +638,7 @@
                         <div class="form-group contact">
                             <label for="command1" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control pop-sm" id="command1"/>&nbsp;
+                                <input type="text" style="height: 100px;" class="form-control pop-sm" id="command1"/>&nbsp;
                             </div>
                         </div>
 
