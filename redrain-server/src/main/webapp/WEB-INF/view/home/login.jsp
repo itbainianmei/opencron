@@ -401,8 +401,7 @@
         <input type="password" placeholder="请输入密码" id="password" class="login-control">
         <div class="checkbox m-b-20">
             <label style="color: rgb(192,192,192)">
-                <input type="checkbox" id="remember" style="opacity: 1">
-                记住密码
+                <input type="checkbox" id="remember"> 记住密码
             </label>
         </div>
 
