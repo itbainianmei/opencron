@@ -526,6 +526,16 @@ var redrainChart = {
     topData:function () {
         //title
         //    @JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
+
+        var mhtml='<tr>'+
+            '<td class="noborder" title="进程ID">PID</td>'+
+            '<td class="noborder" title="进程所属的用户">USER</td>'+
+            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>'+
+            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>'+
+            '<td class="noborder" title="持续时长">TIME</td>'+
+            '<td class="noborder" title="所执行的命令">COMMAND</td>'+
+            '</tr>';
+
         var html='<tr>'+
             '<td class="noborder" title="进程ID">PID</td>'+
             '<td class="noborder" title="进程所属的用户">USER</td>'+
@@ -540,32 +550,44 @@ var redrainChart = {
             var text = "<tr>";
             var obj = eval('('+data+')');
             for (var k in obj) {
+                if($.isMobile() && ( 'virt' === k || 'res' === k ) ){
+                    continue;
+                }
                 if ('cpu' === k || 'mem' === k) {
-
-                    var val  = obj[k];
-                    var colorCss = "";
-                    if (val < 60) {
-                        colorCss = "progress-bar-success";
-                    } else if (val < 80) {
-                        colorCss = "progress-bar-warning";
-                    } else {
-                        colorCss = "progress-bar-danger";
+                    if($.isMobile()){
+                        text += ("<td>"+obj[k]+"%</td>");
+                    }else {
+                        var val = obj[k];
+                        var colorCss = "";
+                        if (val < 60) {
+                            colorCss = "progress-bar-success";
+                        } else if (val < 80) {
+                            colorCss = "progress-bar-warning";
+                        } else {
+                            colorCss = "progress-bar-danger";
+                        }
+                        var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">' +
+                            '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">' + val + '</span>%' +
+                            '</div>' +
+                            '<div class="progress progress-small progress-white">' +
+                            '<div class="progress-bar ' + colorCss + '" role="progressbar" data-percentage="' + val + '%" style="width:' + val + '%" aria-valuemin="0" aria-valuemax="100"></div>' +
+                            '</div></td>';
+                        text += cpu;
                     }
-                    var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">'+
-                        '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">'+val+'</span>%'+
-                        '</div>'+
-                        '<div class="progress progress-small progress-white">'+
-                        '<div class="progress-bar '+colorCss+'" role="progressbar" data-percentage="'+val+'%" style="width:'+val+'%" aria-valuemin="0" aria-valuemax="100"></div>'+
-                        '</div></td>';
-                    text += cpu;
-                }else {
+                } else {
                     text += ("<td>"+obj[k]+"</td>");
                 }
             }
             text+='</tr>';
+
+            if ($.isMobile()) {
+
+            }
+            mhtml+=text;
             html+=text;
         });
-        $("#topbody").html(html);
+
+        $("#topbody").html($.isMobile()?mhtml:html);
     },
 
     executeChart: function () {

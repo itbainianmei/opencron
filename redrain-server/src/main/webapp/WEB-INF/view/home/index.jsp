@@ -124,6 +124,12 @@
                 $("#no_number").text(no_number).attr("data-value",no_number);
                 $("#no_number_prop").attr("data-percentage",no_number+"%").css("width",no_number+"%");
             }
+
+            if($.isMobile()){
+                $("#startTime").css("width","80px").removeClass("Wdate").addClass("mWdate");
+                $("#endTime").css("width","80px").removeClass("Wdate").addClass("mWdate");
+            }
+
         });
     </script>
 </head>
