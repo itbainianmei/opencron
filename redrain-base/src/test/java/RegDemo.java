@@ -25,9 +25,7 @@
 public class RegDemo {
 
     public static void main(String[] args) {
-
         String str = "fsafdsfds:8080";
         System.out.println(str.replaceAll(":80$",""));
-
     }
 }
