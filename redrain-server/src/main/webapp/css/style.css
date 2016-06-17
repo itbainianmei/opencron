@@ -2301,7 +2301,7 @@ a.list-group-item.active > .badge,
     }
 
     #sidebar {
-        top: -51px;
+        top: -61px;
         z-index: 9999;
         position: absolute;
         height: 100%;
@@ -2352,6 +2352,7 @@ a.list-group-item.active > .badge,
         float: left;
         width: 100%;
         overflow: hidden;
+        padding-left: 55px;
     }
 
     .side-menu > li > a {
@@ -2359,13 +2360,21 @@ a.list-group-item.active > .badge,
     }
 
     .side-menu .menu-item {
-        float: left;
-        border-left: 1px solid rgba(255,255,255,0.1);
-        margin-left: 45px;
+        float: right;
+        margin-left: 4px;
+        width: 71px;
     }
 
     .side-menu ul.menu-item {
-        width: 100%;
+        width: 84%;
+        top: 0;
+        padding: 0;
+    }
+
+    ul.menu-item a {
+        font-weight: bold;
+        height: 40px;
+        display: block;
     }
 
     ul.menu-item a.active {
