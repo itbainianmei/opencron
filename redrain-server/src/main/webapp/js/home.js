@@ -130,7 +130,8 @@ var redrainChart = {
                     beta: 0
                 }
             },
-            colors: ['rgba(35,224,35,0.65)', 'rgba(237,26,26,0.65)'],
+            //colors: ['rgba(46,212,146,0.65)', 'rgba(252,114,150,0.65)'],
+            colors: ['rgba(76,224,105,0.45)', 'rgba(237,56,46,0.45)'],
             title: {
                 text: ''
             },
@@ -809,7 +810,7 @@ var redrainChart = {
                                     beta: 0
                                 }
                             },
-                            colors: ['rgba(255,255,255,0.45)', 'rgba(237,26,26,0.45)', 'rgba(0,0,0,0.45)'],
+                            colors: ['rgba(42,242,221,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
                             title: {text: ''},
                             tooltip: {
                                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
