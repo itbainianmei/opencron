@@ -130,6 +130,11 @@
                 $("#endTime").css("width","80px").removeClass("Wdate").addClass("mWdate");
             }
 
+            $(window).resize(function(){
+                redrainChart.lineChart();
+                $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
+            });
+
         });
     </script>
 </head>

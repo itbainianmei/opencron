@@ -636,6 +636,52 @@ var redrainChart = {
 
     },
 
+    lineChart:function () {
+        $.ajax({
+            url: redrainChart.path+"/diffchart",
+            data: {
+                "startTime": $("#startTime").val(),
+                "endTime": $("#endTime").val()
+            },
+            dataType: "json",
+            success: function (data) {
+                if ( data!=null ) {
+
+                    //折线图
+                    var dataArea = [];
+                    var auto = 0;
+                    for (var i in data) {
+                        dataArea.push({
+                            date: data[i].date,
+                            success: data[i].success,
+                            failure: data[i].failure,
+                            killed: data[i].killed
+                        });
+                    }
+
+                    $("#overview_report").html('');
+                    Morris.Line({
+                        element: 'overview_report',
+                        data: dataArea,
+                        grid: true,
+                        axes: true,
+                        xkey: 'date',
+                        ykeys: ['success', 'failure', 'killed'],
+                        labels: ['成功', '失败', '被杀'],
+                        lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
+                        hoverFillColor: 'rgb(45,45,45)',
+                        lineWidth: 4,
+                        pointSize: 5,
+                        hideHover: 'auto',
+                        smooth: false,
+                        resize: true
+                    });
+
+                }
+            }
+        });
+    },
+
     executeChart: function () {
 
         if($.isMobile()){
