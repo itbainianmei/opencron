@@ -4,6 +4,7 @@ var redrainChart = {
     intervalTime: 2000,
     gauge: null,
     gaugeOption:null,
+    screen:1,//1小屏,2:中屏,3大屏
     data: null,
     socket:null,
     overviewDataArr: [
@@ -219,8 +220,13 @@ var redrainChart = {
             });
 
             if (i == 2) {
-                var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
-                $("#overview-chart").append(html);
+                if(redrainChart.screen==2){
+                    var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    $("#overview-chart").append(html);
+                }else {
+                    var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    $("#overview-chart").append(html);
+                }
                 redrainChart.gauge = echarts.init(document.getElementById('gauge-cpu'));
                 redrainChart.gaugeOption = {
                     series : [
@@ -277,6 +283,7 @@ var redrainChart = {
                 };
                 redrainChart.gaugeOption.series[0].data[0].value = parseFloat(val);
                 redrainChart.gauge.setOption(redrainChart.gaugeOption,true);
+
             } else {
                 var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\"></span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
                 html.easyPieChart({
@@ -287,7 +294,7 @@ var redrainChart = {
                     lineCap: 'square',
                     lineWidth: 4,
                     animate: 3000,
-                    size:  $.isPC() ? ((i==1||i==3)?90:80) : 110,
+                    size: redrainChart.screen==3?((i==1||i==3)?90:80):(redrainChart.screen==1?120:135),
                     onStep: function (from, to, percent) {
                         $(this.el).find('.percent').text(Math.round(percent));
                     }
@@ -525,7 +532,13 @@ var redrainChart = {
 
     topData:function () {
         //title
-        //    @JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
+        //@JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
+        var shtml = '<tr>'+
+            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>'+
+            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>'+
+            '<td class="noborder" title="持续时长">TIME</td>'+
+            '<td class="noborder" title="所执行的命令">COMMAND</td>'+
+            '</tr>';
 
         var mhtml='<tr>'+
             '<td class="noborder" title="进程ID">PID</td>'+
@@ -536,7 +549,7 @@ var redrainChart = {
             '<td class="noborder" title="所执行的命令">COMMAND</td>'+
             '</tr>';
 
-        var html='<tr>'+
+        var lhtml='<tr>'+
             '<td class="noborder" title="进程ID">PID</td>'+
             '<td class="noborder" title="进程所属的用户">USER</td>'+
             '<td class="noborder" title="虚拟内存">VIRI</td>'+
@@ -546,48 +559,81 @@ var redrainChart = {
             '<td class="noborder" title="持续时长">TIME</td>'+
             '<td class="noborder" title="所执行的命令">COMMAND</td>'+
             '</tr>';
+
         $.each( eval('(' + redrainChart.data.top + ')') , function (i, data) {
             var text = "<tr>";
             var obj = eval('('+data+')');
-            for (var k in obj) {
-                if($.isMobile() && ( 'virt' === k || 'res' === k ) ){
-                    continue;
-                }
-                if ('cpu' === k || 'mem' === k) {
-                    if($.isMobile()){
-                        text += ("<td>"+obj[k]+"%</td>");
-                    }else {
-                        var val = obj[k];
-                        var colorCss = "";
-                        if (val < 60) {
-                            colorCss = "progress-bar-success";
-                        } else if (val < 80) {
-                            colorCss = "progress-bar-warning";
-                        } else {
-                            colorCss = "progress-bar-danger";
+            switch (redrainChart.screen){
+                case 1:
+                    //小屏去掉pid,user,virt,res...
+                    for (var k in obj) {
+                        if( 'pid' === k || 'user' === k ||'virt' === k || 'res' === k ){
+                            continue;
                         }
-                        var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">' +
-                            '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">' + val + '</span>%' +
-                            '</div>' +
-                            '<div class="progress progress-small progress-white">' +
-                            '<div class="progress-bar ' + colorCss + '" role="progressbar" data-percentage="' + val + '%" style="width:' + val + '%" aria-valuemin="0" aria-valuemax="100"></div>' +
-                            '</div></td>';
-                        text += cpu;
+                        if ('cpu' === k || 'mem' === k) {
+                            text += ("<td>"+obj[k]+"%</td>");
+                        }else {
+                            text += ("<td>" + obj[k] + "</td>");
+                        }
                     }
-                } else {
-                    text += ("<td>"+obj[k]+"</td>");
-                }
+                    break
+                case 2:
+                    //中屏去掉virt,res
+                    for (var k in obj) {
+                        if ('virt' === k || 'res' === k) {
+                            continue;
+                        }
+                        if ('cpu' === k || 'mem' === k) {
+                            text += ("<td>"+obj[k]+"%</td>");
+                        }else {
+                            text += ("<td>" + obj[k] + "</td>");
+                        }
+                    }
+                    break
+                case 3:
+                    //大屏,全部字段显示。。。
+                    for (var k in obj) {
+                        if ('cpu' === k || 'mem' === k) {
+                                var val = obj[k];
+                                var colorCss = "";
+                                if (val < 60) {
+                                    colorCss = "progress-bar-success";
+                                } else if (val < 80) {
+                                    colorCss = "progress-bar-warning";
+                                } else {
+                                    colorCss = "progress-bar-danger";
+                                }
+                                var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">' +
+                                    '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">' + val + '</span>%' +
+                                    '</div>' +
+                                    '<div class="progress progress-small progress-white">' +
+                                    '<div class="progress-bar ' + colorCss + '" role="progressbar" data-percentage="' + val + '%" style="width:' + val + '%" aria-valuemin="0" aria-valuemax="100"></div>' +
+                                    '</div></td>';
+                                text += cpu;
+                        } else {
+                            text += ("<td>" + obj[k] + "</td>");
+                        }
+                    }
+                    break;
             }
             text+='</tr>';
-
-            if ($.isMobile()) {
-
-            }
+            shtml+=text;
             mhtml+=text;
-            html+=text;
+            lhtml+=text;
         });
 
-        $("#topbody").html($.isMobile()?mhtml:html);
+        switch (redrainChart.screen){
+            case 1:
+                $("#topbody").html(shtml);
+                break;
+            case 2:
+                $("#topbody").html(mhtml);
+                break
+            case 3:
+                $("#topbody").html(lhtml);
+                break
+        }
+
     },
 
     executeChart: function () {
@@ -755,6 +801,16 @@ var redrainChart = {
 $(document).ready(function () {
     var homejs = document.getElementById('homejs').src;
     redrainChart.path = homejs.substr(homejs.indexOf("?")+1);
+
+    var width = window.screen.width;
+    //iphone6以下屏幕大小
+    if (width<375){
+        redrainChart.screen = 1;
+    }else if(width>=375 && width<1280){
+        redrainChart.screen = 2;
+    }else {
+        redrainChart.screen = 3;
+    }
     redrainChart.monitorData();
     redrainChart.executeChart();
 
