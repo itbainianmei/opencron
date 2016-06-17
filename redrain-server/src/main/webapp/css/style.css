@@ -379,6 +379,10 @@ blockquote small {
     padding-top: 10px;
 }
 
+.side-menu .fa{
+    line-height:1.6;
+}
+
 .n-count {
     background: #F00000;
     font-size: 11px;
