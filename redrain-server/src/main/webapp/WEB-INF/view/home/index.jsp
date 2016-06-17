@@ -291,7 +291,7 @@
                <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
            </div>
 
-           <div id="report_detail" class="col-xs-2" style="background-color: rgba(0,0,0,0.3);height: 300px;display: none">
+           <div id="report_detail" class="col-xs-2" style="background-color: rgba(0,0,0,0.3);height: 300px;padding-top:15px;display: none">
                <h5 class="subtitle mb5" style="font-size: 20px;">报告明细</h5>
                <div class="clearfix"></div>
 
