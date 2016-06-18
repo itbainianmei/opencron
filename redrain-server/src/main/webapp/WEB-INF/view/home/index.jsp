@@ -131,7 +131,7 @@
             }
 
             $(window).resize(function(){
-                redrainChart.lineChart();
+                redrainChart.resizeChart();
                 $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
             });
 

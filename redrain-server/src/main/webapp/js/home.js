@@ -7,7 +7,7 @@ var redrainChart = {
     screen: 1,//1小屏,2:中屏,3大屏
     data: null,
     socket: null,
-    lineChartData: {},
+    resizeChartData: {},
     overviewDataArr: [
         {"key": "us", "title": "用户占用", "color": "rgba(221,68,255,0.90)"},
         {"key": "sy", "title": "系统占用", "color": "rgba(255,255,255,0.90)"},
@@ -637,12 +637,118 @@ var redrainChart = {
 
     },
 
+    resizeChart: function () {
+        if ($.isMobile()) {
+            $("#overview_pie_div").remove();
+            $("#report_detail").remove();
+            $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-12")
+        } else {
+            if( $( window).width() < 1024 ){
+                $("#overview_pie_div").removeClass("col-xs-3").removeClass("col-xs-4").hide();
+                $("#report_detail").removeClass("col-xs-2").hide();
+                $("#overview_report_div").removeClass("col-xs-7").removeClass("col-xs-8").addClass("col-xs-12")
+            }else if ( $(window).width() < 1280 ) {//1024 ~ 1280
+                $("#report_detail").removeClass("col-xs-2").hide();
+                $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-8");
+                $("#overview_pie_div").removeClass("col-xs-3").addClass("col-xs-4");
+            }else {//>1280
+                $("#overview_report_div").removeClass("col-xs-8").addClass("col-xs-7");
+                $("#overview_pie_div").removeClass("col-xs-4").addClass("col-xs-3");
+                $("#report_detail").addClass("col-xs-2").show();
+            }
+        }
 
-    lineChart: function () {
+        //屏幕大于1024显示饼状图
+        if($(window).width()>=1024){
+            $("#overview_pie").html('');
+            $("#overview_pie_div").show();
+            $('#overview_pie').highcharts({
+                chart: {
+                    backgroundColor: 'rgba(0,0,0,0)',
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: true,
+                    options3d: {
+                        enabled: true,
+                        alpha: 20,
+                        beta: 0
+                    }
+                },
+                colors: ['rgba(110,186,249,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
+                title: {text: ''},
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true,
+                        depth: 25
+                    }
+                },
+                series: [{
+                    type: 'pie',
+                    name: '占比',
+
+                    data: [
+                        ['成功', redrainChart.resizeChartData.success],
+                        ['失败', redrainChart.resizeChartData.failure],
+                        ['被杀', redrainChart.resizeChartData.killed]
+                    ]
+
+                }]
+            });
+        }
+
+        //屏幕大于1280显示占比进度图
+        if ($(window).width() >= 1280){
+
+            var job_type = parseFloat(redrainChart.resizeChartData.auto / (redrainChart.resizeChartData.auto + redrainChart.resizeChartData.operator)) * 100;
+            if (isNaN(job_type)) {
+                $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+            } else {
+                $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+            }
+
+            var job_category = parseFloat(redrainChart.resizeChartData.singleton / (redrainChart.resizeChartData.singleton + redrainChart.resizeChartData.flow)) * 100;
+            if (isNaN(job_category)) {
+                $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
+            } else {
+                $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
+            }
+
+            var job_model = parseFloat(redrainChart.resizeChartData.crontab / (redrainChart.resizeChartData.crontab + redrainChart.resizeChartData.quartz)) * 100;
+            if (isNaN(job_model)) {
+                $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
+            } else {
+                $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
+            }
+
+            var job_rerun = parseFloat((redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed - redrainChart.resizeChartData.rerun) / (redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed)) * 100;
+            if (isNaN(job_rerun)) {
+                $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
+            } else {
+                $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
+            }
+
+            var job_status = parseFloat(redrainChart.resizeChartData.success / (redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed)) * 100;
+            if (isNaN(job_status)) {
+                $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
+            } else {
+                $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
+            }
+        }
+
+        //线型报表
+        $("#overview_report_div").show();
         $("#overview_report").html('');
         Morris.Line({
             element: 'overview_report',
-            data: redrainChart.lineChartData,
+            data: redrainChart.resizeChartData.dataArea,
             grid: true,
             axes: true,
             xkey: 'date',
@@ -658,15 +764,7 @@ var redrainChart = {
         });
     },
 
-
     executeChart: function () {
-
-        if ($.isMobile()) {
-            $("#overview_pie_div").remove();
-            $("#report_detail").remove();
-            $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-12")
-        }
-
         $.ajax({
             url: redrainChart.path + "/diffchart",
             data: {
@@ -675,8 +773,8 @@ var redrainChart = {
             },
             dataType: "json",
             success: function (data) {
+                $("#overview_loader").hide();
                 if (data != null) {
-
                     //折线图
                     var dataArea = [];
                     var successSum = 0;
@@ -700,7 +798,6 @@ var redrainChart = {
                         successSum += parseInt(data[i].success);
                         failureSum += parseInt(data[i].failure);
                         killedSum += parseInt(data[i].killed);
-
                         singleton += parseInt(data[i].singleton);
                         flow += parseInt(data[i].flow);
                         crontab += parseInt(data[i].crontab);
@@ -710,114 +807,20 @@ var redrainChart = {
                         operator += parseInt(data[i].operator);
                     }
 
-                    $("#overview_loader").hide();
-                    $("#overview_report_div").show();
-
-                    $("#overview_report").html('');
-                    if ($.isPC()) {
-                        $("#overview_pie").html('');
-                        $("#overview_pie_div").show();
-                        $("#report_detail").show();
-
-                        var job_type = parseFloat(auto / (auto + operator)) * 100;
-                        if (isNaN(job_type)) {
-                            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
-                        } else {
-                            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
-                        }
-
-                        var job_category = parseFloat(singleton / (singleton + flow)) * 100;
-                        if (isNaN(job_category)) {
-                            $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
-                        } else {
-                            $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
-                        }
-
-                        var job_model = parseFloat(crontab / (crontab + quartz)) * 100;
-                        if (isNaN(job_model)) {
-                            $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
-                        } else {
-                            $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
-                        }
-
-                        var job_rerun = parseFloat((successSum + failureSum + killedSum - rerun) / (successSum + failureSum + killedSum)) * 100;
-                        if (isNaN(job_rerun)) {
-                            $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
-                        } else {
-                            $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
-                        }
-
-                        var job_status = parseFloat(successSum / (successSum + failureSum + killedSum)) * 100;
-                        if (isNaN(job_status)) {
-                            $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
-                        } else {
-                            $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
-                        }
-
-                    }
-
-                    redrainChart.lineChartData = dataArea;
-
-                    Morris.Line({
-                        element: 'overview_report',
-                        data: dataArea,
-                        grid: true,
-                        axes: true,
-                        xkey: 'date',
-                        ykeys: ['success', 'failure', 'killed'],
-                        labels: ['成功', '失败', '被杀'],
-                        lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
-                        hoverFillColor: 'rgb(45,45,45)',
-                        lineWidth: 4,
-                        pointSize: 5,
-                        hideHover: 'auto',
-                        smooth: false,
-                        resize: true
-                    });
-
-                    if ($.isPC()) {
-                        $('#overview_pie').highcharts({
-                            chart: {
-                                backgroundColor: 'rgba(0,0,0,0)',
-                                plotBackgroundColor: null,
-                                plotBorderWidth: null,
-                                plotShadow: true,
-                                options3d: {
-                                    enabled: true,
-                                    alpha: 20,
-                                    beta: 0
-                                }
-                            },
-                            //colors: ['rgba(42,242,221,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
-                            colors: ['rgba(110,186,249,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
-                            title: {text: ''},
-                            tooltip: {
-                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                            },
-                            plotOptions: {
-                                pie: {
-                                    allowPointSelect: true,
-                                    cursor: 'pointer',
-                                    dataLabels: {
-                                        enabled: false
-                                    },
-                                    showInLegend: true,
-                                    depth: 25
-                                }
-                            },
-                            series: [{
-                                type: 'pie',
-                                name: '占比',
-
-                                data: [
-                                    ['成功', successSum],
-                                    ['失败', failureSum],
-                                    ['被杀', killedSum]
-                                ]
-
-                            }]
-                        });
-                    }
+                    redrainChart.resizeChartData = {
+                        "dataArea":dataArea,
+                        "success":successSum,
+                        "failure":failureSum,
+                        "killed":killedSum,
+                        "singleton":singleton,
+                        "flow":flow,
+                        "crontab":crontab,
+                        "quartz":quartz,
+                        "rerun":rerun,
+                        "auto":auto,
+                        "operator":operator
+                    };
+                    redrainChart.resizeChart();
                 }
             }
         });
