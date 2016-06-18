@@ -93,12 +93,14 @@
             //接收输入框
             vars : {
                 "nameNode":"",
+                "nameInput":"",
                 "pwdNode":"",
                 "index":-1
             },
 
             init:function(name,pwd){
                 this.vars.nameNode = $(name);
+                this.vars.nameInput = $(name).val();
                 this.vars.pwdNode = $(pwd);
                 this.band();
             },
@@ -266,7 +268,7 @@
                     var obj = loginCookie.find(userVal);
 
                     if(obj && obj.length>0) {
-                        var oUl = $('<select id="userList" class="form-control" style="border: none; width:'+loginCookie.vars.nameNode.outerWidth()+'px;margin-top:-9px;position: absolute;z-index: 99;background:rgba(30, 30, 30, 0.98) none repeat scroll 0 0" multiple="">');
+                        var oUl = $('<select id="userList" class="form-control" style="border: none; width:'+loginCookie.vars.nameNode.outerWidth()+'px;margin-top:-10px;border-radius: 0px; position: absolute;z-index: 99;background:rgba(30, 30, 40, 0.98) none repeat scroll 0 0" multiple="">');
                         loginCookie.vars.nameNode.after(oUl);
 
                         for(var i=0;i<obj.length;i++){
@@ -306,23 +308,26 @@
                 });
 
                 loginCookie.vars.nameNode.keydown(function(event) {
-                    if(event.keyCode==38){
-                        loginCookie.vars.index--;
-                        if(loginCookie.vars.index==-1){
-                            loginCookie.vars.index=$("#userList li").length-1;
+                    if(event.keyCode==9){//tab
+                        $("#userList").remove();
+                        $("#passsword").focus();
+                    } else if(event.keyCode==38){//up
+                        --loginCookie.vars.index;
+                        if(loginCookie.vars.index<0){
+                            loginCookie.vars.index = $("#userList option").length-1;
                         }
-                        $("#userList li").eq(loginCookie.vars.index).addClass("active").siblings().removeClass("active");
-                    }else if(event.keyCode==40){
-                        loginCookie.vars.index++;
-                        if(loginCookie.vars.index==($("#userList li").length)){
-                            loginCookie.vars.index=0;
+                        $("#userList option").eq(loginCookie.vars.index).css("background","rgba(215, 215, 215, 0.45)").siblings().css("background","rgba(30, 30, 30, 0.98)");
+                    }else if(event.keyCode==40){//down
+                        ++loginCookie.vars.index;
+                        if( loginCookie.vars.index > $("#userList option").length-1 ){
+                            loginCookie.vars.index = 0;
                         }
-                        $("#userList li").eq(loginCookie.vars.index).addClass("active").siblings().removeClass("active");
-                    }else if(event.keyCode==13){
-                        var name = $("#userList li").eq(loginCookie.vars.index).text();
+                        $("#userList option").eq(loginCookie.vars.index).css("background","rgba(215, 215, 215, 0.45)").siblings().css("background","rgba(30, 30, 30, 0.98)");
+                    }else if(event.keyCode==13){ //enter
+                        var name = $("#userList option").eq(loginCookie.vars.index).text();
                         if(name){
                             loginCookie.vars.nameNode.val(name);
-                            sendpwd = $("#userList li").eq(loginCookie.vars.index).attr('data-id');
+                            sendpwd = $("#userList option").eq(loginCookie.vars.index).attr('data-id');
                             flag = true;
                         }
                         loginCookie.vars.pwdNode.val("88888888");
