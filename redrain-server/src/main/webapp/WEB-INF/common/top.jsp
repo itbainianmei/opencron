@@ -123,7 +123,7 @@
 		<ul class="list-unstyled side-menu">
 			<li class="<c:if test="${fn:contains(uri,'/home')}">active</c:if>">
 				<a href="${contextPath}/home">
-					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">效果报告</span>
+					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">作业报告</span>
 				</a>
 			</li>
 			<li class="<c:if test="${fn:contains(uri,'/worker')}">active</c:if>">

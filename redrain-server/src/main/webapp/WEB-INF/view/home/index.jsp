@@ -155,7 +155,7 @@
         <li><a href="">首页</a></li>
     </ol>
 
-    <h4 class="page-title" ><i class="fa fa-tachometer" aria-hidden="true" style="font-style: 30px;"></i>&nbsp;效果报告</h4>
+    <h4 class="page-title" ><i class="fa fa-tachometer" aria-hidden="true" style="font-style: 30px;"></i>&nbsp;作业报告</h4>
     <!-- Quick Stats -->
     <div class="block-area" id="overview" style="margin-top: 0px">
         <!-- cards -->
