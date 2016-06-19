@@ -179,69 +179,94 @@
                 }
             }
 
+            var jobObj = {
+                "id":jobId,
+                "name":jobName,
+                "jobId":jobId,
+                "cronType":cronType,
+                "cronExp":cronExp,
+                "workerId":workerId,
+                "command":command,
+                "execType":execType,
+                "jobName":jobName,
+                "redo":redo,
+                "runCount":runCount,
+                "comment":$("#comment").val()
+            };
+
+            //手动....
+            if( execType == 1  ){
+                doSave(jobObj);
+            }else {//需要验证时间规则...
+                $.ajax({
+                    url:"${contextPath}/validation/cronexp",
+                    data:{
+                        "cronType":cronType,
+                        "cronExp":cronExp
+                    },
+                    success:function(data){
+                        if (data == "success"){
+                            doSave(jobObj);
+                        } else {
+                            alert("时间规则语法错误!");
+                            return false;
+                        }
+                    },
+                    error : function() {
+                        alert("网络异常，请刷新页面重试!");
+                        return false;
+                    }
+                });
+            }
+
+        }
+
+        function doSave(job) {
             $.ajax({
-                url:"${contextPath}/validation/cronexp",
+                url:"${contextPath}/job/checkname",
                 data:{
-                    "cronType":cronType,
-                    "cronExp":cronExp
+                    "id":job.jobId,
+                    "name":job.jobName
                 },
                 success:function(data){
-                    if (data == "success"){
+
+                    if (data == "yes"){
                         $.ajax({
-                            url:"${contextPath}/job/checkname",
+                            url:"${contextPath}/job/edit",
                             data:{
-                                "id":jobId,
-                                "name":jobName
+                                "jobId":job.jobId,
+                                "cronType":job.cronType,
+                                "cronExp":job.cronExp,
+                                "workerId":job.workerId,
+                                "command":job.command,
+                                "execType":job.execType,
+                                "jobName":job.jobName,
+                                "redo":job.redo,
+                                "runCount":job.runCount,
+                                "comment":job.comment
                             },
                             success:function(data){
-                                if (data == "yes"){
-                                    $.ajax({
-                                        url:"${contextPath}/job/edit",
-                                        data:{
-                                            "jobId":jobId,
-                                            "cronType":cronType,
-                                            "cronExp":cronExp,
-                                            "workerId":workerId,
-                                            "command":command,
-                                            "execType":execType,
-                                            "jobName":jobName,
-                                            "redo":redo,
-                                            "runCount":runCount,
-                                            "comment":$("#comment").val()
-                                        },
-                                        success:function(data){
-                                            if (data == "success"){
-                                                $('#jobModal').modal('hide');
-                                                alertMsg("修改成功");
+                                if (data == "success"){
+                                    $('#jobModal').modal('hide');
+                                    alertMsg("修改成功");
 
-                                                $("#jobName_"+jobId).html(jobName);
-                                                $("#cronType_"+jobId).html(cronType == "0" ? "crontab" : "quartz");
-                                                $("#cronExp_"+jobId).html(cronExp);
-                                                if (execType == "0"){
-                                                    $("#execType_"+jobId).html('<font color="green">自动</font>');
-                                                }else {
-                                                    $("#execType_"+jobId).html('<font color="red">手动</font>');
-                                                }
-                                                if (redo == "0"){
-                                                    $("#redo_"+jobId).html('<font color="green">否</font>');
-                                                }else {
-                                                    $("#redo_"+jobId).html('<font color="red">是</font>');
-                                                }
-                                                $("#runCount_"+jobId).html(runCount);
-                                                return false;
-                                            }else {
-                                                alert("修改失败");
-                                            }
-                                        },
-                                        error : function() {
-                                            alert("网络繁忙请刷新页面重试!");
-                                            return false;
-                                        }
-                                    });
+                                    $("#jobName_"+job.jobId).html(job.jobName);
+                                    $("#cronType_"+job.jobId).html(job.cronType == "0" ? "crontab" : "quartz");
+                                    $("#cronExp_"+job.jobId).html(job.cronExp);
+                                    if (job.execType == "0"){
+                                        $("#execType_"+job.jobId).html('<font color="green">自动</font>');
+                                    }else {
+                                        $("#execType_"+job.jobId).html('<font color="red">手动</font>');
+                                    }
+                                    if (job.redo == "0"){
+                                        $("#redo_"+job.jobId).html('<font color="green">否</font>');
+                                    }else {
+                                        $("#redo_"+job.jobId).html('<font color="red">是</font>');
+                                    }
+                                    $("#runCount_"+job.jobId).html(job.runCount);
                                     return false;
                                 }else {
-                                    alert("作业名已存在!");
-                                    return false;
+                                    alert("修改失败");
                                 }
                             },
                             error : function() {
@@ -249,23 +274,20 @@
                                 return false;
                             }
                         });
-                    }
-                    else {
-                        alert("时间规则语法错误!");
+                        return false;
+                    }else {
+                        alert("作业名已存在!");
                         return false;
                     }
                 },
                 error : function() {
-                    alert("网络异常，请刷新页面重试!");
+                    alert("网络繁忙请刷新页面重试!");
                     return false;
                 }
             });
-
-
         }
 
         $(document).ready(function(){
-
             $("#execType0").next().attr("onclick","showCronExp()");
             $("#execType1").next().attr("onclick","hideCronExp()");
             $("#redo1").next().attr("onclick","showCountDiv()");
