@@ -74,28 +74,29 @@ public final class SchedulerService {
 
     public void addOrModify(JobVo job, Job jobBean) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId().toString());
-
-        if (checkExists(job.getJobId())) {
-            this.remove(job.getJobId());
-        }
-
         CronTrigger cronTrigger = newTrigger().withIdentity(triggerKey).withSchedule(cronSchedule(job.getCronExp())).build();
-        JobDetail jobDetail = JobBuilder.newJob(jobBean.getClass()).withIdentity(JobKey.jobKey(job.getJobId().toString())).build();
-        jobDetail.getJobDataMap().put(job.getJobId().toString(), job);
-        jobDetail.getJobDataMap().put("jobBean", jobBean);
-        Date date = scheduler.scheduleJob(jobDetail, cronTrigger);
-        if (!scheduler.isStarted()) {
-            scheduler.start();
+        //存在则修改
+        if (checkExists(job.getJobId())) {
+            scheduler.rescheduleJob(triggerKey,cronTrigger);
+        }else {//不存在则添加。。。
+            JobDetail jobDetail = JobBuilder.newJob(jobBean.getClass()).withIdentity(JobKey.jobKey(job.getJobId().toString())).build();
+            jobDetail.getJobDataMap().put(job.getJobId().toString(), job);
+            jobDetail.getJobDataMap().put("jobBean", jobBean);
+            Date date = scheduler.scheduleJob(jobDetail, cronTrigger);
+            if (!scheduler.isStarted()) {
+                scheduler.start();
+            }
+            logger.info("redrain: add success,cronTrigger:{}", cronTrigger, date);
         }
-        logger.info("redrain: add success,cronTrigger:{}", cronTrigger, date);
-
     }
 
     public void remove(Long jobId) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         if (checkExists(jobId)) {
-            boolean result = scheduler.unscheduleJob(triggerKey);
-            logger.info("redrain: removed, triggerKey:{}, result [{}]", triggerKey, result);
+            logger.info("redrain: removed, triggerKey:{}, result [{}]",
+                    triggerKey,
+                    scheduler.unscheduleJob(triggerKey) && scheduler.deleteJob(JobKey.jobKey(jobId.toString()))
+            );
         }
     }
 
