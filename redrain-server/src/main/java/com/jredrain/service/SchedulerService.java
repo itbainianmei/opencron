@@ -75,10 +75,10 @@ public final class SchedulerService {
     public void addOrModify(JobVo job, Job jobBean) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId().toString());
         CronTrigger cronTrigger = newTrigger().withIdentity(triggerKey).withSchedule(cronSchedule(job.getCronExp())).build();
-        //存在则修改
+        //when exists then modify..
         if (checkExists(job.getJobId())) {
             scheduler.rescheduleJob(triggerKey,cronTrigger);
-        }else {//不存在则添加。。。
+        }else {//add new job 。。。
             JobDetail jobDetail = JobBuilder.newJob(jobBean.getClass()).withIdentity(JobKey.jobKey(job.getJobId().toString())).build();
             jobDetail.getJobDataMap().put(job.getJobId().toString(), job);
             jobDetail.getJobDataMap().put("jobBean", jobBean);
@@ -91,8 +91,8 @@ public final class SchedulerService {
     }
 
     public void remove(Long jobId) throws SchedulerException {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         if (checkExists(jobId)) {
+            TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
             logger.info("redrain: removed, triggerKey:{}, result [{}]",
                     triggerKey,
                     scheduler.unscheduleJob(triggerKey) && scheduler.deleteJob(JobKey.jobKey(jobId.toString()))
@@ -101,17 +101,18 @@ public final class SchedulerService {
     }
 
     public void pause(Long jobId) throws SchedulerException {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         if (checkExists(jobId)) {
+            TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
             scheduler.pauseTrigger(triggerKey);
         }
     }
 
     public void resume(Long jobId) throws SchedulerException {
-        TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
         if (checkExists(jobId)) {
+            TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
             scheduler.resumeTrigger(triggerKey);
         } else {
+            //skip.....
         }
     }
 
