@@ -89,12 +89,6 @@
             </dependency>
 
             <dependency>
-                <groupId>commons-daemon</groupId>
-                <artifactId>commons-daemon</artifactId>
-                <version>1.0.15</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.corundumstudio.socketio</groupId>
                 <artifactId>netty-socketio</artifactId>
                 <version>1.7.10</version>
