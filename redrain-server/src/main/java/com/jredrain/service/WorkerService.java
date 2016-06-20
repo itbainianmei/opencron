@@ -146,7 +146,7 @@ public class WorkerService {
             if (pwd1.equals(pwd2)) {
                 pwd1 = DigestUtils.md5Hex(pwd1);
                 work.setPassword(pwd1);
-                Boolean flag = executeService.password(work.getIp(), work.getPort(), password, pwd1);
+                Boolean flag = executeService.password(work,work.getIp(), work.getPort(), password, pwd1);
                 if (flag) {
                     this.addOrUpdate(work);
                     return "success";

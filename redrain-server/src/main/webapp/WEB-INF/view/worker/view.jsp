@@ -234,6 +234,7 @@
                         $.ajax({
                             url:"${contextPath}/validation/ping",
                             data:{
+                                "proxyId":0,
                                 "ip":ip,
                                 "port":port,
                                 "password":password

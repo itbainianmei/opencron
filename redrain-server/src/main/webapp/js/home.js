@@ -41,7 +41,7 @@ var redrainChart = {
         }
 
         $.ajax({
-            url: redrainChart.path + "/url",
+            url: redrainChart.path + "/monitor",
             data: "workerId=" + $("#workerId").val(),
             dataType: "html",
             success: function (url) {

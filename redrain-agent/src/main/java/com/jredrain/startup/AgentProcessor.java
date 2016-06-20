@@ -23,22 +23,28 @@
 package com.jredrain.startup;
 
 import com.alibaba.fastjson.JSON;
+import com.jredrain.base.job.Action;
 import org.apache.commons.exec.*;
 import org.apache.thrift.TException;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
 import com.jredrain.base.utils.*;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
+import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
-import static com.jredrain.base.utils.CommonUtils.isEmpty;
-import static com.jredrain.base.utils.CommonUtils.isPrototype;
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.base.utils.CommonUtils.*;
 
 /**
  * Created by benjo on 2016/3/25.
@@ -73,7 +79,7 @@ public class AgentProcessor implements RedRain.Iface {
     }
 
     @Override
-    public Response port(Request request) throws TException {
+    public Response monitor(Request request) throws TException {
         if (  CommonUtils.isEmpty(agentMonitor,socketPort) || agentMonitor.stoped() ) {
             agentMonitor = new AgentMonitor();
             //选举一个空闲可用的port
@@ -92,6 +98,52 @@ public class AgentProcessor implements RedRain.Iface {
         Map<String,String> map = new HashMap<String, String>(0);
         map.put("port",this.socketPort.toString());
         response.setResult(map);
+        return response;
+    }
+
+    @Override
+    public Response proxy(Request request) throws TException {
+        String proxyHost = request.getParams().get("proxyHost");
+        String proxyPort = request.getParams().get("proxyPort");
+        String proxyAction = request.getParams().get("proxyAction");
+        String proxyPassword = request.getParams().get("proxyPassword");
+
+        //其他参数....
+        String proxyParams = request.getParams().get("proxyParams");
+        Map<String,String> params = new HashMap<String, String>(0);
+        if (CommonUtils.notEmpty(proxyParams)) {
+            params = (Map<String, String>) JSON.parse(proxyParams);
+        }
+
+        Request proxyReq = Request.request(proxyHost,toInt(proxyPort), Action.findByName(proxyAction),proxyPassword);
+        proxyReq.setParams(params);
+
+        TTransport transport = null;
+        /**
+         * ping的超时设置为5毫秒,其他默认
+         */
+        if (proxyReq.getAction().equals(Action.PING)) {
+            transport = new TSocket(proxyReq.getHostName(),proxyReq.getPort(),1000*5);
+        }else {
+            transport = new TSocket(proxyReq.getHostName(),proxyReq.getPort());
+        }
+        TProtocol protocol = new TBinaryProtocol(transport);
+        RedRain.Client client = new RedRain.Client(protocol);
+        transport.open();
+
+        Response response = null;
+        for(Method method:client.getClass().getMethods()){
+            if (method.getName().equalsIgnoreCase(proxyReq.getAction().name())) {
+                try {
+                    response = (Response) method.invoke(client, proxyReq);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            }
+        }
+        transport.flush();
+        transport.close();
         return response;
     }
 

@@ -88,7 +88,7 @@ public class RedRainInitiator implements Serializable {
                     Boolean result;
                     int countLimit = 0;
                     do {
-                        result = executeService.ping(worker.getIp(), worker.getPort(), worker.getPassword());
+                        result = executeService.ping(worker,worker.getIp(), worker.getPort(), worker.getPassword());
                         ++countLimit;
                     } while (!result && countLimit < 3);
                     if (!result) {

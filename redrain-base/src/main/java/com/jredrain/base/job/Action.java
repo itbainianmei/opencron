@@ -23,14 +23,13 @@
 package com.jredrain.base.job;
 
 
-import org.apache.thrift.TEnum;
-
-public enum Action implements TEnum {
+public enum Action implements org.apache.thrift.TEnum {
   PING(0),
   EXECUTE(1),
   PASSWORD(2),
   KILL(3),
-  PORT(4);
+  MONITOR(4),
+  PROXY(5);
 
   private final int value;
 
@@ -49,7 +48,7 @@ public enum Action implements TEnum {
    * Find a the enum type by its integer value, as defined in the Thrift IDL.
    * @return null if the value is not found.
    */
-  public static Action findByValue(int value) { 
+  public static Action findByValue(int value) {
     switch (value) {
       case 0:
         return PING;
@@ -60,9 +59,21 @@ public enum Action implements TEnum {
       case 3:
         return KILL;
       case 4:
-        return PORT;
+        return MONITOR;
+      case 5:
+        return PROXY;
       default:
         return null;
     }
   }
+
+  public static Action findByName(String name) {
+    for (Action action:Action.values()) {
+      if (action.name().equalsIgnoreCase(name)) {
+        return action;
+      }
+    }
+    return null;
+  }
+
 }

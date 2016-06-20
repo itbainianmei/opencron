@@ -22,6 +22,10 @@
 
 package com.jredrain.job;
 
+import com.alibaba.fastjson.JSON;
+import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.domain.Worker;
+import com.jredrain.service.WorkerService;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -30,9 +34,12 @@ import com.jredrain.base.job.Action;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -46,7 +53,27 @@ import java.lang.reflect.Method;
 @Component
 public class RedRainCaller {
 
-    public Response call(Request request) throws Exception {
+    @Autowired
+    private WorkerService workerService;
+
+    public Response call(Worker worker,Request request) throws Exception {
+
+        //代理...
+        if (worker.getProxy()==1) {
+            Worker proxyWorker = workerService.getWorker(worker.getProxyWorker());
+            Map<String,String> proxyParams = new HashMap<String, String>(0);
+            proxyParams.put("proxyHost",proxyWorker.getIp());
+            proxyParams.put("proxyPort",proxyWorker.getPort()+"");
+            proxyParams.put("proxyAction",request.getAction().name());
+            proxyParams.put("proxyPassword",proxyWorker.getPassword());
+            if (CommonUtils.notEmpty(request.getParams())) {
+                proxyParams.put("proxyParams", JSON.toJSONString(request.getParams()));
+            }
+
+            //代理...
+            request.setAction(Action.PROXY);
+            request.setParams(null);
+        }
 
         TTransport transport = null;
         /**

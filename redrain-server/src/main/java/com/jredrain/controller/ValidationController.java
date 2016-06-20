@@ -21,6 +21,8 @@
 
 package com.jredrain.controller;
 
+import com.jredrain.domain.Worker;
+import com.jredrain.service.WorkerService;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 
 import com.jredrain.base.utils.PageIOUtils;
@@ -43,6 +45,9 @@ public class ValidationController {
     @Autowired
     private ExecuteService executeService;
 
+    @Autowired
+    private WorkerService workerService;
+
     @RequestMapping("/cronexp")
     public void validateCronExp(Integer cronType, String cronExp, HttpServletResponse response) {
         boolean pass = false;
@@ -52,9 +57,23 @@ public class ValidationController {
     }
 
     @RequestMapping("/ping")
-    public void validatePing(String ip, Integer port, String password, HttpServletResponse response) {
+    public void validatePing(Long proxyId,String ip, Integer port, String password, HttpServletResponse response) {
         String pass = "failure";
-        boolean ping = executeService.ping(ip, port, password);
+
+        Worker proxyWorker = null;
+        if (proxyId==null) {
+            //直连
+            proxyWorker = new Worker();
+            proxyWorker.setProxy(0);
+        }else {
+            proxyWorker = workerService.getWorker(proxyId);
+            if (proxyWorker == null) {
+                PageIOUtils.writeHtml(response, pass);
+            }
+        }
+
+        boolean ping = executeService.ping(proxyWorker,ip, port, password);
+
         if (!ping) {
             logger.error(String.format("validate ip:%s,port:%s cannot ping!", ip, port));
         } else {

@@ -39,6 +39,9 @@ public class Worker implements Serializable {
     @GeneratedValue
     private Long workerId;
 
+    //代理执行器的Id
+    private Long proxyWorker;
+
     private String ip;
     private Integer port;
     private String name;
@@ -50,6 +53,8 @@ public class Worker implements Serializable {
     private Date failTime;
     private String comment;
     private Date updateTime;
+
+    private Integer proxy;//是否需要代理
 
     /**
      * 新增一个得到task任务个数的字段，供页面显示使用
@@ -159,6 +164,22 @@ public class Worker implements Serializable {
 
     public void setTaskCount(Integer taskCount) {
         this.taskCount = taskCount;
+    }
+
+    public Long getProxyWorker() {
+        return proxyWorker;
+    }
+
+    public void setProxyWorker(Long proxyWorker) {
+        this.proxyWorker = proxyWorker;
+    }
+
+    public Integer getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(Integer proxy) {
+        this.proxy = proxy;
     }
 
     @Override

@@ -37,10 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static com.jredrain.base.job.RedRain.*;
@@ -323,7 +320,7 @@ public class ExecuteService implements Job {
         for (Record cord : records) {
             JobVo job = jobService.getJobVoById(cord.getJobId());
             try {
-                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()));
+                cronJobCaller.call(job.getWorker(),Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()));
                 cord.setStatus(RunStatus.STOPED.getStatus());
                 cord.setEndTime(new Date());
                 recordService.update(cord);
@@ -338,10 +335,10 @@ public class ExecuteService implements Job {
         return true;
     }
 
-    public boolean ping(String ip, Integer port, final String password) {
+    public boolean ping(Worker worker, String ip, Integer port, final String password) {
         boolean ping = false;
         try {
-            ping = cronJobCaller.call(Request.request(ip, port, Action.PING, password)).isSuccess();
+            ping = cronJobCaller.call(worker,Request.request(ip, port, Action.PING, password)).isSuccess();
         } catch (Exception e) {
             logger.error("[redrain]ping failed,host:{},port:{}", ip, port);
         } finally {
@@ -358,10 +355,10 @@ public class ExecuteService implements Job {
      * @param newPassword
      * @return
      */
-    public boolean password(String ip, int port, final String password, final String newPassword) {
+    public boolean password(Worker worker, String ip, int port, final String password, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronJobCaller.call(Request.request(ip, port, Action.PASSWORD, password).putParam("newPassword", newPassword));
+            Response response = cronJobCaller.call(worker,Request.request(ip, port, Action.PASSWORD, password).putParam("newPassword", newPassword));
             ping = response.isSuccess();
         } catch (Exception e) {
             e.printStackTrace();
@@ -371,7 +368,7 @@ public class ExecuteService implements Job {
     }
 
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
+        Response response = cronJobCaller.call(job.getWorker(),Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
         logger.info("[redrain]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
         record.setMessage(response.getMessage());
@@ -382,7 +379,7 @@ public class ExecuteService implements Job {
     }
 
     private void checkPing(JobVo job, Record record) throws Exception {
-        if (!ping(job.getIp(), job.getPort(), job.getPassword())) {
+        if (!ping(job.getWorker(),job.getIp(), job.getPort(), job.getPassword())) {
             record.setStatus(RunStatus.DONE.getStatus());//已完成
             record.setReturnCode(StatusCode.ERROR_PING.getValue());
 
@@ -407,7 +404,7 @@ public class ExecuteService implements Job {
 
     }
 
-    public Response port(Worker worker) throws Exception {
-        return cronJobCaller.call(Request.request(worker.getIp(), worker.getPort(), Action.PORT, worker.getPassword()));
+    public Response monitor(Worker worker) throws Exception {
+        return cronJobCaller.call(worker,Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()));
     }
 }

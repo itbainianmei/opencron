@@ -5,7 +5,8 @@ enum Action{
     EXECUTE,
     PASSWORD,
     KILL,
-    PORT
+    MONITOR,
+    PROXY
 }
 
 struct Request {
@@ -31,5 +32,6 @@ service RedRain {
  Response execute(1:Request request),
  Response password(1:Request request),
  Response kill(1:Request request),
- Response port(1:Request request)
+ Response monitor(1:Request request)
+ Response proxy(1:Request request)
 }

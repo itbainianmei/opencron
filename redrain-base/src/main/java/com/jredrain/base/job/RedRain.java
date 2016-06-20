@@ -33,6 +33,7 @@ import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.server.AbstractNonblockingServer.*;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -313,15 +314,15 @@ public class RedRain implements Serializable {
         }
     }
 
-    public enum  MsgType {
-        EMAIL(0,"邮件"),
-        SMS(1,"短信"),
-        WEBSITE(2,"站内信");
+    public enum MsgType {
+        EMAIL(0, "邮件"),
+        SMS(1, "短信"),
+        WEBSITE(2, "站内信");
 
         private Integer value;
         private String desc;
 
-        MsgType(Integer value,String desc){
+        MsgType(Integer value, String desc) {
             this.value = value;
             this.desc = desc;
         }
@@ -343,13 +344,13 @@ public class RedRain implements Serializable {
         }
     }
 
-    public enum RunModel{
-        SEQUENCE(0,"串行"),
-        SAMETIME(1,"并行");
+    public enum RunModel {
+        SEQUENCE(0, "串行"),
+        SAMETIME(1, "并行");
         private Integer value;
         private String desc;
 
-        RunModel(Integer value,String desc){
+        RunModel(Integer value, String desc) {
             this.value = value;
             this.desc = desc;
         }
@@ -381,7 +382,9 @@ public class RedRain implements Serializable {
 
         public Response kill(Request request) throws org.apache.thrift.TException;
 
-        public Response port(Request request) throws org.apache.thrift.TException;
+        public Response monitor(Request request) throws org.apache.thrift.TException;
+
+        public Response proxy(Request request) throws  org.apache.thrift.TException;
 
     }
 
@@ -395,7 +398,9 @@ public class RedRain implements Serializable {
 
         public void kill(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-        public void port(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+        public void monitor(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+        public void proxy(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     }
 
@@ -511,31 +516,53 @@ public class RedRain implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "kill failed: unknown result");
         }
 
-        public Response port(Request request) throws org.apache.thrift.TException
+        public Response monitor(Request request) throws org.apache.thrift.TException
         {
-            send_port(request);
-            return recv_port();
+            send_monitor(request);
+            return recv_monitor();
         }
 
-        public void send_port(Request request) throws org.apache.thrift.TException
+        public void send_monitor(Request request) throws org.apache.thrift.TException
         {
-            port_args args = new port_args();
+            monitor_args args = new monitor_args();
             args.setRequest(request);
-            sendBase("port", args);
+            sendBase("monitor", args);
         }
 
-        public Response recv_port() throws org.apache.thrift.TException
+        public Response recv_monitor() throws org.apache.thrift.TException
         {
-            port_result result = new port_result();
-            receiveBase(result, "port");
+            monitor_result result = new monitor_result();
+            receiveBase(result, "monitor");
             if (result.isSetSuccess()) {
                 return result.success;
             }
-            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "port failed: unknown result");
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "monitor failed: unknown result");
+        }
+
+        public Response proxy(Request request) throws org.apache.thrift.TException
+        {
+            send_proxy(request);
+            return recv_proxy();
+        }
+
+        public void send_proxy(Request request) throws org.apache.thrift.TException
+        {
+            proxy_args args = new proxy_args();
+            args.setRequest(request);
+            sendBase("proxy", args);
+        }
+
+        public Response recv_proxy() throws org.apache.thrift.TException
+        {
+            proxy_result result = new proxy_result();
+            receiveBase(result, "proxy");
+            if (result.isSetSuccess()) {
+                return result.success;
+            }
+            throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "proxy failed: unknown result");
         }
 
     }
-
     public static class AsyncClient extends org.apache.thrift.async.TAsyncClient implements AsyncIface {
         public static class Factory implements org.apache.thrift.async.TAsyncClientFactory<AsyncClient> {
             private org.apache.thrift.async.TAsyncClientManager clientManager;
@@ -681,23 +708,23 @@ public class RedRain implements Serializable {
             }
         }
 
-        public void port(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+        public void monitor(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
             checkReady();
-            port_call method_call = new port_call(request, resultHandler, this, ___protocolFactory, ___transport);
+            monitor_call method_call = new monitor_call(request, resultHandler, this, ___protocolFactory, ___transport);
             this.___currentMethod = method_call;
             ___manager.call(method_call);
         }
 
-        public static class port_call extends org.apache.thrift.async.TAsyncMethodCall {
+        public static class monitor_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
-            public port_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+            public monitor_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
             }
 
             public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
-                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("port", org.apache.thrift.protocol.TMessageType.CALL, 0));
-                port_args args = new port_args();
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("monitor", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                monitor_args args = new monitor_args();
                 args.setRequest(request);
                 args.write(prot);
                 prot.writeMessageEnd();
@@ -709,7 +736,39 @@ public class RedRain implements Serializable {
                 }
                 org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
                 org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-                return (new Client(prot)).recv_port();
+                return (new Client(prot)).recv_monitor();
+            }
+        }
+
+        public void proxy(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+            checkReady();
+            proxy_call method_call = new proxy_call(request, resultHandler, this, ___protocolFactory, ___transport);
+            this.___currentMethod = method_call;
+            ___manager.call(method_call);
+        }
+
+        public static class proxy_call extends org.apache.thrift.async.TAsyncMethodCall {
+            private Request request;
+            public proxy_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+                super(client, protocolFactory, transport, resultHandler, false);
+                this.request = request;
+            }
+
+            public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+                prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("proxy", org.apache.thrift.protocol.TMessageType.CALL, 0));
+                proxy_args args = new proxy_args();
+                args.setRequest(request);
+                args.write(prot);
+                prot.writeMessageEnd();
+            }
+
+            public Response getResult() throws org.apache.thrift.TException {
+                if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+                    throw new IllegalStateException("Method call not finished!");
+                }
+                org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+                org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+                return (new Client(prot)).recv_proxy();
             }
         }
 
@@ -730,7 +789,8 @@ public class RedRain implements Serializable {
             processMap.put("execute", new execute());
             processMap.put("password", new password());
             processMap.put("kill", new kill());
-            processMap.put("port", new port());
+            processMap.put("monitor", new monitor());
+            processMap.put("proxy", new proxy());
             return processMap;
         }
 
@@ -814,22 +874,42 @@ public class RedRain implements Serializable {
             }
         }
 
-        public static class port<I extends Iface> extends org.apache.thrift.ProcessFunction<I, port_args> {
-            public port() {
-                super("port");
+        public static class monitor<I extends Iface> extends org.apache.thrift.ProcessFunction<I, monitor_args> {
+            public monitor() {
+                super("monitor");
             }
 
-            public port_args getEmptyArgsInstance() {
-                return new port_args();
+            public monitor_args getEmptyArgsInstance() {
+                return new monitor_args();
             }
 
             protected boolean isOneway() {
                 return false;
             }
 
-            public port_result getResult(I iface, port_args args) throws org.apache.thrift.TException {
-                port_result result = new port_result();
-                result.success = iface.port(args.request);
+            public monitor_result getResult(I iface, monitor_args args) throws org.apache.thrift.TException {
+                monitor_result result = new monitor_result();
+                result.success = iface.monitor(args.request);
+                return result;
+            }
+        }
+
+        public static class proxy<I extends Iface> extends org.apache.thrift.ProcessFunction<I, proxy_args> {
+            public proxy() {
+                super("proxy");
+            }
+
+            public proxy_args getEmptyArgsInstance() {
+                return new proxy_args();
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public proxy_result getResult(I iface, proxy_args args) throws org.apache.thrift.TException {
+                proxy_result result = new proxy_result();
+                result.success = iface.proxy(args.request);
                 return result;
             }
         }
@@ -851,7 +931,8 @@ public class RedRain implements Serializable {
             processMap.put("execute", new execute());
             processMap.put("password", new password());
             processMap.put("kill", new kill());
-            processMap.put("port", new port());
+            processMap.put("monitor", new monitor());
+            processMap.put("proxy", new proxy());
             return processMap;
         }
 
@@ -1059,20 +1140,20 @@ public class RedRain implements Serializable {
             }
         }
 
-        public static class port<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, port_args, Response> {
-            public port() {
-                super("port");
+        public static class monitor<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, monitor_args, Response> {
+            public monitor() {
+                super("monitor");
             }
 
-            public port_args getEmptyArgsInstance() {
-                return new port_args();
+            public monitor_args getEmptyArgsInstance() {
+                return new monitor_args();
             }
 
             public AsyncMethodCallback<Response> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
                 final org.apache.thrift.AsyncProcessFunction fcall = this;
                 return new AsyncMethodCallback<Response>() {
                     public void onComplete(Response o) {
-                        port_result result = new port_result();
+                        monitor_result result = new monitor_result();
                         result.success = o;
                         try {
                             fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
@@ -1085,7 +1166,7 @@ public class RedRain implements Serializable {
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
-                        port_result result = new port_result();
+                        monitor_result result = new monitor_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
                             msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
@@ -1105,8 +1186,59 @@ public class RedRain implements Serializable {
                 return false;
             }
 
-            public void start(I iface, port_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.port(args.request,resultHandler);
+            public void start(I iface, monitor_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.monitor(args.request,resultHandler);
+            }
+        }
+
+        public static class proxy<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, proxy_args, Response> {
+            public proxy() {
+                super("proxy");
+            }
+
+            public proxy_args getEmptyArgsInstance() {
+                return new proxy_args();
+            }
+
+            public AsyncMethodCallback<Response> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+                final org.apache.thrift.AsyncProcessFunction fcall = this;
+                return new AsyncMethodCallback<Response>() {
+                    public void onComplete(Response o) {
+                        proxy_result result = new proxy_result();
+                        result.success = o;
+                        try {
+                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            return;
+                        } catch (Exception e) {
+                            LOGGER.error("Exception writing to internal frame buffer", e);
+                        }
+                        fb.close();
+                    }
+                    public void onError(Exception e) {
+                        byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+                        org.apache.thrift.TBase msg;
+                        proxy_result result = new proxy_result();
+                        {
+                            msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                        }
+                        try {
+                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            return;
+                        } catch (Exception ex) {
+                            LOGGER.error("Exception writing to internal frame buffer", ex);
+                        }
+                        fb.close();
+                    }
+                };
+            }
+
+            protected boolean isOneway() {
+                return false;
+            }
+
+            public void start(I iface, proxy_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
+                iface.proxy(args.request,resultHandler);
             }
         }
 
@@ -4040,15 +4172,15 @@ public class RedRain implements Serializable {
 
     }
 
-    public static class port_args implements org.apache.thrift.TBase<port_args, port_args._Fields>, java.io.Serializable, Cloneable, Comparable<port_args>   {
-        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("port_args");
+    public static class monitor_args implements org.apache.thrift.TBase<monitor_args, monitor_args._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_args>   {
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("monitor_args");
 
         private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
         static {
-            schemes.put(StandardScheme.class, new port_argsStandardSchemeFactory());
-            schemes.put(TupleScheme.class, new port_argsTupleSchemeFactory());
+            schemes.put(StandardScheme.class, new monitor_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new monitor_argsTupleSchemeFactory());
         }
 
         public Request request; // required
@@ -4118,13 +4250,13 @@ public class RedRain implements Serializable {
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Request.class)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
-            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(port_args.class, metaDataMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(monitor_args.class, metaDataMap);
         }
 
-        public port_args() {
+        public monitor_args() {
         }
 
-        public port_args(
+        public monitor_args(
                 Request request)
         {
             this();
@@ -4134,14 +4266,14 @@ public class RedRain implements Serializable {
         /**
          * Performs a deep copy on <i>other</i>.
          */
-        public port_args(port_args other) {
+        public monitor_args(monitor_args other) {
             if (other.isSetRequest()) {
                 this.request = new Request(other.request);
             }
         }
 
-        public port_args deepCopy() {
-            return new port_args(this);
+        public monitor_args deepCopy() {
+            return new monitor_args(this);
         }
 
         @Override
@@ -4153,7 +4285,7 @@ public class RedRain implements Serializable {
             return this.request;
         }
 
-        public port_args setRequest(Request request) {
+        public monitor_args setRequest(Request request) {
             this.request = request;
             return this;
         }
@@ -4212,12 +4344,12 @@ public class RedRain implements Serializable {
         public boolean equals(Object that) {
             if (that == null)
                 return false;
-            if (that instanceof port_args)
-                return this.equals((port_args)that);
+            if (that instanceof monitor_args)
+                return this.equals((monitor_args)that);
             return false;
         }
 
-        public boolean equals(port_args that) {
+        public boolean equals(monitor_args that) {
             if (that == null)
                 return false;
 
@@ -4246,7 +4378,7 @@ public class RedRain implements Serializable {
         }
 
         @Override
-        public int compareTo(port_args other) {
+        public int compareTo(monitor_args other) {
             if (!getClass().equals(other.getClass())) {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
@@ -4280,7 +4412,7 @@ public class RedRain implements Serializable {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("port_args(");
+            StringBuilder sb = new StringBuilder("monitor_args(");
             boolean first = true;
 
             sb.append("request:");
@@ -4318,15 +4450,15 @@ public class RedRain implements Serializable {
             }
         }
 
-        private static class port_argsStandardSchemeFactory implements SchemeFactory {
-            public port_argsStandardScheme getScheme() {
-                return new port_argsStandardScheme();
+        private static class monitor_argsStandardSchemeFactory implements SchemeFactory {
+            public monitor_argsStandardScheme getScheme() {
+                return new monitor_argsStandardScheme();
             }
         }
 
-        private static class port_argsStandardScheme extends StandardScheme<port_args> {
+        private static class monitor_argsStandardScheme extends StandardScheme<monitor_args> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, port_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, monitor_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
                 while (true)
@@ -4356,7 +4488,7 @@ public class RedRain implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, port_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, monitor_args struct) throws org.apache.thrift.TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -4371,16 +4503,16 @@ public class RedRain implements Serializable {
 
         }
 
-        private static class port_argsTupleSchemeFactory implements SchemeFactory {
-            public port_argsTupleScheme getScheme() {
-                return new port_argsTupleScheme();
+        private static class monitor_argsTupleSchemeFactory implements SchemeFactory {
+            public monitor_argsTupleScheme getScheme() {
+                return new monitor_argsTupleScheme();
             }
         }
 
-        private static class port_argsTupleScheme extends TupleScheme<port_args> {
+        private static class monitor_argsTupleScheme extends TupleScheme<monitor_args> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, monitor_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetRequest()) {
@@ -4393,7 +4525,7 @@ public class RedRain implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, port_args struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, monitor_args struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {
@@ -4406,15 +4538,15 @@ public class RedRain implements Serializable {
 
     }
 
-    public static class port_result implements org.apache.thrift.TBase<port_result, port_result._Fields>, java.io.Serializable, Cloneable, Comparable<port_result>   {
-        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("port_result");
+    public static class monitor_result implements org.apache.thrift.TBase<monitor_result, monitor_result._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_result>   {
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("monitor_result");
 
         private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
         static {
-            schemes.put(StandardScheme.class, new port_resultStandardSchemeFactory());
-            schemes.put(TupleScheme.class, new port_resultTupleSchemeFactory());
+            schemes.put(StandardScheme.class, new monitor_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new monitor_resultTupleSchemeFactory());
         }
 
         public Response success; // required
@@ -4484,13 +4616,13 @@ public class RedRain implements Serializable {
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
                     new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Response.class)));
             metaDataMap = Collections.unmodifiableMap(tmpMap);
-            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(port_result.class, metaDataMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(monitor_result.class, metaDataMap);
         }
 
-        public port_result() {
+        public monitor_result() {
         }
 
-        public port_result(
+        public monitor_result(
                 Response success)
         {
             this();
@@ -4500,14 +4632,14 @@ public class RedRain implements Serializable {
         /**
          * Performs a deep copy on <i>other</i>.
          */
-        public port_result(port_result other) {
+        public monitor_result(monitor_result other) {
             if (other.isSetSuccess()) {
                 this.success = new Response(other.success);
             }
         }
 
-        public port_result deepCopy() {
-            return new port_result(this);
+        public monitor_result deepCopy() {
+            return new monitor_result(this);
         }
 
         @Override
@@ -4519,7 +4651,7 @@ public class RedRain implements Serializable {
             return this.success;
         }
 
-        public port_result setSuccess(Response success) {
+        public monitor_result setSuccess(Response success) {
             this.success = success;
             return this;
         }
@@ -4578,12 +4710,12 @@ public class RedRain implements Serializable {
         public boolean equals(Object that) {
             if (that == null)
                 return false;
-            if (that instanceof port_result)
-                return this.equals((port_result)that);
+            if (that instanceof monitor_result)
+                return this.equals((monitor_result)that);
             return false;
         }
 
-        public boolean equals(port_result that) {
+        public boolean equals(monitor_result that) {
             if (that == null)
                 return false;
 
@@ -4612,7 +4744,7 @@ public class RedRain implements Serializable {
         }
 
         @Override
-        public int compareTo(port_result other) {
+        public int compareTo(monitor_result other) {
             if (!getClass().equals(other.getClass())) {
                 return getClass().getName().compareTo(other.getClass().getName());
             }
@@ -4646,7 +4778,7 @@ public class RedRain implements Serializable {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder("port_result(");
+            StringBuilder sb = new StringBuilder("monitor_result(");
             boolean first = true;
 
             sb.append("success:");
@@ -4684,15 +4816,15 @@ public class RedRain implements Serializable {
             }
         }
 
-        private static class port_resultStandardSchemeFactory implements SchemeFactory {
-            public port_resultStandardScheme getScheme() {
-                return new port_resultStandardScheme();
+        private static class monitor_resultStandardSchemeFactory implements SchemeFactory {
+            public monitor_resultStandardScheme getScheme() {
+                return new monitor_resultStandardScheme();
             }
         }
 
-        private static class port_resultStandardScheme extends StandardScheme<port_result> {
+        private static class monitor_resultStandardScheme extends StandardScheme<monitor_result> {
 
-            public void read(org.apache.thrift.protocol.TProtocol iprot, port_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol iprot, monitor_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
                 while (true)
@@ -4722,7 +4854,7 @@ public class RedRain implements Serializable {
                 struct.validate();
             }
 
-            public void write(org.apache.thrift.protocol.TProtocol oprot, port_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol oprot, monitor_result struct) throws org.apache.thrift.TException {
                 struct.validate();
 
                 oprot.writeStructBegin(STRUCT_DESC);
@@ -4737,16 +4869,16 @@ public class RedRain implements Serializable {
 
         }
 
-        private static class port_resultTupleSchemeFactory implements SchemeFactory {
-            public port_resultTupleScheme getScheme() {
-                return new port_resultTupleScheme();
+        private static class monitor_resultTupleSchemeFactory implements SchemeFactory {
+            public monitor_resultTupleScheme getScheme() {
+                return new monitor_resultTupleScheme();
             }
         }
 
-        private static class port_resultTupleScheme extends TupleScheme<port_result> {
+        private static class monitor_resultTupleScheme extends TupleScheme<monitor_result> {
 
             @Override
-            public void write(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws org.apache.thrift.TException {
+            public void write(org.apache.thrift.protocol.TProtocol prot, monitor_result struct) throws org.apache.thrift.TException {
                 TTupleProtocol oprot = (TTupleProtocol) prot;
                 BitSet optionals = new BitSet();
                 if (struct.isSetSuccess()) {
@@ -4759,7 +4891,739 @@ public class RedRain implements Serializable {
             }
 
             @Override
-            public void read(org.apache.thrift.protocol.TProtocol prot, port_result struct) throws org.apache.thrift.TException {
+            public void read(org.apache.thrift.protocol.TProtocol prot, monitor_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.success = new Response();
+                    struct.success.read(iprot);
+                    struct.setSuccessIsSet(true);
+                }
+            }
+        }
+
+    }
+
+    public static class proxy_args implements org.apache.thrift.TBase<proxy_args, proxy_args._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_args>   {
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("proxy_args");
+
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+        static {
+            schemes.put(StandardScheme.class, new proxy_argsStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new proxy_argsTupleSchemeFactory());
+        }
+
+        public Request request; // required
+
+        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+            REQUEST((short)1, "request");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            /**
+             * Find the _Fields constant that matches fieldId, or null if its not found.
+             */
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case 1: // REQUEST
+                        return REQUEST;
+                    default:
+                        return null;
+                }
+            }
+
+            /**
+             * Find the _Fields constant that matches fieldId, throwing an exception
+             * if it is not found.
+             */
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            /**
+             * Find the _Fields constant that matches name, or null if its not found.
+             */
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
+                    new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Request.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(proxy_args.class, metaDataMap);
+        }
+
+        public proxy_args() {
+        }
+
+        public proxy_args(
+                Request request)
+        {
+            this();
+            this.request = request;
+        }
+
+        /**
+         * Performs a deep copy on <i>other</i>.
+         */
+        public proxy_args(proxy_args other) {
+            if (other.isSetRequest()) {
+                this.request = new Request(other.request);
+            }
+        }
+
+        public proxy_args deepCopy() {
+            return new proxy_args(this);
+        }
+
+        @Override
+        public void clear() {
+            this.request = null;
+        }
+
+        public Request getRequest() {
+            return this.request;
+        }
+
+        public proxy_args setRequest(Request request) {
+            this.request = request;
+            return this;
+        }
+
+        public void unsetRequest() {
+            this.request = null;
+        }
+
+        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        public boolean isSetRequest() {
+            return this.request != null;
+        }
+
+        public void setRequestIsSet(boolean value) {
+            if (!value) {
+                this.request = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch (field) {
+                case REQUEST:
+                    if (value == null) {
+                        unsetRequest();
+                    } else {
+                        setRequest((Request)value);
+                    }
+                    break;
+
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch (field) {
+                case REQUEST:
+                    return getRequest();
+
+            }
+            throw new IllegalStateException();
+        }
+
+        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+
+            switch (field) {
+                case REQUEST:
+                    return isSetRequest();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof proxy_args)
+                return this.equals((proxy_args)that);
+            return false;
+        }
+
+        public boolean equals(proxy_args that) {
+            if (that == null)
+                return false;
+
+            boolean this_present_request = true && this.isSetRequest();
+            boolean that_present_request = true && that.isSetRequest();
+            if (this_present_request || that_present_request) {
+                if (!(this_present_request && that_present_request))
+                    return false;
+                if (!this.request.equals(that.request))
+                    return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+
+            boolean present_request = true && (isSetRequest());
+            list.add(present_request);
+            if (present_request)
+                list.add(request);
+
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(proxy_args other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+
+            int lastComparison = 0;
+
+            lastComparison = Boolean.valueOf(isSetRequest()).compareTo(other.isSetRequest());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetRequest()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.request, other.request);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("proxy_args(");
+            boolean first = true;
+
+            sb.append("request:");
+            if (this.request == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.request);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for required fields
+            // check for sub-struct validity
+            if (request != null) {
+                request.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class proxy_argsStandardSchemeFactory implements SchemeFactory {
+            public proxy_argsStandardScheme getScheme() {
+                return new proxy_argsStandardScheme();
+            }
+        }
+
+        private static class proxy_argsStandardScheme extends StandardScheme<proxy_args> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, proxy_args struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true)
+                {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch (schemeField.id) {
+                        case 1: // REQUEST
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.request = new Request();
+                                struct.request.read(iprot);
+                                struct.setRequestIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, proxy_args struct) throws org.apache.thrift.TException {
+                struct.validate();
+
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.request != null) {
+                    oprot.writeFieldBegin(REQUEST_FIELD_DESC);
+                    struct.request.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+
+        }
+
+        private static class proxy_argsTupleSchemeFactory implements SchemeFactory {
+            public proxy_argsTupleScheme getScheme() {
+                return new proxy_argsTupleScheme();
+            }
+        }
+
+        private static class proxy_argsTupleScheme extends TupleScheme<proxy_args> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, proxy_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetRequest()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetRequest()) {
+                    struct.request.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, proxy_args struct) throws org.apache.thrift.TException {
+                TTupleProtocol iprot = (TTupleProtocol) prot;
+                BitSet incoming = iprot.readBitSet(1);
+                if (incoming.get(0)) {
+                    struct.request = new Request();
+                    struct.request.read(iprot);
+                    struct.setRequestIsSet(true);
+                }
+            }
+        }
+
+    }
+
+    public static class proxy_result implements org.apache.thrift.TBase<proxy_result, proxy_result._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_result>   {
+        private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("proxy_result");
+
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+
+        private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+        static {
+            schemes.put(StandardScheme.class, new proxy_resultStandardSchemeFactory());
+            schemes.put(TupleScheme.class, new proxy_resultTupleSchemeFactory());
+        }
+
+        public Response success; // required
+
+        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+            SUCCESS((short)0, "success");
+
+            private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+            static {
+                for (_Fields field : EnumSet.allOf(_Fields.class)) {
+                    byName.put(field.getFieldName(), field);
+                }
+            }
+
+            /**
+             * Find the _Fields constant that matches fieldId, or null if its not found.
+             */
+            public static _Fields findByThriftId(int fieldId) {
+                switch(fieldId) {
+                    case 0: // SUCCESS
+                        return SUCCESS;
+                    default:
+                        return null;
+                }
+            }
+
+            /**
+             * Find the _Fields constant that matches fieldId, throwing an exception
+             * if it is not found.
+             */
+            public static _Fields findByThriftIdOrThrow(int fieldId) {
+                _Fields fields = findByThriftId(fieldId);
+                if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+                return fields;
+            }
+
+            /**
+             * Find the _Fields constant that matches name, or null if its not found.
+             */
+            public static _Fields findByName(String name) {
+                return byName.get(name);
+            }
+
+            private final short _thriftId;
+            private final String _fieldName;
+
+            _Fields(short thriftId, String fieldName) {
+                _thriftId = thriftId;
+                _fieldName = fieldName;
+            }
+
+            public short getThriftFieldId() {
+                return _thriftId;
+            }
+
+            public String getFieldName() {
+                return _fieldName;
+            }
+        }
+
+        // isset id assignments
+        public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+        static {
+            Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+            tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
+                    new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, Response.class)));
+            metaDataMap = Collections.unmodifiableMap(tmpMap);
+            org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(proxy_result.class, metaDataMap);
+        }
+
+        public proxy_result() {
+        }
+
+        public proxy_result(
+                Response success)
+        {
+            this();
+            this.success = success;
+        }
+
+        /**
+         * Performs a deep copy on <i>other</i>.
+         */
+        public proxy_result(proxy_result other) {
+            if (other.isSetSuccess()) {
+                this.success = new Response(other.success);
+            }
+        }
+
+        public proxy_result deepCopy() {
+            return new proxy_result(this);
+        }
+
+        @Override
+        public void clear() {
+            this.success = null;
+        }
+
+        public Response getSuccess() {
+            return this.success;
+        }
+
+        public proxy_result setSuccess(Response success) {
+            this.success = success;
+            return this;
+        }
+
+        public void unsetSuccess() {
+            this.success = null;
+        }
+
+        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        public boolean isSetSuccess() {
+            return this.success != null;
+        }
+
+        public void setSuccessIsSet(boolean value) {
+            if (!value) {
+                this.success = null;
+            }
+        }
+
+        public void setFieldValue(_Fields field, Object value) {
+            switch (field) {
+                case SUCCESS:
+                    if (value == null) {
+                        unsetSuccess();
+                    } else {
+                        setSuccess((Response)value);
+                    }
+                    break;
+
+            }
+        }
+
+        public Object getFieldValue(_Fields field) {
+            switch (field) {
+                case SUCCESS:
+                    return getSuccess();
+
+            }
+            throw new IllegalStateException();
+        }
+
+        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        public boolean isSet(_Fields field) {
+            if (field == null) {
+                throw new IllegalArgumentException();
+            }
+
+            switch (field) {
+                case SUCCESS:
+                    return isSetSuccess();
+            }
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean equals(Object that) {
+            if (that == null)
+                return false;
+            if (that instanceof proxy_result)
+                return this.equals((proxy_result)that);
+            return false;
+        }
+
+        public boolean equals(proxy_result that) {
+            if (that == null)
+                return false;
+
+            boolean this_present_success = true && this.isSetSuccess();
+            boolean that_present_success = true && that.isSetSuccess();
+            if (this_present_success || that_present_success) {
+                if (!(this_present_success && that_present_success))
+                    return false;
+                if (!this.success.equals(that.success))
+                    return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            List<Object> list = new ArrayList<Object>();
+
+            boolean present_success = true && (isSetSuccess());
+            list.add(present_success);
+            if (present_success)
+                list.add(success);
+
+            return list.hashCode();
+        }
+
+        @Override
+        public int compareTo(proxy_result other) {
+            if (!getClass().equals(other.getClass())) {
+                return getClass().getName().compareTo(other.getClass().getName());
+            }
+
+            int lastComparison = 0;
+
+            lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+            if (lastComparison != 0) {
+                return lastComparison;
+            }
+            if (isSetSuccess()) {
+                lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+                if (lastComparison != 0) {
+                    return lastComparison;
+                }
+            }
+            return 0;
+        }
+
+        public _Fields fieldForId(int fieldId) {
+            return _Fields.findByThriftId(fieldId);
+        }
+
+        public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+            schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+        }
+
+        public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+            schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("proxy_result(");
+            boolean first = true;
+
+            sb.append("success:");
+            if (this.success == null) {
+                sb.append("null");
+            } else {
+                sb.append(this.success);
+            }
+            first = false;
+            sb.append(")");
+            return sb.toString();
+        }
+
+        public void validate() throws org.apache.thrift.TException {
+            // check for required fields
+            // check for sub-struct validity
+            if (success != null) {
+                success.validate();
+            }
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+            try {
+                write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+            try {
+                read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+            } catch (org.apache.thrift.TException te) {
+                throw new java.io.IOException(te);
+            }
+        }
+
+        private static class proxy_resultStandardSchemeFactory implements SchemeFactory {
+            public proxy_resultStandardScheme getScheme() {
+                return new proxy_resultStandardScheme();
+            }
+        }
+
+        private static class proxy_resultStandardScheme extends StandardScheme<proxy_result> {
+
+            public void read(org.apache.thrift.protocol.TProtocol iprot, proxy_result struct) throws org.apache.thrift.TException {
+                org.apache.thrift.protocol.TField schemeField;
+                iprot.readStructBegin();
+                while (true)
+                {
+                    schemeField = iprot.readFieldBegin();
+                    if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
+                        break;
+                    }
+                    switch (schemeField.id) {
+                        case 0: // SUCCESS
+                            if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
+                                struct.success = new Response();
+                                struct.success.read(iprot);
+                                struct.setSuccessIsSet(true);
+                            } else {
+                                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                            }
+                            break;
+                        default:
+                            org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+                    }
+                    iprot.readFieldEnd();
+                }
+                iprot.readStructEnd();
+
+                // check for required fields of primitive type, which can't be checked in the validate method
+                struct.validate();
+            }
+
+            public void write(org.apache.thrift.protocol.TProtocol oprot, proxy_result struct) throws org.apache.thrift.TException {
+                struct.validate();
+
+                oprot.writeStructBegin(STRUCT_DESC);
+                if (struct.success != null) {
+                    oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+                    struct.success.write(oprot);
+                    oprot.writeFieldEnd();
+                }
+                oprot.writeFieldStop();
+                oprot.writeStructEnd();
+            }
+
+        }
+
+        private static class proxy_resultTupleSchemeFactory implements SchemeFactory {
+            public proxy_resultTupleScheme getScheme() {
+                return new proxy_resultTupleScheme();
+            }
+        }
+
+        private static class proxy_resultTupleScheme extends TupleScheme<proxy_result> {
+
+            @Override
+            public void write(org.apache.thrift.protocol.TProtocol prot, proxy_result struct) throws org.apache.thrift.TException {
+                TTupleProtocol oprot = (TTupleProtocol) prot;
+                BitSet optionals = new BitSet();
+                if (struct.isSetSuccess()) {
+                    optionals.set(0);
+                }
+                oprot.writeBitSet(optionals, 1);
+                if (struct.isSetSuccess()) {
+                    struct.success.write(oprot);
+                }
+            }
+
+            @Override
+            public void read(org.apache.thrift.protocol.TProtocol prot, proxy_result struct) throws org.apache.thrift.TException {
                 TTupleProtocol iprot = (TTupleProtocol) prot;
                 BitSet incoming = iprot.readBitSet(1);
                 if (incoming.get(0)) {

@@ -46,6 +46,9 @@
             alert("请填写正确的端口号!");
             return false;
         }
+
+
+
         var warning = $('input[type="radio"][name="warning"]:checked').val();
         if (warning == 1){
             if (!$("#mobiles").val()){
@@ -65,6 +68,13 @@
                 return false;
             }
         }
+
+        var proxy = $('input[type="radio"][name="proxy"]:checked').val();
+        var proxyId = null;
+        if(proxy==1){
+            proxyId = $("#proxyWorker").val();
+        }
+
         $.ajax({
             url:"${contextPath}/worker/checkname",
             data:{
@@ -75,6 +85,7 @@
                     $.ajax({
                         url:"${contextPath}/validation/ping",
                         data:{
+                            "proxyId":proxyId,
                             "ip":ip,
                             "port":port,
                             "password":calcMD5(password)
@@ -129,10 +140,17 @@
             alert("请填写正确的端口号!");
             return false;
         }
+        var proxy = $('input[type="radio"][name="proxy"]:checked').val();
+        var proxyId = null;
+        if(proxy==1){
+            proxyId = $("#proxyWorker").val();
+        }
+
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
         $.ajax({
             url:"${contextPath}/validation/ping",
             data:{
+                "proxyId":proxyId,
                 "ip":ip,
                 "port":port,
                 "password":calcMD5(password)
@@ -197,6 +215,8 @@
 
     function showContact(){$(".contact").show()}
     function hideContact(){$(".contact").hide()}
+    function showProxy(){$(".proxy").show()}
+    function hideProxy(){$(".proxy").hide()}
 
 </script>
 
@@ -233,6 +253,31 @@
                         <span class="tips" id="checkName"><b>*&nbsp;</b>执行器名称必填</span>
                     </div>
                 </div><br>
+
+                <c:if test="${empty workers}">
+                    <!--默认为直连-->
+                    <input type="hidden" name="proxy" value="0">
+                </c:if>
+                <c:if test="${!empty workers}">
+                    <div class="form-group">
+                        <label class="col-lab control-label"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
+                        <div class="col-md-10">
+                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio" name="proxy" value="0" id="proxy1">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio" name="proxy" value="1" id="proxy0" checked>代理&nbsp;&nbsp;&nbsp;</label>
+                            </br><span class="tips"><b>*&nbsp;</b>直连:直接连接目标agent,代理:通过其他执行器代理连接目标执行器</span>
+                        </div>
+                    </div><br>
+
+                    <div class="form-group proxy" style="display: none;">
+                        <label for="proxyWorker" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>代理执行器:</label>
+                        <select id="proxyWorker" name="proxyWorker" class="form-control m-b-10 input-sm">
+                            <c:forEach var="d" items="${workers}">
+                                <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                            </c:forEach>
+                        </select>
+                        <span class="tips">&nbsp;&nbsp;此执行器的代理执行器</span>
+                    </div>
+                </c:if>
 
                 <div class="form-group">
                     <label for="ip" class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;机&nbsp;&nbsp;器&nbsp;&nbsp;IP：</label>

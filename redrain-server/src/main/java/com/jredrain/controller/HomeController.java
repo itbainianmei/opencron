@@ -155,10 +155,10 @@ public class HomeController {
         }
     }
 
-    @RequestMapping("/url")
+    @RequestMapping("/monitor")
     public void port(HttpServletResponse response, Long workerId) throws Exception {
         Worker worker = workerService.getWorker(workerId);
-        Response resource = executeService.port(worker);
+        Response resource = executeService.monitor(worker);
         String port = resource.getResult().get("port");
         String url = String.format("http://%s:%s",worker.getIp(),port);
         PageIOUtils.writeTxt(response,url);

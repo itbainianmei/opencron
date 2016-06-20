@@ -70,6 +70,12 @@ public class WorkerController {
             worker.setMobiles(null);
             worker.setEmailAddress(null);
         }
+
+        //直联
+        if (worker.getProxy()==0) {
+            worker.setProxyWorker(null);
+        }
+
         worker.setPassword(DigestUtils.md5Hex(worker.getPassword()));
         worker.setStatus(true);
         worker.setUpdateTime(new Date());
