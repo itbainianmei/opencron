@@ -21,6 +21,7 @@
 
 package com.jredrain.controller;
 
+import com.jredrain.base.job.RedRain;
 import com.jredrain.domain.Worker;
 import com.jredrain.service.WorkerService;
 import it.sauronsoftware.cron4j.SchedulingPattern;
@@ -64,7 +65,7 @@ public class ValidationController {
         if (proxyId==null) {
             //直连
             proxyWorker = new Worker();
-            proxyWorker.setProxy(0);
+            proxyWorker.setProxy(RedRain.ConnType.CONN.getValue());
         }else {
             proxyWorker = workerService.getWorker(proxyId);
             if (proxyWorker == null) {

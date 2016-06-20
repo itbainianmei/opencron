@@ -26,6 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.jredrain.base.job.RedRain;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.JsonMapper;
@@ -75,7 +76,7 @@ public class WorkerController {
         }
 
         //直联
-        if (worker.getProxy()==0) {
+        if (worker.getProxy()== RedRain.ConnType.CONN.getValue()) {
             worker.setProxyWorker(null);
         }
 

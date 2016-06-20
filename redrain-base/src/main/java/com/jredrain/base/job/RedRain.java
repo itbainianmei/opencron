@@ -372,6 +372,34 @@ public class RedRain implements Serializable {
         }
     }
 
+    public enum ConnType{
+        CONN(0,"直连"),
+        PROXY(1,"代理");
+        private Integer value;
+        private String desc;
+
+        ConnType(Integer value,String desc){
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
     public interface Iface {
 
         public Response ping(Request request) throws org.apache.thrift.TException;
