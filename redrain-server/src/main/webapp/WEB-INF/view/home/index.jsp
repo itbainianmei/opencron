@@ -363,7 +363,9 @@
                     <div class="tile-config dropdown" style="float: right;">
                         <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;" id="workerId">
                             <c:forEach var="w" items="${workers}">
-                                <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
+                                <c:if test="${w.proxy eq 0}">
+                                    <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
+                                </c:if>
                             </c:forEach>
                         </select>
                     </div>

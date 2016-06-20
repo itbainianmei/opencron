@@ -273,9 +273,9 @@
                     <div class="form-group">
                         <label class="col-lab control-label"><i class="glyphicon glyphicon-transfer"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
                         <div class="col-md-10">
-                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio" name="proxy" value="0" id="proxy0">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio" name="proxy" value="1" id="proxy1" checked>代理&nbsp;&nbsp;&nbsp;</label>
-                            </br><span class="tips"><b>*&nbsp;</b>直连:直接连接目标agent,代理:通过其他执行器代理连接目标执行器</span>
+                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio" name="proxy" value="0" id="proxy0" checked>直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio" name="proxy" value="1" id="proxy1">代理&nbsp;&nbsp;&nbsp;</label>
+                            </br><span class="tips"><b>*&nbsp;</b>直连:直接连接目标执行器,代理:通过其他执行器代理连接目标执行器</span>
                         </div>
                     </div><br>
 
