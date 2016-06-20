@@ -25,6 +25,7 @@ import java.util.*;
 
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.RedRain.ExecType;
+import com.jredrain.domain.User;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.base.utils.JsonMapper;
@@ -120,7 +121,7 @@ public class JobController {
 
         //单任务
         if ( RedRain.JobCategory.SINGLETON.getCode().equals(job.getCategory()) ) {
-            job.setOperateId((Long) (session.getAttribute("userId")));
+            job.setOperateId( ((User)session.getAttribute("user")).getUserId() );
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
         } else { //流程任务
@@ -166,7 +167,7 @@ public class JobController {
             }
 
             if (job.getOperateId() == null) {
-                job.setOperateId((Long) (session.getAttribute("userId")));
+                job.setOperateId( ((User)session.getAttribute("user")).getUserId());
             }
 
             jobService.saveFlowJob(job, chindren);

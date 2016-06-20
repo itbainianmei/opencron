@@ -26,6 +26,7 @@ import com.jcraft.jsch.*;
 import com.jredrain.base.utils.DigestUtils;
 import com.jredrain.base.utils.PageIOUtils;
 import com.jredrain.domain.Term;
+import com.jredrain.domain.User;
 import com.jredrain.domain.Worker;
 import com.jredrain.service.ConfigService;
 import com.jredrain.service.TermService;
@@ -54,8 +55,8 @@ public class TermController {
     @RequestMapping("/ssh")
     public void ssh(HttpServletRequest request, HttpSession session, HttpServletResponse response, final Worker worker) throws Exception {
 
-        Long userId = (Long) session.getAttribute("userId");
-        final Term term = termService.getTerm(userId, worker.getIp());
+        User user = (User)session.getAttribute("user");
+        final Term term = termService.getTerm(user.getUserId(), worker.getIp());
 
         if (term == null) {
             PageIOUtils.writeHtml(response, "null");
@@ -72,8 +73,8 @@ public class TermController {
         Session connect = termService.createJschSession(term);
         try {
             connect.connect();
-            Long userId = (Long) session.getAttribute("userId");
-            term.setUserId(userId);
+            User user = (User)session.getAttribute("user");
+            term.setUserId(user.getUserId());
             term.setStatus(1);
             termService.saveOrUpdate(term);
             PageIOUtils.writeHtml(response,"success");

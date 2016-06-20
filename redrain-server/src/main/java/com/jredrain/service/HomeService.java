@@ -86,7 +86,7 @@ public class HomeService {
             sql += " AND L.sendTime like '" + sendTime + "%' ";
         }
         if (!(Boolean) session.getAttribute("permission")) {
-            sql += " AND L.receiverId = " + session.getAttribute("userId");
+            sql += " AND L.receiverId = " + ((User)session.getAttribute("user")).getUserId();
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(page, LogVo.class, sql);
@@ -96,7 +96,7 @@ public class HomeService {
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM log L WHERE isread=0 and type=2 ";
         if (!(Boolean) session.getAttribute("permission")) {
-            sql += " and L.receiverId = " + session.getAttribute("userId");
+            sql += " and L.receiverId = " + ((User)session.getAttribute("user")).getUserId();
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
@@ -105,7 +105,7 @@ public class HomeService {
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT count(1) FROM log L WHERE isread=0 and type=2 ";
         if (!(Boolean) session.getAttribute("permission")) {
-            sql += " and L.receiverId = " + session.getAttribute("userId");
+            sql += " and L.receiverId = " + ((User)session.getAttribute("user")).getUserId();
         }
         return queryDao.getCountBySql(sql);
     }

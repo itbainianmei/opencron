@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.jredrain.base.job.RedRain;
 import com.jredrain.dao.QueryDao;
+import com.jredrain.domain.User;
 import com.jredrain.domain.Worker;
 import com.jredrain.job.Globals;
 import com.jredrain.session.MemcacheCache;
@@ -127,7 +128,7 @@ public class JobService {
                 sql += " AND t.redo=" + job.getRedo();
             }
             if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND t.operateId = " + session.getAttribute("userId");
+                sql += " AND t.operateId = " + ((User)session.getAttribute("user")).getUserId();
             }
         }
         page = queryDao.getPageBySql(page, JobVo.class, sql);

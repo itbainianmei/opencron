@@ -24,6 +24,7 @@ package com.jredrain.service;
 
 import com.jredrain.dao.QueryDao;
 import com.jredrain.base.job.RedRain;
+import com.jredrain.domain.User;
 import com.jredrain.tag.Page;
 import com.jredrain.domain.Record;
 import com.jredrain.vo.ChartVo;
@@ -67,7 +68,7 @@ public class RecordService {
                 sql += " AND IFNULL(r.flowNum,0) = 0 ";
             }
             if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND t.operateId = " + session.getAttribute("userId");
+                sql += " AND t.operateId = " + ((User)session.getAttribute("user")).getUserId();
             }
         }
         sql += " ORDER BY r.startTime DESC";

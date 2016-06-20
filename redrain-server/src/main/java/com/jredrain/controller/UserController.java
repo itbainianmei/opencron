@@ -78,7 +78,7 @@ public class UserController {
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
         if (!(Boolean) session.getAttribute("permission")
-                && Long.parseLong(session.getAttribute("userId").toString()) != id){
+                && Long.parseLong(((User)session.getAttribute("user")).getUserId().toString()) != id){
             return "redirect:/user/detail";
         }
         User user = userService.queryUserById(id);
