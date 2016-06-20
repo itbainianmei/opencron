@@ -115,8 +115,7 @@ public class AgentProcessor implements RedRain.Iface {
             params = (Map<String, String>) JSON.parse(proxyParams);
         }
 
-        Request proxyReq = Request.request(proxyHost,toInt(proxyPort), Action.findByName(proxyAction),proxyPassword);
-        proxyReq.setParams(params);
+        Request proxyReq = Request.request(proxyHost,toInt(proxyPort), Action.findByName(proxyAction),proxyPassword).setParams(params);
 
         TTransport transport = null;
         /**
