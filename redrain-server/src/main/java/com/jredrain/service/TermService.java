@@ -151,7 +151,7 @@ public class TermService {
                             protected void onSuccess() {
                                 System.out.println("ack from client: " + client.getSessionId());
                             }
-                        }, "successful....");
+                        }, "登录成功!webssh功能正在开发中,敬请期待");
 
                     } catch (JSchException e) {
                         /**
