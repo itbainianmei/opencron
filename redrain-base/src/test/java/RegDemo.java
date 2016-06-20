@@ -19,13 +19,33 @@
  * under the License.
  */
 
+import com.alibaba.fastjson.JSON;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by benjobs on 15/12/5.
  */
 public class RegDemo {
 
     public static void main(String[] args) {
-        String str = "fsafdsfds:8080";
-        System.out.println(str.replaceAll(":80$",""));
+       Map<String,String> map = new HashMap<String,String>(0);
+        map.put("1","a");
+        map.put("2","fd");
+        map.put("3","f");
+        map.put("4","g");
+        map.put("5","h");
+        map.put("6","s");
+        map.put("7","o");
+
+        String text = JSON.toJSONString(map);
+
+        Map<String,String> map1 = new HashMap<String,String>(0);
+
+        map1 = (Map<String, String>) JSON.parse(text);
+
+        System.out.println(map1);
+
     }
 }

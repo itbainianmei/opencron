@@ -22,6 +22,7 @@
 package com.jredrain.controller;
 
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,7 +61,9 @@ public class WorkerController {
     }
 
     @RequestMapping("/addpage")
-    public String addPage() {
+    public String addPage(Model model) {
+        List<Worker> workerList = workerService.getAll();
+        model.addAttribute("workers",workerList);
         return "/worker/add";
     }
 

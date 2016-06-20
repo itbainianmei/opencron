@@ -211,6 +211,17 @@
 
         $("#warning1").next().attr("onclick","showContact()");
         $("#warning0").next().attr("onclick","hideContact()");
+
+        $("#proxy1").next().attr("onclick","showProxy()");
+        $("#proxy0").next().attr("onclick","hideProxy()");
+
+        var proxy = $('input[type="radio"][name="proxy"]:checked').val();
+        if(proxy==1){
+            $(".proxy").show();
+        }else {
+            $(".proxy").hide();
+        }
+
     });
 
     function showContact(){$(".contact").show()}
@@ -260,23 +271,24 @@
                 </c:if>
                 <c:if test="${!empty workers}">
                     <div class="form-group">
-                        <label class="col-lab control-label"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
+                        <label class="col-lab control-label"><i class="glyphicon glyphicon-transfer"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
                         <div class="col-md-10">
-                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio" name="proxy" value="0" id="proxy1">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio" name="proxy" value="1" id="proxy0" checked>代理&nbsp;&nbsp;&nbsp;</label>
+                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio" name="proxy" value="0" id="proxy0">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio" name="proxy" value="1" id="proxy1" checked>代理&nbsp;&nbsp;&nbsp;</label>
                             </br><span class="tips"><b>*&nbsp;</b>直连:直接连接目标agent,代理:通过其他执行器代理连接目标执行器</span>
                         </div>
                     </div><br>
 
                     <div class="form-group proxy" style="display: none;">
-                        <label for="proxyWorker" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>代理执行器:</label>
-                        <select id="proxyWorker" name="proxyWorker" class="form-control m-b-10 input-sm">
-                            <c:forEach var="d" items="${workers}">
-                                <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
-                            </c:forEach>
-                        </select>
-                        <span class="tips">&nbsp;&nbsp;此执行器的代理执行器</span>
-                    </div>
+                        <label for="proxyWorker" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
+                        <div class="col-md-10">
+                            <select id="proxyWorker" name="proxyWorker" class="form-control input-sm">
+                                <c:forEach var="d" items="${workers}">
+                                    <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </div><br>
                 </c:if>
 
                 <div class="form-group">
