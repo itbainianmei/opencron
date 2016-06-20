@@ -146,6 +146,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `worker`;
 CREATE TABLE `worker` (
   workerId bigint(20) unsigned PRIMARY KEY  NOT NULL AUTO_INCREMENT,
+  proxyWorker  bigint(20) DEFAULT NULL COMMENT '代理执行器的Id,非代理为空',
   status tinyint(1) DEFAULT NULL COMMENT '通信状态:0通讯异常，1通信正常',
   ip varchar(16) NOT NULL COMMENT '机器ip',
   port int(4) NOT NULL COMMENT '机器端口号',
@@ -156,5 +157,6 @@ CREATE TABLE `worker` (
   mobiles varchar(255) DEFAULT NULL COMMENT '接收通知的手机号',
   emailAddress varchar(1000) DEFAULT NULL COMMENT '失去联络通信的报警email,#隔开',
   comment text DEFAULT NULL COMMENT '简介',
+  proxy tinyint(1) DEFAULT '0' COMMENT '0:直连,1:代理',
   updateTime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
