@@ -28,13 +28,13 @@ CREATE TABLE job (
   category smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
   cronType smallint(10) DEFAULT '0' COMMENT '表达式类型',
   cronExp varchar(16) DEFAULT NULL COMMENT 'crontab表达式',
-  command varchar(1000) DEFAULT NULL COMMENT '运行的命令,原始命令,未替换参数前',
+  command varchar(1000) DEFAULT NULL COMMENT '执行时运行的命令',
   execType tinyint(1) NOT NULL COMMENT '0-自动模式,由系统自动调用,1-手动模式(手动执行)',
   comment text DEFAULT NULL COMMENT '简介',
   operateId bigint(20) DEFAULT '-1' COMMENT '操作人的id号',
   updateTime datetime DEFAULT NULL COMMENT '修改日期',
   redo tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此作业,1--重新执行此作业',
-  runCount int(11) DEFAULT '0' COMMENT '截止重新执行次数',
+  runCount int(11) DEFAULT '0' COMMENT '失败后重跑的次数',
   flowId bigint(10) DEFAULT NULL COMMENT '流程作业的组Id',
   flowNum smallint(10) DEFAULT NULL,
   status smallint(2) DEFAULT '1' COMMENT '1:有效,0:无效,2:',
@@ -78,14 +78,14 @@ DROP TABLE IF EXISTS record;
 CREATE TABLE record (
   recordId bigint(20) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
   parentId bigint(20) DEFAULT NULL COMMENT '重复记录需要记录跑的是哪条父记录',
-  jobId bigint(20) NOT NULL COMMENT '该task作业是哪个task id执行的结果',
+  jobId bigint(20) NOT NULL COMMENT '该作业对应的作业Id',
   command text NOT NULL COMMENT '执行的命令',
   returnCode int(10) DEFAULT NULL COMMENT '完成的返回值。0--成功，其他都--失败',
   success tinyint(4) DEFAULT NULL COMMENT '完成的返回状态。1--成功，0--失败',
   startTime datetime NOT NULL COMMENT '作业开始时间(如果是自动重执行时,每次执行不修改起始时间)',
   endTime datetime DEFAULT NULL COMMENT '作业结束时间',
   execType int(10) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
-  message longtext COMMENT '执行后的外部进程字符串返回结果。',
+  message longtext COMMENT '执行调度作业后返回的结果。',
   redoCount int(11) DEFAULT NULL COMMENT '当前第几次自动重试执行',
   status tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
   pid varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
@@ -139,7 +139,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 INSERT INTO `user`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
-VALUES (999,'redrain','016b85818bdc68ba65d6a41e3d8054e693778dee','ece2bae9d384582b','蓝光','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
+VALUES (999,'redrain','016b85818bdc68ba65d6a41e3d8054e693778dee','ece2bae9d384582b','jredrain','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
 UNLOCK TABLES;
 
 
@@ -152,10 +152,10 @@ CREATE TABLE `worker` (
   port int(4) NOT NULL COMMENT '机器端口号',
   password varchar(50) DEFAULT NULL,
   failTime datetime DEFAULT NULL COMMENT '检查通信上一次失败的时间',
-  name varchar(100) NOT NULL COMMENT 'daemon版本名',
-  warning smallint(1) DEFAULT '0' COMMENT 'bool.是否失去联络通信的通知email报警',
+  name varchar(100) NOT NULL COMMENT '执行器名字',
+  warning smallint(1) DEFAULT '0' COMMENT 'bool.失联后是否通知email报警',
   mobiles varchar(255) DEFAULT NULL COMMENT '接收通知的手机号',
-  emailAddress varchar(1000) DEFAULT NULL COMMENT '失去联络通信的报警email,#隔开',
+  emailAddress varchar(1000) DEFAULT NULL COMMENT '失联后接受报警的email',
   comment text DEFAULT NULL COMMENT '简介',
   proxy tinyint(1) DEFAULT '0' COMMENT '0:直连,1:代理',
   updateTime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
