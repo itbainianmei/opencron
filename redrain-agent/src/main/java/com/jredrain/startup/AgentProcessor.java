@@ -204,6 +204,15 @@ public class AgentProcessor implements RedRain.Iface {
                 } catch (Exception e) {
                     logger.error("[redrain]:error:{}", e);
                 }
+
+                /**
+                 * 修复脚本里执行ssh可能连接超时导致任务失败的bug..
+                 */
+                String timeoutRegex = "^ssh:.+Connection\\stimed\\sout$";
+                if (response.getMessage().matches(timeoutRegex)) {
+                    //连接超时...
+                    response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
+                }
             } else {
                 response.setExitCode(exitValue);
             }

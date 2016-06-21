@@ -86,7 +86,8 @@ public class RedRain implements Serializable {
         KILL(137, "进程被kill"),
         NOFOUND(127, "未找到文件"),
         ERROR_EXEC(-100, "连接成功，执行任务失败!"),
-        ERROR_PASSWORD(-500, "密码不正确!");
+        ERROR_PASSWORD(-500, "密码不正确!"),
+        TIME_OUT(504,"连接超时");
 
         private Integer value;
         private String description;
