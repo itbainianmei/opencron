@@ -49,7 +49,6 @@ public class ConfigService {
             String aeskey = CommonUtils.uuid(18);
             config.setAeskey(aeskey);
             queryDao.createSQLQuery("update config set aeskey=? where configId = 1",aeskey).executeUpdate();
-            queryDao.save(config);
         }
         return config.getAeskey();
     }
