@@ -69,9 +69,9 @@ public class Record implements Serializable {
     public Record() {
     }
 
-    public Record(JobVo task, RedRain.ExecType execType) {
+    public Record(JobVo task) {
         this.setJobId(task.getJobId());
-        this.setExecType(execType.getStatus());
+        this.setExecType( task.getExecType() );
         this.setCommand(task.getCommand());//执行的命令
         this.setStartTime(new Date());//开始执行的时间
         this.setRedoCount(0L);//运行次数

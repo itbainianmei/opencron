@@ -54,16 +54,16 @@ public final class SchedulerService {
     @Autowired
     private RedRainCollector cronJobCollector;
 
-    private Scheduler scheduler;
+    private Scheduler quartzScheduler;
 
     private it.sauronsoftware.cron4j.Scheduler crontabScheduler;
 
     public SchedulerService() throws SchedulerException {
-        this.scheduler = StdSchedulerFactory.getDefaultScheduler();
+        this.quartzScheduler = new StdSchedulerFactory().getScheduler();
     }
 
     public boolean checkExists(Long jobId) throws SchedulerException {
-        return scheduler.checkExists(JobKey.jobKey(jobId.toString()));
+        return quartzScheduler.checkExists(JobKey.jobKey(jobId.toString()));
     }
 
     public void addOrModify(List<JobVo> jobs, Job jobBean) throws SchedulerException {
@@ -75,19 +75,19 @@ public final class SchedulerService {
     public void addOrModify(JobVo job, Job jobBean) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobId().toString());
         CronTrigger cronTrigger = newTrigger().withIdentity(triggerKey).withSchedule(cronSchedule(job.getCronExp())).build();
-        //when exists then modify..
+        //when exists then delete..
         if (checkExists(job.getJobId())) {
-            scheduler.rescheduleJob(triggerKey,cronTrigger);
-        }else {//add new job 。。。
-            JobDetail jobDetail = JobBuilder.newJob(jobBean.getClass()).withIdentity(JobKey.jobKey(job.getJobId().toString())).build();
-            jobDetail.getJobDataMap().put(job.getJobId().toString(), job);
-            jobDetail.getJobDataMap().put("jobBean", jobBean);
-            Date date = scheduler.scheduleJob(jobDetail, cronTrigger);
-            if (!scheduler.isStarted()) {
-                scheduler.start();
-            }
-            logger.info("redrain: add success,cronTrigger:{}", cronTrigger, date);
+            this.remove(job.getJobId());
         }
+        //add new job 。。。
+        JobDetail jobDetail = JobBuilder.newJob(jobBean.getClass()).withIdentity(JobKey.jobKey(job.getJobId().toString())).build();
+        jobDetail.getJobDataMap().put(job.getJobId().toString(), job);
+        jobDetail.getJobDataMap().put("jobBean", jobBean);
+        Date date = quartzScheduler.scheduleJob(jobDetail, cronTrigger);
+        if (!quartzScheduler.isStarted()) {
+            quartzScheduler.start();
+        }
+        logger.info("redrain: add success,cronTrigger:{}", cronTrigger, date);
     }
 
     public void remove(Long jobId) throws SchedulerException {
@@ -95,22 +95,34 @@ public final class SchedulerService {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
             logger.info("redrain: removed, triggerKey:{}, result [{}]",
                     triggerKey,
-                    scheduler.unscheduleJob(triggerKey) && scheduler.deleteJob(JobKey.jobKey(jobId.toString()))
+                    quartzScheduler.unscheduleJob(triggerKey) && quartzScheduler.deleteJob(JobKey.jobKey(jobId.toString()))
             );
+        }
+    }
+
+    public void start() throws SchedulerException {
+        if (quartzScheduler!=null && !quartzScheduler.isStarted()) {
+            quartzScheduler.start();
+        }
+    }
+
+    public void shutdown() throws SchedulerException {
+        if (quartzScheduler!=null && !quartzScheduler.isShutdown()) {
+            quartzScheduler.isShutdown();
         }
     }
 
     public void pause(Long jobId) throws SchedulerException {
         if (checkExists(jobId)) {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
-            scheduler.pauseTrigger(triggerKey);
+            quartzScheduler.pauseTrigger(triggerKey);
         }
     }
 
     public void resume(Long jobId) throws SchedulerException {
         if (checkExists(jobId)) {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobId.toString());
-            scheduler.resumeTrigger(triggerKey);
+            quartzScheduler.resumeTrigger(triggerKey);
         } else {
             //skip.....
         }

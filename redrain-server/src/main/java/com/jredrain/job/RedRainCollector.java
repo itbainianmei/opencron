@@ -65,7 +65,9 @@ public class RedRainCollector implements TaskCollector {
                 taskTable.add(new SchedulingPattern(job.getCronExp()),new Task() {
                     @Override
                     public void execute(TaskExecutionContext context) throws RuntimeException {
-                        executeService.executeJob(job, RedRain.ExecType.AUTO);
+                        //自动执行
+                        job.setExecType(RedRain.ExecType.AUTO.getStatus());
+                        executeService.executeJob(job);
                     }
                 });
             }
@@ -82,7 +84,9 @@ public class RedRainCollector implements TaskCollector {
         taskTable.add(new SchedulingPattern(job.getCronExp()),new Task() {
             @Override
             public void execute(TaskExecutionContext context) throws RuntimeException {
-                executeService.executeJob(job, RedRain.ExecType.AUTO);
+                //自动执行
+                job.setExecType(RedRain.ExecType.AUTO.getStatus());
+                executeService.executeJob(job);
             }
         });
     }

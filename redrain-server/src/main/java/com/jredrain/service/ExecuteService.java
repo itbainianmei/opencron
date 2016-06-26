@@ -65,14 +65,14 @@ public class ExecuteService implements Job {
         JobVo jobVo = (JobVo) jobExecutionContext.getJobDetail().getJobDataMap().get(key);
         try {
             ExecuteService executeService = (ExecuteService) jobExecutionContext.getJobDetail().getJobDataMap().get("jobBean");
-            boolean success = executeService.executeJob(jobVo, ExecType.getByStatus(jobVo.getExecType()));
+            boolean success = executeService.executeJob(jobVo);
             logger.info("[redrain] job:{} at {}:{},execute:{}", jobVo.getJobName(),jobVo.getWorker().getIp(),jobVo.getWorker().getPort(), success?"successful":"failed");
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
     }
 
-    public boolean executeJob(final JobVo job, final ExecType execType) {
+    public boolean executeJob(final JobVo job) {
 
         //流程作业..
         if ( job.getCategory().equals(JobCategory.FLOW.getCode()) ) {
@@ -94,7 +94,7 @@ public class ExecuteService implements Job {
                     //如果子任务是并行(则启动多线程,所有子任务同时执行)
                     Thread thread = new Thread(new Runnable() {
                         public void run() {
-                            result.add(executeFlowJob(jobVo, execType, flowGroup));
+                            result.add(executeFlowJob(jobVo, flowGroup));
                         }
                     });
                     threads.add(thread);
@@ -114,7 +114,7 @@ public class ExecuteService implements Job {
                 return !result.contains(false);
             }else {//串行,按顺序执行
                 for (JobVo jobVo : jobQueue) {
-                    if (!executeFlowJob(jobVo, execType, flowGroup)) {
+                    if (!executeFlowJob(jobVo, flowGroup)) {
                         return false;
                     }
                 }
@@ -125,7 +125,7 @@ public class ExecuteService implements Job {
         /**
          * 单一作业...
          */
-        Record record = new Record(job, execType);
+        Record record = new Record(job);
         record.setCategory(JobCategory.SINGLETON.getCode());//单一任务
         //执行前先保存
         record = recordService.save(record);
@@ -161,8 +161,8 @@ public class ExecuteService implements Job {
     }
 
 
-    private boolean executeFlowJob(JobVo job, ExecType execType, long flowGroup) {
-        Record record = new Record(job, execType);
+    private boolean executeFlowJob(JobVo job,long flowGroup) {
+        Record record = new Record(job);
         record.setRedoCount(0L);
         record.setFlowGroup(flowGroup);//组Id
         record.setCategory(JobCategory.FLOW.getCode());//流程任务
@@ -247,7 +247,8 @@ public class ExecuteService implements Job {
         /**
          * 当前重新执行的新纪录
          */
-        Record record = new Record(job, ExecType.RERUN);
+        job.setExecType(ExecType.RERUN.getStatus());
+        Record record = new Record(job);
         record.setParentId(parentRecord.getRecordId());
         record.setFlowGroup(parentRecord.getFlowGroup());
         record.setCategory(category.getCode());

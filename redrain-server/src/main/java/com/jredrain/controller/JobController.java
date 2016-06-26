@@ -219,9 +219,11 @@ public class JobController {
     @RequestMapping("/execute")
     public void remoteExecute(Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
+        //手动执行
+        job.setExecType(ExecType.OPERATOR.getStatus());
         job.setWorker(workerService.getWorker(job.getWorkerId()));
         try {
-            this.executeService.executeJob(job, ExecType.OPERATOR);
+            this.executeService.executeJob(job);
         } catch (Exception e) {
             e.printStackTrace();
         }
