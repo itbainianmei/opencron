@@ -56,8 +56,8 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        //登陆
-        if (requestURI.contains("/login")) {
+        //登陆|上传
+        if (requestURI.contains("/login")||requestURI.contains("/upload")) {
             return super.preHandle(request, response, handler);
         }
 

@@ -132,15 +132,6 @@
 					marginLeft:"-"+Math.round(rx*c.x)+"px",
 					marginTop:"-"+Math.round(ry*c.y)+"px"
 				});
-
-				var rx2=50/c.w;
-				var ry2=50/c.h;
-				$("#preview2").css({
-					width:Math.round(rx2*boundx)+"px",
-					height:Math.round(ry2*boundy)+"px",
-					marginLeft:"-"+Math.round(rx2*c.x)+"px",
-					marginTop:"-"+Math.round(ry2*c.y)+"px"
-				});
 			}else{
 				var rect = [0,0,50,50];
 				jcrop_api.setSelect(rect);
@@ -193,18 +184,17 @@
 			fileObjName : 'file',
 			method:'post',
 			formData: {
-				userId:$("#userId").val()
+				userId:${user.userId}
 			},
 			height : 25,
 			width : 80,
 			buttonImage : '',
-			swf : '/js/upload/uploadify.swf',
+			swf : '${contextPath}/js/upload/uploadify.swf',
 			uploader : '/uploadimg',
 			fileTypeExts : '*.gif; *.jpg; *.png; *.jpeg',
 			buttonText : "上传图片",
-			overrideEvents : [ 'onSelectError',
-				'onUploadError', 'onDialogClose' ],
-			onSelectError : function(file, errorCode, errorMsg) {
+			overrideEvents : [ 'onSelectError','onUploadError', 'onDialogClose' ],
+			onSelectError : function(file, errorCode) {
 				switch (errorCode) {
 					case -100:
 						alert("上传的文件数量已经超出系统限制的"
@@ -234,23 +224,19 @@
 				var result = jQuery.parseJSON(data);
 				if (result && result.fileUrl) {
 
-					var imgUrl = result.fileUrl;
+					var imgUrl = "${contextPath}"+result.fileUrl;
 					$("#headIcon").val(imgUrl);
-					$("#previewImg_link").attr("href", imgUrl);
 					$("#previewImg").attr("src", imgUrl);
-					$("#btnUploadPic").uploadify('settings',
-							'buttonText', '重传图片');
+					$("#btnUploadPic").uploadify('settings', 'buttonText', '重传图片');
 
 					//截图
 					jcrop_api.setImage(imgUrl);
-
 					$("#preview").attr("src",imgUrl);
 
-					$("#preview2").attr("src",imgUrl);
 					var rect = [0,0,300,300];
 
 					if(!result.flag){
-						rect = [0,0,50,50];
+						rect = [0,0,120,120];
 						jcrop_api.setSelect(rect);
 						jcrop_api.allowResize=false;
 						jcrop_api.allowMove=false;
@@ -267,11 +253,8 @@
 					alert("上传失败，请重试!" + result);
 				}
 			},
-			onUploadProgress : function(file, bytesUploaded,
-										bytesTotal, totalBytesUploaded,
-										totalBytesTotal) {
-				$("#btnUploadPic").uploadify('settings',
-						'buttonText', '上传中...');
+			onUploadProgress : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal) {
+				$("#btnUploadPic").uploadify('settings', 'buttonText', '上传中...');
 			}
 		});
 	});
@@ -308,8 +291,6 @@
 		<h1 style="width:620px;margin-top:0px" class="dialog-title"><span onclick="closeDialog();"></span>头像设置</h1>
 		<div class="dialog-center" style="width:600px;height: 398px;">
 			<div class="form-group spacing-col20">
-				<input type="hidden" name="userId" id="userId" value="65001">
-
 				<div id="outer">
 					<div class="jcExample" style="width:600px;margin:0 0 0 0;border:0;">
 						<div>
@@ -389,9 +370,7 @@
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
 					<img class="profile-pic" src="${contextPath}/img/profile-pic.jpg" alt="">
-					<div class="change-text">
-						<a onclick="showDialog();" href="javascript:void(0);">更换头像</a>
-					</div>
+					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">

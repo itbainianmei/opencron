@@ -23,6 +23,7 @@
 package com.jredrain.service;
 
 import com.jredrain.dao.QueryDao;
+import com.jredrain.dao.UploadDao;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.Digests;
 import com.jredrain.base.utils.Encodes;
@@ -49,6 +50,9 @@ public class UserService {
 
     @Autowired
     private QueryDao queryDao;
+
+    @Autowired
+    private UploadDao uploadDao;
 
     private final String SALT = "ece2bae9d384582b";
 
@@ -109,10 +113,11 @@ public class UserService {
         queryDao.save(user);
     }
 
-    public User uploadimg(MultipartFile file, User user) throws IOException {
-        User loginUser =  queryDao.get(User.class,user.getUserId());
-        loginUser.setHeaderpic(Hibernate.getLobCreator(queryDao.getSession()).createBlob(file.getBytes()));
-        return (User) queryDao.save(loginUser);
+    public User uploadimg(MultipartFile file, Long userId) throws IOException {
+
+
+
+        return uploadDao.uploadimg(file,userId);
     }
 
 }

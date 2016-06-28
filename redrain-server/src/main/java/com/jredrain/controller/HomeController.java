@@ -22,19 +22,18 @@
 package com.jredrain.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.jredrain.base.utils.IOUtils;
+import com.jredrain.base.utils.*;
 import com.jredrain.domain.User;
 import net.sf.json.JSONObject;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Response;
-import com.jredrain.base.utils.DateUtils;
-import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.PageIOUtils;
 import com.jredrain.domain.Job;
 import com.jredrain.domain.Worker;
 import com.jredrain.service.*;
 import com.jredrain.tag.Page;
 import com.jredrain.vo.ChartVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,6 +51,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static com.jredrain.base.utils.CommonUtils.isEmpty;
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
@@ -85,6 +85,9 @@ public class HomeController {
 
     @Autowired
     private UserService userService;
+
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping("/home")
     public String index(Model model) {
@@ -219,7 +222,7 @@ public class HomeController {
         if (status == 200) {
             User user = (User) httpSession.getAttribute("user");
             if (user.getHeaderpic()!=null) {
-                String path = httpSession.getServletContext().getRealPath(File.separator) + "temp" + File.separator + user.getUserId() + "_pic.png";
+                String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + user.getUserId() + "_pic.png";
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
                 user.setHreaderPath(path);
             }
@@ -229,12 +232,35 @@ public class HomeController {
     }
 
     @RequestMapping("/uploadimg")
-    public void uploadimg(@RequestParam(value = "file", required = false) MultipartFile file, HttpSession httpSession, HttpServletResponse response) throws Exception {
-        User user = (User) httpSession.getAttribute("user");
-        user = userService.uploadimg(file,user);
-        String path = httpSession.getServletContext().getRealPath(File.separator) + "temp" + File.separator + user.getUserId()+"_pic.png";
-        IOUtils.writeFile(new File(path),user.getHeaderpic().getBinaryStream());
-        PageIOUtils.writeJson(response,String.format("{\"fileUrl\":\"%s\"}",path));
+    public void uploadimg(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpSession httpSession, HttpServletResponse response) throws Exception {
+        User user = userService.getUserById(userId);
+        String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+        String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
+
+        String fileName = UUID.randomUUID() +"." + extensionName.toLowerCase();
+        File targetFile = new File(path, fileName);
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+
+        try {
+            file.transferTo(targetFile);
+            logger.info(" upload file successful @ "+fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("upload exception:"+e.getMessage());
+        }
+        /**
+         * 上传文件有可能很大,则生成一个300*300的图片返回.....
+         */
+        ImageUtils.zoom(targetFile);
+
+        fileName =  user.getUserId()+"-"+UUID.randomUUID().toString() + "." + extensionName.toLowerCase();
+        String filepath = path + fileName;
+        float scale = ImageUtils.scale(targetFile.getPath(),filepath,1,false);
+        logger.info("图片缩放倍数:"+scale);
+        String format = "{\"fileUrl\":\"%s\",\"flag\":\"%s\"}";
+        PageIOUtils.writeJson( response, String.format(format,"/upload/"+fileName,scale!=-1f));
     }
 
     @RequestMapping("/logout")
