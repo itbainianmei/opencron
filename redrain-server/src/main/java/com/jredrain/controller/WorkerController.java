@@ -76,7 +76,7 @@ public class WorkerController {
         }
 
         //直联
-        if (worker.getProxy()== RedRain.ConnType.CONN.getValue()) {
+        if (worker.getProxy()== RedRain.ConnType.CONN.getType()) {
             worker.setProxyWorker(null);
         }
 

@@ -25,3 +25,92 @@ b{color: red;}
 .item{
     width: 120px;
 }
+
+.change-text {
+    background: rgba(0, 0, 0, 0) url("/img/img-cover.png") no-repeat scroll 0 0;
+    bottom: 29px;
+    color: #fff;
+    display: none;
+    height: 35px;
+    left: 45px;
+    line-height: 35px;
+    position: absolute;
+    text-align: center;
+    font-size: 11px;
+    font-weight: lighter;
+    width: 100px;
+}
+
+.dialog-title {
+    background: #3296e6 none repeat scroll 0 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: normal;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 20px;
+    width: 740px;
+}
+
+.swfupload {
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.uploadify span{width: 80px;height: 25px;vertical-align:baseline; text-align: center; }
+.uploadify {
+    color: #ffffff;
+    font-size:13px;
+    width:60px;height:25px;
+    border:none;
+    background-color: #5CB85C;
+    cursor: pointer;
+    float: left;
+    position: relative;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.uploadify:hover { background-color: #5CB86C;}
+.uploadify:active{ background-color: #5CB86C;}
+.uploadify-queue{height: 0px; overflow: hidden;}
+.swfupload{left:0;}
+dd .uploadify span{color:#fff; text-align: center; }
+.uploadify-button{text-align: center;}
+
+.dialog-title span {
+    background: rgba(0, 0, 0, 0) url("/img/dialog_closed.png") no-repeat scroll 0 0;
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    height: 15px;
+    margin-right: 20px;
+    margin-top: 20px;
+    transition: transform 0.5s ease 0s;
+    width: 15px;
+}
+
+.dialog-next input {
+    margin: 0 5px;
+}
+.dialog-next input {
+    margin: 0 5px;
+}
+.btn-login {
+    height: 30px;
+    width: 80px;
+}
+.btn-submit {
+    background-color: #15a4fa;
+    border: 1px solid #15a4fa;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    height: 30px;
+    text-align: center;
+    width: 160px;
+}
+.btn-login {
+    height: 30px;
+    width: 80px;
+}

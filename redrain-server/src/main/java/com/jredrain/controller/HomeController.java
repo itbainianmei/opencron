@@ -21,6 +21,9 @@
 
 package com.jredrain.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.jredrain.base.utils.IOUtils;
+import com.jredrain.domain.User;
 import net.sf.json.JSONObject;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Response;
@@ -37,10 +40,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +82,9 @@ public class HomeController {
 
     @Autowired
     private JobService jobService;
+
+    @Autowired
+    private UserService userService;
 
     @RequestMapping("/home")
     public String index(Model model) {
@@ -158,11 +170,24 @@ public class HomeController {
     @RequestMapping("/monitor")
     public void port(HttpServletResponse response, Long workerId) throws Exception {
         Worker worker = workerService.getWorker(workerId);
-        Response resource = executeService.monitor(worker);
-        String port = resource.getResult().get("port");
-        String url = String.format("http://%s:%s",worker.getIp(),port);
-        PageIOUtils.writeTxt(response,url);
+        Response req = executeService.monitor(worker);
+        /**
+         * 直联
+         */
+
+        String format = "{\"conn\":" + worker.getProxy() + "},\"data\":%s";
+
+        if (worker.getProxy().equals(RedRain.ConnType.CONN.getType())) {
+            String port = req.getResult().get("port");
+            String url = String.format("http://%s:%s", worker.getIp(), port);
+            PageIOUtils.writeJson(response, String.format(format, url));
+        } else {//代理
+            PageIOUtils.writeJson(response, String.format(format, JSON.toJSONString(req.getResult())));
+        }
     }
+
+
+
 
    /* @RequestMapping("/monitor")
     public void monitor(HttpServletResponse response, Long workerId) throws Exception {
@@ -183,7 +208,7 @@ public class HomeController {
     }
 
     @RequestMapping("/login")
-    public void login(HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) {
+    public void login(HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
         //用户信息验证
         int status = homeService.checkLogin(httpSession, username, password);
 
@@ -192,9 +217,24 @@ public class HomeController {
             return;
         }
         if (status == 200) {
+            User user = (User) httpSession.getAttribute("user");
+            if (user.getHeaderpic()!=null) {
+                String path = httpSession.getServletContext().getRealPath(File.separator) + "temp" + File.separator + user.getUserId() + "_pic.png";
+                IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
+                user.setHreaderPath(path);
+            }
             PageIOUtils.writeJson(response, "{\"successUrl\":\"/home\"}");
             return;
         }
+    }
+
+    @RequestMapping("/uploadimg")
+    public void uploadimg(@RequestParam(value = "file", required = false) MultipartFile file, HttpSession httpSession, HttpServletResponse response) throws Exception {
+        User user = (User) httpSession.getAttribute("user");
+        user = userService.uploadimg(file,user);
+        String path = httpSession.getServletContext().getRealPath(File.separator) + "temp" + File.separator + user.getUserId()+"_pic.png";
+        IOUtils.writeFile(new File(path),user.getHeaderpic().getBinaryStream());
+        PageIOUtils.writeJson(response,String.format("{\"fileUrl\":\"%s\"}",path));
     }
 
     @RequestMapping("/logout")

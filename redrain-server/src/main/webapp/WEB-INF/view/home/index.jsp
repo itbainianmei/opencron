@@ -361,11 +361,9 @@
                 <div class="tile" style="background: none">
                     <h2 class="tile-title" style="background:rgba(0,0,0,0.40);border-top-left-radius:2px;border-top-right-radius:2px;"><i aria-hidden="true" class="fa fa-area-chart"></i>&nbsp;系统概况</h2>
                     <div class="tile-config dropdown" style="float: right;">
-                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;" id="workerId">
+                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;"ps  id="workerId">
                             <c:forEach var="w" items="${workers}">
-                                <c:if test="${w.proxy eq 0}">
-                                    <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
-                                </c:if>
+                                <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
                             </c:forEach>
                         </select>
                     </div>

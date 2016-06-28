@@ -65,7 +65,7 @@ public class ValidationController {
         if (proxyId==null) {
             //直连
             proxyWorker = new Worker();
-            proxyWorker.setProxy(RedRain.ConnType.CONN.getValue());
+            proxyWorker.setProxy(RedRain.ConnType.CONN.getType());
         }else {
             proxyWorker = workerService.getWorker(proxyId);
             if (proxyWorker == null) {

@@ -70,7 +70,7 @@ public class IOUtils implements Serializable {
         return null;
     }
 
-    public static boolean writeFile(File file, String text, String charset) {
+    public static boolean writeText(File file, String text, String charset) {
         try {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
             out.write(text);
@@ -82,6 +82,21 @@ public class IOUtils implements Serializable {
         }
         return false;
     }
+
+    public static void writeFile(File file, InputStream inputStream) throws IOException {
+        AssertUtils.notNull(file,inputStream);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+
+        BufferedOutputStream  output= new BufferedOutputStream(new FileOutputStream(file));
+        int r;
+        while((r=inputStream.read())!=-1){
+            output.write((byte)r);
+        }
+        output.close();
+    }
+
 
     public static final synchronized String getTempFolderPath() {
         return System.getProperty("java.io.tmpdir");

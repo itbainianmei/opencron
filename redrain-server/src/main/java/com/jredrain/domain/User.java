@@ -24,6 +24,7 @@ package com.jredrain.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
 
 /**
@@ -59,6 +60,11 @@ public class User implements Serializable {
 
     @Transient
     private String roleName;
+
+    private Blob headerpic;
+
+    @Transient
+    private String hreaderPath;
 
     public Long getUserId() {
         return userId;
@@ -154,5 +160,21 @@ public class User implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Blob getHeaderpic() {
+        return headerpic;
+    }
+
+    public void setHeaderpic(Blob headerpic) {
+        this.headerpic = headerpic;
+    }
+
+    public String getHreaderPath() {
+        return hreaderPath;
+    }
+
+    public void setHreaderPath(String hreaderPath) {
+        this.hreaderPath = hreaderPath;
     }
 }

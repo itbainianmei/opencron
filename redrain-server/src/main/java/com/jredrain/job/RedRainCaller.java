@@ -59,7 +59,7 @@ public class RedRainCaller {
     public Response call(Worker worker,Request request) throws Exception {
 
         //代理...
-        if (worker.getProxy() == RedRain.ConnType.PROXY.getValue()) {
+        if (worker.getProxy() == RedRain.ConnType.PROXY.getType()) {
             Map<String,String> proxyParams = new HashMap<String, String>(0);
             proxyParams.put("proxyHost",request.getHostName());
             proxyParams.put("proxyPort",request.getPort()+"");

@@ -23,8 +23,10 @@
 package com.jredrain.service;
 
 import com.jredrain.base.job.Action;
+import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
+import com.jredrain.base.utils.ParamsMap;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Worker;
 import com.jredrain.job.RedRainCaller;
@@ -406,6 +408,9 @@ public class ExecuteService implements Job {
     }
 
     public Response monitor(Worker worker) throws Exception {
-        return cronJobCaller.call(worker,Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()));
+        return cronJobCaller.call(
+                worker,
+                Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()).setParams( ParamsMap.instance().fill("connType",ConnType.getByType(worker.getProxy())) )
+        );
     }
 }

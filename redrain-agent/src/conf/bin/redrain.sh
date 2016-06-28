@@ -368,7 +368,7 @@ case "$1" in
                   echo "To aid diagnostics a thread dump has been written to standard out."
                   kill -3 `cat "$REDRAIN_PID"`
                 fi
-                SLEEP=`expr $SLEEP - 1 `
+                SLEEP=`expr $SLEEP - 1 `;
               done
             fi
           fi

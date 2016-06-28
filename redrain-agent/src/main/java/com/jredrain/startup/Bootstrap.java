@@ -149,11 +149,11 @@ public class Bootstrap implements Serializable {
         if (notEmpty(inputPwd)) {
             this.password = DigestUtils.md5Hex(inputPwd).toLowerCase();
             Globals.REDRAIN_PASSWORD_FILE.deleteOnExit();
-            IOUtils.writeFile(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
+            IOUtils.writeText(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
         } else {
             if (!Globals.REDRAIN_PASSWORD_FILE.exists()) {
                 this.password = DigestUtils.md5Hex(this.password).toLowerCase();
-                IOUtils.writeFile(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
+                IOUtils.writeText(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
             } else {
                 password = IOUtils.readFile(Globals.REDRAIN_PASSWORD_FILE, CHARSET).trim().toLowerCase();
             }
@@ -179,7 +179,7 @@ public class Bootstrap implements Serializable {
             /**
              * write pid to pidfile...
              */
-            IOUtils.writeFile(Globals.REDRAIN_PID_FILE, getPid() + "", CHARSET);
+            IOUtils.writeText(Globals.REDRAIN_PID_FILE, getPid() + "", CHARSET);
 
             //new thread to start for thrift server
             new Thread(new Runnable() {
@@ -344,6 +344,7 @@ public class Bootstrap implements Serializable {
              * delete pid file...
              */
             Globals.REDRAIN_PID_FILE.deleteOnExit();
+            System.exit(0);
         }
     }
 

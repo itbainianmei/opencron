@@ -28,9 +28,16 @@ import com.jredrain.base.utils.Digests;
 import com.jredrain.base.utils.Encodes;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -101,4 +108,11 @@ public class UserService {
     public void updateUser(User user) {
         queryDao.save(user);
     }
+
+    public User uploadimg(MultipartFile file, User user) throws IOException {
+        User loginUser =  queryDao.get(User.class,user.getUserId());
+        loginUser.setHeaderpic(Hibernate.getLobCreator(queryDao.getSession()).createBlob(file.getBytes()));
+        return (User) queryDao.save(loginUser);
+    }
+
 }

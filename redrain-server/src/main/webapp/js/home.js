@@ -8,6 +8,13 @@ var redrainChart = {
     data: null,
     socket: null,
     resizeChartData: {},
+    diskLoad:false,
+    cpuLoad:false,
+    cpuChartObj:{},
+    cpuX:[],
+    cpuY:[],
+    intervalId:0,
+
     overviewDataArr: [
         {"key": "us", "title": "用户占用", "color": "rgba(221,68,255,0.90)"},
         {"key": "sy", "title": "系统占用", "color": "rgba(255,255,255,0.90)"},
@@ -17,12 +24,6 @@ var redrainChart = {
     ],
 
     monitorData: function () {
-        var diskLoad = false;
-        var cpuLoad = false;
-        var cpuChartObj = null;
-        var cpuX = [];
-        var cpuY = [];
-
         /**
          * 没有执行器
          */
@@ -44,48 +45,66 @@ var redrainChart = {
             url: redrainChart.path + "/monitor",
             data: "workerId=" + $("#workerId").val(),
             dataType: "html",
-            success: function (url) {
-                redrainChart.socket = new io.connect(url, {'reconnect': false, 'auto connect': false});
-                redrainChart.socket.on("monitor", function (data) {
-                    $(".loader").remove();
-                    //解决子页面登录失联,不能跳到登录页面的bug
-                    if (data.toString().indexOf("login") > -1) {
-                        window.location.href = redrainChart.path;
-                    } else {
-                        redrainChart.data = data;
-                        if (!diskLoad) {
-                            diskLoad = true;
-                            redrainChart.diskChart();
-                        }
+            success: function (dataResult) {
+                //remobe loader...
+                $(".loader").remove();
+                var dataResult = eval("("+dataResult+")");
 
-                        if (!cpuLoad) {
-                            cpuLoad = true;
-                            redrainChart.createItemCpu();
-                            cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
-                            var option = {};
-                            cpuChartObj.setOption(option);
-                        } else {
-                            var opt = redrainChart.cpuChart(cpuX, cpuY);
-                            cpuChartObj.setOption(opt);
-                            redrainChart.gaugeOption.series[0].data[0].value = parseFloat(redrainChart.data.memUsage);
-                            redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
-                        }
-
-                        redrainChart.topData();
-
+                //代理
+                if (dataResult.conn === 1) {
+                    redrainChart.data = dataResult.data;
+                    redrainChart.doRender();
+                    redrainChart.intervalId = window.setInterval(redrainChart.monitorData,1000);
+                }else {//直联-->发送websocket...
+                    //clear interval
+                    if (!redrainChart.intervalId){
+                        window.clearInterval( redrainChart.intervalId );
                     }
-                });
-                redrainChart.socket.on("disconnect", function () {
-                    redrainChart.socket.close();
-                    console.log('close');
-                    diskLoad = false;
-                    cpuLoad = false;
-                    cpuChartObj = null;
-                    cpuX = [];
-                    cpuY = [];
-                });
+                    redrainChart.socket = new io.connect(dataResult.data, {'reconnect': false, 'auto connect': false});
+                    redrainChart.socket.on("monitor", function (data) {
+                        redrainChart.data = data;
+                        redrainChart.doRender();
+                    });
+                    //when close then clear data...
+                    redrainChart.socket.on("disconnect", function () {
+                        redrainChart.socket.close();
+                        console.log('close');
+                        redrainChart.diskLoad = false;
+                        redrainChart.cpuLoad = false;
+                        redrainChart.cpuChartObj = null;
+                        redrainChart.cpuX = [];
+                        redrainChart.cpuY = [];
+                    });
+                }
+
             }
         });
+    },
+
+    doRender:function () {
+        $(".loader").remove();
+        //解决子页面登录失联,不能跳到登录页面的bug
+        if (data.toString().indexOf("login") > -1) {
+            window.location.href = redrainChart.path;
+        } else {
+            if (!redrainChart.diskLoad) {
+                redrainChart.diskLoad = true;
+                redrainChart.diskChart();
+            }
+            if (!redrainChart.cpuLoad) {
+                redrainChart.cpuLoad = true;
+                redrainChart.createItemCpu();
+                redrainChart.cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
+                var option = {};
+                redrainChart.cpuChartObj.setOption(option);
+            } else {
+                var opt = redrainChart.cpuChart(redrainChart.cpuX, redrainChart.cpuY);
+                redrainChart.cpuChartObj.setOption(opt);
+                redrainChart.gaugeOption.series[0].data[0].value = parseFloat(redrainChart.data.memUsage);
+                redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
+            }
+            redrainChart.topData();
+        }
     },
 
     diskChart: function () {

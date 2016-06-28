@@ -73,3 +73,12 @@
 <script src="${contextPath}/js/sweetalert.min.js"></script>
 <script src="${contextPath}/js/redrain.js"></script>
 
+<!--upfile-->
+<link rel="stylesheet" href="${contextPath}/css/jquery.Jcrop.css" type="text/css" />
+<link rel="stylesheet" href="${contextPath}/css/Dialog.css" type="text/css" />
+
+<script type="text/javascript" src="${contextPath}/js/upload/jquery.Jcrop.js" ></script>
+<script type="text/javascript" src="${contextPath}/js/upload/jquery.uploadify.min.js"></script>
+<script type="text/javascript" src="${contextPath}/js/Dialog.js"></script>
+
+

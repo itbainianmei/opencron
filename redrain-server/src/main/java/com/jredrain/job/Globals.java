@@ -1,6 +1,7 @@
 package com.jredrain.job;
 
 
+import java.io.File;
 
 public final class Globals {
 

@@ -376,29 +376,48 @@ public class RedRain implements Serializable {
     public enum ConnType{
         CONN(0,"直连"),
         PROXY(1,"代理");
-        private Integer value;
-        private String desc;
+        private Integer type;
+        private String name;
 
-        ConnType(Integer value,String desc){
-            this.value = value;
-            this.desc = desc;
+        ConnType(Integer type,String name){
+            this.type = type;
+            this.name = name;
         }
 
-        public Integer getValue() {
-            return value;
+        public Integer getType() {
+            return type;
         }
 
-        public void setValue(Integer value) {
-            this.value = value;
+        public void setType(Integer type) {
+            this.type = type;
         }
 
-        public String getDesc() {
-            return desc;
+        public String getName() {
+            return name;
         }
 
-        public void setDesc(String desc) {
-            this.desc = desc;
+        public void setName(String name) {
+            this.name = name;
         }
+
+        public static ConnType getByType(Integer type) {
+            for (ConnType connType : ConnType.values()) {
+                if (connType.getType().equals(type)) {
+                    return connType;
+                }
+            }
+            return null;
+        }
+
+        public static ConnType getByName(String name) {
+            for (ConnType connType : ConnType.values()) {
+                if (connType.getName().equals(name)) {
+                    return connType;
+                }
+            }
+            return null;
+        }
+
     }
 
     public interface Iface {

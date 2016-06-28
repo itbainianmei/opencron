@@ -23,24 +23,19 @@
 package com.jredrain.startup;
 
 import com.alibaba.fastjson.JSON;
-import com.jredrain.base.job.Action;
+import com.jredrain.base.job.*;
 import org.apache.commons.exec.*;
 import org.apache.thrift.TException;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.job.Request;
-import com.jredrain.base.job.Response;
 import com.jredrain.base.utils.*;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
-import org.omg.SendingContext.RunTime;
 import org.slf4j.Logger;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -80,25 +75,36 @@ public class AgentProcessor implements RedRain.Iface {
 
     @Override
     public Response monitor(Request request) throws TException {
-        if (  CommonUtils.isEmpty(agentMonitor,socketPort) || agentMonitor.stoped() ) {
-            agentMonitor = new AgentMonitor();
-            //选举一个空闲可用的port
-            do {
-                this.socketPort = HttpUtils.generagePort();
-            }while (this.socketPort == this.agentPort);
-            try {
-                agentMonitor.start(socketPort);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        logger.debug("[redrain]:getMonitorPort @:{}", socketPort);
-
+        RedRain.ConnType connType = RedRain.ConnType.getByName(request.getParams().get("connType"));
         Response response = Response.response(request);
         Map<String,String> map = new HashMap<String, String>(0);
-        map.put("port",this.socketPort.toString());
-        response.setResult(map);
-        return response;
+
+        switch (connType) {
+            case CONN:
+                if (  CommonUtils.isEmpty(agentMonitor,socketPort) || agentMonitor.stoped() ) {
+                    agentMonitor = new AgentMonitor();
+                    //选举一个空闲可用的port
+                    do {
+                        this.socketPort = HttpUtils.generagePort();
+                    }while (this.socketPort == this.agentPort);
+                    try {
+                        agentMonitor.start(socketPort);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                logger.debug("[redrain]:getMonitorPort @:{}", socketPort);
+                map.put("port",this.socketPort.toString());
+                response.setResult(map);
+                return response;
+            case PROXY:
+                Monitor monitor = agentMonitor.monitor();
+                map = serializableToMap(monitor);
+                response.setResult(map);
+                return response;
+            default:
+                return null;
+        }
     }
 
     @Override
@@ -239,7 +245,7 @@ public class AgentProcessor implements RedRain.Iface {
         }
         this.password = newPassword.toLowerCase().trim();
 
-        IOUtils.writeFile(Globals.REDRAIN_PASSWORD_FILE, this.password, "UTF-8");
+        IOUtils.writeText(Globals.REDRAIN_PASSWORD_FILE, this.password, "UTF-8");
 
         return response.setSuccess(true).setExitCode(RedRain.StatusCode.SUCCESS_EXIT.getValue()).end();
     }
