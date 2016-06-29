@@ -33,8 +33,10 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -113,10 +115,8 @@ public class UserService {
         queryDao.save(user);
     }
 
-    public User uploadimg(MultipartFile file, Long userId) throws IOException {
-
-
-
+    @Transactional(readOnly = false)
+    public User uploadimg(File file, Long userId) throws IOException {
         return uploadDao.uploadimg(file,userId);
     }
 

@@ -24,6 +24,7 @@ package com.jredrain.controller;
 import com.alibaba.fastjson.JSON;
 import com.jredrain.base.utils.*;
 import com.jredrain.domain.User;
+import com.jredrain.job.Globals;
 import net.sf.json.JSONObject;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Response;
@@ -39,7 +40,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +48,6 @@ import javax.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -149,7 +148,7 @@ public class HomeController {
         //成功失败占比数据
         json.put("status", jsonMapper.toJson(recordService.getStatusDonutData()));
 
-        PageIOUtils.writeJson(response, json.toString());
+        WebUtils.writeJson(response, json.toString());
     }
 
     @RequestMapping("/diffchart")
@@ -164,9 +163,9 @@ public class HomeController {
         JsonMapper jsonMapper = new JsonMapper();
         List<ChartVo> voList = recordService.getDiffData(startTime, endTime);
         if (isEmpty(voList)) {
-            PageIOUtils.writeJson(response, "null");
+            WebUtils.writeJson(response, "null");
         }else {
-            PageIOUtils.writeJson(response, jsonMapper.toJson(voList));
+            WebUtils.writeJson(response, jsonMapper.toJson(voList));
         }
     }
 
@@ -183,14 +182,11 @@ public class HomeController {
         if (worker.getProxy().equals(RedRain.ConnType.CONN.getType())) {
             String port = req.getResult().get("port");
             String url = String.format("http://%s:%s", worker.getIp(), port);
-            PageIOUtils.writeJson(response, String.format(format, url));
+            WebUtils.writeJson(response, String.format(format, url));
         } else {//代理
-            PageIOUtils.writeJson(response, String.format(format, JSON.toJSONString(req.getResult())));
+            WebUtils.writeJson(response, String.format(format, JSON.toJSONString(req.getResult())));
         }
     }
-
-
-
 
    /* @RequestMapping("/monitor")
     public void monitor(HttpServletResponse response, Long workerId) throws Exception {
@@ -206,32 +202,40 @@ public class HomeController {
         if (notEmpty(workerId)) {
             model.addAttribute("workerId", workerId);
             JsonMapper jsonMapper = new JsonMapper();
-            PageIOUtils.writeJson(response, jsonMapper.toJson(monitorService.getCpuData(workerId)));
+            WebUtils.writeJson(response, jsonMapper.toJson(monitorService.getCpuData(workerId)));
         }
     }
 
     @RequestMapping("/login")
-    public void login(HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
+    public void login(HttpServletRequest request,HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
         //用户信息验证
         int status = homeService.checkLogin(httpSession, username, password);
 
         if (status == 500) {
-            PageIOUtils.writeJson(response, "{\"msg\":\"用户名密码错误\"}");
+            WebUtils.writeJson(response, "{\"msg\":\"用户名密码错误\"}");
             return;
         }
         if (status == 200) {
-            User user = (User) httpSession.getAttribute("user");
+            User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
             if (user.getHeaderpic()!=null) {
-                String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + user.getUserId() + "_pic.png";
+                String name = user.getUserId() + "_header"+user.getPicExtName();
+                String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
-                user.setHreaderPath(path);
+                user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/"+name);
             }
-            PageIOUtils.writeJson(response, "{\"successUrl\":\"/home\"}");
+            WebUtils.writeJson(response, "{\"successUrl\":\"/home\"}");
             return;
         }
     }
 
-    @RequestMapping("/uploadimg")
+
+    @RequestMapping("/logout")
+    public String logout(HttpSession httpSession) {
+        httpSession.removeAttribute("user");
+        return "redirect:/";
+    }
+
+    @RequestMapping("/upload/upimg")
     public void uploadimg(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpSession httpSession, HttpServletResponse response) throws Exception {
         User user = userService.getUserById(userId);
         String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
@@ -255,19 +259,46 @@ public class HomeController {
          */
         ImageUtils.zoom(targetFile);
 
-        fileName =  user.getUserId()+"-"+UUID.randomUUID().toString() + "." + extensionName.toLowerCase();
+        fileName =  user.getUserId()+"_preview." + extensionName.toLowerCase();
         String filepath = path + fileName;
         float scale = ImageUtils.scale(targetFile.getPath(),filepath,1,false);
         logger.info("图片缩放倍数:"+scale);
-        String format = "{\"fileUrl\":\"%s\",\"flag\":\"%s\"}";
-        PageIOUtils.writeJson( response, String.format(format,"/upload/"+fileName,scale!=-1f));
+        String format = "{\"fileUrl\":\"%s\",\"flag\":\"%s\",\"scale\":%f}";
+        WebUtils.writeJson( response, String.format(format,"/upload/"+fileName+"?"+System.currentTimeMillis(),scale>-1f,scale));
     }
 
-    @RequestMapping("/logout")
-    public String logout(HttpSession httpSession) {
-        httpSession.removeAttribute("user");
-        return "redirect:/";
+    @RequestMapping("/upload/cutimg")
+    public void imageCut(HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,
+                         Long userId,Integer x,Integer y,Integer w,Integer h,Float f,String p) throws IllegalStateException, IOException {
+
+        String extensionName = p.substring(p.lastIndexOf("."));
+        String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
+        String imagePath = path+userId+"_preview" + extensionName.toLowerCase();;
+
+        String imgName = userId+"_header"+extensionName.toLowerCase();
+        String createImgPath = path + imgName;
+
+        if(f==-1f){
+            ImageUtils.zoom(imagePath,createImgPath,120,120);
+        }else{
+            //进行剪切图片操作
+            ImageUtils.abscut(imagePath, createImgPath, x,y,w, h);
+            ImageUtils.zoom(createImgPath,createImgPath,120,120);
+        }
+
+        //保存入库.....
+        userService.uploadimg(new File(createImgPath),userId);
+        String contextPath = WebUtils.getWebUrlPath(request);
+
+        String imgPath = contextPath+"/upload/"+imgName+"?"+System.currentTimeMillis();
+        User user =  (User) httpSession.getAttribute(Globals.LOGIN_USER);
+        user.setHreaderPath(imgPath);
+        httpSession.setAttribute(Globals.LOGIN_USER,user);
+
+        String format = "{\"fileUrl\":\"%s\"}";
+        WebUtils.writeJson( response, String.format(format,imgPath));
     }
+
 
     @RequestMapping("/notice/view")
     public String log(HttpSession session, Model model, Page page, Long workerId, String sendTime) {
@@ -286,7 +317,7 @@ public class HomeController {
     @RequestMapping("/notice/uncount")
     public void uncount(HttpSession session, HttpServletResponse response) {
          Long count = homeService.getUnReadCount(session);
-         PageIOUtils.writeHtml(response,count.toString());
+         WebUtils.writeHtml(response,count.toString());
     }
 
     /**

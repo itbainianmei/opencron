@@ -21,13 +21,16 @@
 
 package com.jredrain.base.utils;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 
-public class PageIOUtils {
+public class WebUtils {
 
     public static void writeXml(HttpServletResponse response, String xml) {
         response.setCharacterEncoding("UTF-8");
@@ -74,5 +77,32 @@ public class PageIOUtils {
         }
     }
 
+    public static String getWebUrlPath(HttpServletRequest request) {
+        String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
+        String path = request.getContextPath().replaceAll("/$","");
+        return request.getScheme()+"://"+request.getServerName()+port+path;
+    }
+
+    /**
+     * 从web的作用域中获取对象...
+     * @param key
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T>T getObjectFormWebScope(String key,Object obj, Class<T> clazz) {
+        AssertUtils.notNull(key,obj,clazz);
+        if (obj instanceof HttpServletRequest) {
+            HttpServletRequest request = (HttpServletRequest) obj;
+            return (T) request.getAttribute(key);
+        }else if(obj instanceof HttpSession){
+            HttpSession session = (HttpSession) obj;
+            return (T) session.getAttribute(key);
+        }else if(obj instanceof ServletContext){
+            ServletContext servletContext = (ServletContext) obj;
+            return (T) servletContext.getAttribute(key);
+        }
+        throw new IllegalArgumentException("obj must be {HttpServletRequest|HttpSession|ServletContext} ");
+    }
 
 }

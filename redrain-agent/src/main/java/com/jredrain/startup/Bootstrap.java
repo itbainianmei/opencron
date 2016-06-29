@@ -155,7 +155,7 @@ public class Bootstrap implements Serializable {
                 this.password = DigestUtils.md5Hex(this.password).toLowerCase();
                 IOUtils.writeText(Globals.REDRAIN_PASSWORD_FILE, this.password, CHARSET);
             } else {
-                password = IOUtils.readFile(Globals.REDRAIN_PASSWORD_FILE, CHARSET).trim().toLowerCase();
+                password = IOUtils.readText(Globals.REDRAIN_PASSWORD_FILE, CHARSET).trim().toLowerCase();
             }
         }
     }

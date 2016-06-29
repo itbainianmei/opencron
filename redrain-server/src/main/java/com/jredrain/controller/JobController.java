@@ -29,7 +29,7 @@ import com.jredrain.domain.User;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.PageIOUtils;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Worker;
 import com.jredrain.domain.Job;
 import com.jredrain.service.*;
@@ -91,7 +91,7 @@ public class JobController {
     @RequestMapping("/checkname")
     public void checkName(HttpServletResponse response, Long jobId, Long workerId, String name) {
         String result = jobService.checkName(jobId, workerId, name);
-        PageIOUtils.writeHtml(response, result);
+        WebUtils.writeHtml(response, result);
     }
 
     @RequestMapping("/addpage")
@@ -182,7 +182,7 @@ public class JobController {
     public void editSingleJob(HttpServletResponse response, Long id) {
         JobVo job = jobService.getJobVoById(id);
         JsonMapper json = new JsonMapper();
-        PageIOUtils.writeJson(response, json.toJson(job));
+        WebUtils.writeJson(response, json.toJson(job));
     }
 
     @RequestMapping("/editflow")
@@ -208,12 +208,12 @@ public class JobController {
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
         schedulerService.syncJobTigger(jober.getJobId(),executeService);
-        PageIOUtils.writeHtml(response, "success");
+        WebUtils.writeHtml(response, "success");
     }
 
     @RequestMapping("/canrun")
     public void canRun(Long id, HttpServletResponse response) {
-        PageIOUtils.writeJson(response, recordService.isRunning(id).toString());
+        WebUtils.writeJson(response, recordService.isRunning(id).toString());
     }
 
     @RequestMapping("/execute")
@@ -244,7 +244,7 @@ public class JobController {
 
     @RequestMapping("/remove")
     public void removeJob(Long jobId, HttpServletResponse response) {
-        PageIOUtils.writeHtml(response, jobService.delete(jobId) == 1 ? "true" : "false");
+        WebUtils.writeHtml(response, jobService.delete(jobId) == 1 ? "true" : "false");
     }
 
 }

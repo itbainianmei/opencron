@@ -22,12 +22,14 @@
 
 package com.jredrain.dao;
 
+import com.jredrain.base.utils.IOUtils;
 import com.jredrain.domain.User;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -36,10 +38,12 @@ import java.io.IOException;
 @Repository
 public class UploadDao extends BaseDao {
 
-    public User uploadimg(MultipartFile file, Long userId) throws IOException {
+    public User uploadimg(File file, Long userId) throws IOException {
         Session session = getSession();
         User loginUser =  get(User.class,userId);
-        loginUser.setHeaderpic(Hibernate.getLobCreator(session).createBlob(file.getBytes()));
+        loginUser.setHeaderpic(Hibernate.getLobCreator(session).createBlob(IOUtils.readFileToArray(file)));
+        //图像文件的后缀名
+        loginUser.setPicExtName(file.getName().substring(file.getName().lastIndexOf(".")));
         session.save(loginUser);
         return loginUser;
     }

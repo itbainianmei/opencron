@@ -28,7 +28,30 @@ import java.io.*;
  */
 public class IOUtils implements Serializable {
 
-    public static String readFile(File file, String charset) {
+    private static final int EOF = -1;
+    /**
+     * The Unix directory separator character.
+     */
+    public static final char DIR_SEPARATOR_UNIX = '/';
+    /**
+     * The Windows directory separator character.
+     */
+    public static final char DIR_SEPARATOR_WINDOWS = '\\';
+    /**
+     * The system directory separator character.
+     */
+    public static final char DIR_SEPARATOR = File.separatorChar;
+    /**
+     * The Unix line separator string.
+     */
+    public static final String LINE_SEPARATOR_UNIX = "\n";
+    /**
+     * The Windows line separator string.
+     */
+    public static final String LINE_SEPARATOR_WINDOWS = "\r\n";
+
+
+    public static String readText(File file, String charset) {
         InputStream inputStream = null;
         InputStreamReader inputReader = null;
         BufferedReader bufferReader = null;
@@ -95,6 +118,56 @@ public class IOUtils implements Serializable {
             output.write((byte)r);
         }
         output.close();
+    }
+
+    public static byte[] readFileToArray(File file) throws IOException {
+        InputStream input = null;
+        try {
+            input = openInputStream(file);
+            long size = file.length();
+            if(file.length() > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException("Size cannot be greater than Integer max value: " + size);
+            }
+
+            if (size < 0) {
+                throw new IllegalArgumentException("Size must be equal or greater than zero: " + size);
+            }
+
+            if (size == 0) {
+                return new byte[0];
+            }
+
+            byte[] data = new byte[(int) size];
+            int offset = 0;
+            int readed;
+
+            while (offset < size && (readed = input.read(data, offset, (int)size - offset)) != EOF) {
+                offset += readed;
+            }
+
+            if (offset != size) {
+                throw new IOException("Unexpected readed size. current: " + offset + ", excepted: " + size);
+            }
+            return data;
+        } finally {
+            if (input!=null) {
+                input.close();
+            }
+        }
+    }
+
+    public static FileInputStream openInputStream(File file) throws IOException {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                throw new IOException("File '" + file + "' exists but is a directory");
+            }
+            if (file.canRead() == false) {
+                throw new IOException("File '" + file + "' cannot be read");
+            }
+        } else {
+            throw new FileNotFoundException("File '" + file + "' does not exist");
+        }
+        return new FileInputStream(file);
     }
 
 

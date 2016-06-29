@@ -26,7 +26,7 @@ import com.jredrain.domain.Worker;
 import com.jredrain.service.WorkerService;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 
-import com.jredrain.base.utils.PageIOUtils;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.service.ExecuteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public class ValidationController {
         boolean pass = false;
         if (cronType == 0) pass = SchedulingPattern.validate(cronExp);
         if (cronType == 1) pass = CronExpression.isValidExpression(cronExp);
-        PageIOUtils.writeHtml(response, pass ? "success" : "failure");
+        WebUtils.writeHtml(response, pass ? "success" : "failure");
     }
 
     @RequestMapping("/ping")
@@ -69,7 +69,7 @@ public class ValidationController {
         }else {
             proxyWorker = workerService.getWorker(proxyId);
             if (proxyWorker == null) {
-                PageIOUtils.writeHtml(response, pass);
+                WebUtils.writeHtml(response, pass);
             }
         }
 
@@ -80,6 +80,6 @@ public class ValidationController {
         } else {
             pass = "success";
         }
-        PageIOUtils.writeHtml(response, pass);
+        WebUtils.writeHtml(response, pass);
     }
 }

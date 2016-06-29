@@ -23,7 +23,9 @@
 package com.jredrain.session;
 
 
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.User;
+import com.jredrain.job.Globals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -61,7 +63,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(Globals.LOGIN_USER);
         if (user == null) {
             logger.info(request.getRequestURL().toString());
             //跳到登陆页面

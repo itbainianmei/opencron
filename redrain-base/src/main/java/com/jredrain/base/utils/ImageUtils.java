@@ -81,6 +81,7 @@ public class ImageUtils {
 	 * @param flag               缩放选择:true 放大; false 缩小;
 	 */
 	public static float scale(String srcImageFile, String result, int scale,boolean flag) {
+
 		try {
 			File file = new File(srcImageFile);
 			BufferedImage src = ImageIO.read(file); // 读入文件
@@ -88,11 +89,8 @@ public class ImageUtils {
 			int height = src.getHeight(); // 得到源图长
 			
 			float n = width>height?width:height;
-			float f = scale;
-			if( n > 300f ){
-				f = n/300f;
-			}
-			
+			float f = n>300f?n/300f:scale;
+
 			if (flag) {
 				// 放大
 				width = width * scale;
@@ -110,34 +108,29 @@ public class ImageUtils {
 				g.drawImage(image, 0, 0, null); // 绘制缩小后的图
 				g.dispose();
 				ImageIO.write(tag, "JPEG", new File(result));// 输出到文件流
-			}else if(n > 120f){//小于300 大于120的直接返回原图
-				if(width<120||height<120){
-					zoom(srcImageFile,result,120,120);
-					f=-1f;
-				}else{
-					File targetFile = new File(result);
-					
-					FileOutputStream fos1=new FileOutputStream(targetFile); 
-					//对文件进行读操作
-		            FileInputStream fis=new FileInputStream(srcImageFile); 
-		            byte[] buffer=new byte[1024]; 
-		            int len=0; 
-		            //读入流，保存至byte数组
-		            while((len=fis.read(buffer))>0){ 
-		                fos1.write(buffer,0,len); 
-		            } 
-		            fos1.close(); 
-		            fis.close(); 
+			} else if (width>=120&&height>=120) {//宽高小与300,大于120.直接返回原图
+				File targetFile = new File(result);
+				FileOutputStream fos1=new FileOutputStream(targetFile);
+				//对文件进行读操作
+				FileInputStream fis=new FileInputStream(srcImageFile);
+				byte[] buffer=new byte[1024];
+				int len=0;
+				//读入流，保存至byte数组
+				while((len=fis.read(buffer))>0){
+					fos1.write(buffer,0,len);
 				}
-	            file.delete();//删除原图
-			}else{
+				fos1.close();
+				fis.close();
+				f = 1f;
+			}else {//宽或高有小于120的,需要裁剪....
 				zoom(srcImageFile,result,120,120);
-				f=-1f;
+				f=-1f;//缩小。。
 			}
 			return f;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return 1f;
 	}
 	

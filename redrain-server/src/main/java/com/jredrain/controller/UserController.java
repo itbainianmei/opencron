@@ -23,7 +23,7 @@ package com.jredrain.controller;
 
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.PageIOUtils;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
 import com.jredrain.service.UserService;
@@ -107,18 +107,18 @@ public class UserController {
     public void pwdPage(HttpServletResponse response, Long id) {
         User user = userService.queryUserById(id);
         JsonMapper json = new JsonMapper();
-        PageIOUtils.writeJson(response, json.toJson(user));
+        WebUtils.writeJson(response, json.toJson(user));
     }
 
     @RequestMapping("/editpwd")
     public void editPwd(HttpServletResponse response, Long id, String pwd0, String pwd1, String pwd2) {
         String result = userService.editPwd(id, pwd0, pwd1, pwd2);
-        PageIOUtils.writeHtml(response, result);
+        WebUtils.writeHtml(response, result);
     }
 
     @RequestMapping("/checkname")
     public void checkName(HttpServletResponse response, String name) {
         String result = userService.checkName(name);
-        PageIOUtils.writeHtml(response, result);
+        WebUtils.writeHtml(response, result);
     }
 }

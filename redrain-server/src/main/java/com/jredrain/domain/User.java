@@ -66,6 +66,9 @@ public class User implements Serializable {
     @Transient
     private String hreaderPath;
 
+    //头像文件的后缀名字
+    private  String picExtName;
+
     public Long getUserId() {
         return userId;
     }
@@ -176,5 +179,13 @@ public class User implements Serializable {
 
     public void setHreaderPath(String hreaderPath) {
         this.hreaderPath = hreaderPath;
+    }
+
+    public String getPicExtName() {
+        return picExtName;
+    }
+
+    public void setPicExtName(String picExtName) {
+        this.picExtName = picExtName;
     }
 }

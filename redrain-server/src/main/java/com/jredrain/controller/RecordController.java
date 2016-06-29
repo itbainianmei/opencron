@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.PageIOUtils;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
 import com.jredrain.service.RecordService;
@@ -136,7 +136,7 @@ public class RecordController {
     public void kill(HttpServletResponse response, Long recordId) {
         Record record = recordService.get(recordId);
         Boolean flag = executeService.killJob(record);
-        PageIOUtils.writeHtml(response, flag.toString());
+        WebUtils.writeHtml(response, flag.toString());
     }
 
 }

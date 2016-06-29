@@ -26,6 +26,7 @@ import com.jredrain.base.utils.Digests;
 import com.jredrain.base.utils.Encodes;
 import com.jredrain.domain.Log;
 import com.jredrain.domain.User;
+import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
 import com.jredrain.vo.LogVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class HomeService {
         //将session置为无效
         if (!httpSession.isNew()) {
             httpSession.invalidate();
-            httpSession.removeAttribute("user");
+            httpSession.removeAttribute(Globals.LOGIN_USER);
         }
 
         User user = queryDao.hqlUniqueQuery("FROM User WHERE userName = ?", username);
@@ -65,7 +66,7 @@ public class HomeService {
         Long count = queryDao.getCountBySql(sql, username, password);
 
         if (count == 1L) {
-            httpSession.setAttribute("user", user);
+            httpSession.setAttribute(Globals.LOGIN_USER, user);
             if (user.getRoleId() == 999L) {
                 httpSession.setAttribute("permission", true);
             } else {

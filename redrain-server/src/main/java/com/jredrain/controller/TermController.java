@@ -24,10 +24,11 @@ package com.jredrain.controller;
 import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.*;
 import com.jredrain.base.utils.DigestUtils;
-import com.jredrain.base.utils.PageIOUtils;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Term;
 import com.jredrain.domain.User;
 import com.jredrain.domain.Worker;
+import com.jredrain.job.Globals;
 import com.jredrain.service.ConfigService;
 import com.jredrain.service.TermService;
 
@@ -55,17 +56,17 @@ public class TermController {
     @RequestMapping("/ssh")
     public void ssh(HttpServletRequest request, HttpSession session, HttpServletResponse response, final Worker worker) throws Exception {
 
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute(Globals.LOGIN_USER);
         final Term term = termService.getTerm(user.getUserId(), worker.getIp());
 
         if (term == null) {
-            PageIOUtils.writeHtml(response, "null");
+            WebUtils.writeHtml(response, "null");
             return;
         }
         String termUrl = termService.getTermUrl(request,worker);
         String json = JSON.toJSONString(term);
         String data = DigestUtils.aesEncrypt(configService.getAeskey(),json);
-        PageIOUtils.writeHtml(response, termUrl+"?"+data);
+        WebUtils.writeHtml(response, termUrl+"?"+data);
     }
 
     @RequestMapping("/save")
@@ -73,13 +74,14 @@ public class TermController {
         Session connect = termService.createJschSession(term);
         try {
             connect.connect();
-            User user = (User)session.getAttribute("user");
+            User user = (User)session.getAttribute(Globals.LOGIN_USER);
+
             term.setUserId(user.getUserId());
             term.setStatus(1);
             termService.saveOrUpdate(term);
-            PageIOUtils.writeHtml(response,"success");
+            WebUtils.writeHtml(response,"success");
         }catch (JSchException e) {
-            PageIOUtils.writeHtml(response,termService.termFailCause(e));
+            WebUtils.writeHtml(response,termService.termFailCause(e));
         }
     }
 

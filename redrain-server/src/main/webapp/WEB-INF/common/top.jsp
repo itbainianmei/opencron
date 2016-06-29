@@ -10,6 +10,75 @@
 	request.setAttribute("uri",request.getRequestURI());
 %>
 
+<style type="text/css">
+
+
+	.button-header{
+		margin:20px 30px;
+		padding-bottom: 9px;
+	}
+	#target-pane{
+		margin:30px 44px;
+		display: block;
+		position: absolute;
+		z-index: 999;
+		bottom: 30px;
+
+		padding: 5px;
+		border: 1px rgba(0,0,0,.4) solid;
+		background-color: white;
+
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+
+		-webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+		-moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+		box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
+	}
+
+
+	#preview-pane{
+		display: block;
+		position: absolute;
+		z-index: 999;
+		margin: 35px 350px;
+	}
+
+	#preview-pane .preview-container {
+		width:140px;
+		height:140px;
+		margin-top: -35px;
+		position: relative;
+		overflow: hidden;
+	}
+
+	#preview-unborder {
+		border: 30px solid rgb(255, 255, 255);
+		border-radius: 100px !important;
+		display: block;
+		height: 200px;
+		margin: -170px -30px;
+		position: absolute;
+		width: 200px;
+		z-index: 1000;
+	}
+
+	#preview-border {
+		border: 6px solid rgba(0, 0, 0, 0.2);
+		border-radius: 100px !important;
+		display: block;
+		height: 152px;
+		margin: -146px -6px;
+		position: absolute;
+		width: 152px;
+		z-index: 1001;
+	}
+
+
+
+</style>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 
@@ -105,38 +174,50 @@
 	}
 
 	jQuery(function($){
-		var jcrop_api, boundx, boundy;
+		// Create variables (in this scope) to hold the API and image size
+		var jcrop_api,
+				boundx,
+				boundy,
+
+		// Grab some information about the preview pane
+				$preview = $('#preview-pane'),
+				$pcnt = $('#preview-pane .preview-container'),
+				$pimg = $('#preview-pane .preview-container img'),
+
+				xsize = $pcnt.width(),
+				ysize = $pcnt.height();
+
+		console.log('init',[xsize,ysize]);
 		$('#target').Jcrop({
 			onChange: updatePreview,
 			onSelect: updatePreview,
-			minSize:[50,50],
-			allowSelect:false,
-			aspectRatio: 1
+			aspectRatio: xsize / ysize
 		},function(){
+			// Use the API to get the real image size
+			var bounds = this.getBounds();
+			boundx = bounds[0];
+			boundy = bounds[1];
+			// Store the API in the jcrop_api variable
 			jcrop_api = this;
-			var rect = [0,0,300,300];
-			//this.setSelect(rect);
+
+			// Move the preview into the jcrop container for css positioning
+			$preview.appendTo(jcrop_api.ui.holder);
 		});
 
 		function updatePreview(c) {
-			if(parseInt(c.w)>0){
-				var bounds = jcrop_api.getBounds();
-				boundx = bounds[0];
-				boundy = bounds[1];
+			if (parseInt(c.w) > 0) {
+				var rx = xsize / c.w;
+				var ry = ysize / c.h;
 
-				var rx=120/c.w;
-				var ry=120/c.h;
-				$("#preview").css({
-					width:Math.round(rx*boundx)+"px",
-					height:Math.round(ry*boundy)+"px",
-					marginLeft:"-"+Math.round(rx*c.x)+"px",
-					marginTop:"-"+Math.round(ry*c.y)+"px"
+				$pimg.css({
+					width: Math.round(rx * boundx) + 'px',
+					height: Math.round(ry * boundy) + 'px',
+					marginLeft: '-' + Math.round(rx * c.x) + 'px',
+					marginTop: '-' + Math.round(ry * c.y) + 'px'
 				});
-			}else{
-				var rect = [0,0,50,50];
-				jcrop_api.setSelect(rect);
 			}
 
+			//set value......
 			jQuery('#x').val(c.x);
 			jQuery('#y').val(c.y);
 			jQuery('#w').val(c.w);
@@ -144,32 +225,34 @@
 		};
 
 		jQuery('#cropButton').click(function(){
+
 			var x = jQuery("#x").val();
 			var y = jQuery("#y").val();
 			var w = jQuery("#w").val();
 			var h = jQuery("#h").val();
+			var path = jQuery("#path").val();
+			var scale = jQuery("#scale").val();
 
 			if(w == 0 || h == 0 ){
 				alert("您还没有选择图片的剪切区域,不能进行剪切图片!");
 				return;
 			}
-			var url = "/upload/imageCut";
-			var data = {
-				userId:$("#userId").val(),
-				x:x,
-				y:y,
-				w:w,
-				h:h,
-				oldImgPath:$("#oldImgPath").val(),
-				scale:$("#scale").val()
-			};
+
 			$.ajax({
-				url      : url,
-				type 	   : "POST",
-				data     : data,
-				success  : function(result) {
-					var result = jQuery.parseJSON(result);
-					$("#iconHead").val(result.fileUrl);//首页头像
+				url:"/upload/cutimg",
+				type:"POST",
+				data:{
+					userId:${redrain_user.userId},
+					x:x,
+					y:y,
+					w:w,
+					h:h,
+					p:path,
+					f:scale
+				},
+				dataType:"JSON",
+				success  : function(data) {
+					$(".profile-pic").attr("src",data.fileUrl);//首页头像
 					alert("头像设置成功！");
 					closeDialog();//保存头像成功，关闭对话框
 				},
@@ -184,13 +267,13 @@
 			fileObjName : 'file',
 			method:'post',
 			formData: {
-				userId:${user.userId}
+				userId:${redrain_user.userId}
 			},
 			height : 25,
 			width : 80,
 			buttonImage : '',
 			swf : '${contextPath}/js/upload/uploadify.swf',
-			uploader : '/uploadimg',
+			uploader : '/upload/upimg',
 			fileTypeExts : '*.gif; *.jpg; *.png; *.jpeg',
 			buttonText : "上传图片",
 			overrideEvents : [ 'onSelectError','onUploadError', 'onDialogClose' ],
@@ -223,19 +306,14 @@
 			onUploadSuccess : function(file, data, response) {
 				var result = jQuery.parseJSON(data);
 				if (result && result.fileUrl) {
-
 					var imgUrl = "${contextPath}"+result.fileUrl;
-					$("#headIcon").val(imgUrl);
-					$("#previewImg").attr("src", imgUrl);
 					$("#btnUploadPic").uploadify('settings', 'buttonText', '重传图片');
-
 					//截图
 					jcrop_api.setImage(imgUrl);
 					$("#preview").attr("src",imgUrl);
-
 					var rect = [0,0,300,300];
-
-					if(!result.flag){
+					//未经过缩放...
+					if(!result.zoom){
 						rect = [0,0,120,120];
 						jcrop_api.setSelect(rect);
 						jcrop_api.allowResize=false;
@@ -245,10 +323,8 @@
 						jcrop_api.setSelect(rect);
 					}
 
-					$("#oldImgPath").val(imgUrl);
+					$("#path").val(imgUrl);
 					$("#scale").val(result.scale);
-
-					$("#divBut").show();
 				} else {
 					alert("上传失败，请重试!" + result);
 				}
@@ -279,7 +355,6 @@
 				<span id="hours"></span>:<span id="min"></span>:<span id="sec"></span>
 			</div>
 		</div>
-
 	</div>
 </header>
 
@@ -287,70 +362,49 @@
 
 <!-- 头像设置弹窗 -->
 <div class="black-wrap" style="display: none" id="contactDialog">
-	<div class="dialog-wrap" id="contentBody" style="height:550px; width:620px;z-index: 999; margin-top:-300px;margin-left: -380px;">
-		<h1 style="width:620px;margin-top:0px" class="dialog-title"><span onclick="closeDialog();"></span>头像设置</h1>
-		<div class="dialog-center" style="width:600px;height: 398px;">
+	<div class="dialog-wrap" id="contentBody" style="height:550px; width:640px;z-index: 999; margin-top:-300px;margin-left: -380px;">
+		<h1 style="width:640px;margin-top:0px" class="dialog-title"><span onclick="closeDialog();"></span>头像设置</h1>
+		<div class="dialog-center" style="width:620px;height: 398px;position: relative">
 			<div class="form-group spacing-col20">
 				<div id="outer">
-					<div class="jcExample" style="width:600px;margin:0 0 0 0;border:0;">
-						<div>
-							<form id="imageCutForm" action="/upload/imageCut" method="post">
-								<input type="hidden" id="oldImgPath" name="oldImgPath" value=""/>
-								<input type="hidden" id=scale name="scale" value=""/>
-								<input type="hidden" id="x" name="x"/>
-								<input type="hidden" id="y" name="y"/>
-								<input type="hidden" id="w" name="w"/>
-								<input type="hidden" id="h" name="h"/>
-							</form>
-
-							<table frame=void class="head-set">
-								<tr>
-									<td width="140px;">
-										<input type="hidden" id="headIcon" value="" name="headIcon" class="xg_shuru">
-										<input type="hidden" id="iconHead" value="" name="iconHead" class="xg_shuru">
-										<div style="margin-left: 40px;">
-											<div id="btnUploadPic" class="btnUpload" style="text-align: center;"></div>
-										</div>
-									</td>
-
-								</tr>
-							</table>
-
-							<table style="height:300px;margin-left:42px;" frame=void class="head-set">
-								<tr>
-									<td style="height:300px;overflow:hidden;" valign="bottom">
-										<img height="300px;" width="300px;" src="${contextPath}/img/profile-pic.jpg" id="target" alt="Flowers">
-									</td>
-									<td style="width: 55px;">&nbsp;&nbsp;&nbsp;</td>
-									<td valign="bottom">
-										<span class="l">120*120</span>
-										<div style="width:120px;height:120px;position: relative; overflow: hidden;">
-											<img src="${contextPath}/img/profile-pic.jpg" id="preview" alt="Preview" width="120px;" height="120px;">
-										</div>
-									</td>
-								</tr>
-							</table>
-
-							<table frame=void class="head-set">
-								<tr>
-									<td height="50px;" style="padding-left: 35px;color:#969696">
-										选择一张JPG/PNG/GIF格式的本地图片上传。图片大小不能超过5M。
-									</td>
-								</tr>
-							</table>
+					<div class="jcExample" style="width:620px;margin:0 0 0 0;border:0;">
+						<input type="hidden" id="path" name="path" value=""/>
+						<input type="hidden" id=scale name="scale" value=""/>
+						<input type="hidden" id="x" name="x"/>
+						<input type="hidden" id="y" name="y"/>
+						<input type="hidden" id="w" name="w"/>
+						<input type="hidden" id="h" name="h"/>
+						<div class="row">
+							<div id="target-pane">
+								<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" height="300px;" width="285px;" src="${contextPath}/upload/${redrain_user.userId}_preview${user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
+							</div>
+							<div id="preview-pane">
+								<div class="preview-container">
+									<img id="preview" alt="Preview" class="jcrop-preview" src="${redrain_user.hreaderPath}" onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'">
+								</div>
+								<div id="preview-unborder"></div>
+								<div id="preview-border"></div>
+								<div class="button-header">
+									<div id="btnUploadPic" class="btnUpload" style="text-align: center;"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
 			</div>
 		</div>
+
+		<div style="color:#969696;height: 30px; margin-left: 64px;margin-top: -23px;">
+			选择一张JPG/PNG/GIF格式的本地图片上传。图片大小不能超过5M。
+		</div>
+
 		<div class="dialog-describe"></div>
 		<!--下一步-->
 		<div class="dialog-next-wrap">
 			<div class="dialog-next">
 				<input id="cropButton" class="btn-submit btn-login" type="button" style="height: 26px;" value="保存头像">
-				<input id="cropButton" class="btn-submit btn-login dialog-next-cancel" type="button"
-					   style="height: 26px;" value="取消" onclick="closeDialog();">
+				<input class="btn-submit btn-login dialog-next-cancel" type="button" style="height: 26px;" value="取消" onclick="closeDialog();">
 			</div>
 		</div>
 	</div>
@@ -372,9 +426,9 @@
 					<img class="profile-pic" src="${contextPath}/img/profile-pic.jpg" alt="">
 					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
 				</a>
-				<h4 class="m-0">${user.userName}</h4>
+				<h4 class="m-0">${redrain_user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="${contextPath}/user/detail?userId=${user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/user/detail?userId=${redrain_user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>
