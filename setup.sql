@@ -127,6 +127,8 @@ CREATE TABLE `user` (
   roleId int(11) DEFAULT NULL COMMENT '角色ID',
   userName varchar(50) NOT NULL COMMENT '用户名',
   password varchar(50) NOT NULL COMMENT '登录密码',
+  headerpic blob DEFAULT NULL COMMENT '头像',
+  picExtName varchar(10) DEFAULT NULL COMMENT '图片后缀名',
   salt varchar(16) NOT NULL COMMENT '校验码',
   realName varchar(50) DEFAULT NULL COMMENT '真实姓名',
   contact varchar(200) NOT NULL COMMENT '联系方式',
