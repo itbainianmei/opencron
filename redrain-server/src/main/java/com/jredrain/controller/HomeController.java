@@ -221,7 +221,7 @@ public class HomeController {
                 String name = user.getUserId() + "_header"+user.getPicExtName();
                 String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
-                user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/"+name);
+                user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
             }
             WebUtils.writeJson(response, "{\"successUrl\":\"/home\"}");
             return;
