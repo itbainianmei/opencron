@@ -261,6 +261,10 @@ public class HomeController {
 
         fileName =  user.getUserId()+"_preview." + extensionName.toLowerCase();
         String filepath = path + fileName;
+        if (IOUtils.fileExists(filepath)) {
+            new File(filepath).delete();
+        }
+
         float scale = ImageUtils.scale(targetFile.getPath(),filepath,1,false);
         logger.info("图片缩放倍数:"+scale);
         String format = "{\"fileUrl\":\"%s\",\"flag\":\"%s\",\"scale\":%f}";
@@ -271,19 +275,20 @@ public class HomeController {
     public void imageCut(HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,
                          Long userId,Integer x,Integer y,Integer w,Integer h,Float f,String p) throws IllegalStateException, IOException {
 
+        p = p.replaceAll("\\?\\d+$","");
         String extensionName = p.substring(p.lastIndexOf("."));
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
-        String imagePath = path+userId+"_preview" + extensionName.toLowerCase();;
+        String imagePath = path+userId+"_preview" + extensionName.toLowerCase();
 
         String imgName = userId+"_header"+extensionName.toLowerCase();
         String createImgPath = path + imgName;
 
         if(f==-1f){
-            ImageUtils.zoom(imagePath,createImgPath,120,120);
+            ImageUtils.zoom(imagePath,createImgPath,140,140);
         }else{
             //进行剪切图片操作
             ImageUtils.abscut(imagePath, createImgPath, x,y,w, h);
-            ImageUtils.zoom(createImgPath,createImgPath,120,120);
+            ImageUtils.zoom(createImgPath,createImgPath,140,140);
         }
 
         //保存入库.....

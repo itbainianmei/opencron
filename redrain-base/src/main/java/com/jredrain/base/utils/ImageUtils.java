@@ -108,7 +108,7 @@ public class ImageUtils {
 				g.drawImage(image, 0, 0, null); // 绘制缩小后的图
 				g.dispose();
 				ImageIO.write(tag, "JPEG", new File(result));// 输出到文件流
-			} else if (width>=120&&height>=120) {//宽高小与300,大于120.直接返回原图
+			} else if (width>=140&&height>=140) {//宽高小与300,140.直接返回原图
 				File targetFile = new File(result);
 				FileOutputStream fos1=new FileOutputStream(targetFile);
 				//对文件进行读操作
@@ -122,8 +122,8 @@ public class ImageUtils {
 				fos1.close();
 				fis.close();
 				f = 1f;
-			}else {//宽或高有小于120的,需要裁剪....
-				zoom(srcImageFile,result,120,120);
+			}else {//宽或高有小于140的,需要裁剪....
+				zoom(srcImageFile,result,140,140);
 				f=-1f;//缩小。。
 			}
 			return f;

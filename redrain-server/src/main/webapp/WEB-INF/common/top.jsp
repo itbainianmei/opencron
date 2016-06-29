@@ -314,7 +314,7 @@
 					var rect = [0,0,300,300];
 					//未经过缩放...
 					if(!result.zoom){
-						rect = [0,0,120,120];
+						rect = [0,0,140,140];
 						jcrop_api.setSelect(rect);
 						jcrop_api.allowResize=false;
 						jcrop_api.allowMove=false;
@@ -376,7 +376,7 @@
 						<input type="hidden" id="h" name="h"/>
 						<div class="row">
 							<div id="target-pane">
-								<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" height="300px;" width="285px;" src="${contextPath}/upload/${redrain_user.userId}_preview${user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
+								<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" height="300px;" width="285px;" src="${contextPath}/upload/${redrain_user.userId}_preview${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
 							</div>
 							<div id="preview-pane">
 								<div class="preview-container">
@@ -423,7 +423,7 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" src="${contextPath}/img/profile-pic.jpg" alt="">
+					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_preview${redrain_user.picExtName}?<%=System.currentTimeMillis()%>">
 					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${redrain_user.userName}</h4>

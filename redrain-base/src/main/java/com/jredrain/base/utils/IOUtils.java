@@ -189,4 +189,13 @@ public class IOUtils implements Serializable {
     public static void main(String[] args) {
         System.out.println(getProjectFolderPath());
     }
+
+    public static boolean fileExists(Object file) {
+        AssertUtils.notNull(file);
+        if (file instanceof String) {
+            file = new File((String) file);
+        }
+
+        return  ((File)file).exists();
+    }
 }
