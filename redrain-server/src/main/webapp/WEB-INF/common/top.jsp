@@ -423,7 +423,7 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_preview${redrain_user.picExtName}?<%=System.currentTimeMillis()%>">
+					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_header${redrain_user.picExtName}?<%=System.currentTimeMillis()%>">
 					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${redrain_user.userName}</h4>
