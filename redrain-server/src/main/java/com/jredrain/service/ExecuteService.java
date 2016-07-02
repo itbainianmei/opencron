@@ -410,7 +410,7 @@ public class ExecuteService implements Job {
     public Response monitor(Worker worker) throws Exception {
         return cronJobCaller.call(
                 worker,
-                Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()).setParams( ParamsMap.instance().fill("connType",ConnType.getByType(worker.getProxy())) )
+                Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()).setParams( ParamsMap.instance().fill("connType",ConnType.getByType(worker.getProxy()).getName()) )
         );
     }
 }
