@@ -174,8 +174,8 @@ dd .uploadify span{color:#fff; text-align: center; }
     position:fixed;
     _position:absolute;
     top:0; z-index:9999;
-    opacity:0.3;
-    filter: alpha(opacity=30);
-    background-color:#000;
+    opacity:0.5;
+    filter: alpha(opacity=50);
+    background-color:rgb(30,30,30);
     display: none;
 }

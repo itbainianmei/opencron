@@ -10,9 +10,11 @@ var redrainChart = {
     resizeChartData: {},
     diskLoad:false,
     cpuLoad:false,
+    configLoad:false,
     cpuChartObj:{},
     cpuX:[],
     cpuY:[],
+    config:[],
 
     overviewDataArr: [
         {"key": "us", "title": "用户占用", "color": "rgba(221,68,255,0.90)"},
@@ -35,9 +37,9 @@ var redrainChart = {
         /**
          * 关闭上一个websocket
          */
-        if (this.socket) {
-            this.socket.close();
-            this.socket = null;
+        if (redrainChart.socket) {
+            redrainChart.socket.close();
+            redrainChart.socket = null;
         }
 
         $.ajax({
@@ -57,10 +59,17 @@ var redrainChart = {
                 if (connType == 1) {
                     redrainChart.data = $.parseJSON(data);
                     redrainChart.doRender();
-                    if(redrainChart.intervalId==null){
-                        redrainChart.intervalId = window.setInterval(redrainChart.monitorData,2000);
+                    if ( redrainChart.intervalId == null ) {
+                        redrainChart.intervalId = window.setInterval(function(){
+                            redrainChart.monitorData()
+                        },redrainChart.intervalTime);
                     }
                 }else {//直联-->发送websocket...
+
+                    if ( redrainChart.intervalId != null ) {
+                        window.clearInterval(redrainChart.intervalId);
+                        redrainChart.intervalId = null;
+                    }
 
                     redrainChart.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
                     redrainChart.socket.on("monitor", function (data) {
@@ -69,7 +78,6 @@ var redrainChart = {
                     });
                     //when close then clear data...
                     redrainChart.socket.on("disconnect", function () {
-                        redrainChart.socket.close();
                         console.log('close');
                         redrainChart.clearData();
                     });
@@ -80,8 +88,15 @@ var redrainChart = {
     },
 
     clearData:function () {
+        if (redrainChart.socket!=null) {
+            redrainChart.socket.close();
+            redrainChart.socket = null;
+        }
+        redrainChart.data = [];
         redrainChart.diskLoad = false;
         redrainChart.cpuLoad = false;
+        redrainChart.configLoad = false;
+        redrainChart.config = [];
         redrainChart.cpuChartObj = null;
         redrainChart.cpuX = [];
         redrainChart.cpuY = [];
@@ -94,6 +109,13 @@ var redrainChart = {
             redrainChart.diskLoad = true;
             redrainChart.diskChart();
         }
+
+        if (!redrainChart.configLoad){
+            redrainChart.config = $.parseJSON(redrainChart.data.config);
+            redrainChart.configLoad = true;
+            redrainChart.configData();
+        }
+
         if (!redrainChart.cpuLoad) {
             redrainChart.cpuLoad = true;
             redrainChart.createItemCpu();
@@ -179,9 +201,11 @@ var redrainChart = {
                 ]
             }]
         });
+    },
 
+    configData:function () {
         //config...
-        $.each($.parseJSON(redrainChart.data.config), function (name, value) {
+        $.each( redrainChart.config, function (name, value) {
             var css = {
                 "font-size": "15px",
                 "font-weight": "900",
@@ -205,7 +229,6 @@ var redrainChart = {
                 });
             }
         });
-
         $("#config-view").fadeIn(1000);
     },
 
@@ -867,12 +890,16 @@ $(document).ready(function () {
     $("#workerId").change(
         function () {
             //clear interval
-            if ( redrainChart.intervalId!=null ){
+            if ( redrainChart.intervalId!=null ) {
                 window.clearInterval( redrainChart.intervalId );
-                redrainChart.intervalId = null;
                 redrainChart.clearData();
+                redrainChart.intervalId = null;
+                window.setTimeout(function(){
+                    redrainChart.monitorData()
+                },redrainChart.intervalTime);
+            }else {
+                redrainChart.monitorData();
             }
-            redrainChart.monitorData();
         }
     );
 });
