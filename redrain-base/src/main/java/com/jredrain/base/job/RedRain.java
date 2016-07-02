@@ -374,14 +374,17 @@ public class RedRain implements Serializable {
     }
 
     public enum ConnType{
-        CONN(0,"直连"),
-        PROXY(1,"代理");
+        CONN(0,"conn","直连"),
+        PROXY(1,"proxy","代理");
+
         private Integer type;
         private String name;
+        private String desc;
 
-        ConnType(Integer type,String name){
+        ConnType(Integer type,String name,String desc){
             this.type = type;
             this.name = name;
+            this.desc = desc;
         }
 
         public Integer getType() {
@@ -398,6 +401,14 @@ public class RedRain implements Serializable {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
         }
 
         public static ConnType getByType(Integer type) {
