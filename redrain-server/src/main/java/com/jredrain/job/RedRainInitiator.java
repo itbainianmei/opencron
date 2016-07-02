@@ -77,7 +77,7 @@ public class RedRainInitiator implements Serializable {
      * 执行器通信监控,每10秒通信一次
      */
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     public void ping() {
         logger.info("[redrain]:checking Worker connection...");
         List<Worker> workers = workerService.getAll();
@@ -117,7 +117,7 @@ public class RedRainInitiator implements Serializable {
         }
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     public void redoJob() {
         logger.info("[redrain] redojob running...");
         List<Record> records = recordService.getReExecuteRecord();

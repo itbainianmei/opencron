@@ -123,6 +123,8 @@ public class AgentProcessor implements RedRain.Iface {
 
         Request proxyReq = Request.request(proxyHost,toInt(proxyPort), Action.findByName(proxyAction),proxyPassword).setParams(params);
 
+        logger.info("[redrain]proxy params:{}",proxyReq.toString());
+
         TTransport transport = null;
         /**
          * ping的超时设置为5毫秒,其他默认

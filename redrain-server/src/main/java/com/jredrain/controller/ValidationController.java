@@ -61,19 +61,20 @@ public class ValidationController {
     public void validatePing(Long proxyId,String ip, Integer port, String password, HttpServletResponse response) {
         String pass = "failure";
 
-        Worker proxyWorker = null;
+        Worker worker = new Worker();
         if (proxyId==null) {
             //直连
-            proxyWorker = new Worker();
-            proxyWorker.setProxy(RedRain.ConnType.CONN.getType());
+            worker.setProxy(RedRain.ConnType.CONN.getType());
         }else {
-            proxyWorker = workerService.getWorker(proxyId);
+            Worker proxyWorker = workerService.getWorker(proxyId);
+            worker.setProxy(RedRain.ConnType.PROXY.getType());
+            worker.setProxyWorker(proxyWorker.getWorkerId());
             if (proxyWorker == null) {
                 WebUtils.writeHtml(response, pass);
             }
         }
 
-        boolean ping = executeService.ping(proxyWorker,ip, port, password);
+        boolean ping = executeService.ping(worker,ip, port, password);
 
         if (!ping) {
             logger.error(String.format("validate ip:%s,port:%s cannot ping!", ip, port));

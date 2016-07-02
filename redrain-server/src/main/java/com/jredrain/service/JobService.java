@@ -128,7 +128,7 @@ public class JobService {
                 sql += " AND t.redo=" + job.getRedo();
             }
             if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND t.operateId = " + ((User)session.getAttribute("user")).getUserId();
+                sql += " AND t.operateId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
             }
         }
         page = queryDao.getPageBySql(page, JobVo.class, sql);

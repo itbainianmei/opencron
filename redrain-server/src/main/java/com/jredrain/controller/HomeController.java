@@ -177,14 +177,14 @@ public class HomeController {
          * 直联
          */
 
-        String format = "{\"conn\":" + worker.getProxy() + "},\"data\":%s";
+        String format = "{\"conn\":%d,\"data\":\"%s\"}";
 
         if (worker.getProxy().equals(RedRain.ConnType.CONN.getType())) {
             String port = req.getResult().get("port");
             String url = String.format("http://%s:%s", worker.getIp(), port);
-            WebUtils.writeJson(response, String.format(format, url));
+            WebUtils.writeJson(response, String.format(format,worker.getProxy(), url));
         } else {//代理
-            WebUtils.writeJson(response, String.format(format, JSON.toJSONString(req.getResult())));
+            WebUtils.writeJson(response, String.format(format,worker.getProxy(), JSON.toJSONString(req.getResult())));
         }
     }
 
@@ -231,7 +231,7 @@ public class HomeController {
 
     @RequestMapping("/logout")
     public String logout(HttpSession httpSession) {
-        httpSession.removeAttribute("user");
+        httpSession.removeAttribute(Globals.LOGIN_USER);
         return "redirect:/";
     }
 

@@ -46,10 +46,13 @@ var redrainChart = {
             data: "workerId=" + $("#workerId").val(),
             dataType: "html",
             success: function (dataResult) {
+
+                if (dataResult.toString().indexOf("login") > -1) {
+                    window.location.href = redrainChart.path;
+                }
                 //remobe loader...
                 $(".loader").remove();
-                var dataResult = eval("("+dataResult+")");
-
+                var dataResult = $.parseJSON( dataResult );
                 //代理
                 if (dataResult.conn === 1) {
                     redrainChart.data = dataResult.data;
@@ -84,27 +87,23 @@ var redrainChart = {
     doRender:function () {
         $(".loader").remove();
         //解决子页面登录失联,不能跳到登录页面的bug
-        if (data.toString().indexOf("login") > -1) {
-            window.location.href = redrainChart.path;
-        } else {
-            if (!redrainChart.diskLoad) {
-                redrainChart.diskLoad = true;
-                redrainChart.diskChart();
-            }
-            if (!redrainChart.cpuLoad) {
-                redrainChart.cpuLoad = true;
-                redrainChart.createItemCpu();
-                redrainChart.cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
-                var option = {};
-                redrainChart.cpuChartObj.setOption(option);
-            } else {
-                var opt = redrainChart.cpuChart(redrainChart.cpuX, redrainChart.cpuY);
-                redrainChart.cpuChartObj.setOption(opt);
-                redrainChart.gaugeOption.series[0].data[0].value = parseFloat(redrainChart.data.memUsage);
-                redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
-            }
-            redrainChart.topData();
+        if (!redrainChart.diskLoad) {
+            redrainChart.diskLoad = true;
+            redrainChart.diskChart();
         }
+        if (!redrainChart.cpuLoad) {
+            redrainChart.cpuLoad = true;
+            redrainChart.createItemCpu();
+            redrainChart.cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
+            var option = {};
+            redrainChart.cpuChartObj.setOption(option);
+        } else {
+            var opt = redrainChart.cpuChart(redrainChart.cpuX, redrainChart.cpuY);
+            redrainChart.cpuChartObj.setOption(opt);
+            redrainChart.gaugeOption.series[0].data[0].value = parseFloat(redrainChart.data.memUsage);
+            redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
+        }
+        redrainChart.topData();
     },
 
     diskChart: function () {
@@ -112,7 +111,7 @@ var redrainChart = {
         $("#disk-view").html("");
         $("#disk-item").html("");
 
-        var diskArr = eval('(' + redrainChart.data.diskUsage + ')');
+        var diskArr = $.parseJSON(redrainChart.data.diskUsage);
         var freeTotal, usedTotal;
 
         for (var i in diskArr) {
@@ -179,7 +178,7 @@ var redrainChart = {
         });
 
         //config...
-        $.each(eval('(' + redrainChart.data.config + ')'), function (name, value) {
+        $.each($.parseJSON(redrainChart.data.config), function (name, value) {
             var css = {
                 "font-size": "15px",
                 "font-weight": "900",
@@ -220,7 +219,7 @@ var redrainChart = {
 
                 }
             });
-            var _cpuData = eval('(' + redrainChart.data.cpuData + ')');
+            var _cpuData = $.parseJSON( redrainChart.data.cpuData );
             for (var k in _cpuData) {
                 if (elem.key == k) {
                     overdata.push([k, parseFloat(_cpuData[k])]);
@@ -342,7 +341,7 @@ var redrainChart = {
                         }
                     }
                 });
-                var _cpuData = eval('(' + redrainChart.data.cpuData + ')');
+                var _cpuData = $.parseJSON( redrainChart.data.cpuData );
                 for (var k in _cpuData) {
                     if (elem.key == k) {
                         overelem.data('easyPieChart').update(parseFloat(_cpuData[k]));
@@ -353,7 +352,7 @@ var redrainChart = {
 
         //添加新的
         x.push(redrainChart.data.time);
-        y.push(parseFloat(eval('(' + redrainChart.data.cpuData + ')')["usage"]));
+        y.push(parseFloat($.parseJSON( redrainChart.data.cpuData )["usage"]));
 
         if (y.length == 60 * 10) {
             x.shift();
@@ -444,7 +443,7 @@ var redrainChart = {
     },
 
     networkChart: function () {
-        var network = eval('(' + redrainChart.data.network + ')');
+        var network = $.parseJSON( redrainChart.data.network );
         var read = network.read;
         var write = network.write;
         return new Highcharts.Chart({
@@ -580,9 +579,9 @@ var redrainChart = {
             '<td class="noborder" title="所执行的命令">COMMAND</td>' +
             '</tr>';
 
-        $.each(eval('(' + redrainChart.data.top + ')'), function (i, data) {
+        $.each($.parseJSON( redrainChart.data.top ), function (i, data) {
             var text = "<tr>";
-            var obj = eval('(' + data + ')');
+            var obj = $.parseJSON( data );
             switch (redrainChart.screen) {
                 case 1:
                     //小屏去掉pid,user,virt,res...

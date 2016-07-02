@@ -21,6 +21,7 @@
 
 package com.jredrain.controller;
 
+import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.JsonMapper;
 import com.jredrain.base.utils.WebUtils;
@@ -78,7 +79,7 @@ public class UserController {
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
         if (!(Boolean) session.getAttribute("permission")
-                && Long.parseLong(((User)session.getAttribute("user")).getUserId().toString()) != id){
+                && Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString()) != id){
             return "redirect:/user/detail";
         }
         User user = userService.queryUserById(id);
