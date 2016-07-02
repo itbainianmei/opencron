@@ -1,4 +1,4 @@
-﻿﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+﻿﻿﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -12,16 +12,10 @@
 
 <style type="text/css">
 
-
-	.button-header{
-		margin:20px 30px;
-		padding-bottom: 9px;
-	}
 	#target-pane{
-		margin:30px 44px;
 		display: block;
 		position: absolute;
-		z-index: 999;
+		z-index: 100000;
 		bottom: 30px;
 
 		padding: 5px;
@@ -38,19 +32,11 @@
 	}
 
 
-	#preview-pane{
+	#preview-pane {
 		display: block;
+		margin: -154px 123px;
 		position: absolute;
-		z-index: 999;
-		margin: 35px 350px;
-	}
-
-	#preview-pane .preview-container {
-		width:140px;
-		height:140px;
-		margin-top: -35px;
-		position: relative;
-		overflow: hidden;
+		z-index: 100000;
 	}
 
 	#preview-unborder {
@@ -58,10 +44,10 @@
 		border-radius: 100px !important;
 		display: block;
 		height: 200px;
-		margin: -170px -30px;
+		margin: -184px 93px;
 		position: absolute;
 		width: 200px;
-		z-index: 1000;
+		z-index: 100000;
 	}
 
 	#preview-border {
@@ -69,13 +55,23 @@
 		border-radius: 100px !important;
 		display: block;
 		height: 152px;
-		margin: -146px -6px;
+		margin: -160px 117px;
 		position: absolute;
 		width: 152px;
-		z-index: 1001;
+		z-index: 100001;
 	}
 
-
+	.mask{
+		height:100%;
+		width:100%;
+		position:fixed;
+		_position:absolute;
+		top:0; z-index:9999;
+		opacity:0.3;
+		filter: alpha(opacity=30);
+		background-color:#000;
+		display: none;
+	}
 
 </style>
 
@@ -162,76 +158,58 @@
 
 	/**关闭弹窗**/
 	function closeDialog(){
+		$("#mask").hide();
 		$("#contactDialog").css("display", "none");
-		var headIcon=$("#iconHead").val();
-		if(headIcon!=null && headIcon!=""){
-			$("#headIconImg").attr("src", headIcon+"?tn="+Math.ceil(Math.random()*10000));
-		}
 	}
 	/**显示弹窗**/
 	function showDialog(){
+		$("#mask").show();
 		$("#contactDialog").css("display", "block");
 	}
 
-	jQuery(function($){
-		// Create variables (in this scope) to hold the API and image size
-		var jcrop_api,
-				boundx,
-				boundy,
-
-		// Grab some information about the preview pane
-				$preview = $('#preview-pane'),
-				$pcnt = $('#preview-pane .preview-container'),
-				$pimg = $('#preview-pane .preview-container img'),
-
-				xsize = $pcnt.width(),
-				ysize = $pcnt.height();
-
-		console.log('init',[xsize,ysize]);
+	$(function($){
+		var jcrop_api, boundx, boundy;
 		$('#target').Jcrop({
 			onChange: updatePreview,
 			onSelect: updatePreview,
-			aspectRatio: xsize / ysize
+			minSize:[140,140],
+			allowSelect:false,
+			aspectRatio: 1
 		},function(){
-			// Use the API to get the real image size
-			var bounds = this.getBounds();
-			boundx = bounds[0];
-			boundy = bounds[1];
-			// Store the API in the jcrop_api variable
 			jcrop_api = this;
-
-			// Move the preview into the jcrop container for css positioning
-			$preview.appendTo(jcrop_api.ui.holder);
 		});
 
 		function updatePreview(c) {
-			if (parseInt(c.w) > 0) {
-				var rx = xsize / c.w;
-				var ry = ysize / c.h;
-
-				$pimg.css({
-					width: Math.round(rx * boundx) + 'px',
-					height: Math.round(ry * boundy) + 'px',
-					marginLeft: '-' + Math.round(rx * c.x) + 'px',
-					marginTop: '-' + Math.round(ry * c.y) + 'px'
+			if(parseInt(c.w)>0){
+				var bounds = jcrop_api.getBounds();
+				boundx = bounds[0];
+				boundy = bounds[1];
+				var rx=140/c.w;
+				var ry=140/c.h;
+				$("#preview").css({
+					width:Math.round(rx*boundx)+"px",
+					height:Math.round(ry*boundy)+"px",
+					marginLeft:"-"+Math.round(rx*c.x)+"px",
+					marginTop:"-"+Math.round(ry*c.y)+"px"
 				});
+			}else{
+				var rect = [0,0,140,140];
+				jcrop_api.setSelect(rect);
 			}
-
-			//set value......
-			jQuery('#x').val(c.x);
-			jQuery('#y').val(c.y);
-			jQuery('#w').val(c.w);
-			jQuery('#h').val(c.h);
+			$('#x').val(c.x);
+			$('#y').val(c.y);
+			$('#w').val(c.w);
+			$('#h').val(c.h);
 		};
 
-		jQuery('#cropButton').click(function(){
+		$('#cropButton').click(function(){
 
-			var x = jQuery("#x").val();
-			var y = jQuery("#y").val();
-			var w = jQuery("#w").val();
-			var h = jQuery("#h").val();
-			var path = jQuery("#path").val();
-			var scale = jQuery("#scale").val();
+			var x = $("#x").val();
+			var y = $("#y").val();
+			var w = $("#w").val();
+			var h = $("#h").val();
+			var path = $("#path").val();
+			var scale = $("#scale").val();
 
 			if(w == 0 || h == 0 ){
 				alert("您还没有选择图片的剪切区域,不能进行剪切图片!");
@@ -277,22 +255,13 @@
 			fileTypeExts : '*.gif; *.jpg; *.png; *.jpeg',
 			buttonText : "上传图片",
 			overrideEvents : [ 'onSelectError','onUploadError', 'onDialogClose' ],
-			onSelectError : function(file, errorCode) {
+			onSelectError : function(file, errorCode, errorMsg) {
 				switch (errorCode) {
 					case -100:
-						alert("上传的文件数量已经超出系统限制的"
-								+ $('#btnUploadPic').uploadify(
-										'settings',
-										'queueSizeLimit') + "个文件！");
+						alert("上传的文件数量已经超出系统限制的"+ $('#btnUploadPic').uploadify('settings','queueSizeLimit') + "个文件！");
 						break;
 					case -110:
-						alert("文件 ["
-								+ file.name
-								+ "] 大小超出系统限制的"
-								+ $('#btnUploadPic')
-										.uploadify('settings',
-												'fileSizeLimit')
-								+ "大小！");
+						alert("文件 ["+ file.name+ "] 大小超出系统限制的"+ $('#btnUploadPic').uploadify('settings','fileSizeLimit')+ "大小！");
 						break;
 					case -120:
 						alert("文件 [" + file.name + "] 大小异常！");
@@ -307,24 +276,22 @@
 				var result = jQuery.parseJSON(data);
 				if (result && result.fileUrl) {
 					var imgUrl = "${contextPath}"+result.fileUrl;
-					$("#btnUploadPic").uploadify('settings', 'buttonText', '重传图片');
+					$("#btnUploadPic").uploadify('settings','buttonText', '重传图片');
 					//截图
 					jcrop_api.setImage(imgUrl);
 					$("#preview").attr("src",imgUrl);
-					var rect = [0,0,300,300];
-					//未经过缩放...
-					if(!result.zoom){
-						rect = [0,0,140,140];
-						jcrop_api.setSelect(rect);
+					var rect = [0,0,140,140];
+					jcrop_api.setSelect(rect);
+					if(!result.flag){
 						jcrop_api.allowResize=false;
 						jcrop_api.allowMove=false;
 					}else{
 						jcrop_api.allowSelect=true;
-						jcrop_api.setSelect(rect);
 					}
-
-					$("#path").val(imgUrl);
+					$("#oldImgPath").val(imgUrl);
 					$("#scale").val(result.scale);
+
+					$("#divBut").show();
 				} else {
 					alert("上传失败，请重试!" + result);
 				}
@@ -334,9 +301,13 @@
 			}
 		});
 	});
+
 </script>
 
 <body id="skin-blur-violate">
+
+<div id="mask" class="mask"></div>
+
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
 	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float:left;width: 145px;margin-left:24px;margin-top:4px;">
@@ -362,41 +333,54 @@
 
 <!-- 头像设置弹窗 -->
 <div class="black-wrap" style="display: none" id="contactDialog">
-	<div class="dialog-wrap" id="contentBody" style="height:550px; width:640px;z-index: 999; margin-top:-300px;margin-left: -380px;">
+	<div class="dialog-wrap" id="contentBody" style="height:550px; width:640px;z-index: 100000; margin-top:-300px;margin-left: -320px;">
 		<h1 style="width:640px;margin-top:0px" class="dialog-title"><span onclick="closeDialog();"></span>头像设置</h1>
 		<div class="dialog-center" style="width:620px;height: 398px;position: relative">
 			<div class="form-group spacing-col20">
-				<div id="outer">
-					<div class="jcExample" style="width:620px;margin:0 0 0 0;border:0;">
-						<input type="hidden" id="path" name="path" value=""/>
-						<input type="hidden" id=scale name="scale" value=""/>
-						<input type="hidden" id="x" name="x"/>
-						<input type="hidden" id="y" name="y"/>
-						<input type="hidden" id="w" name="w"/>
-						<input type="hidden" id="h" name="h"/>
-						<div class="row">
-							<div id="target-pane">
-								<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" height="300px;" width="285px;" src="${contextPath}/upload/${redrain_user.userId}_preview${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
-							</div>
-							<div id="preview-pane">
-								<div class="preview-container">
-									<img id="preview" alt="Preview" class="jcrop-preview" src="${redrain_user.hreaderPath}" onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'">
-								</div>
-								<div id="preview-unborder"></div>
-								<div id="preview-border"></div>
-								<div class="button-header">
-									<div id="btnUploadPic" class="btnUpload" style="text-align: center;"></div>
-								</div>
+					<div id="outer">
+						<div class="jcExample" style="width:600px;margin:0 0 0 0;border:0;">
+							<div>
+								<input type="hidden" id="path" name="path" value="${contextPath}/upload/${redrain_user.userId}_300${redrain_user.picExtName}"/>
+								<input type="hidden" id=scale name="scale" value=""/>
+								<input type="hidden" id="x" name="x"/>
+								<input type="hidden" id="y" name="y"/>
+								<input type="hidden" id="w" name="w"/>
+								<input type="hidden" id="h" name="h"/>
+
+								<table style="height:300px;margin-left:35px;width: 495px" frame=void class="head-set" >
+									<tr>
+										<td width="140px;" colspan="3">
+											<div>
+												<div id="btnUploadPic"  class="btnUpload" style="text-align: center;"></div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="height:300px;overflow:hidden;" valign="bottom">
+											<div id="target-pane">
+												<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_300${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
+											</div>
+										</td>
+										<td valign="bottom" style="margin-right: 10px;">
+											<div id="preview-pane">
+												<div id="preview-container" style="width:140px;height:140px;margin-bottom:17px;position: relative; overflow: hidden;">
+													<img id="preview" alt="Preview" class="jcrop-preview" src="${contextPath}/upload/${redrain_user.userId}_140${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'">
+												</div>
+											</div>
+											<div id="preview-unborder"></div>
+											<div id="preview-border"></div>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="3" height="70px" style="color:#969696;"> 选择一张JPG/PNG/GIF格式的本地图片上传。图片大小不能超过5M。</td>
+									</tr>
+								</table>
+
 							</div>
 						</div>
 					</div>
-				</div>
 
 			</div>
-		</div>
-
-		<div style="color:#969696;height: 30px; margin-left: 64px;margin-top: -23px;">
-			选择一张JPG/PNG/GIF格式的本地图片上传。图片大小不能超过5M。
 		</div>
 
 		<div class="dialog-describe"></div>
@@ -423,7 +407,7 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_header${redrain_user.picExtName}?<%=System.currentTimeMillis()%>">
+					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_140${redrain_user.picExtName}?<%=System.currentTimeMillis()%>">
 					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${redrain_user.userName}</h4>

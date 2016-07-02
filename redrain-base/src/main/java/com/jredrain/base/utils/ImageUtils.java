@@ -36,8 +36,7 @@ public class ImageUtils {
      * @param destWidth              目标切片宽度
      * @param destHeight             目标切片高度
      */
-    public static void abscut(String srcImageFile,String dirImageFile, int x, int y, int destWidth,
-            int destHeight) {
+    public static void abscut(String srcImageFile,String dirImageFile, int x, int y, int destWidth,int destHeight) {
         try {
             Image img;
             ImageFilter cropFilter;
@@ -58,8 +57,7 @@ public class ImageUtils {
 //                destWidth = destWidth<100?destWidth:100;
 //                destHeight = destHeight<100?destHeight:100;
                 
-                BufferedImage tag = new BufferedImage(destWidth, destHeight,
-                        BufferedImage.TYPE_INT_RGB);
+                BufferedImage tag = new BufferedImage(destWidth, destHeight,  BufferedImage.TYPE_INT_RGB);
                 Graphics g = tag.getGraphics();
                 g.drawImage(img, 0, 0, null); // 绘制缩小后的图
                 g.dispose();

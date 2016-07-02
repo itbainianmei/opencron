@@ -218,7 +218,7 @@ public class HomeController {
         if (status == 200) {
             User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
             if (user.getHeaderpic()!=null) {
-                String name = user.getUserId() + "_header"+user.getPicExtName();
+                String name = user.getUserId() + "_140"+user.getPicExtName();
                 String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
                 user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
@@ -241,7 +241,7 @@ public class HomeController {
         String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
 
-        String fileName = UUID.randomUUID() +"." + extensionName.toLowerCase();
+        String fileName = user.getUserId()+"_preview." + extensionName.toLowerCase();
         File targetFile = new File(path, fileName);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
@@ -259,7 +259,7 @@ public class HomeController {
          */
         ImageUtils.zoom(targetFile);
 
-        fileName =  user.getUserId()+"_preview." + extensionName.toLowerCase();
+        fileName =  user.getUserId()+"_300." + extensionName.toLowerCase();
         String filepath = path + fileName;
         if (IOUtils.fileExists(filepath)) {
             new File(filepath).delete();
@@ -278,9 +278,10 @@ public class HomeController {
         p = p.replaceAll("\\?\\d+$","");
         String extensionName = p.substring(p.lastIndexOf("."));
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
-        String imagePath = path+userId+"_preview" + extensionName.toLowerCase();
+        //获取上传的原始图片
+        String imagePath = path+userId+"_300" + extensionName.toLowerCase();
 
-        String imgName = userId+"_header"+extensionName.toLowerCase();
+        String imgName = userId+"_140"+extensionName.toLowerCase();
         String createImgPath = path + imgName;
 
         if(f==-1f){
