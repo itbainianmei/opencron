@@ -79,10 +79,13 @@ public class AgentProcessor implements RedRain.Iface {
         Response response = Response.response(request);
         Map<String,String> map = new HashMap<String, String>(0);
 
+        if (agentMonitor==null) {
+            agentMonitor = new AgentMonitor();
+        }
+
         switch (connType) {
             case CONN:
                 if (  CommonUtils.isEmpty(agentMonitor,socketPort) || agentMonitor.stoped() ) {
-                    agentMonitor = new AgentMonitor();
                     //选举一个空闲可用的port
                     do {
                         this.socketPort = HttpUtils.generagePort();

@@ -48,6 +48,7 @@ import javax.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -177,14 +178,14 @@ public class HomeController {
          * 直联
          */
 
-        String format = "{\"conn\":%d,\"data\":\"%s\"}";
+        String format = "%d_%s";
 
         if (worker.getProxy().equals(RedRain.ConnType.CONN.getType())) {
             String port = req.getResult().get("port");
             String url = String.format("http://%s:%s", worker.getIp(), port);
-            WebUtils.writeJson(response, String.format(format,worker.getProxy(), url));
+            WebUtils.writeHtml(response, String.format(format,worker.getProxy(), url));
         } else {//代理
-            WebUtils.writeJson(response, String.format(format,worker.getProxy(), JSON.toJSONString(req.getResult())));
+            WebUtils.writeHtml(response, String.format(format,worker.getProxy(),JSON.toJSONString(req.getResult())) );
         }
     }
 

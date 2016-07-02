@@ -19,16 +19,20 @@
  * under the License.
  */
 
+import com.jredrain.base.utils.DigestUtils;
+import com.jredrain.base.utils.Digests;
+import org.hibernate.annotations.SourceType;
+
 /**
  * Created by benjobs on 15/12/5.
  */
 public class RegDemo {
 
     public static void main(String[] args) {
-        String xxx = "fsafdsfd.jpg?3213232";
 
-        System.out.println(xxx.replaceAll("\\?\\d+$",""));
 
+
+        System.out.println(DigestUtils.toBase64("dankogai"));
 
     }
 }

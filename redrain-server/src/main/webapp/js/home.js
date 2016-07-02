@@ -13,7 +13,6 @@ var redrainChart = {
     cpuChartObj:{},
     cpuX:[],
     cpuY:[],
-    intervalId:0,
 
     overviewDataArr: [
         {"key": "us", "title": "用户占用", "color": "rgba(221,68,255,0.90)"},
@@ -52,18 +51,18 @@ var redrainChart = {
                 }
                 //remobe loader...
                 $(".loader").remove();
-                var dataResult = $.parseJSON( dataResult );
+                var connType = dataResult.substring(0,1);
+                var data =  dataResult.substring(2);
                 //代理
-                if (dataResult.conn === 1) {
-                    redrainChart.data = dataResult.data;
+                if (connType == 1) {
+                    redrainChart.data = $.parseJSON(data);
                     redrainChart.doRender();
-                    redrainChart.intervalId = window.setInterval(redrainChart.monitorData,1000);
-                }else {//直联-->发送websocket...
-                    //clear interval
-                    if (!redrainChart.intervalId){
-                        window.clearInterval( redrainChart.intervalId );
+                    if(redrainChart.intervalId==null){
+                        redrainChart.intervalId = window.setInterval(redrainChart.monitorData,2000);
                     }
-                    redrainChart.socket = new io.connect(dataResult.data, {'reconnect': false, 'auto connect': false});
+                }else {//直联-->发送websocket...
+
+                    redrainChart.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
                     redrainChart.socket.on("monitor", function (data) {
                         redrainChart.data = data;
                         redrainChart.doRender();
@@ -72,16 +71,20 @@ var redrainChart = {
                     redrainChart.socket.on("disconnect", function () {
                         redrainChart.socket.close();
                         console.log('close');
-                        redrainChart.diskLoad = false;
-                        redrainChart.cpuLoad = false;
-                        redrainChart.cpuChartObj = null;
-                        redrainChart.cpuX = [];
-                        redrainChart.cpuY = [];
+                        redrainChart.clearData();
                     });
                 }
 
             }
         });
+    },
+
+    clearData:function () {
+        redrainChart.diskLoad = false;
+        redrainChart.cpuLoad = false;
+        redrainChart.cpuChartObj = null;
+        redrainChart.cpuX = [];
+        redrainChart.cpuY = [];
     },
 
     doRender:function () {
@@ -863,6 +866,12 @@ $(document).ready(function () {
 
     $("#workerId").change(
         function () {
+            //clear interval
+            if ( redrainChart.intervalId!=null ){
+                window.clearInterval( redrainChart.intervalId );
+                redrainChart.intervalId = null;
+                redrainChart.clearData();
+            }
             redrainChart.monitorData();
         }
     );
