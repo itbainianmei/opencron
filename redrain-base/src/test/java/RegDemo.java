@@ -25,9 +25,9 @@
 public class RegDemo {
 
     public static void main(String[] args) {
-        String text="ssh: connect to host 117.79.226.249 port 22: Connection timed out";
-        String rex = "^ssh:.+Connection\\stimed\\sout$";
-        System.out.println(text.matches(rex));
+        String xxx = "fsafdsfd.jpg?3213232";
+
+        System.out.println(xxx.replaceAll("\\?\\d+$",""));
 
 
     }
