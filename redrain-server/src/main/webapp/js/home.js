@@ -25,6 +25,11 @@ var redrainChart = {
     ],
 
     monitorData: function () {
+
+        if ( (arguments[0]||0) ==1 && redrainChart.intervalId==null ) {
+            return;
+        }
+
         /**
          * 没有执行器
          */
@@ -58,17 +63,22 @@ var redrainChart = {
                 //代理
                 if (connType == 1) {
                     redrainChart.data = $.parseJSON(data);
-                    redrainChart.doRender();
                     if ( redrainChart.intervalId == null ) {
-                        redrainChart.intervalId = window.setInterval(function(){
-                            redrainChart.monitorData()
-                        },redrainChart.intervalTime);
+                        /**
+                         * 第一个轮询不显示,等下一个轮询开始渲染...
+                         * @type {number}
+                         */
+                        redrainChart.intervalId = window.setInterval(function () {
+                            redrainChart.monitorData(connType);
+                        }, redrainChart.intervalTime);
+                    }else {
+                        redrainChart.doRender();
                     }
                 }else {//直联-->发送websocket...
-
-                    if ( redrainChart.intervalId != null ) {
-                        window.clearInterval(redrainChart.intervalId);
+                    if ( redrainChart.intervalId!=null ) {
+                        window.clearInterval( redrainChart.intervalId );
                         redrainChart.intervalId = null;
+                        redrainChart.clearData();
                     }
 
                     redrainChart.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
@@ -889,17 +899,7 @@ $(document).ready(function () {
 
     $("#workerId").change(
         function () {
-            //clear interval
-            if ( redrainChart.intervalId!=null ) {
-                window.clearInterval( redrainChart.intervalId );
-                redrainChart.clearData();
-                redrainChart.intervalId = null;
-                window.setTimeout(function(){
-                    redrainChart.monitorData()
-                },redrainChart.intervalTime);
-            }else {
-                redrainChart.monitorData();
-            }
+            redrainChart.monitorData();
         }
     );
 });
