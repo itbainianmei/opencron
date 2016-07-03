@@ -217,9 +217,9 @@ public class Bootstrap implements Serializable {
 
         // Set up a server socket to wait on
         try {
-            awaitSocket = new ServerSocket(RedrainProperties.getInt("redrain.socket"));
+            awaitSocket = new ServerSocket(RedrainProperties.getInt("redrain.shutdown"));
         } catch (IOException e) {
-            logger.error("[redrain] agent .await: create[{}] ", RedrainProperties.getInt("redrain.socket"), e);
+            logger.error("[redrain] agent .await: create[{}] ", RedrainProperties.getInt("redrain.shutdown"), e);
             return;
         }
 
@@ -318,7 +318,7 @@ public class Bootstrap implements Serializable {
         /**
          * connect to startup socket and send stop command。。。。。。
          */
-        Socket socket = new Socket("localhost",RedrainProperties.getInt("redrain.socket"));
+        Socket socket = new Socket("localhost",RedrainProperties.getInt("redrain.shutdown"));
         OutputStream os = socket.getOutputStream();
         PrintWriter pw = new PrintWriter(os);
         InputStream is = socket.getInputStream();
