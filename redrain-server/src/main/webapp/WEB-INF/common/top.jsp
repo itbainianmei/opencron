@@ -20,6 +20,32 @@
 
 		if($.isMobile()){
 			$("#time").remove();
+			$("#contactDialog").remove();
+			$(".change-text").remove();
+		}else {
+			var i_flash;
+			// 检测是否安装flash
+			if (navigator.plugins) {
+				for (var i=0; i < navigator.plugins.length; i++) {
+					if (navigator.plugins[i].name.toLowerCase().indexOf("shockwave flash") >= 0) {
+						i_flash = true;
+					}
+				}
+			}
+			if (!i_flash) {
+				document.writeln("<span style='color:red;font-size:16px;'>此浏览器未安装Flash插件，请先下载安装！</span>")
+			}
+			$(".profile-pic").mouseover(function () {
+				$(".change-text").show();
+			}).mouseout(function () {
+				$(".change-text").hide();
+			});
+
+			$(".change-text").mouseover(function () {
+				$(this).show();
+			}).mouseout(function () {
+				$(this).hide();
+			});
 		}
 
 		var skin = $.cookie("redrain_skin");
@@ -65,32 +91,9 @@
 			}
 		});
 
-		$(".profile-pic").mouseover(function () {
-			$(".change-text").show();
-		}).mouseout(function () {
-			$(".change-text").hide();
-		});
 
-		$(".change-text").mouseover(function () {
-			$(this).show();
-		}).mouseout(function () {
-			$(this).hide();
-		});
 
 	});
-
-	var i_flash;
-	// 检测是否安装flash
-	if (navigator.plugins) {
-		for (var i=0; i < navigator.plugins.length; i++) {
-			if (navigator.plugins[i].name.toLowerCase().indexOf("shockwave flash") >= 0) {
-				i_flash = true;
-			}
-		}
-	}
-	if (!i_flash) {
-		document.writeln("<span style='color:red;font-size:16px;'>此浏览器未安装Flash插件，请先下载安装！</span>")
-	}
 
 	/**关闭弹窗**/
 	function closeDialog(){
