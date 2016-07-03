@@ -12,8 +12,8 @@
 
 
 <script type="text/javascript">
+	i_flash = false;
 	$(document).ready(function() {
-
 		<c:if test="${fn:contains(uri,'/notice/')}">
 		$("#msg-icon").remove();
 		</c:if>
@@ -23,7 +23,6 @@
 			$("#contactDialog").remove();
 			$(".change-text").remove();
 		}else {
-			var i_flash;
 			// 检测是否安装flash
 			if (navigator.plugins) {
 				for (var i=0; i < navigator.plugins.length; i++) {
@@ -31,9 +30,6 @@
 						i_flash = true;
 					}
 				}
-			}
-			if (!i_flash) {
-				document.writeln("<span style='color:red;font-size:16px;'>此浏览器未安装Flash插件，请先下载安装！</span>")
 			}
 			$(".profile-pic").mouseover(function () {
 				$(".change-text").show();
@@ -91,8 +87,6 @@
 			}
 		});
 
-
-
 	});
 
 	/**关闭弹窗**/
@@ -102,6 +96,10 @@
 	}
 	/**显示弹窗**/
 	function showDialog(){
+		if(!i_flash){
+			alert("您的浏览器未安装Flash,请先安装或者更换其他浏览器重试");
+			return;
+		}
 		$("#mask").show();
 		$("#contactDialog").css("display", "block");
 	}
