@@ -1,4 +1,4 @@
-﻿﻿﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -278,22 +278,22 @@
 						<div class="jcExample" style="width:600px;margin:0 0 0 0;border:0;">
 							<div>
 								<input type="hidden" id="path" name="path" value="${contextPath}/upload/${redrain_user.userId}_300${redrain_user.picExtName}"/>
-								<input type="hidden" id=scale name="scale" value=""/>
+								<input type="hidden" id="scale" name="scale" value=""/>
 								<input type="hidden" id="x" name="x"/>
 								<input type="hidden" id="y" name="y"/>
 								<input type="hidden" id="w" name="w"/>
 								<input type="hidden" id="h" name="h"/>
 
-								<table style="height:300px;margin-left:35px;width: 495px" frame=void class="head-set" >
+								<table border="1px" bordercolor="#FFF" style="height:300px;margin-left:35px;width: 495px" frame=void class="head-set" >
 									<tr>
-										<td width="140px;" colspan="3">
+										<td width="140px;" colspan="2">
 											<div>
 												<div id="btnUploadPic"  class="btnUpload" style="text-align: center;"></div>
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td style="height:300px;overflow:hidden;" valign="bottom">
+										<td width="300px;" style="height:300px;overflow:hidden;" valign="bottom">
 											<div id="target-pane">
 												<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_300${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
 											</div>

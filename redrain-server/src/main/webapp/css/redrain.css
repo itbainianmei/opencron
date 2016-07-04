@@ -28,17 +28,17 @@ b{color: red;}
 
 .change-text {
     background: rgba(0, 0, 0, 0) url("/img/img-cover.png") no-repeat scroll 0 0;
-    bottom: 29px;
+    bottom: 23px;
     color: #fff;
     display: none;
-    height: 35px;
-    left: 45px;
-    line-height: 35px;
-    position: absolute;
-    text-align: center;
     font-size: 11px;
     font-weight: lighter;
-    width: 100px;
+    height: 35px;
+    left: 42px;
+    line-height: 25px;
+    position: absolute;
+    text-align: center;
+    width: 110px;
 }
 
 .dialog-title {
@@ -119,41 +119,10 @@ dd .uploadify span{color:#fff; text-align: center; }
     width: 80px;
 }
 
-
-#target-pane{
-    display: block;
-    position: absolute;
-    z-index: 100000;
-    bottom: 30px;
-
-    padding: 5px;
-    border: 1px rgba(0,0,0,.4) solid;
-    background-color: white;
-
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-
-    -webkit-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-    box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.2);
-}
-
 #preview-pane {
     display: block;
-    margin: -154px 123px;
+    margin: -152px 63px;
     position: absolute;
-    z-index: 100000;
-}
-
-#preview-unborder {
-    border: 30px solid rgb(255, 255, 255);
-    border-radius: 100px !important;
-    display: block;
-    height: 200px;
-    margin: -184px 93px;
-    position: absolute;
-    width: 200px;
     z-index: 100000;
 }
 
@@ -162,11 +131,24 @@ dd .uploadify span{color:#fff; text-align: center; }
     border-radius: 100px !important;
     display: block;
     height: 152px;
-    margin: -160px 117px;
+    margin: -160px 57px;
     position: absolute;
     width: 152px;
     z-index: 100001;
 }
+
+#preview-unborder {
+    border: 30px solid rgb(255, 255, 255);
+    border-radius: 100px !important;
+    display: block;
+    height: 200px;
+    margin: -184px 33px;
+    position: absolute;
+    width: 200px;
+    z-index: 100000;
+}
+
+.head-set td,.head-set tr{border:0}
 
 .mask{
     height:100%;
