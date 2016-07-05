@@ -121,7 +121,7 @@ dd .uploadify span{color:#fff; text-align: center; }
 
 #preview-pane {
     display: block;
-    margin: -152px 63px;
+    margin: -154px 63px;
     position: absolute;
     z-index: 100000;
 }

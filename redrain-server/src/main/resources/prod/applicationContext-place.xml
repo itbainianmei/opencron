@@ -29,9 +29,7 @@
 
 	<task:annotation-driven/>
 
-	<context:component-scan base-package="com.jredrain" scoped-proxy="targetClass" use-default-filters="true">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-	</context:component-scan>
+	<context:component-scan base-package="com.jredrain.service,com.jredrain.dao,com.jredrain.job" scoped-proxy="targetClass" use-default-filters="true"/>
 
 	<bean id="sessionStore" class="com.jredrain.session.SessionStore">
 		<property name="hosts">
