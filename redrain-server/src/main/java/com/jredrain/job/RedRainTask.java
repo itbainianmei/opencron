@@ -30,17 +30,19 @@ import com.jredrain.domain.Record;
 import com.jredrain.domain.Worker;
 import com.jredrain.service.*;
 import com.jredrain.vo.JobVo;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class RedRainInitiator implements Serializable {
 
-    private final Logger logger = Logger.getLogger(RedRainInitiator.class);
+@Component
+public class RedRainTask implements InitializingBean {
+
+    private final Logger logger = Logger.getLogger(RedRainTask.class);
 
     @Autowired
     private WorkerService workerService;
@@ -66,8 +68,8 @@ public class RedRainInitiator implements Serializable {
     @Autowired
     private MemcacheCache memcacheCache;
 
-    @PostConstruct
-    public void init() throws Exception {
+    @Override
+    public void afterPropertiesSet() throws Exception {
         clearCache();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();
@@ -76,8 +78,7 @@ public class RedRainInitiator implements Serializable {
     /**
      * 执行器通信监控,每10秒通信一次
      */
-
-    //@Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void ping() {
         logger.info("[redrain]:checking Worker connection...");
         List<Worker> workers = workerService.getAll();
@@ -117,7 +118,7 @@ public class RedRainInitiator implements Serializable {
         }
     }
 
-    //@Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void redoJob() {
         logger.info("[redrain] redojob running...");
         List<Record> records = recordService.getReExecuteRecord();
@@ -142,7 +143,9 @@ public class RedRainInitiator implements Serializable {
 
 
     //@Scheduled(cron = "0 0/1 * * * ?")
-  /*  public void monitor() throws Exception {
+  /*
+  //离线监控.....
+  public void monitor() throws Exception {
         List<Worker> workers = workerService.getAll();
 
         for (Worker worker : workers) {

@@ -39,6 +39,6 @@
 		</property>
 	</bean>
 
-	<bean class="com.jredrain.job.RedRainInitiator" lazy-init="false"/>
+	<bean class="com.jredrain.job.RedRainTask" lazy-init="false"/>
 
 </beans>

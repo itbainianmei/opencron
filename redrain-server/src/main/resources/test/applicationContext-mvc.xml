@@ -11,9 +11,7 @@
                         http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
 
-    <context:component-scan base-package="com.jredrain.controller">
-        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
-    </context:component-scan>
+    <context:component-scan base-package="com.jredrain.controller"/>
 
     <!--防止 @ResponseBody 中文乱码 此配置必须放在 注解驱动 前面-->
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
@@ -41,13 +39,6 @@
     <mvc:resources mapping="/fonts/**" location="/fonts/"/>
     <mvc:resources mapping="/img/**" location="/img/"/>
     <mvc:resources mapping="/js/**" location="/js/"/>
-
-    <mvc:resources mapping="/upload/*.gif" location="/upload/"/>
-    <mvc:resources mapping="/upload/*.jpg" location="/upload/"/>
-    <mvc:resources mapping="/upload/*.png" location="/upload/"/>
-    <mvc:resources mapping="/upload/*.jpeg" location="/upload/"/>
-    <mvc:resources mapping="/upload/**" location="/upload/"/>
-
     <mvc:resources mapping="/favicon.ico" location="/img/favicon.ico"/>
     <mvc:default-servlet-handler/>
 

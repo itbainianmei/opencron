@@ -23,7 +23,6 @@
 package com.jredrain.session;
 
 
-import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import org.slf4j.Logger;
@@ -43,8 +42,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityHandlerInterceptor.class);
 
-    public boolean preHandle(HttpServletRequest request,
-                             HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession();
         String requestURI = request.getContextPath() + request.getServletPath();
