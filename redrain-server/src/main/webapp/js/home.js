@@ -899,6 +899,12 @@ $(document).ready(function () {
 
     $("#workerId").change(
         function () {
+            //清理上一个轮询...
+            if ( redrainChart.intervalId!=null ) {
+                window.clearInterval( redrainChart.intervalId );
+                redrainChart.intervalId = null;
+                redrainChart.clearData();
+            }
             redrainChart.monitorData();
         }
     );
