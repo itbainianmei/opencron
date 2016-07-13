@@ -298,7 +298,7 @@
 												<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${redrain_user.userId}_300${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
 											</div>
 										</td>
-										<td valign="bottom" style="margin-right: 10px;">
+										<td valign="bottom" style="margin-right: 10px;width:175px;">
 											<div id="preview-pane">
 												<div id="preview-container" style="width:140px;height:140px;margin-bottom:17px;position: relative; overflow: hidden;">
 													<img id="preview" alt="Preview" class="jcrop-preview" src="${contextPath}/upload/${redrain_user.userId}_140${redrain_user.picExtName}?<%=System.currentTimeMillis()%>" onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'">
