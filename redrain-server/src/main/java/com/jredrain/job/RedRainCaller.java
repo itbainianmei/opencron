@@ -24,8 +24,8 @@ package com.jredrain.job;
 
 import com.alibaba.fastjson.JSON;
 import com.jredrain.base.utils.CommonUtils;
-import com.jredrain.domain.Worker;
-import com.jredrain.service.WorkerService;
+import com.jredrain.domain.Agent;
+import com.jredrain.service.AgentService;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -54,12 +54,12 @@ import java.util.Map;
 public class RedRainCaller {
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
-    public Response call(Worker worker,Request request) throws Exception {
+    public Response call(Request request,Agent agent) throws Exception {
 
         //代理...
-        if (worker.getProxy() == RedRain.ConnType.PROXY.getType()) {
+        if (agent.getProxy() == RedRain.ConnType.PROXY.getType()) {
             Map<String,String> proxyParams = new HashMap<String, String>(0);
             proxyParams.put("proxyHost",request.getHostName());
             proxyParams.put("proxyPort",request.getPort()+"");
@@ -69,11 +69,11 @@ public class RedRainCaller {
                 proxyParams.put("proxyParams", JSON.toJSONString(request.getParams()));
             }
 
-            Worker proxyWorker = workerService.getWorker(worker.getProxyWorker());
-            request.setHostName(proxyWorker.getIp());
-            request.setPort(proxyWorker.getPort());
+            Agent proxyAgent = agentService.getAgent(agent.getProxyAgent());
+            request.setHostName(proxyAgent.getIp());
+            request.setPort(proxyAgent.getPort());
             request.setAction(Action.PROXY);
-            request.setPassword(proxyWorker.getPassword());
+            request.setPassword(proxyAgent.getPassword());
             request.setParams(proxyParams);
         }
 

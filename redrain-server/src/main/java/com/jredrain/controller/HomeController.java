@@ -29,7 +29,7 @@ import net.sf.json.JSONObject;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Response;
 import com.jredrain.domain.Job;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.service.*;
 import com.jredrain.tag.Page;
 import com.jredrain.vo.ChartVo;
@@ -48,10 +48,8 @@ import javax.servlet.http.HttpSession;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import static com.jredrain.base.utils.CommonUtils.isEmpty;
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
@@ -69,7 +67,7 @@ public class HomeController {
     private RecordService recordService;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private ConfigService configService;
@@ -95,13 +93,13 @@ public class HomeController {
         /**
          * agent...
          */
-        List<Worker> success = workerService.getWorkerByStatus(1);
-        List<Worker> failed = workerService.getWorkerByStatus(0);
+        List<Agent> success = agentService.getAgentByStatus(1);
+        List<Agent> failed = agentService.getAgentByStatus(0);
         model.addAttribute("success",success.size());
         model.addAttribute("failed",failed.size());
 
         success.addAll(failed);
-        model.addAttribute("workers",success);
+        model.addAttribute("agents",success);
 
         /**
          * job
@@ -171,39 +169,39 @@ public class HomeController {
     }
 
     @RequestMapping("/monitor")
-    public void port(HttpServletResponse response, Long workerId) throws Exception {
-        Worker worker = workerService.getWorker(workerId);
-        Response req = executeService.monitor(worker);
+    public void port(HttpServletResponse response, Long agentId) throws Exception {
+        Agent agent = agentService.getAgent(agentId);
+        Response req = executeService.monitor(agent);
         /**
          * 直联
          */
 
         String format = "%d_%s";
 
-        if (worker.getProxy().equals(RedRain.ConnType.CONN.getType())) {
+        if (agent.getProxy().equals(RedRain.ConnType.CONN.getType())) {
             String port = req.getResult().get("port");
-            String url = String.format("http://%s:%s", worker.getIp(), port);
-            WebUtils.writeHtml(response, String.format(format,worker.getProxy(), url));
+            String url = String.format("http://%s:%s", agent.getIp(), port);
+            WebUtils.writeHtml(response, String.format(format,agent.getProxy(), url));
         } else {//代理
-            WebUtils.writeHtml(response, String.format(format,worker.getProxy(),JSON.toJSONString(req.getResult())) );
+            WebUtils.writeHtml(response, String.format(format,agent.getProxy(),JSON.toJSONString(req.getResult())) );
         }
     }
 
    /* @RequestMapping("/monitor")
-    public void monitor(HttpServletResponse response, Long workerId) throws Exception {
-        Worker worker = workerService.getWorker(workerId);
-        Map<String, String> data = executeService.monitor(worker);
+    public void monitor(HttpServletResponse response, Long agentId) throws Exception {
+        Agent agent = agentService.getAgent(agentId);
+        Map<String, String> data = executeService.monitor(agent);
         JsonMapper jsonMapper = new JsonMapper();
         PageIOUtils.writeJson(response, jsonMapper.toJson(data));
     }*/
 
     @RequestMapping("/cpuchart")
-    public void cpuChart(HttpServletResponse response, Model model, Long workerId) throws Exception {
+    public void cpuChart(HttpServletResponse response, Model model, Long agentId) throws Exception {
         //CPU图表数据
-        if (notEmpty(workerId)) {
-            model.addAttribute("workerId", workerId);
+        if (notEmpty(agentId)) {
+            model.addAttribute("agentId", agentId);
             JsonMapper jsonMapper = new JsonMapper();
-            WebUtils.writeJson(response, jsonMapper.toJson(monitorService.getCpuData(workerId)));
+            WebUtils.writeJson(response, jsonMapper.toJson(monitorService.getCpuData(agentId)));
         }
     }
 
@@ -308,15 +306,15 @@ public class HomeController {
 
 
     @RequestMapping("/notice/view")
-    public String log(HttpSession session, Model model, Page page, Long workerId, String sendTime) {
-        model.addAttribute("workers", workerService.getAll());
-        if (notEmpty(workerId)) {
-            model.addAttribute("workerId", workerId);
+    public String log(HttpSession session, Model model, Page page, Long agentId, String sendTime) {
+        model.addAttribute("agents", agentService.getAll());
+        if (notEmpty(agentId)) {
+            model.addAttribute("agentId", agentId);
         }
         if (notEmpty(sendTime)) {
             model.addAttribute("sendTime", sendTime);
         }
-        homeService.getLog(session,page, workerId, sendTime);
+        homeService.getLog(session,page, agentId, sendTime);
         return "notice/view";
     }
 

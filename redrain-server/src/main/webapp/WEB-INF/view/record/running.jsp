@@ -30,7 +30,7 @@
                         "refresh":1,
                         "size":"${size}",
                         "queryTime":"${queryTime}",
-                        "workerId":"${workerId}",
+                        "agentId":"${agentId}",
                         "jobId":"${jobId}",
                         "execType":"${execType}",
                         "pageNo":${page.pageNo},
@@ -49,17 +49,17 @@
             },5000);
 
             $("#size").change(function(){doUrl();});
-            $("#workerId").change(function(){doUrl();});
+            $("#agentId").change(function(){doUrl();});
             $("#jobId").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
         });
         function doUrl() {
             var pageSize = $("#size").val();
             var queryTime = $("#queryTime").val();
-            var workerId = $("#workerId").val();
+            var agentId = $("#agentId").val();
             var jobId = $("#jobId").val();
             var execType = $("#execType").val();
-            window.location.href = "${contextPath}/record/running?queryTime=" + queryTime + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
+            window.location.href = "${contextPath}/record/running?queryTime=" + queryTime + "&agentId=" + agentId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
         function killJob(id){
@@ -144,11 +144,11 @@
             </div>
 
             <div style="float: right;margin-bottom: 10px">
-                <label for="workerId">执行器：</label>
-                <select id="workerId" name="workerId" class="select-self" style="width: 120px;">
+                <label for="agentId">执行器：</label>
+                <select id="agentId" name="agentId" class="select-self" style="width: 120px;">
                     <option value="">全部</option>
-                    <c:forEach var="d" items="${workers}">
-                        <option value="${d.workerId}" ${d.workerId eq workerId ? 'selected' : ''}>${d.name}</option>
+                    <c:forEach var="d" items="${agents}">
+                        <option value="${d.agentId}" ${d.agentId eq agentId ? 'selected' : ''}>${d.name}</option>
                     </c:forEach>
                 </select>
                 &nbsp;&nbsp;&nbsp;
@@ -193,7 +193,7 @@
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tr>
                     <td><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></td>
-                    <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
+                    <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
                     <td>
                         <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
                             <div style="width:100%;height: 100%;" class="progress-bar">
@@ -236,7 +236,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/record/running?queryTime=${queryTime}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/record/running?queryTime=${queryTime}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

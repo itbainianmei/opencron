@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.domain.Record;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.service.*;
 import com.jredrain.vo.JobVo;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,7 +45,7 @@ public class RedRainTask implements InitializingBean {
     private final Logger logger = Logger.getLogger(RedRainTask.class);
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private ExecuteService executeService;
@@ -80,36 +80,36 @@ public class RedRainTask implements InitializingBean {
      */
     @Scheduled(cron = "0/5 * * * * ?")
     public void ping() {
-        logger.info("[redrain]:checking Worker connection...");
-        List<Worker> workers = workerService.getAll();
-        for (final Worker worker : workers) {
+        logger.info("[redrain]:checking Agent connection...");
+        List<Agent> agents = agentService.getAll();
+        for (final Agent agent : agents) {
             Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
                     Boolean result;
                     int countLimit = 0;
                     do {
-                        result = executeService.ping(worker,worker.getIp(), worker.getPort(), worker.getPassword());
+                        result = executeService.ping(agent);
                         ++countLimit;
                     } while (!result && countLimit < 3);
                     if (!result) {
-                        if (CommonUtils.isEmpty(worker.getFailTime()) || new Date().getTime() - worker.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
-                            noticeService.notice(worker);
+                        if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
+                            noticeService.notice(agent);
                             //记录本次任务失败的时间
-                            worker.setFailTime(new Date());
-                            worker.setStatus(false);
-                            workerService.addOrUpdate(worker);
+                            agent.setFailTime(new Date());
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
                         }
 
-                        if (worker.getStatus()) {
-                            worker.setStatus(false);
-                            workerService.addOrUpdate(worker);
+                        if (agent.getStatus()) {
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
                         }
 
                     } else {
-                        if (!worker.getStatus()) {
-                            worker.setStatus(true);
-                            workerService.addOrUpdate(worker);
+                        if (!agent.getStatus()) {
+                            agent.setStatus(true);
+                            agentService.addOrUpdate(agent);
                         }
                     }
                 }
@@ -125,7 +125,7 @@ public class RedRainTask implements InitializingBean {
         for (final Record record : records) {
             JobVo jobVo = jobService.getJobVoById(record.getJobId());
             try {
-                jobVo.setWorker(workerService.getWorker(jobVo.getWorkerId()));
+                jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
                 executeService.reRunJob(record, jobVo, RedRain.JobCategory.SINGLETON);
             } catch (Exception e) {
                 //任务执行失败,发送通知警告
@@ -137,7 +137,7 @@ public class RedRainTask implements InitializingBean {
 
 
     private void clearCache() {
-        memcacheCache.evict(Globals.CACHED_WORKER_ID);
+        memcacheCache.evict(Globals.CACHED_AGENT_ID);
         memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
     }
 
@@ -146,10 +146,10 @@ public class RedRainTask implements InitializingBean {
   /*
   //离线监控.....
   public void monitor() throws Exception {
-        List<Worker> workers = workerService.getAll();
+        List<Agent> agents = agentService.getAll();
 
-        for (Worker worker : workers) {
-            Map<String, String> systemData = executeService.monitor(worker);
+        for (Agent agent : agents) {
+            Map<String, String> systemData = executeService.monitor(agent);
 
             String cpuUsage = systemData.remove("cpuUsage");
             Float cpuUs = Float.parseFloat(cpuUsage.split(",")[0]);
@@ -160,7 +160,7 @@ public class RedRainTask implements InitializingBean {
             Long memUsed = Long.parseLong(memUsage.split(",")[0]);
             Long memFree = Long.parseLong(memUsage.split(",")[1]);
 
-            Monitor monitor = new Monitor(worker.getWorkerId(), cpuUs, cpuSy, cpuId, memUsed, memFree);
+            Monitor monitor = new Monitor(agent.getAgentId(), cpuUs, cpuSy, cpuId, memUsed, memFree);
             monitorService.save(monitor);
         }
     }*/

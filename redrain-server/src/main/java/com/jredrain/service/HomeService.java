@@ -78,10 +78,10 @@ public class HomeService {
         }
     }
 
-    public Page<LogVo> getLog(HttpSession session, Page page, Long workerId, String sendTime) {
-        String sql = "SELECT L.*,w.name AS workerName FROM log L LEFT JOIN worker w ON L.workerId = w.workerId WHERE 1=1 ";
-        if (notEmpty(workerId)) {
-            sql += " AND L.workerId = " + workerId;
+    public Page<LogVo> getLog(HttpSession session, Page page, Long agentId, String sendTime) {
+        String sql = "SELECT L.*,w.name AS agentName FROM log L LEFT JOIN agent w ON L.agentId = w.agentId WHERE 1=1 ";
+        if (notEmpty(agentId)) {
+            sql += " AND L.agentId = " + agentId;
         }
         if (notEmpty(sendTime)) {
             sql += " AND L.sendTime like '" + sendTime + "%' ";

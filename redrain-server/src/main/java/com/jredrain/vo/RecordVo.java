@@ -46,8 +46,8 @@ public class RecordVo implements Serializable {
     private String cronExp;
     private Long operateId;
     private String operateUname;
-    private Long workerId;
-    private String workerName;
+    private Long agentId;
+    private String agentName;
     private String jobName;
     private String ip;
     private User user;
@@ -193,20 +193,20 @@ public class RecordVo implements Serializable {
         this.operateUname = operateUname;
     }
 
-    public Long getWorkerId() {
-        return workerId;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public String getAgentName() {
+        return agentName;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public String getJobName() {

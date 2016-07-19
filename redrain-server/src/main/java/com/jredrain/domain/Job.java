@@ -32,7 +32,7 @@ public class Job implements Serializable {
     @Id
     @GeneratedValue
     private Long jobId;
-    private Long workerId;
+    private Long agentId;
     private String jobName;
     private Integer cronType;
     private String cronExp;
@@ -68,12 +68,12 @@ public class Job implements Serializable {
         this.jobId = jobId;
     }
 
-    public Long getWorkerId() {
-        return workerId;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
     }
 
     public String getJobName() {

@@ -31,12 +31,11 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.base.utils.DigestUtils;
 import com.jredrain.base.utils.HttpUtils;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.Term;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,15 +113,15 @@ public class TermService {
         }
     }
 
-    public String getTermUrl(HttpServletRequest request, Worker worker) {
+    public String getTermUrl(HttpServletRequest request, Agent agent) {
         /**
          * 创建一个用户连接websocket的空闲端口,存起来
          */
-        final Long workerId = worker.getWorkerId();
+        final Long agentId = agent.getAgentId();
 
-        if (sessionMap.get(workerId) == null) {
+        if (sessionMap.get(agentId) == null) {
             final int port = HttpUtils.generagePort();
-            this.sessionMap.put(workerId, port);
+            this.sessionMap.put(agentId, port);
 
             /**
              * websocket server start......
@@ -162,7 +161,7 @@ public class TermService {
                         ackRequest.sendAckData(termFailCause(e));
                         logger.info("[redrain]:SSHServer connect error:", e.getLocalizedMessage());
                         server.stop();
-                        sessionMap.remove(workerId);
+                        sessionMap.remove(agentId);
                     }
 
                 }
@@ -173,7 +172,7 @@ public class TermService {
                 public void onDisconnect(SocketIOClient client) {
                     clients.remove(client.getSessionId());
                     if (clients.isEmpty()) {
-                        sessionMap.remove(workerId);
+                        sessionMap.remove(agentId);
                         logger.info("[redrain]:SSHServer disconnect:SessionId @ {},port @ {} ", client.getSessionId(), port);
                         server.stop();
                     }
@@ -183,7 +182,7 @@ public class TermService {
             logger.debug("[redrain] SSHServer started @ {}", port);
         }
 
-        return String.format("http://%s:%s",request.getServerName(),sessionMap.get(workerId));
+        return String.format("http://%s:%s",request.getServerName(),sessionMap.get(agentId));
     }
 
     public Session createJschSession(Term term) throws JSchException {

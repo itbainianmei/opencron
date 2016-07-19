@@ -369,8 +369,8 @@
 					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">作业报告</span>
 				</a>
 			</li>
-			<li class="<c:if test="${fn:contains(uri,'/worker')}">active</c:if>">
-				<a  href="${contextPath}/worker/view">
+			<li class="<c:if test="${fn:contains(uri,'/agent')}">active</c:if>">
+				<a  href="${contextPath}/agent/view">
 					<i aria-hidden="true" class="fa fa-desktop"></i><span class="menu-item">执行器管理</span>
 				</a>
 			</li>

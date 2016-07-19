@@ -52,7 +52,7 @@
         $(document).ready(function(){
             $("#size").change(function(){doUrl();});
             $("#success").change(function(){doUrl();});
-            $("#workerId").change(function(){doUrl();});
+            $("#agentId").change(function(){doUrl();});
             $("#jobId").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
         });
@@ -60,10 +60,10 @@
             var pageSize = $("#size").val();
             var queryTime = $("#queryTime").val();
             var success = $("#success").val();
-            var workerId = $("#workerId").val();
+            var agentId = $("#agentId").val();
             var jobId = $("#jobId").val();
             var execType = $("#execType").val();
-            window.location.href = "${contextPath}/record/done?queryTime=" + queryTime + "&success=" + success + "&workerId=" + workerId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
+            window.location.href = "${contextPath}/record/done?queryTime=" + queryTime + "&success=" + success + "&agentId=" + agentId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
         function showChild(id){
@@ -193,11 +193,11 @@
             </div>
 
             <div style="float: right;margin-bottom: 10px">
-                <label for="workerId">执行器：</label>
-                <select id="workerId" name="workerId" class="select-self" style="width: 110px;">
+                <label for="agentId">执行器：</label>
+                <select id="agentId" name="agentId" class="select-self" style="width: 110px;">
                     <option value="">全部</option>
-                    <c:forEach var="d" items="${workers}">
-                        <option value="${d.workerId}" ${d.workerId eq workerId ? 'selected' : ''}>${d.name}</option>
+                    <c:forEach var="d" items="${agents}">
+                        <option value="${d.agentId}" ${d.agentId eq agentId ? 'selected' : ''}>${d.name}</option>
                     </c:forEach>
                 </select>
                 &nbsp;&nbsp;&nbsp;
@@ -288,7 +288,7 @@
                             </center>
                         </td>
                     </c:if>
-                    <td>${r.workerName}</td>
+                    <td>${r.agentName}</td>
                     <td>
                         <c:if test="${r.success eq 1}">
                             <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -336,7 +336,7 @@
                 <c:if test="${r.redoCount ne 0}">
                     <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
                         <tr class="child${r.recordId} redoGroup${r.recordId}" style="display: none;">
-                            <td>${rc.workerName}</td>
+                            <td>${rc.agentName}</td>
                             <td>
                                 <c:if test="${rc.success eq 1}">
                                     <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -373,7 +373,7 @@
                     <c:forEach var="t" items="${r.childJob}" varStatus="index">
 
                         <tr class="childFlow${r.recordId} flowRecord${r.flowGroup} redoGroup${t.recordId}" style="display: none;">
-                            <td>${t.workerName}</td>
+                            <td>${t.agentName}</td>
                             <td>
                                 <c:if test="${t.success eq 1}">
                                     <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -413,7 +413,7 @@
                         <c:if test="${t.redoCount ne 0}">
                             <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
                                 <tr class="child${t.recordId} redoGroup${t.recordId} childFlowRedo${r.recordId}" style="display: none;">
-                                    <td>${tc.workerName}</td>
+                                    <td>${tc.agentName}</td>
                                     <td>
                                         <c:if test="${tc.success eq 1}">
                                             <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -447,7 +447,7 @@
             </c:forEach>
             </tbody>
         </table>
-        <ben:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&workerId=${workerId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
     </div>
 
 </section>

@@ -27,7 +27,7 @@ import com.jredrain.base.utils.DigestUtils;
 import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Term;
 import com.jredrain.domain.User;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.job.Globals;
 import com.jredrain.service.ConfigService;
 import com.jredrain.service.TermService;
@@ -54,16 +54,16 @@ public class TermController {
     private ConfigService configService;
 
     @RequestMapping("/ssh")
-    public void ssh(HttpServletRequest request, HttpSession session, HttpServletResponse response, final Worker worker) throws Exception {
+    public void ssh(HttpServletRequest request, HttpSession session, HttpServletResponse response, final Agent agent) throws Exception {
 
         User user = (User) session.getAttribute(Globals.LOGIN_USER);
-        final Term term = termService.getTerm(user.getUserId(), worker.getIp());
+        final Term term = termService.getTerm(user.getUserId(), agent.getIp());
 
         if (term == null) {
             WebUtils.writeHtml(response, "null");
             return;
         }
-        String termUrl = termService.getTermUrl(request,worker);
+        String termUrl = termService.getTermUrl(request,agent);
         String json = JSON.toJSONString(term);
         String data = DigestUtils.aesEncrypt(configService.getAeskey(),json);
         WebUtils.writeHtml(response, termUrl+"?"+data);

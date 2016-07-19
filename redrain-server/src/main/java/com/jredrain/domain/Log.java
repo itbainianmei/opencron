@@ -40,7 +40,7 @@ public class Log implements Serializable {
     @GeneratedValue
     private Long logId;
 
-    private Long workerId;
+    private Long agentId;
 
     private Integer type;
 
@@ -62,12 +62,12 @@ public class Log implements Serializable {
         this.logId = logId;
     }
 
-    public Long getWorkerId() {
-        return workerId;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
     }
 
     public Integer getType() {

@@ -31,7 +31,7 @@ import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
 import com.jredrain.service.RecordService;
 import com.jredrain.service.JobService;
-import com.jredrain.service.WorkerService;
+import com.jredrain.service.AgentService;
 import com.jredrain.vo.RecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,7 +48,7 @@ public class RecordController {
     private RecordService recordService;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private JobService jobService;
@@ -66,18 +66,18 @@ public class RecordController {
     @RequestMapping("/done")
     public String queryDone(HttpSession session, Page page, RecordVo recordVo, String queryTime, Model model) {
 
-        model.addAttribute("workers", workerService.getAll());
+        model.addAttribute("agents", agentService.getAll());
 
         if (notEmpty(recordVo.getSuccess())) {
             model.addAttribute("success", recordVo.getSuccess());
         }
-        if (notEmpty(recordVo.getWorkerId())) {
-            model.addAttribute("workerId", recordVo.getWorkerId());
+        if (notEmpty(recordVo.getAgentId())) {
+            model.addAttribute("agentId", recordVo.getAgentId());
         }
 
-        if (notEmpty(recordVo.getWorkerId())) {
-            model.addAttribute("workerId", recordVo.getWorkerId());
-            model.addAttribute("jobs", jobService.getJobByWorkerId(recordVo.getWorkerId()));
+        if (notEmpty(recordVo.getAgentId())) {
+            model.addAttribute("agentId", recordVo.getAgentId());
+            model.addAttribute("jobs", jobService.getJobByAgentId(recordVo.getAgentId()));
         } else {
             model.addAttribute("jobs", jobService.getAll());
         }
@@ -99,11 +99,11 @@ public class RecordController {
     @RequestMapping("/running")
     public String queryRunning(HttpSession session, HttpServletRequest request, Page page, RecordVo recordVo, String queryTime, Model model) {
 
-        model.addAttribute("workers", workerService.getAll());
+        model.addAttribute("agents", agentService.getAll());
 
-        if (notEmpty(recordVo.getWorkerId())) {
-            model.addAttribute("workerId", recordVo.getWorkerId());
-            model.addAttribute("jobs", jobService.getJobByWorkerId(recordVo.getWorkerId()));
+        if (notEmpty(recordVo.getAgentId())) {
+            model.addAttribute("agentId", recordVo.getAgentId());
+            model.addAttribute("jobs", jobService.getJobByAgentId(recordVo.getAgentId()));
         } else {
             model.addAttribute("jobs", jobService.getAll());
         }

@@ -61,13 +61,13 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="w" items="${workers}" varStatus="index">
+            <c:forEach var="w" items="${agents}" varStatus="index">
                 <tr>
                     <td><input type="checkbox"></td>
-                    <td id="name_${w.workerId}">${w.name}</td>
+                    <td id="name_${w.agentId}">${w.name}</td>
                     <td>${w.ip}</td>
-                    <td id="port_${w.workerId}">${w.port}</td>
-                    <td id="worker_${d.workerId}">
+                    <td id="port_${w.agentId}">${w.port}</td>
+                    <td id="agent_${d.agentId}">
                         <c:if test="${w.status eq false}">
                             <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
                         </c:if>

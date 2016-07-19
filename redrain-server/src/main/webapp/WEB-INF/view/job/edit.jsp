@@ -74,7 +74,7 @@
                     data:{
                         "jobId":jobId,
                         "name":jobName,
-                        "workerId":$("#workerId").val()
+                        "agentId":$("#agentId").val()
                     },
                     success:function(data){
                         if (data == "yes"){
@@ -177,7 +177,7 @@
                 alert("请填写作业名称!");
                 return false;
             }
-            if (!$("#workerId").val()){
+            if (!$("#agentId").val()){
                 alert("页面异常，请刷新重试!");
                 return false;
             }
@@ -217,7 +217,7 @@
                 data:{
                     "jobId":jobId,
                     "name":jobName,
-                    "workerId":$("#workerId").val()
+                    "agentId":$("#agentId").val()
                 },
                 success:function(data){
                     if (data == "yes"){
@@ -279,7 +279,7 @@
                 return false;
             }
 
-            if (!$("#workerId1").val()){
+            if (!$("#agentId1").val()){
                 alert("页面异常，请刷新重试!");
                 return false;
             }
@@ -306,7 +306,7 @@
                 data:{
                     "jobId":$("#jobId1").val(),
                     "name":jobName,
-                    "workerId":$("#workerId1").val()
+                    "agentId":$("#agentId1").val()
                 },
 
                 success:function(data){
@@ -320,7 +320,7 @@
                             var addHtml = "<li id='"+timestamp+"' ><span onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑'><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;<span id='name_"+timestamp+"'>"+jobName+"</span></a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='javascript:void(0)' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
                                     "<input type='hidden' name='child.jobId' value=''>"+
                                     "<input type='hidden' name='child.jobName' value='"+jobName+"'>"+
-                                    "<input type='hidden' name='child.workerId' value='"+$("#workerId1").val()+"'>"+
+                                    "<input type='hidden' name='child.agentId' value='"+$("#agentId1").val()+"'>"+
                                     "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
                                     "<input type='hidden' name='child.redo' value='"+$('input[type="radio"][name="redo1"]:checked').val()+"'>"+
                                     "<input type='hidden' name='child.runCount' value='"+$("#runCount1").val()+"'>"+
@@ -347,8 +347,8 @@
                                     $(element).attr("value",$("#runCount1").val());
                                 }
 
-                                if ($(element).attr("name") == "child.workerId"){
-                                    $(element).attr("value",$("#workerId1").val());
+                                if ($(element).attr("name") == "child.agentId"){
+                                    $(element).attr("value",$("#agentId1").val());
                                 }
                                 if ($(element).attr("name") == "child.command"){
                                     $(element).attr("value",$("#command1").val());
@@ -385,8 +385,8 @@
                 if ($(element).attr("name") == "child.jobName"){
                     $("#jobName1").val($(element).val());
                 }
-                if ($(element).attr("name") == "child.workerId"){
-                    $("#workerId1").val($(element).val());
+                if ($(element).attr("name") == "child.agentId"){
+                    $("#agentId1").val($(element).val());
                 }
                 if ($(element).attr("name") == "child.command"){
                     $("#command1").val($(element).val());
@@ -470,7 +470,7 @@
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"><br>
                 <input type="hidden" id="jobId" name="jobId" value="${job.jobId}">
                 <input type="hidden" name="operateId" value="${job.operateId}">
-                <input type="hidden" id="workerId" name="workerId" class="input-self" value="${job.workerId}">
+                <input type="hidden" id="agentId" name="agentId" class="input-self" value="${job.agentId}">
 
                 <div class="form-group">
                     <label for="jobName" class="col-lab control-label"><i class="glyphicon glyphicon-tasks"></i>&nbsp;&nbsp;作业名称：</label>
@@ -481,9 +481,9 @@
                 </div><br>
 
                 <div class="form-group">
-                    <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                    <label for="agentId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control input-sm" value="${job.workerName}&nbsp;&nbsp;&nbsp;${job.ip}" readonly>
+                        <input type="text" class="form-control input-sm" value="${job.agentName}&nbsp;&nbsp;&nbsp;${job.ip}" readonly>
                         <font color="red">&nbsp;*只读</font>
                         <span class="tips">&nbsp;&nbsp;要执行此作业的机器名称和IP地址</span>
                     </div>
@@ -568,7 +568,7 @@
                                     </span>
                                     <input type="hidden" name="child.jobId" value="${c.jobId}">
                                     <input type="hidden" name="child.jobName" value="${c.jobName}">
-                                    <input type="hidden" name="child.workerId" value="${c.workerId}">
+                                    <input type="hidden" name="child.agentId" value="${c.agentId}">
                                     <input type="hidden" name="child.redo" value="${c.redo}">
                                     <input type="hidden" name="child.runCount" value="${c.runCount}">
                                     <input type="hidden" name="child.command" value="${c.command}">
@@ -619,11 +619,11 @@
                         <input type="hidden" id="jobId1"/>&nbsp;
 
                         <div class="form-group">
-                            <label for="workerId1" class="col-lab control-label" title="执行器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <label for="agentId1" class="col-lab control-label" title="执行器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
-                                <select id="workerId1" name="workerId1" class="form-control m-b-10 ">
-                                    <c:forEach var="d" items="${workers}">
-                                        <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                                <select id="agentId1" name="agentId1" class="form-control m-b-10 ">
+                                    <c:forEach var="d" items="${agents}">
+                                        <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
                                     </c:forEach>
                                 </select>
                             </div>

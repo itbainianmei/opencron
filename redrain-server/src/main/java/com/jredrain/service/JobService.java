@@ -29,7 +29,7 @@ import java.util.List;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.User;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.job.Globals;
 import com.jredrain.session.MemcacheCache;
 import com.jredrain.tag.Page;
@@ -57,7 +57,7 @@ public class JobService {
     private QueryDao queryDao;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private MemcacheCache memcacheCache;
@@ -73,23 +73,23 @@ public class JobService {
      * @return
      */
     public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
-        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
-                job.setWorker(workerService.getWorker(job.getWorkerId()));
+                job.setAgent(agentService.getAgent(job.getAgentId()));
                 job.setChildren(queryChildren(job));
             }
         }
         return jobs;
     }
 
-    public List<JobVo> getJobVoByWorkerId(Worker worker,ExecType execType, CronType cronType) {
-        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,d.warning FROM job t INNER JOIN worker d ON t.workerId = d.workerId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.workerId=? ";
-        List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),worker.getWorkerId());
+    public List<JobVo> getJobVoByAgentId(Agent agent, ExecType execType, CronType cronType) {
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,d.warning FROM job t INNER JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.agentId=? ";
+        List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),agent.getAgentId());
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
-                job.setWorker(workerService.getWorker(job.getWorkerId()));
+                job.setAgent(agentService.getAgent(job.getAgentId()));
                 job.setChildren(queryChildren(job));
             }
         }
@@ -115,11 +115,11 @@ public class JobService {
     }
 
     public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {
-        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
-                " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user as u ON t.operateId = u.userId WHERE IFNULL(flowNum,0)=0 AND t.status=1 ";
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job AS t LEFT JOIN agent AS d ON t.agentId = d.agentId LEFT JOIN user as u ON t.operateId = u.userId WHERE IFNULL(flowNum,0)=0 AND t.status=1 ";
         if (job != null) {
-            if (notEmpty(job.getWorkerId())) {
-                sql += " AND t.workerId=" + job.getWorkerId();
+            if (notEmpty(job.getAgentId())) {
+                sql += " AND t.agentId=" + job.getAgentId();
             }
             if (notEmpty(job.getExecType())) {
                 sql += " AND t.execType=" + job.getExecType();
@@ -143,13 +143,13 @@ public class JobService {
 
     private List<JobVo> queryChildren(JobVo job) {
         if (job.getCategory().equals(JobCategory.FLOW.getCode())) {
-            String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname" +
-                    " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u " +
+            String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname" +
+                    " FROM job AS t LEFT JOIN agent AS d ON t.agentId = d.agentId LEFT JOIN user AS u " +
                     " ON t.operateId = u.userId WHERE t.status=1 AND t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
             List<JobVo> childJobs = queryDao.sqlQuery(JobVo.class, sql, job.getFlowId());
             if (CommonUtils.notEmpty(childJobs)) {
                 for(JobVo jobVo:childJobs){
-                    jobVo.setWorker(workerService.getWorker(jobVo.getWorkerId()));
+                    jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
                 }
             }
             job.setChildren(childJobs);
@@ -165,10 +165,10 @@ public class JobService {
     }
 
     public JobVo getJobVoById(Long id) {
-        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
-                " FROM job AS t LEFT JOIN worker AS d ON t.workerId = d.workerId LEFT JOIN user AS u ON t.operateId = u.userId WHERE t.jobId =?";
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job AS t LEFT JOIN agent AS d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE t.jobId =?";
         JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
-        job.setWorker(workerService.getWorker(job.getWorkerId()));
+        job.setAgent(agentService.getAgent(job.getAgentId()));
         queryChildren(job);
         return job;
     }
@@ -177,20 +177,18 @@ public class JobService {
         return queryDao.getAll(Job.class);
     }
 
-
-
-    public List<JobVo> getJobByWorkerId(Long workerId) {
-        String sql = "SELECT t.*,d.name AS workerName,d.port,d.ip,d.password,u.userName AS operateUname " +
-                " FROM job t LEFT JOIN user u ON t.operateId = u.userId LEFT JOIN worker d ON t.workerId = d.workerId WHERE t.workerId =?";
-        return queryDao.sqlQuery(JobVo.class, sql, workerId);
+    public List<JobVo> getJobByAgentId(Long agentId) {
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname " +
+                " FROM job t LEFT JOIN user u ON t.operateId = u.userId LEFT JOIN agent d ON t.agentId = d.agentId WHERE t.agentId =?";
+        return queryDao.sqlQuery(JobVo.class, sql, agentId);
     }
 
-    public String checkName(Long jobId,Long workerId, String name) {
-        String sql = "SELECT COUNT(1) FROM job WHERE workerId=? AND status=1 AND jobName=? ";
+    public String checkName(Long jobId,Long agentId, String name) {
+        String sql = "SELECT COUNT(1) FROM job WHERE agentId=? AND status=1 AND jobName=? ";
         if (notEmpty(jobId)) {
             sql += " AND jobId != " + jobId + " AND flowId != " + jobId;
         }
-        return (queryDao.getCountBySql(sql, workerId,name)) > 0L ? "no" : "yes";
+        return (queryDao.getCountBySql(sql, agentId,name)) > 0L ? "no" : "yes";
     }
 
     @Transactional(readOnly = false)

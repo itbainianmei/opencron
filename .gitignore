@@ -7,3 +7,6 @@
 */.project
 */.settings
 */.DS_Store
+.idea/
+redrain-server/src/main/webapp/upload/
+redrain-server/webapp/

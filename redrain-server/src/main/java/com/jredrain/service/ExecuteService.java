@@ -23,12 +23,11 @@
 package com.jredrain.service;
 
 import com.jredrain.base.job.Action;
-import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
 import com.jredrain.base.utils.ParamsMap;
 import com.jredrain.domain.Record;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
 import org.quartz.Job;
@@ -68,7 +67,7 @@ public class ExecuteService implements Job {
         try {
             ExecuteService executeService = (ExecuteService) jobExecutionContext.getJobDetail().getJobDataMap().get("jobBean");
             boolean success = executeService.executeJob(jobVo);
-            logger.info("[redrain] job:{} at {}:{},execute:{}", jobVo.getJobName(),jobVo.getWorker().getIp(),jobVo.getWorker().getPort(), success?"successful":"failed");
+            logger.info("[redrain] job:{} at {}:{},execute:{}", jobVo.getJobName(),jobVo.getAgent().getIp(),jobVo.getAgent().getPort(), success?"successful":"failed");
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
         }
@@ -323,7 +322,7 @@ public class ExecuteService implements Job {
         for (Record cord : records) {
             JobVo job = jobService.getJobVoById(cord.getJobId());
             try {
-                cronJobCaller.call(job.getWorker(),Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()));
+                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()),job.getAgent());
                 cord.setStatus(RunStatus.STOPED.getStatus());
                 cord.setEndTime(new Date());
                 recordService.update(cord);
@@ -338,12 +337,12 @@ public class ExecuteService implements Job {
         return true;
     }
 
-    public boolean ping(Worker worker, String ip, Integer port, final String password) {
+    public boolean ping(Agent agent) {
         boolean ping = false;
         try {
-            ping = cronJobCaller.call(worker,Request.request(ip, port, Action.PING, password)).isSuccess();
+            ping = cronJobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()),agent).isSuccess();
         } catch (Exception e) {
-            logger.error("[redrain]ping failed,host:{},port:{}", ip, port);
+            logger.error("[redrain]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {
             return ping;
         }
@@ -358,10 +357,10 @@ public class ExecuteService implements Job {
      * @param newPassword
      * @return
      */
-    public boolean password(Worker worker, String ip, int port, final String password, final String newPassword) {
+    public boolean password(Agent agent, String ip, int port, final String password, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronJobCaller.call(worker,Request.request(ip, port, Action.PASSWORD, password).putParam("newPassword", newPassword));
+            Response response = cronJobCaller.call(Request.request(ip, port, Action.PASSWORD, password).putParam("newPassword", newPassword),agent);
             ping = response.isSuccess();
         } catch (Exception e) {
             e.printStackTrace();
@@ -371,7 +370,7 @@ public class ExecuteService implements Job {
     }
 
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronJobCaller.call(job.getWorker(),Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()));
+        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword()).putParam("command", job.getCommand()).putParam("pid", record.getPid()) , job.getAgent());
         logger.info("[redrain]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
         record.setMessage(response.getMessage());
@@ -382,12 +381,12 @@ public class ExecuteService implements Job {
     }
 
     private void checkPing(JobVo job, Record record) throws Exception {
-        if (!ping(job.getWorker(),job.getIp(), job.getPort(), job.getPassword())) {
+        if (!ping(job.getAgent())) {
             record.setStatus(RunStatus.DONE.getStatus());//已完成
             record.setReturnCode(StatusCode.ERROR_PING.getValue());
 
-            String format = "can't to communicate with worker:%s(%s:%d),execute job:%s failed";
-            String content = String.format(format, job.getWorkerName(), job.getIp(), job.getPort(), job.getJobName());
+            String format = "can't to communicate with agent:%s(%s:%d),execute job:%s failed";
+            String content = String.format(format, job.getAgentName(), job.getIp(), job.getPort(), job.getJobName());
 
             record.setMessage(content);
             record.setSuccess(ResultStatus.FAILED.getStatus());
@@ -407,10 +406,10 @@ public class ExecuteService implements Job {
 
     }
 
-    public Response monitor(Worker worker) throws Exception {
+    public Response monitor(Agent agent) throws Exception {
         return cronJobCaller.call(
-                worker,
-                Request.request(worker.getIp(), worker.getPort(), Action.MONITOR, worker.getPassword()).setParams( ParamsMap.instance().fill("connType",ConnType.getByType(worker.getProxy()).getName()) )
+                Request.request(agent.getIp(), agent.getPort(), Action.MONITOR, agent.getPassword()).setParams( ParamsMap.instance().fill("connType",ConnType.getByType(agent.getProxy()).getName()) ),
+                agent
         );
     }
 }

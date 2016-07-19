@@ -43,7 +43,7 @@ public class MonitorService {
         queryDao.save(monitor);
     }
 
-    public List<Map<String, ?>> getCpuData(Long workerId) {
-        return queryDao.sqlQuery("SELECT DISTINCT DATE_FORMAT(t.monitTime,'%H:%i') AS cpuTime,TRUNCATE(cpuUs,2) AS cpuUs,TRUNCATE(cpuSy,2) as cpuSy,TRUNCATE(cpuUsage,2) AS cpuUsage,TRUNCATE(cpuId,2) AS cpuId FROM (SELECT cpuUs,cpuSy,cpuUs+cpuSy AS cpuUsage,cpuId,monitTime FROM monitor WHERE workerId = ? ORDER BY monitTime DESC LIMIT 180) AS t ORDER BY t.monitTime ASC", workerId);
+    public List<Map<String, ?>> getCpuData(Long agentId) {
+        return queryDao.sqlQuery("SELECT DISTINCT DATE_FORMAT(t.monitTime,'%H:%i') AS cpuTime,TRUNCATE(cpuUs,2) AS cpuUs,TRUNCATE(cpuSy,2) as cpuSy,TRUNCATE(cpuUsage,2) AS cpuUsage,TRUNCATE(cpuId,2) AS cpuId FROM (SELECT cpuUs,cpuSy,cpuUs+cpuSy AS cpuUsage,cpuId,monitTime FROM monitor WHERE agentId = ? ORDER BY monitTime DESC LIMIT 180) AS t ORDER BY t.monitTime ASC", agentId);
     }
 }

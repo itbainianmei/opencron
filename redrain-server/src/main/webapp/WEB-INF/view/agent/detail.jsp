@@ -40,24 +40,24 @@
             <tbody id="tableContent">
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-leaf"></i>&nbsp;执行器名：</td>
-                <td>${worker.name}</td>
+                <td>${agent.name}</td>
             </tr>
 
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-tag"></i>&nbsp;机&nbsp;器&nbsp;&nbsp;IP：</td>
-                <td>${worker.ip}</td>
+                <td>${agent.ip}</td>
             </tr>
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-question-sign"></i>&nbsp;端&nbsp;口&nbsp;&nbsp;号：</td>
-                <td>${worker.port}</td>
+                <td>${agent.port}</td>
             </tr>
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-signal"></i>&nbsp;通信状态：</td>
-                <td><c:if test="${worker.status eq false}">
+                <td><c:if test="${agent.status eq false}">
                         <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
-                        <span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;失败时间：<fmt:formatDate value="${worker.failTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span>
+                        <span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;失败时间：<fmt:formatDate value="${agent.failTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span>
                     </c:if>
-                    <c:if test="${worker.status eq true}">
+                    <c:if test="${agent.status eq true}">
                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                     </c:if>
                 </td>
@@ -65,24 +65,24 @@
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;失联报警：</td>
                 <td>
-                    <c:if test="${worker.warning eq false}"><font color="red"><span class="span-self">否</span></font></c:if>
-                    <c:if test="${worker.warning eq true}"><font color="green"><span class="span-self">是</span></font></c:if>
+                    <c:if test="${agent.warning eq false}"><font color="red"><span class="span-self">否</span></font></c:if>
+                    <c:if test="${agent.warning eq true}"><font color="green"><span class="span-self">是</span></font></c:if>
                 </td>
             </tr>
 
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-comment"></i>&nbsp;报警手机：</td>
-                <td>${worker.mobiles}</td>
+                <td>${agent.mobiles}</td>
             </tr>
 
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-envelope"></i>&nbsp;报警邮箱：</td>
-                <td>${worker.emailAddress}</td>
+                <td>${agent.emailAddress}</td>
             </tr>
 
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-magnet"></i>&nbsp;简&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;介：</td>
-                <td>${worker.comment}</td>
+                <td>${agent.comment}</td>
             </tr>
             </tbody>
 

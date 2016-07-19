@@ -72,11 +72,11 @@
         var proxy = $('input[type="radio"][name="proxy"]:checked').val();
         var proxyId = null;
         if(proxy==1){
-            proxyId = $("#proxyWorker").val();
+            proxyId = $("#proxyAgent").val();
         }
 
         $.ajax({
-            url:"${contextPath}/worker/checkname",
+            url:"${contextPath}/agent/checkname",
             data:{
                 "name":name
             },
@@ -92,7 +92,7 @@
                         },
                         success:function(data){
                             if (data == "success"){
-                                $("#worker").submit();
+                                $("#agent").submit();
                                 return;
                             }else {
                                 alert("通信失败!请检查IP和端口号及密码");
@@ -143,7 +143,7 @@
         var proxy = $('input[type="radio"][name="proxy"]:checked').val();
         var proxyId = null;
         if(proxy==1){
-            proxyId = $("#proxyWorker").val();
+            proxyId = $("#proxyAgent").val();
         }
 
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
@@ -179,7 +179,7 @@
                 return false;
             }
             $.ajax({
-                url:"${contextPath}/worker/checkname",
+                url:"${contextPath}/agent/checkname",
                 data:{
                     "name":$("#name").val()
                 },
@@ -256,7 +256,7 @@
 
     <div class="block-area" id="basic">
         <div class="tile p-15">
-            <form  class="form-horizontal" role="form"  id="worker" action="${contextPath}/worker/add" method="post"></br>
+            <form  class="form-horizontal" role="form"  id="agent" action="${contextPath}/agent/add" method="post"></br>
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执行器名：</label>
                     <div class="col-md-10">
@@ -265,11 +265,11 @@
                     </div>
                 </div><br>
 
-                <c:if test="${empty workers}">
+                <c:if test="${empty agents}">
                     <!--默认为直连-->
                     <input type="hidden" name="proxy" value="0">
                 </c:if>
-                <c:if test="${!empty workers}">
+                <c:if test="${!empty agents}">
                     <div class="form-group">
                         <label class="col-lab control-label"><i class="glyphicon glyphicon-transfer"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
                         <div class="col-md-10">
@@ -280,11 +280,11 @@
                     </div><br>
 
                     <div class="form-group proxy" style="display: none;">
-                        <label for="proxyWorker" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
+                        <label for="proxyAgent" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
                         <div class="col-md-10">
-                            <select id="proxyWorker" name="proxyWorker" class="form-control input-sm">
-                                <c:forEach var="d" items="${workers}">
-                                    <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                            <select id="proxyAgent" name="proxyAgent" class="form-control input-sm">
+                                <c:forEach var="d" items="${agents}">
+                                    <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
                                 </c:forEach>
                             </select>
                         </div>

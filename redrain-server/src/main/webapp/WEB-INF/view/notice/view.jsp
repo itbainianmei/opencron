@@ -18,13 +18,13 @@
 
         $(document).ready(function(){
             $("#size").change(function(){doUrl();});
-            $("#workerId").change(function(){doUrl();});
+            $("#agentId").change(function(){doUrl();});
         });
         function doUrl(){
-            var workerId = $("#workerId").val();
+            var agentId = $("#agentId").val();
             var sendTime = $("#sendTime").val();
             var pageSize = $("#size").val();
-            window.location.href = "${contextPath}/notice/view?workerId="+workerId+"&sendTime="+sendTime+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/notice/view?agentId="+agentId+"&sendTime="+sendTime+"&pageSize="+pageSize;
         }
 
     </script>
@@ -60,11 +60,11 @@
             </div>
 
             <div style="float: right;margin-top: -10px">
-                <label for="workerId">执行器：</label>
-                <select id="workerId" name="workerId" class="select-self" style="width: 120px;">
+                <label for="agentId">执行器：</label>
+                <select id="agentId" name="agentId" class="select-self" style="width: 120px;">
                     <option value="">全部</option>
-                    <c:forEach var="w" items="${workers}">
-                        <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
+                    <c:forEach var="w" items="${agents}">
+                        <option value="${w.agentId}" ${w.agentId eq agentId ? 'selected' : ''}>${w.name}</option>
                     </c:forEach>
                 </select>
                 &nbsp;
@@ -96,7 +96,7 @@
                         <c:if test="${log.type eq 0}"><i class="icon" title="邮件">&#61880;</i></c:if>
                         <c:if test="${log.type eq 1}"><i class="icon" title="短信">&#61704;</i></c:if>
                     </center></td>
-                    <td>${log.workerName}</td>
+                    <td>${log.agentName}</td>
                     <td>${log.receiver}</td>
                     <td title="${log.message}">${ben:substr(log.message,0,60,"...")}</td>
                     <td>${log.sendTime}</td>
@@ -112,7 +112,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/notice/view?workerId=${workerId}&sendTime=${sendTime}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/notice/view?agentId=${agentId}&sendTime=${sendTime}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 

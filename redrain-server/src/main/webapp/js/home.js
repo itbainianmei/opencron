@@ -33,7 +33,7 @@ var redrainChart = {
         /**
          * 没有执行器
          */
-        if (!$("#workerId").val()) {
+        if (!$("#agentId").val()) {
             window.setTimeout(function () {
                 $(".loader").remove();
             }, 1000);
@@ -49,7 +49,7 @@ var redrainChart = {
 
         $.ajax({
             url: redrainChart.path + "/monitor",
-            data: "workerId=" + $("#workerId").val(),
+            data: "agentId=" + $("#agentId").val(),
             dataType: "html",
             success: function (dataResult) {
 
@@ -897,7 +897,7 @@ $(document).ready(function () {
     redrainChart.monitorData();
     redrainChart.executeChart();
 
-    $("#workerId").change(
+    $("#agentId").change(
         function () {
             //清理上一个轮询...
             if ( redrainChart.intervalId!=null ) {

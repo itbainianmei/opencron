@@ -32,7 +32,7 @@ import com.jredrain.base.utils.HttpUtils;
 import com.jredrain.domain.Config;
 import com.jredrain.domain.Log;
 import com.jredrain.domain.User;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.vo.JobVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,37 +82,37 @@ public class NoticeService {
         this.config = newConfig;
     }
 
-    public void notice(Worker worker) {
-        if (!worker.getWarning()) return;
-        String content = getMessage(worker, "通信失败,请速速处理!");
+    public void notice(Agent agent) {
+        if (!agent.getWarning()) return;
+        String content = getMessage(agent, "通信失败,请速速处理!");
         logger.info(content);
         try {
-            sendMessage(null,worker.getWorkerId(), worker.getEmailAddress(), worker.getMobiles(), content);
+            sendMessage(null,agent.getAgentId(), agent.getEmailAddress(), agent.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void notice(JobVo job) {
-        Worker worker = job.getWorker();
+        Agent agent = job.getAgent();
         String message = "执行任务:" + job.getCommand() + "(" + job.getCronExp() + ")失败,请速速处理!";
-        String content = getMessage(worker, message);
+        String content = getMessage(agent, message);
         logger.info(content);
         try {
-            sendMessage(job.getOperateId(),worker.getWorkerId(), worker.getEmailAddress(), worker.getMobiles(), content);
+            sendMessage(job.getOperateId(),agent.getAgentId(), agent.getEmailAddress(), agent.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private String getMessage(Worker worker, String message) {
+    private String getMessage(Agent agent, String message) {
         String msgFormat = "[redrain] 机器:%s(%s:%s)%s\n\r\t\t--%s";
-        return String.format(msgFormat, worker.getName(), worker.getIp(), worker.getPort(), message, DateUtils.formatFullDate(new Date()));
+        return String.format(msgFormat, agent.getName(), agent.getIp(), agent.getPort(), message, DateUtils.formatFullDate(new Date()));
     }
 
     public void sendMessage(Long receiverId,Long workId, String emailAddress, String mobiles, String content) {
         Log log = new Log();
-        log.setWorkerId(workId);
+        log.setAgentId(workId);
         log.setMessage(content);
         //手机号和邮箱都为空则发送站内信
         if ( CommonUtils.isEmpty(emailAddress,mobiles) ) {

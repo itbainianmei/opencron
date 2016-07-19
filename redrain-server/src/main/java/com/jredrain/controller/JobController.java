@@ -31,7 +31,7 @@ import com.jredrain.tag.Page;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.base.utils.JsonMapper;
 import com.jredrain.base.utils.WebUtils;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.domain.Job;
 import com.jredrain.service.*;
 import com.jredrain.vo.JobVo;
@@ -59,7 +59,7 @@ public class JobController {
     private JobService jobService;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private RecordService recordService;
@@ -70,11 +70,11 @@ public class JobController {
     @RequestMapping("/view")
     public String view(HttpServletRequest request, HttpSession session, Page page, JobVo job, Model model) {
 
-        model.addAttribute("workers", workerService.getAll());
+        model.addAttribute("agents", agentService.getAll());
 
         model.addAttribute("jobs", jobService.getAll());
-        if (notEmpty(job.getWorkerId())) {
-            model.addAttribute("workerId", job.getWorkerId());
+        if (notEmpty(job.getAgentId())) {
+            model.addAttribute("agentId", job.getAgentId());
         }
         if (notEmpty(job.getExecType())) {
             model.addAttribute("execType", job.getExecType());
@@ -90,21 +90,21 @@ public class JobController {
     }
 
     @RequestMapping("/checkname")
-    public void checkName(HttpServletResponse response, Long jobId, Long workerId, String name) {
-        String result = jobService.checkName(jobId, workerId, name);
+    public void checkName(HttpServletResponse response, Long jobId, Long agentId, String name) {
+        String result = jobService.checkName(jobId, agentId, name);
         WebUtils.writeHtml(response, result);
     }
 
     @RequestMapping("/addpage")
     public String addpage(Model model, Long id) {
         if (notEmpty(id)) {
-            Worker worker = workerService.getWorker(id);
-            model.addAttribute("worker", worker);
-            List<Worker> workers = workerService.getAll();
-            model.addAttribute("workers", workers);
+            Agent agent = agentService.getAgent(id);
+            model.addAttribute("agent", agent);
+            List<Agent> agents = agentService.getAll();
+            model.addAttribute("agents", agents);
         } else {
-            List<Worker> workers = workerService.getAll();
-            model.addAttribute("workers", workers);
+            List<Agent> agents = agentService.getAll();
+            model.addAttribute("agents", agents);
         }
         return "/job/add";
     }
@@ -129,7 +129,7 @@ public class JobController {
             Map<String, Object[]> map = request.getParameterMap();
             Object[] jobName = map.get("child.jobName");
             Object[] jobId = map.get("child.jobId");
-            Object[] workerId = map.get("child.workerId");
+            Object[] agentId = map.get("child.agentId");
             Object[] command = map.get("child.command");
             Object[] redo = map.get("child.redo");
             Object[] runCount = map.get("child.runCount");
@@ -149,7 +149,7 @@ public class JobController {
                  */
                 chind.setRunModel(job.getRunModel());
                 chind.setJobName((String) jobName[i]);
-                chind.setWorkerId(Long.parseLong((String) workerId[i]));
+                chind.setAgentId(Long.parseLong((String) agentId[i]));
                 chind.setCommand((String) command[i]);
                 chind.setCronExp(job.getCronExp());
                 chind.setComment((String) comment[i]);
@@ -190,8 +190,8 @@ public class JobController {
     public String editFlowJob(Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
         model.addAttribute("job", job);
-        List<Worker> workers = workerService.getAll();
-        model.addAttribute("workers", workers);
+        List<Agent> agents = agentService.getAll();
+        model.addAttribute("agents", agents);
         return "/job/edit";
     }
 
@@ -222,7 +222,7 @@ public class JobController {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         //手动执行
         job.setExecType(ExecType.OPERATOR.getStatus());
-        job.setWorker(workerService.getWorker(job.getWorkerId()));
+        job.setAgent(agentService.getAgent(job.getAgentId()));
         try {
             this.executeService.executeJob(job);
         } catch (Exception e) {
@@ -232,7 +232,7 @@ public class JobController {
 
     @RequestMapping("/goexec")
     public String goExec(Model model) {
-        model.addAttribute("workers", workerService.getAll());
+        model.addAttribute("agents", agentService.getAll());
         return "/job/exec";
     }
 

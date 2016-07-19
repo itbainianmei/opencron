@@ -22,8 +22,8 @@
 package com.jredrain.controller;
 
 import com.jredrain.base.job.RedRain;
-import com.jredrain.domain.Worker;
-import com.jredrain.service.WorkerService;
+import com.jredrain.domain.Agent;
+import com.jredrain.service.AgentService;
 import it.sauronsoftware.cron4j.SchedulingPattern;
 
 import com.jredrain.base.utils.WebUtils;
@@ -47,7 +47,7 @@ public class ValidationController {
     private ExecuteService executeService;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @RequestMapping("/cronexp")
     public void validateCronExp(Integer cronType, String cronExp, HttpServletResponse response) {
@@ -58,26 +58,31 @@ public class ValidationController {
     }
 
     @RequestMapping("/ping")
-    public void validatePing(Long proxyId,String ip, Integer port, String password, HttpServletResponse response) {
+    public void validatePing(int proxy,Long proxyId, String ip, Integer port, String password, HttpServletResponse response) {
         String pass = "failure";
 
-        Worker worker = new Worker();
-        if (proxyId==null) {
-            //直连
-            worker.setProxy(RedRain.ConnType.CONN.getType());
-        }else {
-            Worker proxyWorker = workerService.getWorker(proxyId);
-            worker.setProxy(RedRain.ConnType.PROXY.getType());
-            worker.setProxyWorker(proxyWorker.getWorkerId());
-            if (proxyWorker == null) {
-                WebUtils.writeHtml(response, pass);
+        Agent agent = new Agent();
+        agent.setProxy(proxy);
+        agent.setIp(ip);
+        agent.setPort(port);
+        agent.setPassword(password);
+
+        if(proxy==1){
+            agent.setProxy(RedRain.ConnType.CONN.getType());
+            if (proxyId!=null) {
+                Agent proxyAgent = agentService.getAgent(proxyId);
+                if (proxyAgent == null) {
+                    WebUtils.writeHtml(response,"failure");
+                    return;
+                }
+                agent.setProxyAgent(proxyId);
+                //需要代理..
+                agent.setProxy(RedRain.ConnType.PROXY.getType());
             }
         }
-
-        boolean ping = executeService.ping(worker,ip, port, password);
-
+        boolean ping = executeService.ping(agent);
         if (!ping) {
-            logger.error(String.format("validate ip:%s,port:%s cannot ping!", ip, port));
+            logger.error(String.format("validate ip:%s,port:%s cannot ping!", agent.getIp(), port));
         } else {
             pass = "success";
         }

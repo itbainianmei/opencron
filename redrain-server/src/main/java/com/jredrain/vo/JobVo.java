@@ -22,7 +22,7 @@
 
 package com.jredrain.vo;
 
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ import java.util.List;
 public class JobVo implements Serializable {
     private Long jobId;
     private String jobName;
-    private Long workerId;
+    private Long agentId;
     private Integer cronType;
     private String cronExp;
     private String command;
@@ -54,9 +54,9 @@ public class JobVo implements Serializable {
 
     private Integer flowNum;
 
-    private Worker worker;
+    private Agent agent;
 
-    private String workerName;
+    private String agentName;
 
     private String password;
 
@@ -90,12 +90,20 @@ public class JobVo implements Serializable {
         this.jobName = jobName;
     }
 
-    public Long getWorkerId() {
-        return workerId;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
+    }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
     }
 
     public Integer getCronType() {
@@ -186,12 +194,12 @@ public class JobVo implements Serializable {
         this.ip = ip;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public String getAgentName() {
+        return agentName;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 
     public String getOperateUname() {
@@ -210,12 +218,12 @@ public class JobVo implements Serializable {
         this.port = port;
     }
 
-    public Worker getWorker() {
-        return worker;
+    public Agent getWorker() {
+        return agent;
     }
 
-    public void setWorker(Worker worker) {
-        this.worker = worker;
+    public void setWorker(Agent agent) {
+        this.agent = agent;
     }
 
     public String getPassword() {

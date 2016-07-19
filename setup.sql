@@ -23,7 +23,7 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS job;
 CREATE TABLE job (
   jobId bigint(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  workerId bigint(20) NOT NULL COMMENT '执行器的id',
+  agentId bigint(20) NOT NULL COMMENT '执行器的id',
   jobName varchar(50) NOT NULL COMMENT '作业名称',
   category smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
   cronType smallint(10) DEFAULT '0' COMMENT '表达式类型',
@@ -40,7 +40,7 @@ CREATE TABLE job (
   status smallint(2) DEFAULT '1' COMMENT '1:有效,0:无效,2:',
   lastFlag smallint(2) DEFAULT '0' COMMENT '是否为流程作业的最后一个子作业',
   runModel smallint(2) DEFAULT '0' COMMENT '运行模式,0:串行,1:并行(针对流程作业)' 
-  KEY INX_WORKER (workerId),
+  KEY INX_AGENT (agentId),
   KEY INX_QUERY (category,cronType,execType,status)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
@@ -48,7 +48,7 @@ CREATE TABLE job (
 DROP TABLE IF EXISTS log;
 CREATE TABLE log (
   logId bigint(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  workerId bigint(10) NOT NULL,
+  agentId bigint(10) NOT NULL,
   receiverId bigint(20) DEFAULT NULL,
   type smallint(1) NOT NULL COMMENT '0:邮件,1:短信',
   receiver varchar(500) NOT NULL COMMENT '收件人',
@@ -63,7 +63,7 @@ CREATE TABLE log (
 DROP TABLE IF EXISTS monitor;
 CREATE TABLE monitor (
   monitorId int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  workerId int(10) DEFAULT NULL,
+  agentId int(10) DEFAULT NULL,
   cpuUs float(10,2) DEFAULT NULL,
   cpuSy float(10,2) DEFAULT NULL,
   cpuId float(10,2) DEFAULT NULL,
@@ -145,10 +145,10 @@ VALUES (999,'redrain','016b85818bdc68ba65d6a41e3d8054e693778dee','ece2bae9d38458
 UNLOCK TABLES;
 
 
-DROP TABLE IF EXISTS `worker`;
-CREATE TABLE `worker` (
-  workerId bigint(20) unsigned PRIMARY KEY  NOT NULL AUTO_INCREMENT,
-  proxyWorker  bigint(20) DEFAULT NULL COMMENT '代理执行器的Id,非代理为空',
+DROP TABLE IF EXISTS `agent`;
+CREATE TABLE `agent` (
+  agentId bigint(20) unsigned PRIMARY KEY  NOT NULL AUTO_INCREMENT,
+  proxyAgent  bigint(20) DEFAULT NULL COMMENT '代理执行器的Id,非代理为空',
   status tinyint(1) DEFAULT NULL COMMENT '通信状态:0通讯异常，1通信正常',
   ip varchar(16) NOT NULL COMMENT '机器ip',
   port int(4) NOT NULL COMMENT '机器端口号',

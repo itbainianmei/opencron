@@ -21,7 +21,6 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.utils.CommandUtils;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.Config;

@@ -41,7 +41,7 @@ public class Monitor implements Serializable {
     @GeneratedValue
     private Long monitorId;
 
-    private Long workerId;
+    private Long agentId;
 
     private Float cpuUs;
 
@@ -58,8 +58,8 @@ public class Monitor implements Serializable {
     public Monitor() {
     }
 
-    public Monitor(Long workerId, Float cpuUs, Float cpuSy, Float cpuId, Long memUsed, Long memFree) {
-        this.workerId = workerId;
+    public Monitor(Long agentId, Float cpuUs, Float cpuSy, Float cpuId, Long memUsed, Long memFree) {
+        this.agentId = agentId;
         this.memFree = memFree;
         this.memUsed = memUsed;
         this.cpuUs = cpuUs;
@@ -77,11 +77,11 @@ public class Monitor implements Serializable {
     }
 
     public Long getWorkerId() {
-        return workerId;
+        return agentId;
     }
 
-    public void setWorkerId(Long workerId) {
-        workerId = workerId;
+    public void setWorkerId(Long agentId) {
+        agentId = agentId;
     }
 
 

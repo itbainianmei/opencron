@@ -13,7 +13,7 @@
 <c:forEach var="r" items="${page.result}" varStatus="index">
     <tr>
         <td><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></td>
-        <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
+        <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
         <td>
             <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
                 <div style="width:100%;height: 100%;" class="progress-bar">

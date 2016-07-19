@@ -32,15 +32,15 @@ import com.jredrain.base.utils.CommonUtils;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "worker")
-public class Worker implements Serializable {
+@Table(name = "agent")
+public class Agent implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long workerId;
+    private Long agentId;
 
     //代理执行器的Id
-    private Long proxyWorker;
+    private Long proxyAgent;
 
     private String ip;
     private Integer port;
@@ -61,14 +61,6 @@ public class Worker implements Serializable {
      */
     @Transient
     private Integer taskCount;
-
-    public Long getWorkerId() {
-        return workerId;
-    }
-
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
-    }
 
     public String getIp() {
         return ip;
@@ -166,12 +158,20 @@ public class Worker implements Serializable {
         this.taskCount = taskCount;
     }
 
-    public Long getProxyWorker() {
-        return proxyWorker;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setProxyWorker(Long proxyWorker) {
-        this.proxyWorker = proxyWorker;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
+    }
+
+    public Long getProxyAgent() {
+        return proxyAgent;
+    }
+
+    public void setProxyAgent(Long proxyAgent) {
+        this.proxyAgent = proxyAgent;
     }
 
     public Integer getProxy() {

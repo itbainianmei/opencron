@@ -46,7 +46,7 @@
 
             <tr>
                 <td><i class="glyphicon glyphicon-leaf"></i>&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器</td>
-                <td><a href="${contextPath}/worker/detail?id=${record.workerId}">${record.workerName}</a></td>
+                <td><a href="${contextPath}/agent/detail?id=${record.agentId}">${record.agentName}</a></td>
 
                 <td><i class="glyphicon glyphicon-user"></i>&nbsp;作&nbsp;&nbsp;业&nbsp;&nbsp;人</td>
                 <td>

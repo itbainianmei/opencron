@@ -74,8 +74,8 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
                 (requestURI.contains("/config/")
                         || requestURI.contains("/user/view")
                         || requestURI.contains("/user/add")
-                        || requestURI.contains("/worker/add")
-                        || requestURI.contains("/worker/edit"))) {
+                        || requestURI.contains("/agent/add")
+                        || requestURI.contains("/agent/edit"))) {
             logger.info("illegal or limited access");
             return false;
         }

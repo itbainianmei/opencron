@@ -32,7 +32,7 @@ public class LogVo implements Serializable {
 
     private Long logId;
 
-    private Long workerId;
+    private Long agentId;
 
     private Long receiverId;
 
@@ -46,7 +46,7 @@ public class LogVo implements Serializable {
 
     private Date sendTime;
 
-    private String workerName;
+    private String agentName;
 
     public Long getLogId() {
         return logId;
@@ -54,14 +54,6 @@ public class LogVo implements Serializable {
 
     public void setLogId(Long logId) {
         this.logId = logId;
-    }
-
-    public Long getWorkerId() {
-        return workerId;
-    }
-
-    public void setWorkerId(Long workerId) {
-        this.workerId = workerId;
     }
 
     public Long getReceiverId() {
@@ -112,11 +104,19 @@ public class LogVo implements Serializable {
         this.sendTime = sendTime;
     }
 
-    public String getWorkerName() {
-        return workerName;
+    public Long getAgentId() {
+        return agentId;
     }
 
-    public void setWorkerName(String workerName) {
-        this.workerName = workerName;
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
     }
 }

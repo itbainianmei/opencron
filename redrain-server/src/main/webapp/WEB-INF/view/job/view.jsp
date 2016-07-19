@@ -38,9 +38,9 @@
                                     $("#checkJobName").html("");
                                     $("#checkcronExp").html("");
                                     $("#id").val(obj.jobId);
-                                    $("#mworkerId").val(obj.workerId);
+                                    $("#magentId").val(obj.agentId);
                                     $("#jobName").val(obj.jobName);
-                                    $("#worker").val(obj.workerName+"   "+obj.ip);
+                                    $("#agent").val(obj.agentName+"   "+obj.ip);
                                     $("#cronExp").val(obj.cronExp);
                                     $("#cmd").val(obj.command);
                                     if(obj.execType==1){
@@ -134,8 +134,8 @@
                 return false;
             }
 
-            var workerId = $("#mworkerId").val();
-            if (!workerId){
+            var agentId = $("#magentId").val();
+            if (!agentId){
                 alert("页面异常，请刷新重试!");
                 return false;
             }
@@ -185,7 +185,7 @@
                 "jobId":jobId,
                 "cronType":cronType,
                 "cronExp":cronExp,
-                "workerId":workerId,
+                "agentId":agentId,
                 "command":command,
                 "execType":execType,
                 "jobName":jobName,
@@ -237,7 +237,7 @@
                                 "jobId":job.jobId,
                                 "cronType":job.cronType,
                                 "cronExp":job.cronExp,
-                                "workerId":job.workerId,
+                                "agentId":job.agentId,
                                 "command":job.command,
                                 "execType":job.execType,
                                 "jobName":job.jobName,
@@ -294,7 +294,7 @@
             $("#redo0").next().attr("onclick","hideCountDiv()");
 
             $("#size").change(function(){doUrl();});
-            $("#workerId").change(function(){doUrl();});
+            $("#agentId").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
             $("#redo").change(function(){doUrl();});
             $("#jobName").focus(function(){
@@ -366,10 +366,10 @@
 
         function doUrl(){
             var pageSize = $("#size").val();
-            var workerId = $("#workerId").val();
+            var agentId = $("#agentId").val();
             var execType = $("#execType").val();
             var redo = $("#redo").val();
-            window.location.href = "${contextPath}/job/view?workerId="+workerId+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/job/view?agentId="+agentId+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
         }
 
         function executeJob(id){
@@ -457,11 +457,11 @@
             </div>
 
             <div style="float: right;margin-top: -10px">
-                <label for="workerId">执行器：</label>
-                <select id="workerId" name="workerId" class="select-self" style="width: 110px;">
+                <label for="agentId">执行器：</label>
+                <select id="agentId" name="agentId" class="select-self" style="width: 110px;">
                     <option value="">全部</option>
-                    <c:forEach var="d" items="${workers}">
-                        <option value="${d.workerId}" ${d.workerId eq workerId ? 'selected' : ''}>${d.name}</option>
+                    <c:forEach var="d" items="${agents}">
+                        <option value="${d.agentId}" ${d.agentId eq agentId ? 'selected' : ''}>${d.name}</option>
                     </c:forEach>
                 </select>
                 &nbsp;&nbsp;&nbsp;
@@ -521,7 +521,7 @@
                         </td>
                         <td>流程作业</td>
                     </c:if>
-                    <td><a href="${contextPath}/worker/detail?id=${r.workerId}">${r.workerName}</a></td>
+                    <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td id="cronType_${r.jobId}">
@@ -574,7 +574,7 @@
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
                             <td>流程作业</td>
-                            <td><a href="${contextPath}/worker/detail?id=${c.workerId}">${c.workerName}</a></td>
+                            <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
                             <td>
@@ -607,7 +607,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/job/view?workerId=${workerId}&execType=${execType}&redo=${redo}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/job/view?agentId=${agentId}&execType=${execType}&redo=${redo}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 
@@ -622,11 +622,11 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="jobform">
                         <input type="hidden" id="id">
-                        <input type="hidden" name="workerId" id="mworkerId">
+                        <input type="hidden" name="agentId" id="magentId">
                         <div class="form-group">
-                            <label for="worker" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <label for="agent" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
-                                <input type="text" class="form-control " id="worker" readonly>&nbsp;
+                                <input type="text" class="form-control " id="agent" readonly>&nbsp;
                             </div>
                         </div>
                         <div class="form-group">

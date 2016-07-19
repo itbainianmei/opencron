@@ -83,7 +83,7 @@
                 alert("请填写作业名称!");
                 return false;
             }
-            if (!$("#workerId").val()){
+            if (!$("#agentId").val()){
                 alert("页面异常，请刷新重试!");
                 return false;
             }
@@ -277,7 +277,7 @@
                 return false;
             }
 
-            if (!$("#workerId1").val()){
+            if (!$("#agentId1").val()){
                 alert("页面异常，请刷新重试!");
                 return false;
             }
@@ -308,7 +308,7 @@
                 url:"${contextPath}/job/checkname",
                 data:{
                     "name":jobName,
-                    "workerId":$("#workerId1").val()
+                    "agentId":$("#agentId1").val()
                 },
                 success:function(data){
                     if (data == "no"){
@@ -321,7 +321,7 @@
                             var addHtml = "<li id='"+timestamp+"' ><span onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑'><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;<span id='name_"+timestamp+"'>"+jobName+"</span></a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='#' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
                                     "<input type='hidden' name='child.jobId' value=''>"+
                                     "<input type='hidden' name='child.jobName' value='"+jobName+"'>"+
-                                    "<input type='hidden' name='child.workerId' value='"+$("#workerId1").val()+"'>"+
+                                    "<input type='hidden' name='child.agentId' value='"+$("#agentId1").val()+"'>"+
                                     "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
                                     "<input type='hidden' name='child.redo' value='"+$('#itemRedo').val()+"'>"+
                                     "<input type='hidden' name='child.runCount' value='"+$("#runCount1").val()+"'>"+
@@ -344,8 +344,8 @@
                                     $(element).attr("value",$("#runCount1").val());
                                 }
 
-                                if ($(element).attr("name") == "child.workerId"){
-                                    $(element).attr("value",$("#workerId1").val());
+                                if ($(element).attr("name") == "child.agentId"){
+                                    $(element).attr("value",$("#agentId1").val());
                                 }
                                 if ($(element).attr("name") == "child.command"){
                                     $(element).attr("value",$("#command1").val());
@@ -378,8 +378,8 @@
                 if ($(element).attr("name") == "child.jobName"){
                     $("#jobName1").val($(element).val());
                 }
-                if ($(element).attr("name") == "child.workerId"){
-                    $("#workerId1").val($(element).val());
+                if ($(element).attr("name") == "child.agentId"){
+                    $("#agentId1").val($(element).val());
                 }
                 if ($(element).attr("name") == "child.command"){
                     $("#command1").val($(element).val());
@@ -457,18 +457,18 @@
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"></br>
 
                 <div class="form-group">
-                    <label for="workerId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                    <label for="agentId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                     <div class="col-md-10">
-                        <c:if test="${empty worker}">
-                            <select id="workerId" name="workerId" class="form-control m-b-10 input-sm">
-                                <c:forEach var="d" items="${workers}">
-                                    <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                        <c:if test="${empty agent}">
+                            <select id="agentId" name="agentId" class="form-control m-b-10 input-sm">
+                                <c:forEach var="d" items="${agents}">
+                                    <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
                                 </c:forEach>
                             </select>
                         </c:if>
-                        <c:if test="${!empty worker}">
-                            <input type="hidden" id="workerId" name="workerId" value="${worker.workerId}">
-                            <input type="text" class="form-control input-sm" value="${worker.name}&nbsp;&nbsp;&nbsp;${worker.ip}" readonly>
+                        <c:if test="${!empty agent}">
+                            <input type="hidden" id="agentId" name="agentId" value="${agent.agentId}">
+                            <input type="text" class="form-control input-sm" value="${agent.name}&nbsp;&nbsp;&nbsp;${agent.ip}" readonly>
                             <font color="red">&nbsp;*只读</font>
                         </c:if>
                         <span class="tips">&nbsp;&nbsp;要执行此作业的机器名称和IP地址</span>
@@ -591,11 +591,11 @@
                     <form class="form-horizontal" role="form" id="subForm"><br>
                         <input type="hidden" id="itemRedo" value="1"/>
                         <div class="form-group">
-                            <label for="workerId1" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                            <label for="agentId1" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                             <div class="col-md-9">
-                                <select id="workerId1" name="workerId1" class="form-control m-b-10 ">
-                                    <c:forEach var="d" items="${workers}">
-                                        <option value="${d.workerId}">${d.ip}&nbsp;(${d.name})</option>
+                                <select id="agentId1" name="agentId1" class="form-control m-b-10 ">
+                                    <c:forEach var="d" items="${agents}">
+                                        <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
                                     </c:forEach>
                                 </select>
                             </div>

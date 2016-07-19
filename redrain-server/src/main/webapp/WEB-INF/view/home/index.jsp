@@ -89,7 +89,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            var agent_number = (parseFloat("${success}")/parseFloat("${fn:length(workers)}")*100).toFixed(2);
+            var agent_number = (parseFloat("${success}")/parseFloat("${fn:length(agents)}")*100).toFixed(2);
             if( isNaN(agent_number) ){
                 $("#agent_number").text(0).attr("data-value",0);
                 $("#agent_number_prop").attr("data-percentage","0%").css("width","0%");
@@ -167,7 +167,7 @@
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
                                 <small>执行器</small>
-                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${fn:length(workers)}</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${fn:length(agents)}</h2>
                             </div>
                         </div>
 
@@ -361,9 +361,9 @@
                 <div class="tile" style="background: none">
                     <h2 class="tile-title" style="background:rgba(0,0,0,0.40);border-top-left-radius:2px;border-top-right-radius:2px;"><i aria-hidden="true" class="fa fa-area-chart"></i>&nbsp;系统概况</h2>
                     <div class="tile-config dropdown" style="float: right;">
-                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;"ps  id="workerId">
-                            <c:forEach var="w" items="${workers}">
-                                <option value="${w.workerId}" ${w.workerId eq workerId ? 'selected' : ''}>${w.name}</option>
+                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;"ps  id="agentId">
+                            <c:forEach var="w" items="${agents}">
+                                <option value="${w.agentId}" ${w.agentId eq agentId ? 'selected' : ''}>${w.name}</option>
                             </c:forEach>
                         </select>
                     </div>

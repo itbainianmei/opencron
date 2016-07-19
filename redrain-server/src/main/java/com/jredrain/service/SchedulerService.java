@@ -49,7 +49,7 @@ public final class SchedulerService {
     private JobService jobService;
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @Autowired
     private RedRainCollector cronJobCollector;
@@ -141,7 +141,7 @@ public final class SchedulerService {
 
     public void syncJobTigger(Long jobId,ExecuteService executeService) throws SchedulerException {
         JobVo job = jobService.getJobVoById(jobId);
-        job.setWorker(workerService.getWorker(job.getWorkerId()));
+        job.setAgent(agentService.getAgent(job.getAgentId()));
 
         //quartz表达式
         if (job.getCronType().equals(RedRain.CronType.QUARTZ.getType())) {

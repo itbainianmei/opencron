@@ -21,11 +21,30 @@
 
     function showContact(){$(".contact").show()}
     function hideContact(){$(".contact").hide()}
+    function showProxy(){
+        $(".proxy").show();
+        $("#proxy1").prop("checked",true);
+        $("#proxy").val(1);
+        $("#proxy1").parent().removeClass("checked").addClass("checked");
+        $("#proxy1").parent().attr("aria-checked",true);
+        $("#proxy1").parent().prop("onclick","showContact()");
+        $("#proxy0").parent().removeClass("checked");
+        $("#proxy0").parent().attr("aria-checked",false);
+    }
+    function hideProxy(){
+        $(".proxy").hide();
+        $("#proxy").val(0);
+        $("#proxy0").prop("checked",true);
+        $("#proxy0").parent().removeClass("checked").addClass("checked");
+        $("#proxy0").parent().attr("aria-checked",true);
+        $("#proxy1").parent().removeClass("checked");
+        $("#proxy1").parent().attr("aria-checked",false);
+    }
 
     $(document).ready(function(){
         $("#size").change(function(){
             var pageSize = $("#size").val();
-            window.location.href = "${contextPath}/worker/view?pageSize="+pageSize;
+            window.location.href = "${contextPath}/agent/view?pageSize="+pageSize;
         });
 
         setInterval(function(){
@@ -35,7 +54,7 @@
             });
 
             $.ajax({
-                url:"${contextPath}/worker/view",
+                url:"${contextPath}/agent/view",
                 data:{
                     "refresh":1,
                     "pageNo":${page.pageNo},
@@ -71,7 +90,7 @@
                 return false;
             }
             $.ajax({
-                url:"${contextPath}/worker/checkname",
+                url:"${contextPath}/agent/checkname",
                 data:{
                     "id":$("#id").val(),
                     "name":$("#name").val()
@@ -105,18 +124,22 @@
                 $("#checkpwd").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;密码不一致' + "</font>");
             }
         });
+
+        $("#proxy1").attr("onclick","showProxy()").next().attr("onclick","showProxy()");
+        $("#proxy0").attr("onclick","hideProxy()").next().attr("onclick","hideProxy()");
+
     });
 
     function edit(id){
         $.ajax({
-            url:"${contextPath}/worker/editpage",
+            url:"${contextPath}/agent/editpage",
             data:{"id":id},
             success : function(obj) {
-                $("#workerform")[0].reset();
+                $("#agentform")[0].reset();
                 if(obj!=null){
                     $("#checkName").html("");
                     $("#pingResult").html("");
-                    $("#id").val(obj.workerId);
+                    $("#id").val(obj.agentId);
                     $("#password").val(obj.password);
                     if (obj.status==true){
                         $("#status").val("1");
@@ -126,6 +149,15 @@
                     $("#name").val(obj.name);
                     $("#ip").val(obj.ip);
                     $("#port").val(obj.port);
+                    if(obj.proxy==1){
+                        showProxy();
+                        $("#proxyAgent").val(obj.proxyAgent);
+
+                    }else {
+                        hideProxy();
+
+                    }
+
                     $("#warning1").next().attr("onclick","showContact()");
                     $("#warning0").next().attr("onclick","hideContact()");
                     if(obj.warning==true){
@@ -146,7 +178,7 @@
                     }
                     $("#mobiles").val(obj.mobiles);
                     $("#email").val(obj.emailAddress);
-                    $("#workerModal").modal("show");
+                    $("#agentModal").modal("show");
                     return;
                 }
 
@@ -223,7 +255,7 @@
             return false;
         }
         $.ajax({
-            url:"${contextPath}/worker/checkname",
+            url:"${contextPath}/agent/checkname",
             data:{
                 "id":id,
                 "name":name
@@ -234,7 +266,8 @@
                         $.ajax({
                             url:"${contextPath}/validation/ping",
                             data:{
-                                "proxyId":0,
+                                "proxy":$("#proxy").val(),
+                                "proxyId":$("#proxyAgent").val(),
                                 "ip":ip,
                                 "port":port,
                                 "password":password
@@ -269,9 +302,11 @@
 
     function canSave(id,name,port,warning,mobiles,email){
         $.ajax({
-            url:"${contextPath}/worker/edit",
+            url:"${contextPath}/agent/edit",
             data:{
-                "workerId":id,
+                "proxy":$("#proxy").val(),
+                "proxyAgent":$("#proxyAgent").val(),
+                "agentId":id,
                 "name":name,
                 "port":port,
                 "warning":warning,
@@ -280,7 +315,7 @@
             },
             success:function(data){
                 if (data == "success"){
-                    $('#workerModal').modal('hide');
+                    $('#agentModal').modal('hide');
                     alertMsg("修改成功");
                     $("#name_"+id).html(name);
                     $("#port_"+id).html(port);
@@ -303,14 +338,14 @@
 
     function editPwd(id){
         $.ajax({
-            url:"${contextPath}/worker/pwdpage",
+            url:"${contextPath}/agent/pwdpage",
             data:{"id":id},
             success : function(obj) {
                 $("#pwdform")[0].reset();
                 if(obj!=null){
                     $("#oldpwd").html("");
                     $("#checkpwd").html("");
-                    $("#workerId").val(obj.workerId);
+                    $("#agentId").val(obj.agentId);
                     $("#pwdModal").modal("show");
                     return;
                 }
@@ -322,7 +357,7 @@
     }
 
     function savePwd(){
-        var id = $("#workerId").val();
+        var id = $("#agentId").val();
         if (!id){
             alert("页面异常，请刷新重试!");
             return false;
@@ -347,7 +382,7 @@
             return false;
         }
         $.ajax({
-            url:"${contextPath}/worker/editpwd",
+            url:"${contextPath}/agent/editpwd",
             data:{
                 "id":id,
                 "pwd0":pwd0,
@@ -412,6 +447,7 @@
         $.ajax({
             url:"${contextPath}/validation/ping",
             data:{
+                "agentId":$("#agentId").val(),
                 "ip":ip,
                 "port":port,
                 "password":password
@@ -432,15 +468,15 @@
 
     }
 
-    function ssh(workerId,ip,type) {
+    function ssh(agentId,ip,type) {
         $.ajax({
             url:"${contextPath}/term/ssh",
-            data:"workerId="+workerId+"&ip="+ip,
+            data:"agentId="+agentId+"&ip="+ip,
             dataType: "html",
             success:function (url) {
                 if (url == "null") {
                     $("#sship").val(ip);
-                    $("#sshworker").val(workerId);
+                    $("#sshagent").val(agentId);
                     $("#sshModal").modal("show");
                 }else {
                     var socketUrl = url.split("?")[0];
@@ -452,7 +488,7 @@
                                 alert("登录失败,请确认登录口令的正确性");
                             }else {
                                 $("#sship").val(ip);
-                                $("#sshworker").val(workerId);
+                                $("#sshagent").val(agentId);
                                 $("#sshModal").modal("show");
                             }
                             socket.disconnect();
@@ -483,7 +519,7 @@
         var pwd = $("#sshpwd").val();
         var port = $("#sshport").val();
         var ip = $("#sship").val();
-        var worker = $("#sshworker").val();
+        var agent = $("#sshagent").val();
         $.ajax({
             url:"${contextPath}/term/save",
             type:"post",
@@ -498,7 +534,7 @@
                 $("#sshModal").modal("hide");
                 $("#sshform")[0].reset();
                 if( status == "success" ){
-                    ssh(worker,ip,2);
+                    ssh(agent,ip,2);
                 }else {
                     alert("登录失败,请确认登录口令的正确性");
                 }
@@ -545,7 +581,7 @@
             </div>
             <c:if test="${permission eq true}">
             <div style="float: right;margin-top: -10px">
-                <a href="${contextPath}/worker/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
+                <a href="${contextPath}/agent/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
             </div>
             </c:if>
         </div>
@@ -566,10 +602,10 @@
 
             <c:forEach var="w" items="${page.result}" varStatus="index">
                 <tr>
-                    <td id="name_${w.workerId}">${w.name}</td>
+                    <td id="name_${w.agentId}">${w.name}</td>
                     <td>${w.ip}</td>
-                    <td id="port_${w.workerId}">${w.port}</td>
-                    <td id="worker_${d.workerId}">
+                    <td id="port_${w.agentId}">${w.port}</td>
+                    <td id="agent_${d.agentId}">
                         <c:if test="${w.status eq false}">
                             <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
                         </c:if>
@@ -577,29 +613,29 @@
                             <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                         </c:if>
                     </td>
-                    <td id="warning_${w.workerId}">
+                    <td id="warning_${w.agentId}">
                         <c:if test="${w.warning eq false}"><span class="label label-default" style="color: red;font-weight:bold">&nbsp;&nbsp;否&nbsp;&nbsp;</span>  </c:if>
                         <c:if test="${w.warning eq true}"><span class="label label-warning" style="color: white;font-weight:bold">&nbsp;&nbsp;是&nbsp;&nbsp;</span> </c:if>
                     </td>
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <a href="javascript:ssh('${w.workerId}','${w.ip}',1)" title="登录">
+                                <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="登录">
                                     <i aria-hidden="true" class="fa fa-desktop"></i>
                                 </a>&nbsp;&nbsp;
 
-                                <a href="${contextPath}/job/addpage?id=${w.workerId}" title="新任务">
+                                <a href="${contextPath}/job/addpage?id=${w.agentId}" title="新任务">
                                     <i aria-hidden="true" class="fa fa-plus-square"></i>
                                 </a>&nbsp;&nbsp;
                                 <c:if test="${permission eq true}">
-                                    <a href="#" onclick="edit('${w.workerId}')" title="编辑">
+                                    <a href="#" onclick="edit('${w.agentId}')" title="编辑">
                                         <i aria-hidden="true" class="fa fa-edit"></i>
                                     </a>&nbsp;&nbsp;
-                                    <a href="#" onclick="editPwd('${w.workerId}')" title="修改密码">
+                                    <a href="#" onclick="editPwd('${w.agentId}')" title="修改密码">
                                         <i aria-hidden="true" class="fa fa-lock"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
-                                <a href="${contextPath}/worker/detail?id=${w.workerId}" title="查看详情">
+                                <a href="${contextPath}/agent/detail?id=${w.agentId}" title="查看详情">
                                     <i aria-hidden="true" class="fa fa-eye"></i>
                                 </a>
                             </div>
@@ -611,12 +647,12 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/worker/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/agent/view" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
 
     </div>
 
     <!-- 修改执行器弹窗 -->
-    <div class="modal fade" id="workerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="agentModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -624,7 +660,7 @@
                     <h4>修改执行器</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form" id="workerform">
+                    <form class="form-horizontal" role="form" id="agentform">
                         <input type="hidden" id="id" name="id"><input type="hidden" id="password" name="password"><input type="hidden" id="status" name="status">
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="ip" class="col-lab control-label" title="执行器IP地址只能为点分十进制方式表示">机&nbsp;&nbsp;器&nbsp;&nbsp;IP：</label>
@@ -632,12 +668,40 @@
                                 <input type="text" class="form-control " id="ip" readonly>&nbsp;
                             </div>
                         </div>
+
                         <div class="form-group" style="">
                             <label for="name" class="col-lab control-label" title="执行器名称必填">执行器名：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="name">&nbsp;&nbsp;<label id="checkName"></label>
                             </div>
                         </div>
+
+                        <c:if test="${empty page.result}">
+                            <!--默认为直连-->
+                            <input type="hidden" name="proxy" id="proxy" value="0">
+                        </c:if>
+                        <c:if test="${!empty page.result}">
+                            <div class="form-group">
+                                <label class="col-lab control-label" title="执行器通信不正常时是否发信息报警">连接类型：</label>&nbsp;&nbsp;
+                                <input type="hidden" id="proxy"/>
+                                <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio"  onclick="hideProxy()" name="proxy" value="0" id="proxy0">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio"  onclick="showProxy()" name="proxy" value="1" id="proxy1">代理&nbsp;&nbsp;&nbsp;</label>
+                            </div>
+
+                            <div class="form-group proxy" style="display: none;margin-top: 20px;">
+                                <label for="proxyAgent" class="col-lab control-label">代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
+                                <div class="col-md-9">
+                                <select id="proxyAgent" name="proxyAgent" class="form-control">
+                                    <c:forEach var="d" items="${page.result}">
+                                        <c:if test="${d.proxy eq 0}">
+                                            <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
+                                        </c:if>
+                                    </c:forEach>
+                                </select>
+                                </div>
+                            </div><br>
+                        </c:if>
+
                         <div class="form-group">
                             <label for="port" class="col-lab control-label" title="执行器端口号只能是数字,且不超过4位">端&nbsp;&nbsp;口&nbsp;&nbsp;号：</label>
                             <div class="col-md-9">
@@ -684,7 +748,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="pwdform">
-                        <input type="hidden" id="workerId">
+                        <input type="hidden" id="agentId">
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="pwd0" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;原&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
                             <div class="col-md-9">
@@ -727,7 +791,7 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="sshform">
                         <input type="hidden" id="sship"/>
-                        <input type="hidden" id="sshworker"/>
+                        <input type="hidden" id="sshagent"/>
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshuser" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;帐&nbsp;&nbsp;号&nbsp;&nbsp;：</label>
                             <div class="col-md-9">

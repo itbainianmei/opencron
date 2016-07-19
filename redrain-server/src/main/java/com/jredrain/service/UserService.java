@@ -22,6 +22,7 @@
 
 package com.jredrain.service;
 
+import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.dao.UploadDao;
 import com.jredrain.tag.Page;
@@ -29,18 +30,12 @@ import com.jredrain.base.utils.Digests;
 import com.jredrain.base.utils.Encodes;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -56,8 +51,6 @@ public class UserService {
     @Autowired
     private UploadDao uploadDao;
 
-    private final String SALT = "ece2bae9d384582b";
-
     public Page queryUser(Page page) {
         String sql = "SELECT u.*,r.roleName FROM user u LEFT JOIN role r ON u.roleId = r.roleId";
         queryDao.getPageBySql(page, User.class, sql);
@@ -69,8 +62,9 @@ public class UserService {
     }
 
     public void addUser(User user) {
-        user.setSalt(SALT);
-        byte[] salt = Encodes.decodeHex(SALT);
+        String saltstr = CommonUtils.uuid(16);
+        user.setSalt(saltstr);
+        byte[] salt = Encodes.decodeHex(saltstr);
         byte[] hashPassword = Digests.sha1(user.getPassword().getBytes(), salt, 1024);
         user.setPassword(Encodes.encodeHex(hashPassword));
         user.setCreateTime(new Date());

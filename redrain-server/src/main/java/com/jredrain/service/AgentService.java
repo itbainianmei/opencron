@@ -31,7 +31,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.tag.Page;
-import com.jredrain.domain.Worker;
+import com.jredrain.domain.Agent;
 import com.jredrain.vo.JobVo;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
 
 @Service
-public class WorkerService {
+public class AgentService {
 
     @Autowired
     private QueryDao queryDao;
@@ -59,59 +59,59 @@ public class WorkerService {
     private MemcacheCache memcacheCache;
 
 
-    public List<Worker> getAll() {
+    public List<Agent> getAll() {
 
-        List<Worker> workers = memcacheCache.get(Globals.CACHED_WORKER_ID,List.class);
+        List<Agent> agents = memcacheCache.get(Globals.CACHED_AGENT_ID,List.class);
 
-        if (CommonUtils.isEmpty(workers)) {
-            flushWorker();
+        if (CommonUtils.isEmpty(agents)) {
+            flushAgent();
         }
 
-       return memcacheCache.get(Globals.CACHED_WORKER_ID,List.class);
+       return memcacheCache.get(Globals.CACHED_AGENT_ID,List.class);
     }
 
-    private void flushWorker(){
-        memcacheCache.evict(Globals.CACHED_WORKER_ID);
-        memcacheCache.put(Globals.CACHED_WORKER_ID,queryDao.getAll(Worker.class));
+    private void flushAgent(){
+        memcacheCache.evict(Globals.CACHED_AGENT_ID);
+        memcacheCache.put(Globals.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
-    public List<Worker> getWorkerByStatus(int status){
-        String sql = "SELECT * FROM worker WHERE status=?";
-        return queryDao.sqlQuery(Worker.class,sql,status);
+    public List<Agent> getAgentByStatus(int status){
+        String sql = "SELECT * FROM agent WHERE status=?";
+        return queryDao.sqlQuery(Agent.class,sql,status);
     }
 
-    public Page getWorker(Page page) {
-        String sql = "SELECT * FROM worker";
-        queryDao.getPageBySql(page, Worker.class, sql);
+    public Page getAgent(Page page) {
+        String sql = "SELECT * FROM agent";
+        queryDao.getPageBySql(page, Agent.class, sql);
         return page;
     }
 
-    public Worker getWorker(Long id) {
-        return queryDao.get(Worker.class, id);
+    public Agent getAgent(Long id) {
+        return queryDao.get(Agent.class, id);
     }
 
-    public void addOrUpdate(Worker worker) {
+    public void addOrUpdate(Agent agent) {
         /**
-         * 修改过worker
+         * 修改过agent
          */
         boolean update = false;
-        if (worker.getWorkerId()!=null) {
+        if (agent.getAgentId()!=null) {
             update = true;
         }
 
         /**
          * fix bug.....
-         * 修改了worker要刷新所有在任务队列里对应的作业,
+         * 修改了agent要刷新所有在任务队列里对应的作业,
          * 否则一段端口改变了,任务队列里的还是更改前的连接端口,
          * 当作业执行的时候就会连接失败...
          *
          */
         if (update) {
-            queryDao.save(worker);
+            queryDao.save(agent);
             /**
              * 获取该执行器下所有的自动执行,并且是quartz类型的作业
              */
-            List<JobVo> jobVos = jobService.getJobVoByWorkerId(worker, RedRain.ExecType.AUTO, RedRain.CronType.QUARTZ);
+            List<JobVo> jobVos = jobService.getJobVoByAgentId(agent, RedRain.ExecType.AUTO, RedRain.CronType.QUARTZ);
             try {
                 schedulerService.addOrModify(jobVos,this.executeService);
             } catch (SchedulerException e) {
@@ -121,26 +121,26 @@ public class WorkerService {
                 throw new RuntimeException(e.getCause());
             }
         }else {
-            queryDao.save(worker);
+            queryDao.save(agent);
         }
 
         /**
          * 同步缓存...
          */
-        flushWorker();
+        flushAgent();
 
     }
 
     public String checkName(Long id, String name) {
-        String sql = "SELECT COUNT(1) FROM worker WHERE name=? ";
+        String sql = "SELECT COUNT(1) FROM agent WHERE name=? ";
         if (notEmpty(id)) {
-            sql += " AND workerId != " + id;
+            sql += " AND agentId != " + id;
         }
         return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
     }
 
     public String editPwd(Long id, String pwd0, String pwd1, String pwd2) {
-        Worker work = this.getWorker(id);
+        Agent work = this.getAgent(id);
         String password = DigestUtils.md5Hex(pwd0);
         if (password.equals(work.getPassword())) {
             if (pwd1.equals(pwd2)) {

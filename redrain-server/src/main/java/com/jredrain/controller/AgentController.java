@@ -31,8 +31,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.JsonMapper;
 import com.jredrain.base.utils.WebUtils;
-import com.jredrain.domain.Worker;
-import com.jredrain.service.WorkerService;
+import com.jredrain.domain.Agent;
+import com.jredrain.service.AgentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,92 +40,98 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-@RequestMapping("/worker")
-public class WorkerController {
+@RequestMapping("/agent")
+public class AgentController {
 
     @Autowired
-    private WorkerService workerService;
+    private AgentService agentService;
 
     @RequestMapping("/view")
     public String queryDone(HttpServletRequest request, Page page) {
-        workerService.getWorker(page);
+        agentService.getAgent(page);
         if (request.getParameter("refresh") != null) {
-            return "/worker/refresh";
+            return "/agent/refresh";
         }
-        return "/worker/view";
+        return "/agent/view";
     }
 
     @RequestMapping("/checkname")
     public void checkName(HttpServletResponse response, Long id, String name) {
-        String result = workerService.checkName(id, name);
+        String result = agentService.checkName(id, name);
         WebUtils.writeHtml(response, result);
     }
 
     @RequestMapping("/addpage")
     public String addPage(Model model) {
-        List<Worker> workerList = workerService.getAll();
-        model.addAttribute("workers",workerList);
-        return "/worker/add";
+        List<Agent> agentList = agentService.getAll();
+        model.addAttribute("agents",agentList);
+        return "/agent/add";
     }
 
     @RequestMapping("/add")
-    public String add(Worker worker) {
-        if (!worker.getWarning()) {
-            worker.setMobiles(null);
-            worker.setEmailAddress(null);
+    public String add(Agent agent) {
+        if (!agent.getWarning()) {
+            agent.setMobiles(null);
+            agent.setEmailAddress(null);
         }
 
         //直联
-        if (worker.getProxy()== RedRain.ConnType.CONN.getType()) {
-            worker.setProxyWorker(null);
+        if (agent.getProxy()== RedRain.ConnType.CONN.getType()) {
+            agent.setProxyAgent(null);
         }
 
-        worker.setPassword(DigestUtils.md5Hex(worker.getPassword()));
-        worker.setStatus(true);
-        worker.setUpdateTime(new Date());
-        workerService.addOrUpdate(worker);
-        return "redirect:/worker/view";
+        agent.setPassword(DigestUtils.md5Hex(agent.getPassword()));
+        agent.setStatus(true);
+        agent.setUpdateTime(new Date());
+        agentService.addOrUpdate(agent);
+        return "redirect:/agent/view";
     }
 
     @RequestMapping("/editpage")
     public void editPage(HttpServletResponse response, Long id) {
-        Worker worker = workerService.getWorker(id);
+        Agent agent = agentService.getAgent(id);
         JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(worker));
+        WebUtils.writeJson(response, json.toJson(agent));
     }
 
     @RequestMapping("/edit")
-    public void edit(HttpServletResponse response, Worker worker) {
-        Worker worker1 = workerService.getWorker(worker.getWorkerId());
-        worker1.setName(worker.getName());
-        worker1.setPort(worker.getPort());
-        worker1.setWarning(worker.getWarning());
-        if (worker.getWarning()) {
-            worker1.setMobiles(worker.getMobiles());
-            worker1.setEmailAddress(worker.getEmailAddress());
+    public void edit(HttpServletResponse response, Agent agent) {
+        Agent agent1 = agentService.getAgent(agent.getAgentId());
+        agent1.setName(agent.getName());
+        agent1.setProxy(agent.getProxy());
+        if (agent.getPort()==RedRain.ConnType.CONN.getType()) {
+            agent1.setProxyAgent(null);
+        }else {
+            agent1.setProxyAgent(agent.getProxyAgent());
         }
-        worker1.setUpdateTime(new Date());
-        workerService.addOrUpdate(worker1);
+        agent1.setPort(agent.getPort());
+        agent1.setWarning(agent.getWarning());
+        if (agent.getWarning()) {
+            agent1.setMobiles(agent.getMobiles());
+            agent1.setEmailAddress(agent.getEmailAddress());
+        }
+        agent1.setUpdateTime(new Date());
+        agentService.addOrUpdate(agent1);
         WebUtils.writeHtml(response, "success");
     }
 
     @RequestMapping("/pwdpage")
     public void pwdPage(HttpServletResponse response, Long id) {
-        Worker worker = workerService.getWorker(id);
+        Agent agent = agentService.getAgent(id);
         JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(worker));
+        WebUtils.writeJson(response, json.toJson(agent));
     }
 
     @RequestMapping("/editpwd")
     public void editPwd(HttpServletResponse response, Long id, String pwd0, String pwd1, String pwd2) {
-        String result = workerService.editPwd(id, pwd0, pwd1, pwd2);
+        String result = agentService.editPwd(id, pwd0, pwd1, pwd2);
         WebUtils.writeHtml(response, result);
     }
 
     @RequestMapping("/detail")
     public String showDetail(Model model, Long id) {
-        Worker worker = workerService.getWorker(id);
-        model.addAttribute("worker", worker);
-        return "/worker/detail";
+        Agent agent = agentService.getAgent(id);
+        model.addAttribute("agent", agent);
+        return "/agent/detail";
     }
 }
