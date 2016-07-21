@@ -199,7 +199,7 @@
                 doSave(jobObj);
             }else {//需要验证时间规则...
                 $.ajax({
-                    url:"${contextPath}/validation/cronexp",
+                    url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp
@@ -343,7 +343,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"${contextPath}/validation/cronexp",
+                    url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp

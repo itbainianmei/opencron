@@ -83,7 +83,7 @@
             success:function(data){
                 if (data == "yes"){
                     $.ajax({
-                        url:"${contextPath}/validation/ping",
+                        url:"${contextPath}/verify/ping",
                         data:{
                             "proxyId":proxyId,
                             "ip":ip,
@@ -148,7 +148,7 @@
 
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
         $.ajax({
-            url:"${contextPath}/validation/ping",
+            url:"${contextPath}/verify/ping",
             data:{
                 "proxyId":proxyId,
                 "ip":ip,

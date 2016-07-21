@@ -22,15 +22,14 @@
 package com.jredrain.controller;
 
 import com.jredrain.base.job.RedRain;
+import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Agent;
 import com.jredrain.service.AgentService;
-import it.sauronsoftware.cron4j.SchedulingPattern;
-
-import com.jredrain.base.utils.WebUtils;
 import com.jredrain.service.ExecuteService;
+import it.sauronsoftware.cron4j.SchedulingPattern;
+import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("/validation")
-public class ValidationController {
+@RequestMapping("/verify")
+public class VerifyController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -49,7 +48,7 @@ public class ValidationController {
     @Autowired
     private AgentService agentService;
 
-    @RequestMapping("/cronexp")
+    @RequestMapping("/exp")
     public void validateCronExp(Integer cronType, String cronExp, HttpServletResponse response) {
         boolean pass = false;
         if (cronType == 0) pass = SchedulingPattern.validate(cronExp);
@@ -58,21 +57,20 @@ public class ValidationController {
     }
 
     @RequestMapping("/ping")
-    public void validatePing(int proxy,Long proxyId, String ip, Integer port, String password, HttpServletResponse response) {
+    public void validatePing(int proxy, Long proxyId, String ip, Integer port, String password, HttpServletResponse response) {
         String pass = "failure";
-
         Agent agent = new Agent();
         agent.setProxy(proxy);
         agent.setIp(ip);
         agent.setPort(port);
         agent.setPassword(password);
 
-        if(proxy==1){
+        if (proxy == RedRain.ConnType.PROXY.getType()) {
             agent.setProxy(RedRain.ConnType.CONN.getType());
-            if (proxyId!=null) {
+            if (proxyId != null) {
                 Agent proxyAgent = agentService.getAgent(proxyId);
                 if (proxyAgent == null) {
-                    WebUtils.writeHtml(response,"failure");
+                    WebUtils.writeHtml(response, "failure");
                     return;
                 }
                 agent.setProxyAgent(proxyId);

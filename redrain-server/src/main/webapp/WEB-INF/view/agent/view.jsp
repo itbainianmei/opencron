@@ -264,7 +264,7 @@
                 if (data == "yes"){
                     if (status == 1){
                         $.ajax({
-                            url:"${contextPath}/validation/ping",
+                            url:"${contextPath}/verify/ping",
                             data:{
                                 "proxy":$("#proxy").val(),
                                 "proxyId":$("#proxyAgent").val(),
@@ -445,7 +445,7 @@
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
 
         $.ajax({
-            url:"${contextPath}/validation/ping",
+            url:"${contextPath}/verify/ping",
             data:{
                 "agentId":$("#agentId").val(),
                 "ip":ip,

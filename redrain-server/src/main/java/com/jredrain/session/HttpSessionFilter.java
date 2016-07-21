@@ -19,10 +19,8 @@
  * under the License.
  */
 
-
 package com.jredrain.session;
 
-import com.jredrain.base.utils.CommandUtils;
 import com.jredrain.base.utils.CommonUtils;
 import org.apache.commons.lang.StringUtils;
 import com.jredrain.base.utils.CookieUtils;
@@ -42,7 +40,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @SuppressWarnings("unchecked")
 public class HttpSessionFilter extends OncePerRequestFilter implements Filter {

@@ -73,6 +73,12 @@ public class ExecuteService implements Job {
         }
     }
 
+    /**
+     *
+     * @param job
+     * @return
+     */
+
     public boolean executeJob(final JobVo job) {
 
         //流程作业..
@@ -83,34 +89,36 @@ public class ExecuteService implements Job {
              * 一个指定大小的job队列
              */
             job.getChildren().add(0, job);
-            Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
+            final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
 
             /**
              * 并行任务
              */
             if ( RunModel.SAMETIME.getValue().equals(job.getRunModel()) ) {
                 final List<Boolean> result = new ArrayList<Boolean>(0);
-                List<Thread> threads = new ArrayList<Thread>();
-                for (final JobVo jobVo : jobQueue) {
-                    //如果子任务是并行(则启动多线程,所有子任务同时执行)
-                    Thread thread = new Thread(new Runnable() {
-                        public void run() {
-                            result.add(executeFlowJob(jobVo, flowGroup));
-                        }
-                    });
-                    threads.add(thread);
-                    thread.start();
-                }
 
+                Thread jobThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (final JobVo jobVo : jobQueue) {
+                            //如果子任务是并行(则启动多线程,所有子任务同时执行)
+                            Thread thread = new Thread(new Runnable() {
+                                public void run() {
+                                    result.add(executeFlowJob(jobVo, flowGroup));
+                                }
+                            });
+                            thread.start();
+                        }
+                    }
+                });
+                jobThread.start();
                 /**
                  * 确保所有的现场执行作业都全部执行完毕,拿到返回的执行结果。检查并行任务中有是否失败的...
                  */
-                for(Thread thread:threads){
-                    try {
-                        thread.join();
-                    } catch (InterruptedException e) {
-                        logger.error("[redrain] job rumModel with SAMETIME error:{}",e.getMessage());
-                    }
+                try {
+                    jobThread.join();
+                } catch (InterruptedException e) {
+                    logger.error("[redrain] job rumModel with SAMETIME error:{}",e.getMessage());
                 }
                 return !result.contains(false);
             }else {//串行,按顺序执行
@@ -412,4 +420,5 @@ public class ExecuteService implements Job {
                 agent
         );
     }
+
 }

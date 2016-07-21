@@ -55,7 +55,7 @@ public class RedRainCollector implements TaskCollector {
      * @return
      */
     @Override
-    public TaskTable getTasks() {
+    public synchronized TaskTable getTasks() {
         if ( taskTable==null ) {
             taskTable = new TaskTable();
             List<JobVo> jobs = jobService.getCrontabJob();

@@ -128,7 +128,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
-                                url:"${contextPath}/validation/cronexp",
+                                url:"${contextPath}/verify/exp",
                                 data:{
                                     "cronType":cronType,
                                     "cronExp":cronExp
@@ -222,7 +222,7 @@
                     return false;
                 }
                 $.ajax({
-                    url:"${contextPath}/validation/cronexp",
+                    url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
                         "cronExp":cronExp
