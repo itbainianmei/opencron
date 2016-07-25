@@ -32,7 +32,7 @@
             list-style: outside none none;
             margin-top: -27px;
             margin-bottom: 29px;
-            margin-left: 60px;
+            margin-left: 100px;
             padding: 4px 15px;
             width: 350px;
         }

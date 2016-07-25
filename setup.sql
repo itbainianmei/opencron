@@ -15,7 +15,6 @@ CREATE TABLE config (
   aeskey varchar(16) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-
 LOCK TABLES config WRITE;
 INSERT INTO config VALUES (1,'you_mail_name','smtp.exmail.qq.com',465,'your_mail_pwd','http://your_url',30,'',NULL);
 UNLOCK TABLES;
@@ -59,7 +58,6 @@ CREATE TABLE log (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 
-
 DROP TABLE IF EXISTS monitor;
 CREATE TABLE monitor (
   monitorId int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -71,7 +69,6 @@ CREATE TABLE monitor (
   memFree bigint(10) DEFAULT NULL,
   monitTime datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
-
 
 
 DROP TABLE IF EXISTS record;
