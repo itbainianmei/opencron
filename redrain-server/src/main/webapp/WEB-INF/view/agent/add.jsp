@@ -47,8 +47,6 @@
             return false;
         }
 
-
-
         var warning = $('input[type="radio"][name="warning"]:checked').val();
         if (warning == 1){
             if (!$("#mobiles").val()){
@@ -85,6 +83,7 @@
                     $.ajax({
                         url:"${contextPath}/verify/ping",
                         data:{
+                            "proxy":proxy||0,
                             "proxyId":proxyId,
                             "ip":ip,
                             "port":port,
@@ -150,6 +149,7 @@
         $.ajax({
             url:"${contextPath}/verify/ping",
             data:{
+                "proxy":proxy||0,
                 "proxyId":proxyId,
                 "ip":ip,
                 "port":port,

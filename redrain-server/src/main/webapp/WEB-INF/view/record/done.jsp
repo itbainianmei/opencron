@@ -85,15 +85,15 @@
             }
         }
 
-        function showFatherRedo(id,flowGroup,length){
+        function showFatherRedo(id,groupId,length){
             var open = $("#record_"+id).attr("childOpen");
             if (open == "off"){
                 $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
                 $(".child"+id).show();
                 $("#record_"+id).attr("childOpen","on");
-                var row = $("#row_"+flowGroup).attr("rowspan");
-                $("#row_"+flowGroup).attr("rowspan",parseInt(row) + parseInt(length));
+                var row = $("#row_"+groupId).attr("rowspan");
+                $("#row_"+groupId).attr("rowspan",parseInt(row) + parseInt(length));
                 $(".redoIndex_"+id).show();
                 $(".name_"+id+"_1").hide();
                 $(".name_"+id+"_2").show();
@@ -102,23 +102,23 @@
                 $(".redoGroup"+id).css("background-color","");
                 $(".child"+id).hide();
                 $("#record_"+id).attr("childOpen","off");
-                var row = $("#row_"+flowGroup).attr("rowspan");
-                $("#row_"+flowGroup).attr("rowspan",parseInt(row) - parseInt(length));
+                var row = $("#row_"+groupId).attr("rowspan");
+                $("#row_"+groupId).attr("rowspan",parseInt(row) - parseInt(length));
                 $(".redoIndex_"+id).hide();
                 $(".name_"+id+"_1").show();
                 $(".name_"+id+"_2").hide();
             }
         }
 
-        function showChildRedo(id,flowGroup,length){
+        function showChildRedo(id,groupId,length){
             var open = $("#record_"+id).attr("childOpen");
             if (open == "off"){
                 $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
                 $(".child"+id).show();
                 $("#record_"+id).attr("childOpen","on");
-                var row = $("#row_"+flowGroup).attr("rowspan");
-                $("#row_"+flowGroup).attr("rowspan",parseInt(row) + parseInt(length));
+                var row = $("#row_"+groupId).attr("rowspan");
+                $("#row_"+groupId).attr("rowspan",parseInt(row) + parseInt(length));
                 $(".redoIndex_"+id).show();
                 $(".name_"+id+"_1").hide();
                 $(".name_"+id+"_2").show();
@@ -127,8 +127,8 @@
                 $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.1)");
                 $(".child"+id).hide();
                 $("#record_"+id).attr("childOpen","off");
-                var row = $("#row_"+flowGroup).attr("rowspan");
-                $("#row_"+flowGroup).attr("rowspan",parseInt(row) - parseInt(length));
+                var row = $("#row_"+groupId).attr("rowspan");
+                $("#row_"+groupId).attr("rowspan",parseInt(row) - parseInt(length));
                 $(".redoIndex_"+id).hide();
                 $(".name_"+id+"_1").show();
                 $(".name_"+id+"_2").hide();
@@ -248,7 +248,7 @@
             <tbody>
             <%--父记录--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
-                <tr <c:if test="${r.category eq 1}">class="flowRecord${r.flowGroup} redoGroup${r.recordId}"</c:if>
+                <tr <c:if test="${r.category eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
                     <c:if test="${r.category eq 0}">class="redoGroup${r.recordId}"</c:if>>
                     <c:if test="${r.category eq 0}">
                         <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
@@ -265,7 +265,7 @@
                     </c:if>
                     <c:if test="${r.category eq 1}">
                         <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
-                        <td style="display: none;" class="name_${r.recordId}_2" id="row_${r.flowGroup}" constant="${fn:length(r.childJob)+1}" rowspan="${fn:length(r.childJob)+1}">
+                        <td style="display: none;" class="name_${r.recordId}_2" id="row_${r.groupId}" constant="${fn:length(r.childJob)+1}" rowspan="${fn:length(r.childJob)+1}">
                             <center>
                                     ${r.jobName}
                                 <c:if test="${r.redoCount ne 0}">
@@ -316,12 +316,12 @@
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                 <c:if test="${r.category eq 1 and r.childJob ne null}">
-                                    <a href="#" title="流程任务" id="recordFlow_${r.recordId}" childOpen="off" onclick="showChildFlow(${r.recordId},'${r.flowGroup}')">
+                                    <a href="#" title="流程任务" id="recordFlow_${r.recordId}" childOpen="off" onclick="showChildFlow(${r.recordId},'${r.groupId}')">
                                         <i aria-hidden="true" class="fa fa-angle-double-down" style="font-size:15px;" id="iconFlow${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <c:if test="${r.redoCount ne 0}">
-                                    <a href="#" title="重跑记录" id="record_${r.recordId}" childOpen="off" onclick="showFatherRedo('${r.recordId}','${r.flowGroup}','${fn:length(r.childRecord)}')">
+                                    <a href="#" title="重跑记录" id="record_${r.recordId}" childOpen="off" onclick="showFatherRedo('${r.recordId}','${r.groupId}','${fn:length(r.childRecord)}')">
                                         <i aria-hidden="true" class="fa fa-chevron-down" id="icon${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
@@ -372,7 +372,7 @@
                 <c:if test="${r.category eq 1}">
                     <c:forEach var="t" items="${r.childJob}" varStatus="index">
 
-                        <tr class="childFlow${r.recordId} flowRecord${r.flowGroup} redoGroup${t.recordId}" style="display: none;">
+                        <tr class="childFlow${r.recordId} flowRecord${r.groupId} redoGroup${t.recordId}" style="display: none;">
                             <td>${t.agentName}</td>
                             <td>
                                 <c:if test="${t.success eq 1}">
@@ -398,7 +398,7 @@
                                 <center>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                         <c:if test="${t.redoCount ne 0}">
-                                            <a class="openChild${r.recordId}" href="#" title="重跑记录" id="record_${t.recordId}" childOpen="off" onclick="showChildRedo('${t.recordId}','${t.flowGroup}','${fn:length(t.childRecord)}')">
+                                            <a class="openChild${r.recordId}" href="#" title="重跑记录" id="record_${t.recordId}" childOpen="off" onclick="showChildRedo('${t.recordId}','${t.groupId}','${fn:length(t.childRecord)}')">
                                                 <i aria-hidden="true" class="fa fa-chevron-down iconChild${r.recordId}" id="icon${t.recordId}"></i>
                                             </a>&nbsp;&nbsp;
                                         </c:if>

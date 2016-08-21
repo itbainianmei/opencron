@@ -54,7 +54,7 @@ public class Record implements Serializable {
      */
     private Long parentId;
 
-    private Long flowGroup;
+    private Long groupId;
 
     /**
      * 流程任务的执行序号
@@ -184,12 +184,12 @@ public class Record implements Serializable {
         this.pid = pid;
     }
 
-    public Long getFlowGroup() {
-        return flowGroup;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setFlowGroup(Long flowGroup) {
-        this.flowGroup = flowGroup;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public Integer getCategory() {

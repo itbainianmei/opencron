@@ -126,7 +126,7 @@ public class JobController {
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
         } else { //流程任务
-            Map<String, Object[]> map = request.getParameterMap();
+            Map<String, String[]> map = request.getParameterMap();
             Object[] jobName = map.get("child.jobName");
             Object[] jobId = map.get("child.jobId");
             Object[] agentId = map.get("child.agentId");

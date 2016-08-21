@@ -17,7 +17,7 @@
             <i class="icon" style="font-size: 28px;color:rgba(255,255,255,0.75)">${m.type eq 0?"&#61880;":"&#61704;"}</i>
         </div>
         <div class="media-body">
-            <small class="text-muted">cronjob告警 - <fmt:formatDate value="${m.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></small><br>
+            <small class="text-muted">redrain告警 - <fmt:formatDate value="${m.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></small><br>
             <a class="t-overflow" href="${contextPath}/notice/detail?logId=${m.logId}">${m.message}</a>
         </div>
     </div>

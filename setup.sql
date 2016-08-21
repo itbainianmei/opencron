@@ -86,7 +86,7 @@ CREATE TABLE record (
   redoCount int(11) DEFAULT NULL COMMENT '当前第几次自动重试执行',
   status tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
   pid varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
-  flowGroup bigint(10) DEFAULT NULL,
+  groupId bigint(10) DEFAULT NULL,
   flowNum bigint(10) DEFAULT NULL,
   category smallint(2) DEFAULT '0' COMMENT '0:单作业,1:流程作业'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;

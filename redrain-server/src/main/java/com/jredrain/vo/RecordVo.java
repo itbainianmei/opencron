@@ -41,7 +41,7 @@ public class RecordVo implements Serializable {
     private String message;
     private Integer redoCount;
     private Integer status;
-    private Long flowGroup;
+    private Long groupId;
 
     private String cronExp;
     private Long operateId;
@@ -161,12 +161,12 @@ public class RecordVo implements Serializable {
         this.status = status;
     }
 
-    public Long getFlowGroup() {
-        return flowGroup;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setFlowGroup(Long flowGroup) {
-        this.flowGroup = flowGroup;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public String getCronExp() {

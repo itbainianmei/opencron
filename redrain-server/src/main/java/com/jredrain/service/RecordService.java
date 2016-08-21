@@ -47,7 +47,7 @@ public class RecordService {
 
 
     public Page query(HttpSession session, Page<RecordVo> page, RecordVo recordVo, String queryTime, boolean status) {
-        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.category,r.flowGroup,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId "
+        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.category,r.groupId,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId "
                 + " LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId AND CASE r.category WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3)" : "(0,2)");
         if (recordVo != null) {
             if (notEmpty(recordVo.getSuccess())) {
@@ -100,8 +100,8 @@ public class RecordService {
                     parentRecord.setSuccess(RedRain.ResultStatus.FAILED.getStatus());
                     parentRecord.setChildRecord(records);
                 }
-                sql = "SELECT r.recordId,r.jobId,r.category,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.flowGroup,t.jobName,t.lastFlag,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u on t.operateId = u.userId WHERE r.parentId IS NULL AND r.flowGroup = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
-                List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getFlowGroup());
+                sql = "SELECT r.recordId,r.jobId,r.category,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastFlag,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u on t.operateId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
+                List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getGroupId());
                 if (notEmpty(childJobs)) {
                     parentRecord.setChildJob(childJobs);
                     for (RecordVo childJob : parentRecord.getChildJob()) {
@@ -183,12 +183,12 @@ public class RecordService {
 
     @Transactional(readOnly = false)
     public void flowJobDone(Record record) {
-        String sql = "update record set status=? where flowGroup=?";
-        queryDao.createSQLQuery(sql, RedRain.RunStatus.DONE.getStatus(), record.getFlowGroup()).executeUpdate();
+        String sql = "update record set status=? where groupId=?";
+        queryDao.createSQLQuery(sql, RedRain.RunStatus.DONE.getStatus(), record.getGroupId()).executeUpdate();
     }
 
     public List<Record> getRunningFlowJob(Long recordId) {
-        String sql = "SELECT r.* FROM record r INNER JOIN (SELECT flowGroup FROM record WHERE recordId=?) AS t WHERE r.flowGroup = t.flowGroup";
+        String sql = "SELECT r.* FROM record r INNER JOIN (SELECT groupId FROM record WHERE recordId=?) AS t WHERE r.groupId = t.groupId";
         return queryDao.sqlQuery(Record.class, sql, recordId);
     }
 

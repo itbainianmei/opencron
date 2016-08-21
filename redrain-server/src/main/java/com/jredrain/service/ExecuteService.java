@@ -84,7 +84,7 @@ public class ExecuteService implements Job {
         //流程作业..
         if ( job.getCategory().equals(JobCategory.FLOW.getCode()) ) {
 
-            final long flowGroup = System.currentTimeMillis();//分配一个流程组Id
+            final long groupId = System.nanoTime()+Math.abs(new java.util.Random().nextInt());//分配一个流程组Id
             /**
              * 一个指定大小的job队列
              */
@@ -104,7 +104,7 @@ public class ExecuteService implements Job {
                             //如果子任务是并行(则启动多线程,所有子任务同时执行)
                             Thread thread = new Thread(new Runnable() {
                                 public void run() {
-                                    result.add(executeFlowJob(jobVo, flowGroup));
+                                    result.add(executeFlowJob(jobVo, groupId));
                                 }
                             });
                             thread.start();
@@ -123,7 +123,7 @@ public class ExecuteService implements Job {
                 return !result.contains(false);
             }else {//串行,按顺序执行
                 for (JobVo jobVo : jobQueue) {
-                    if (!executeFlowJob(jobVo, flowGroup)) {
+                    if (!executeFlowJob(jobVo, groupId)) {
                         return false;
                     }
                 }
@@ -170,10 +170,10 @@ public class ExecuteService implements Job {
     }
 
 
-    private boolean executeFlowJob(JobVo job,long flowGroup) {
+    private boolean executeFlowJob(JobVo job,long groupId) {
         Record record = new Record(job);
         record.setRedoCount(0L);
-        record.setFlowGroup(flowGroup);//组Id
+        record.setGroupId(groupId);//组Id
         record.setCategory(JobCategory.FLOW.getCode());//流程任务
         record.setFlowNum(job.getFlowNum());
 
@@ -259,7 +259,7 @@ public class ExecuteService implements Job {
         job.setExecType(ExecType.RERUN.getStatus());
         Record record = new Record(job);
         record.setParentId(parentRecord.getRecordId());
-        record.setFlowGroup(parentRecord.getFlowGroup());
+        record.setGroupId(parentRecord.getGroupId());
         record.setCategory(category.getCode());
 
         record = recordService.save(record);

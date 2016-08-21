@@ -206,6 +206,11 @@
             alert("请填写执行器名称!");
             return false;
         }
+        var proxy = $('input[type="radio"][name="proxy"]:checked').val();
+        if (!proxy){
+            alert("页面异常，请刷新重试!");
+            return false;
+        }
         var ip = $("#ip").val();
         if (!ip){
             alert("请填写机器IP!");
@@ -266,7 +271,7 @@
                         $.ajax({
                             url:"${contextPath}/verify/ping",
                             data:{
-                                "proxy":$("#proxy").val(),
+                                "proxy":proxy,
                                 "proxyId":$("#proxyAgent").val(),
                                 "ip":ip,
                                 "port":port,
@@ -423,6 +428,11 @@
             alert("请填写机器IP!");
             return false;
         }
+        var proxy = $('input[type="radio"][name="proxy"]:checked').val();
+        if (!proxy){
+            alert("页面异常，请刷新重试!");
+            return false;
+        }
         var password = $("#password").val();
         if (!password){
             alert("页面异常，请刷新重试！");
@@ -447,6 +457,7 @@
         $.ajax({
             url:"${contextPath}/verify/ping",
             data:{
+                "proxy":proxy,
                 "agentId":$("#agentId").val(),
                 "ip":ip,
                 "port":port,
@@ -676,31 +687,25 @@
                             </div>
                         </div>
 
-                        <c:if test="${empty page.result}">
-                            <!--默认为直连-->
-                            <input type="hidden" name="proxy" id="proxy" value="0">
-                        </c:if>
-                        <c:if test="${!empty page.result}">
-                            <div class="form-group">
-                                <label class="col-lab control-label" title="执行器通信不正常时是否发信息报警">连接类型：</label>&nbsp;&nbsp;
-                                <input type="hidden" id="proxy"/>
-                                <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio"  onclick="hideProxy()" name="proxy" value="0" id="proxy0">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio"  onclick="showProxy()" name="proxy" value="1" id="proxy1">代理&nbsp;&nbsp;&nbsp;</label>
-                            </div>
 
-                            <div class="form-group proxy" style="display: none;margin-top: 20px;">
-                                <label for="proxyAgent" class="col-lab control-label">代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
-                                <div class="col-md-9">
-                                <select id="proxyAgent" name="proxyAgent" class="form-control">
-                                    <c:forEach var="d" items="${page.result}">
-                                        <c:if test="${d.proxy eq 0}">
-                                            <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
-                                        </c:if>
-                                    </c:forEach>
-                                </select>
-                                </div>
-                            </div><br>
-                        </c:if>
+                        <div class="form-group">
+                            <label class="col-lab control-label" title="执行器通信不正常时是否发信息报警">连接类型：</label>&nbsp;&nbsp;
+                            <label  onclick="hideProxy()" for="proxy0" class="radio-label"><input type="radio"  onclick="hideProxy()" name="proxy" value="0" id="proxy0">直连</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <label  onclick="showProxy()" for="proxy1" class="radio-label"><input type="radio"  onclick="showProxy()" name="proxy" value="1" id="proxy1">代理&nbsp;&nbsp;&nbsp;</label>
+                        </div>
+
+                        <div class="form-group proxy" style="display: none;margin-top: 20px;">
+                            <label for="proxyAgent" class="col-lab control-label">代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
+                            <div class="col-md-9">
+                            <select id="proxyAgent" name="proxyAgent" class="form-control">
+                                <c:forEach var="d" items="${page.result}">
+                                    <c:if test="${d.proxy eq 0}">
+                                        <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
+                                    </c:if>
+                                </c:forEach>
+                            </select>
+                            </div>
+                        </div><br>
 
                         <div class="form-group">
                             <label for="port" class="col-lab control-label" title="执行器端口号只能是数字,且不超过4位">端&nbsp;&nbsp;口&nbsp;&nbsp;号：</label>

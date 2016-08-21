@@ -107,7 +107,7 @@
         <c:if test="${log.type eq 0}">
                 <div class="email">
                     <div class="email-title">
-                        <h4 style="color: #000000;font-size: 12px;font-weight: 900">cronjob监控告警</h4>
+                        <h4 style="color: #000000;font-size: 12px;font-weight: 900">redrain监控告警</h4>
                         <div>
                             <span style="color: #808080;font-size: 12px;">发件人：&nbsp;&nbsp;${sender}</span><br>
                             <span style="color: #808080;font-size: 12px;">时&nbsp;&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;<fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span><br>
