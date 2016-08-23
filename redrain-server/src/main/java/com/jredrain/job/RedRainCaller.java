@@ -77,7 +77,7 @@ public class RedRainCaller {
             request.setParams(proxyParams);
         }
 
-        TTransport transport = null;
+        TTransport transport;
         /**
          * ping的超时设置为5毫秒,其他默认
          */

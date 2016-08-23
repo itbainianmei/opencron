@@ -54,7 +54,6 @@ public class AgentService {
     @Autowired
     private SchedulerService schedulerService;
 
-
     @Autowired
     private MemcacheCache memcacheCache;
 
@@ -113,7 +112,7 @@ public class AgentService {
              */
             List<JobVo> jobVos = jobService.getJobVoByAgentId(agent, RedRain.ExecType.AUTO, RedRain.CronType.QUARTZ);
             try {
-                schedulerService.addOrModify(jobVos,this.executeService);
+                schedulerService.put(jobVos,this.executeService);
             } catch (SchedulerException e) {
                 /**
                  * 创新任务列表失败,抛出异常,整个事务回滚...
