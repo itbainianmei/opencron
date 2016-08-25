@@ -279,7 +279,7 @@
                             },
                             success:function(data){
                                 if (data == "success"){
-                                    canSave(id,name,port,warning,mobiles,email);
+                                    canSave(proxy,id,name,port,warning,mobiles,email);
                                     return false;
                                 }else {
                                     alert("通信失败!请检查IP和端口号");
@@ -290,7 +290,7 @@
                             }
                         });
                     }else {
-                        canSave(id,name,port,warning,mobiles,email);
+                        canSave(proxy,id,name,port,warning,mobiles,email);
                         return false;
                     }
                 }else {
@@ -305,11 +305,11 @@
         });
     }
 
-    function canSave(id,name,port,warning,mobiles,email){
+    function canSave(proxy,id,name,port,warning,mobiles,email){
         $.ajax({
             url:"${contextPath}/agent/edit",
             data:{
-                "proxy":$("#proxy").val(),
+                "proxy":proxy,
                 "proxyAgent":$("#proxyAgent").val(),
                 "agentId":id,
                 "name":name,
@@ -356,7 +356,7 @@
                 }
             },
             error : function() {
-                alert("网络繁忙请刷新页面重试!11");
+                alert("网络繁忙请刷新页面重试!");
             }
         });
     }
@@ -458,7 +458,7 @@
             url:"${contextPath}/verify/ping",
             data:{
                 "proxy":proxy,
-                "agentId":$("#agentId").val(),
+                "proxyId":$("#proxyAgent").val(),
                 "ip":ip,
                 "port":port,
                 "password":password
