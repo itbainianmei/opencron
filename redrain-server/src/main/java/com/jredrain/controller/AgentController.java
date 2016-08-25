@@ -76,7 +76,7 @@ public class AgentController {
         }
 
         //直联
-        if (agent.getProxy()== RedRain.ConnType.CONN.getType()) {
+        if (RedRain.ConnType.CONN.getType().equals(agent.getProxy())) {
             agent.setProxyAgent(null);
         }
 
@@ -99,7 +99,7 @@ public class AgentController {
         Agent agent1 = agentService.getAgent(agent.getAgentId());
         agent1.setName(agent.getName());
         agent1.setProxy(agent.getProxy());
-        if (agent.getPort()==RedRain.ConnType.CONN.getType()) {
+        if (RedRain.ConnType.CONN.getType().equals(agent.getProxy())) {
             agent1.setProxyAgent(null);
         }else {
             agent1.setProxyAgent(agent.getProxyAgent());
