@@ -148,17 +148,18 @@ public final class SchedulerService {
         cronJobCollector.removeTask(job.getJobId());
         remove(job.getJobId());
 
-        //quartz表达式
-        if (job.getCronType().equals(RedRain.CronType.QUARTZ.getType())) {
-            if ( RedRain.ExecType.AUTO.getStatus().equals(job.getExecType()) ) {//自动执行
+        //自动执行
+        if ( RedRain.ExecType.AUTO.getStatus().equals(job.getExecType()) ){
+            if (RedRain.CronType.QUARTZ.getType().equals(job.getCronType())){
+                /**
+                 * 将作业加到quartz任务计划
+                 */
                 put(job, executeService);
-            }
-        } else {
-            /**
-             * 将作业加到crontab任务计划
-             */
-            if ( RedRain.ExecType.AUTO.getStatus().equals(job.getExecType()) ) {//自动执行
-                cronJobCollector.addTask(job); //手动执行
+            }else {
+                /**
+                 * 将作业加到crontab任务计划
+                 */
+                cronJobCollector.addTask(job);
             }
         }
     }
