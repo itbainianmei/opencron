@@ -590,12 +590,12 @@
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td>
                         <c:if test="${r.category eq 0}">
-                            <a href="#" title="编辑命令" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
-                                ${r.command}
+                            <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
+                                    ${ben:substr(r.command, 0, 50,"..." )}
                             </a>
                         </c:if>
                         <c:if test="${r.category eq 1}">
-                            ${r.command}
+                            ${ben:substr(r.command, 0, 50,"..." )}
                         </c:if>
                     </td>
                     <td id="cronType_${r.jobId}">
@@ -649,7 +649,7 @@
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
-                            <td>${r.command}</td>
+                            <td>${ben:substr(r.command, 0, 50,"..." )}</td>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>
                                 <c:if test="${c.cronType eq 1}">quartz</c:if>
