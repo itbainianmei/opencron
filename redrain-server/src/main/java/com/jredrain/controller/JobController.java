@@ -212,6 +212,16 @@ public class JobController {
         WebUtils.writeHtml(response, "success");
     }
 
+    @RequestMapping("/editcmd")
+    public void editCmd(HttpServletResponse response,Long jobId, String command) throws SchedulerException {
+        Job jober = jobService.getJob(jobId);
+        jober.setCommand(command);
+        jober.setUpdateTime(new Date());
+        jobService.addOrUpdate(jober);
+        schedulerService.syncJobTigger(jober.getJobId(),executeService);
+        WebUtils.writeHtml(response, "success");
+    }
+
     @RequestMapping("/canrun")
     public void canRun(Long id, HttpServletResponse response) {
         WebUtils.writeJson(response, recordService.isRunning(id).toString());

@@ -422,6 +422,73 @@
             }
         }
 
+        function editCmd(id){
+            $.ajax({
+                url:"${contextPath}/job/canrun",
+                data:{"id":id},
+                success:function(data){
+                    if ( !eval("("+data+")") ){
+
+                        $.ajax({
+                            url:"${contextPath}/job/editsingle",
+                            data:{"id":id},
+                            success : function(obj) {
+                                $("#cmdform")[0].reset();
+                                if(obj!=null){
+                                    $("#cmdId").val(obj.jobId);
+                                    $("#command").val(obj.command);
+                                    $('#cmdModal').modal('show');
+                                }
+                            },
+                            error : function() {
+                                alert("网络繁忙请刷新页面重试!");
+                            }
+                        });
+                    } else {
+                        alert("当前作业正在运行中,暂时不能编辑!");
+                    }
+                },
+                error : function() {
+                    alert("网络异常，请刷新页面重试!");
+                }
+            });
+        }
+
+        function saveCmd(){
+            var jobId = $("#cmdId").val();
+            if (!jobId){
+                alert("页面异常，请刷新重试!");
+                return false;
+            }
+
+            var command= $("#command").val();
+            if (!command){
+                alert("执行命令不能为空!");
+                return false;
+            }
+
+            $.ajax({
+                url:"${contextPath}/job/editcmd",
+                data:{
+                    "jobId":jobId,
+                    "command":command
+                },
+                success:function(data){
+                    if (data == "success"){
+                        $('#cmdModal').modal('hide');
+                        alertMsg("修改成功");
+                        $("#command_"+jobId).html(command);
+                    }else {
+                        alert("修改失败");
+                    }
+                },
+                error : function() {
+                    alert("网络繁忙请刷新页面重试!");
+                    return false;
+                }
+            });
+        }
+
     </script>
 </head>
 
@@ -465,7 +532,7 @@
                     </c:forEach>
                 </select>
                 &nbsp;&nbsp;&nbsp;
-                <label for="execType">模式：</label>
+                <label for="execType">运行模式：</label>
                 <select id="execType" name="execType" class="select-self" style="width: 80px;">
                     <option value="">全部</option>
                     <option value="1" ${execType eq 1 ? 'selected' : ''}>手动</option>
@@ -488,14 +555,13 @@
             <thead>
             <tr>
                 <th>名称</th>
-                <th>类型</th>
                 <th>执行器</th>
                 <th>作业人</th>
+                <th>执行命令</th>
                 <th>规则类型</th>
+                <th>作业类型</th>
                 <th>时间规则</th>
-                <th>模式</th>
-                <th>重跑</th>
-                <th>重跑次数</th>
+                <th>运行模式</th>
                 <th><center>
                     <i class="icon-time bigger-110 hidden-480"></i>
                     操作
@@ -508,7 +574,6 @@
                 <tr class="trGroup${r.flowId}">
                     <c:if test="${r.category eq 0}">
                         <td id="jobName_${r.jobId}">${r.jobName}</td>
-                        <td>单一作业</td>
                     </c:if>
                     <c:if test="${r.category eq 1}">
                         <td  class="name_${r.flowId}_1">${r.jobName}</td>
@@ -519,25 +584,33 @@
 				<i aria-hidden="true" style="font-size:14px" class="fa fa-arrow-down"></i></div>${c.jobName}
                             </c:forEach>
                         </td>
-                        <td>流程作业</td>
                     </c:if>
                     <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
+                    <td>
+                        <c:if test="${r.category eq 0}">
+                            <a href="#" title="编辑命令" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
+                                ${r.command}
+                            </a>
+                        </c:if>
+                        <c:if test="${r.category eq 1}">
+                            ${r.command}
+                        </c:if>
+                    </td>
                     <td id="cronType_${r.jobId}">
                         <c:if test="${r.cronType eq 0}">crontab</c:if>
                         <c:if test="${r.cronType eq 1}">quartz</c:if>
+                    </td>
+                    <td>
+                        <c:if test="${r.category eq 0}">单一作业</c:if>
+                        <c:if test="${r.category eq 1}">流程作业</c:if>
                     </td>
                     <td id="cronExp_${r.jobId}">${r.cronExp}</td>
                     <td id="execType_${r.jobId}">
                         <c:if test="${r.execType eq 1}"><font color="red">手动</font></c:if>
                         <c:if test="${r.execType eq 0}"><font color="green">自动</font></c:if>
                     </td>
-                    <td id="redo_${r.jobId}">
-                        <c:if test="${r.redo eq 0}"><font color="green">否</font></c:if>
-                        <c:if test="${r.redo eq 1}"><font color="red">是</font></c:if>
-                    </td>
-                    <td id="runCount_${r.jobId}">${r.runCount}</td>
                     <td >
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
@@ -573,24 +646,21 @@
                 <c:if test="${r.category eq 1}">
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
-                            <td>流程作业</td>
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
+                            <td>${r.command}</td>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>
                                 <c:if test="${c.cronType eq 1}">quartz</c:if>
                             </td>
+                            <td>流程作业</td>
                             <td>${c.cronExp}</td>
                             <td>
                                 <c:if test="${c.execType eq 1}"><font color="red">手动</font></c:if>
                                 <c:if test="${c.execType eq 0}"><font color="green">自动</font></c:if>
                             </td>
-                            <td>
-                                <c:if test="${c.redo eq 0}"><font color="green">否</font></c:if>
-                                <c:if test="${c.redo eq 1}"><font color="red">是</font></c:if>
-                            </td>
-                            <td>${c.runCount}</td>
+
                             <td>
                                 <center>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
@@ -613,66 +683,96 @@
 
     <!-- 修改作业弹窗 -->
     <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4>修改作业</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form" id="jobform">
+                    <input type="hidden" id="id">
+                    <input type="hidden" name="agentId" id="magentId">
+                    <div class="form-group">
+                        <label for="agent" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="agent" readonly>&nbsp;
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="jobName" class="col-lab control-label" title="作业名称必填">作业名称：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lab control-label" title="1.手动模式: 管理员手动执行 2.自动模式: 执行器自动执行">运行模式：</label>&nbsp;&nbsp;
+                        <label for="execType1" onclick="hideCronExp()" class="radio-label"><input type="radio" name="execType" value="1" id="execType1">手动&nbsp;&nbsp;&nbsp;</label>
+                        <label for="execType0" onclick="showCronExp()" class="radio-label"><input type="radio" name="execType" value="0" id="execType0">自动</label>
+                    </div>
+                    <div class="form-group cronExpDiv">
+                        <label class="col-lab control-label" title="1.crontab: unix/linux的时间格式表达式&nbsp;&nbsp;2.quartz: quartz框架的时间格式表达式">规则类型：</label>&nbsp;&nbsp;
+                        <label for="cronType0" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="0" id="cronType0">crontab&nbsp;&nbsp;&nbsp;</label>
+                        <label for="cronType1" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="1" id="cronType1">quartz</label>
+                    </div><br>
+                    <div class="form-group cronExpDiv">
+                        <label for="cronExp" class="col-lab control-label" title="请采用对应类型的时间格式表达式">时间规则：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="cronExp"/>&nbsp;&nbsp;<label id="checkcronExp"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cmd" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
+                        <div class="col-md-9">
+                            <textarea class="form-control " id="cmd" name="cmd" style="height: 80px;"></textarea>&nbsp;
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lab control-label" title="作业失败后是否重新执行此作业">重新执行：</label>&nbsp;&nbsp;
+                        <label for="redo1" onclick="showCountDiv()" class="radio-label"><input type="radio" name="redo" value="1" id="redo1"> 是&nbsp;&nbsp;&nbsp;</label>
+                        <label for="redo0" onclick="hideCountDiv()" class="radio-label"><input type="radio" name="redo" value="0" id="redo0"> 否</label>
+                    </div><br>
+                    <div class="form-group countDiv">
+                        <label for="runCount" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="runCount"/>&nbsp;
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comment" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
+                        <div class="col-md-9">
+                            <textarea style="height: 50px;" name="comment" id="comment" class="form-control"></textarea>&nbsp;
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <center>
+                    <button type="button" class="btn btn-sm"  onclick="save()">保存</button>&nbsp;&nbsp;
+                    <button type="button" class="btn btn-sm"  data-dismiss="modal">关闭</button>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="modal fade" id="cmdModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4>修改作业</h4>
+                    <h4>修改命令</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" role="form" id="jobform">
-                        <input type="hidden" id="id">
-                        <input type="hidden" name="agentId" id="magentId">
-                        <div class="form-group">
-                            <label for="agent" class="col-lab control-label" title="要执行此作业的机器名称和IP地址">执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="agent" readonly>&nbsp;
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="jobName" class="col-lab control-label" title="作业名称必填">作业名称：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="jobName">&nbsp;&nbsp;<label id="checkJobName"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-lab control-label" title="1.手动模式: 管理员手动执行 2.自动模式: 执行器自动执行">运行模式：</label>&nbsp;&nbsp;
-                            <label for="execType1" onclick="hideCronExp()" class="radio-label"><input type="radio" name="execType" value="1" id="execType1">手动&nbsp;&nbsp;&nbsp;</label>
-                            <label for="execType0" onclick="showCronExp()" class="radio-label"><input type="radio" name="execType" value="0" id="execType0">自动</label>
-                        </div>
-                        <div class="form-group cronExpDiv">
-                            <label class="col-lab control-label" title="1.crontab: unix/linux的时间格式表达式&nbsp;&nbsp;2.quartz: quartz框架的时间格式表达式">规则类型：</label>&nbsp;&nbsp;
-                            <label for="cronType0" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="0" id="cronType0">crontab&nbsp;&nbsp;&nbsp;</label>
-                            <label for="cronType1" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="1" id="cronType1">quartz</label>
-                        </div><br>
-                        <div class="form-group cronExpDiv">
-                            <label for="cronExp" class="col-lab control-label" title="请采用对应类型的时间格式表达式">时间规则：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="cronExp"/>&nbsp;&nbsp;<label id="checkcronExp"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="cmd" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
-                            <div class="col-md-9">
-                                <textarea class="form-control " id="cmd" name="cmd" style="height: 80px;"></textarea>&nbsp;
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-lab control-label" title="作业失败后是否重新执行此作业">重新执行：</label>&nbsp;&nbsp;
-                            <label for="redo1" onclick="showCountDiv()" class="radio-label"><input type="radio" name="redo" value="1" id="redo1"> 是&nbsp;&nbsp;&nbsp;</label>
-                            <label for="redo0" onclick="hideCountDiv()" class="radio-label"><input type="radio" name="redo" value="0" id="redo0"> 否</label>
-                        </div><br>
-                        <div class="form-group countDiv">
-                            <label for="runCount" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="runCount"/>&nbsp;
-                            </div>
-                        </div>
+                    <form class="form-horizontal" role="form" id="cmdform">
+                        <input type="hidden" id="cmdId">
 
                         <div class="form-group">
-                            <label for="comment" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
+                            <label for="command" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
                             <div class="col-md-9">
-                                <textarea style="height: 50px;" name="comment" id="comment" class="form-control"></textarea>&nbsp;
+                                <textarea class="form-control " id="command" name="command" style="height: 120px;"></textarea>&nbsp;
                             </div>
                         </div>
 
@@ -680,7 +780,7 @@
                 </div>
                 <div class="modal-footer">
                     <center>
-                        <button type="button" class="btn btn-sm"  onclick="save()">保存</button>&nbsp;&nbsp;
+                        <button type="button" class="btn btn-sm"  onclick="saveCmd()">保存</button>&nbsp;&nbsp;
                         <button type="button" class="btn btn-sm"  data-dismiss="modal">关闭</button>
                     </center>
                 </div>
