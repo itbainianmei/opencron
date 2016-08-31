@@ -218,7 +218,7 @@ public class JobController {
         jober.setCommand(command);
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
-        schedulerService.syncJobTigger(jober.getJobId(),executeService);
+        schedulerService.syncJobTigger(RedRain.JobCategory.FLOW.getCode().equals(jober.getCategory()) ? jober.getFlowId() : jober.getJobId(),executeService);
         WebUtils.writeHtml(response, "success");
     }
 

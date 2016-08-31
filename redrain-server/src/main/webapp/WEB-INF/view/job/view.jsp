@@ -477,6 +477,10 @@
                     if (data == "success"){
                         $('#cmdModal').modal('hide');
                         alertMsg("修改成功");
+                        $("#command_"+jobId).attr("title",command);
+                        if(command.length > 50){
+                            command = command.substring(0,50)+"...";
+                        }
                         $("#command_"+jobId).html(command);
                     }else {
                         alert("修改失败");
@@ -589,14 +593,9 @@
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td>
-                        <c:if test="${r.category eq 0}">
-                            <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
-                                    ${ben:substr(r.command, 0, 50,"..." )}
-                            </a>
-                        </c:if>
-                        <c:if test="${r.category eq 1}">
-                            ${ben:substr(r.command, 0, 50,"..." )}
-                        </c:if>
+                        <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
+                                ${ben:substr(r.command, 0, 50,"..." )}
+                        </a>
                     </td>
                     <td id="cronType_${r.jobId}">
                         <c:if test="${r.cronType eq 0}">crontab</c:if>
@@ -649,7 +648,11 @@
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
-                            <td>${ben:substr(r.command, 0, 50,"..." )}</td>
+                            <td>
+                                <a href="#" title="${c.command}" onclick="editCmd('${c.jobId}')" id="command_${c.jobId}">
+                                        ${ben:substr(c.command, 0, 50,"..." )}
+                                </a>
+                            </td>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>
                                 <c:if test="${c.cronType eq 1}">quartz</c:if>
@@ -712,8 +715,8 @@
                     </div>
                     <div class="form-group cronExpDiv">
                         <label class="col-lab control-label" title="1.crontab: unix/linux的时间格式表达式&nbsp;&nbsp;2.quartz: quartz框架的时间格式表达式">规则类型：</label>&nbsp;&nbsp;
-                        <label for="cronType0" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="0" id="cronType0">crontab&nbsp;&nbsp;&nbsp;</label>
-                        <label for="cronType1" class="radio-label" class="radio-label"><input type="radio" name="cronType" value="1" id="cronType1">quartz</label>
+                        <label for="cronType0" class="radio-label"><input type="radio" name="cronType" value="0" id="cronType0">crontab&nbsp;&nbsp;&nbsp;</label>
+                        <label for="cronType1" class="radio-label"><input type="radio" name="cronType" value="1" id="cronType1">quartz</label>
                     </div><br>
                     <div class="form-group cronExpDiv">
                         <label for="cronExp" class="col-lab control-label" title="请采用对应类型的时间格式表达式">时间规则：</label>
