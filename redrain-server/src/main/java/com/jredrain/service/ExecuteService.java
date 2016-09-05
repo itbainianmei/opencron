@@ -88,7 +88,9 @@ public class ExecuteService implements Job {
             /**
              * 一个指定大小的job队列
              */
-            job.getChildren().add(0, job);
+            if (!job.getChildren().contains(job)){
+                job.getChildren().add(0, job);
+            }
             final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
 
             /**

@@ -76,6 +76,12 @@ public class JobController {
         if (notEmpty(job.getAgentId())) {
             model.addAttribute("agentId", job.getAgentId());
         }
+        if (notEmpty(job.getCronType())) {
+            model.addAttribute("cronType", job.getCronType());
+        }
+        if (notEmpty(job.getCategory())) {
+            model.addAttribute("category", job.getCategory());
+        }
         if (notEmpty(job.getExecType())) {
             model.addAttribute("execType", job.getExecType());
         }

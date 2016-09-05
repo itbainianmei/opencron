@@ -295,6 +295,8 @@
 
             $("#size").change(function(){doUrl();});
             $("#agentId").change(function(){doUrl();});
+            $("#cronType").change(function(){doUrl();});
+            $("#category").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
             $("#redo").change(function(){doUrl();});
             $("#jobName").focus(function(){
@@ -367,9 +369,11 @@
         function doUrl(){
             var pageSize = $("#size").val();
             var agentId = $("#agentId").val();
+            var cronType = $("#cronType").val();
+            var category = $("#category").val();
             var execType = $("#execType").val();
             var redo = $("#redo").val();
-            window.location.href = "${contextPath}/job/view?agentId="+agentId+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/job/view?agentId="+agentId+"&cronType="+cronType+"&category="+category+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
         }
 
         function executeJob(id){
@@ -535,6 +539,23 @@
                         <option value="${d.agentId}" ${d.agentId eq agentId ? 'selected' : ''}>${d.name}</option>
                     </c:forEach>
                 </select>
+
+                &nbsp;&nbsp;&nbsp;
+                <label for="cronType">规则类型：</label>
+                <select id="cronType" name="cronType" class="select-self" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="0" ${cronType eq 0 ? 'selected' : ''}>crontab</option>
+                    <option value="1" ${cronType eq 1 ? 'selected' : ''}>quartz</option>
+                </select>
+
+                &nbsp;&nbsp;&nbsp;
+                <label for="category">作业类型：</label>
+                <select id="category" name="category" class="select-self" style="width: 80px;">
+                    <option value="">全部</option>
+                    <option value="0" ${category eq 0 ? 'selected' : ''}>单一作业</option>
+                    <option value="1" ${category eq 1 ? 'selected' : ''}>流程作业</option>
+                </select>
+
                 &nbsp;&nbsp;&nbsp;
                 <label for="execType">运行模式：</label>
                 <select id="execType" name="execType" class="select-self" style="width: 80px;">

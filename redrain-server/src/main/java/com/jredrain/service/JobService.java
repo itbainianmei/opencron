@@ -121,6 +121,12 @@ public class JobService {
             if (notEmpty(job.getAgentId())) {
                 sql += " AND t.agentId=" + job.getAgentId();
             }
+            if (notEmpty(job.getCronType())) {
+                sql += " AND t.cronType=" + job.getCronType();
+            }
+            if (notEmpty(job.getCategory())) {
+                sql += " AND t.category=" + job.getCategory();
+            }
             if (notEmpty(job.getExecType())) {
                 sql += " AND t.execType=" + job.getExecType();
             }
