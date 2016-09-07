@@ -88,13 +88,9 @@ public class ExecuteService implements Job {
         switch (jobCategory) {
             case FLOW:
                 final long groupId = System.nanoTime()+Math.abs(new java.util.Random().nextInt());//分配一个流程组Id
-                /**
-                 * 一个指定大小的job队列
-                 */
-                if (!job.getChildren().contains(job)){
-                    job.getChildren().add(0, job);
-                }
-                final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
+                final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
+                jobQueue.add(job);
+                jobQueue.addAll(job.getChildren());
 
                 /**
                  * 并行任务
