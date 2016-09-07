@@ -60,7 +60,7 @@ public class RecordVo implements Serializable {
     /**
      * 任务类型(0:单一任务,1:流程任务)
      */
-    private Integer category;
+    private Integer jobType;
 
     private JobVo job;
 
@@ -241,12 +241,12 @@ public class RecordVo implements Serializable {
         this.parentId = parentId;
     }
 
-    public Integer getCategory() {
-        return category;
+    public Integer getJobType() {
+        return jobType;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setJobType(Integer jobType) {
+        this.jobType = jobType;
     }
 
     public JobVo getJob() {

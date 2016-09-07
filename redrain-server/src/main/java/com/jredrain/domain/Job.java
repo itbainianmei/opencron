@@ -48,7 +48,7 @@ public class Job implements Serializable {
      * 0:单一任务
      * 1:流程任务
      */
-    private Integer category;
+    private Integer jobType;
 
     private Long flowId;
 
@@ -156,12 +156,12 @@ public class Job implements Serializable {
         this.runCount = runCount;
     }
 
-    public Integer getCategory() {
-        return category;
+    public Integer getJobType() {
+        return jobType;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setJobType(Integer jobType) {
+        this.jobType = jobType;
     }
 
     public Long getFlowId() {

@@ -215,8 +215,8 @@
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                     <td>
-                        <c:if test="${r.category eq 1}">流程作业</c:if>
-                        <c:if test="${r.category eq 0}">单一作业</c:if>
+                        <c:if test="${r.jobType eq 1}">流程作业</c:if>
+                        <c:if test="${r.jobType eq 0}">单一作业</c:if>
                     </td>
                     <td><center>
                         <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">

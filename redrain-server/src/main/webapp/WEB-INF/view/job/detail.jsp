@@ -50,8 +50,8 @@
             <tr>
                 <td class="item"><i class="glyphicon  glyphicon-random"></i>&nbsp;作业类型：</td>
                 <td>
-                    <c:if test="${job.category eq 0}"><span class="span-self">单一作业</span></c:if>
-                    <c:if test="${job.category eq 1}"><span class="span-self">流程作业</span></c:if>
+                    <c:if test="${job.jobType eq 0}"><span class="span-self">单一作业</span></c:if>
+                    <c:if test="${job.jobType eq 1}"><span class="span-self">流程作业</span></c:if>
                 </td>
             </tr>
             <tr>
