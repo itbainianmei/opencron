@@ -47,12 +47,11 @@ public class AgentController {
     private AgentService agentService;
 
     @RequestMapping("/view")
-    public String queryAllAgent(HttpServletRequest request,Model model, Page page) {
+    public String queryDone(HttpServletRequest request, Page page) {
         agentService.getAgent(page);
         if (request.getParameter("refresh") != null) {
             return "/agent/refresh";
         }
-        model.addAttribute("connAgents",agentService.getAgentByConnType(RedRain.ConnType.CONN));
         return "/agent/view";
     }
 
@@ -64,8 +63,8 @@ public class AgentController {
 
     @RequestMapping("/addpage")
     public String addPage(Model model) {
-        List<Agent> agentList = agentService.getAgentByConnType(RedRain.ConnType.CONN);
-        model.addAttribute("connAgents",agentList);
+        List<Agent> agentList = agentService.getAll();
+        model.addAttribute("agents",agentList);
         return "/agent/add";
     }
 
