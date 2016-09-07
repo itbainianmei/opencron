@@ -82,93 +82,67 @@ public class ExecuteService implements Job {
     public boolean executeJob(final JobVo job) {
 
         //流程作业..
-        if ( job.getCategory().equals(JobCategory.FLOW.getCode()) ) {
 
-            final long groupId = System.nanoTime()+Math.abs(new java.util.Random().nextInt());//分配一个流程组Id
-            /**
-             * 一个指定大小的job队列
-             */
-            if (!job.getChildren().contains(job)){
-                job.getChildren().add(0, job);
-            }
-            final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
+        JobCategory jobCategory = JobCategory.getJobCategory(job.getCategory());
 
-            /**
-             * 并行任务
-             */
-            if ( RunModel.SAMETIME.getValue().equals(job.getRunModel()) ) {
-                final List<Boolean> result = new ArrayList<Boolean>(0);
-
-                Thread jobThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (final JobVo jobVo : jobQueue) {
-                            //如果子任务是并行(则启动多线程,所有子任务同时执行)
-                            Thread thread = new Thread(new Runnable() {
-                                public void run() {
-                                    result.add(executeFlowJob(jobVo, groupId));
-                                }
-                            });
-                            thread.start();
-                        }
-                    }
-                });
-                jobThread.start();
+        switch (jobCategory) {
+            case FLOW:
+                final long groupId = System.nanoTime()+Math.abs(new java.util.Random().nextInt());//分配一个流程组Id
                 /**
-                 * 确保所有的现场执行作业都全部执行完毕,拿到返回的执行结果。检查并行任务中有是否失败的...
+                 * 一个指定大小的job队列
                  */
-                try {
-                    jobThread.join();
-                } catch (InterruptedException e) {
-                    logger.error("[redrain] job rumModel with SAMETIME error:{}",e.getMessage());
+                if (!job.getChildren().contains(job)){
+                    job.getChildren().add(0, job);
                 }
-                return !result.contains(false);
-            }else {//串行,按顺序执行
-                for (JobVo jobVo : jobQueue) {
-                    if (!executeFlowJob(jobVo, groupId)) {
+                final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>(job.getChildren());
+
+                /**
+                 * 并行任务
+                 */
+
+                RunModel runModel = RunModel.getRunModel(job.getRunModel());
+                switch (runModel) {
+                    case SAMETIME:
+                        final List<Boolean> result = new ArrayList<Boolean>(0);
+                        Thread jobThread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (final JobVo jobVo : jobQueue) {
+                                    //如果子任务是并行(则启动多线程,所有子任务同时执行)
+                                    Thread thread = new Thread(new Runnable() {
+                                        public void run() {
+                                            result.add(executeFlowJob(jobVo, groupId));
+                                        }
+                                    });
+                                    thread.start();
+                                }
+                            }
+                        });
+                        jobThread.start();
+                        /**
+                         * 确保所有的现场执行作业都全部执行完毕,拿到返回的执行结果。检查并行任务中有是否失败的...
+                         */
+                        try {
+                            jobThread.join();
+                        } catch (InterruptedException e) {
+                            logger.error("[redrain] job rumModel with SAMETIME error:{}",e.getMessage());
+                        }
+                        return !result.contains(false);
+                    case SEQUENCE:
+                        for (JobVo jobVo : jobQueue) {
+                            if (!executeFlowJob(jobVo, groupId)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    default:
                         return false;
-                    }
                 }
-                return true;
-            }
+            case SINGLETON:
+                return executeSingletonJob(job);
+            default:
+                return false;
         }
-
-        /**
-         * 单一作业...
-         */
-        Record record = new Record(job);
-        record.setCategory(JobCategory.SINGLETON.getCode());//单一任务
-        //执行前先保存
-        record = recordService.save(record);
-
-        try {
-            //执行前先检测一次通信是否正常
-            checkPing(job, record);
-
-            Response response = responseToRecord(job, record);
-            /**
-             * 被kill
-             */
-            if ( StatusCode.KILL.getValue().equals(response.getExitCode()) ) {
-                record.setStatus(RunStatus.STOPED.getStatus());
-                record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
-            } else {//非kill
-                record.setStatus(RunStatus.DONE.getStatus());
-            }
-            recordService.update(record);
-
-            if (record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus())) {
-                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
-            } else {
-                noticeService.notice(job);
-                logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), record.getMessage());
-            }
-        } catch (Exception e) {
-            noticeService.notice(job);
-            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
-            logger.error(errorInfo, e);
-        }
-        return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
 
@@ -237,7 +211,7 @@ public class ExecuteService implements Job {
                     int index = 0;
                     boolean flag;
                     do {
-                        flag = reRunJob(red, job, JobCategory.FLOW);
+                        flag = reExecuteJob(red, job, JobCategory.FLOW);
                         ++index;
                     } while (!flag && index < job.getRunCount());
 
@@ -254,7 +228,44 @@ public class ExecuteService implements Job {
 
     }
 
-    public boolean reRunJob(final Record parentRecord, JobVo job, JobCategory category) {
+
+    private boolean executeSingletonJob(JobVo job) {
+        Record record = new Record(job);
+        record.setCategory(JobCategory.SINGLETON.getCode());//单一任务
+        //执行前先保存
+        record = recordService.save(record);
+
+        try {
+            //执行前先检测一次通信是否正常
+            checkPing(job, record);
+
+            Response response = responseToRecord(job, record);
+            /**
+             * 被kill
+             */
+            if ( StatusCode.KILL.getValue().equals(response.getExitCode()) ) {
+                record.setStatus(RunStatus.STOPED.getStatus());
+                record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
+            } else {//非kill
+                record.setStatus(RunStatus.DONE.getStatus());
+            }
+            recordService.update(record);
+
+            if (record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus())) {
+                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
+            } else {
+                noticeService.notice(job);
+                logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), record.getMessage());
+            }
+        } catch (Exception e) {
+            noticeService.notice(job);
+            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
+            logger.error(errorInfo, e);
+        }
+        return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+    }
+
+    public boolean reExecuteJob(final Record parentRecord, JobVo job, JobCategory category) {
         /**
          * 当前重新执行的新纪录
          */

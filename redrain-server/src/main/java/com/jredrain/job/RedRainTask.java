@@ -126,7 +126,7 @@ public class RedRainTask implements InitializingBean {
             JobVo jobVo = jobService.getJobVoById(record.getJobId());
             try {
                 jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
-                executeService.reRunJob(record, jobVo, RedRain.JobCategory.SINGLETON);
+                executeService.reExecuteJob(record, jobVo, RedRain.JobCategory.SINGLETON);
             } catch (Exception e) {
                 //任务执行失败,发送通知警告
                 noticeService.notice(jobVo);

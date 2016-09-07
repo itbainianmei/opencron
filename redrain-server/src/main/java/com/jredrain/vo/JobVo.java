@@ -22,6 +22,7 @@
 
 package com.jredrain.vo;
 
+import com.jredrain.base.job.RedRain;
 import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
 

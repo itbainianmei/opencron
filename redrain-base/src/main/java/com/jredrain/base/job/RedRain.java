@@ -313,6 +313,16 @@ public class RedRain implements Serializable {
         public void setDescription(String description) {
             this.description = description;
         }
+
+        public static JobCategory getJobCategory(Integer category) {
+            if (category==null) return null;
+            for (JobCategory jobCategory : JobCategory.values()) {
+                if (jobCategory.getCode().equals(category)) {
+                    return jobCategory;
+                }
+            }
+            return null;
+        }
     }
 
     public enum MsgType {
@@ -370,6 +380,15 @@ public class RedRain implements Serializable {
 
         public void setDesc(String desc) {
             this.desc = desc;
+        }
+
+        public static RunModel getRunModel(Integer value) {
+            for (RunModel model : RunModel.values()) {
+                if (model.getValue().equals(value)) {
+                    return model;
+                }
+            }
+            return null;
         }
     }
 
