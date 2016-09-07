@@ -283,7 +283,7 @@
                         <label for="proxyAgent" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
                         <div class="col-md-10">
                             <select id="proxyAgent" name="proxyAgent" class="form-control input-sm">
-                                <c:forEach var="d" items="${agents}">
+                                <c:forEach var="d" items="${connAgents}">
                                     <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
                                 </c:forEach>
                             </select>

@@ -106,12 +106,9 @@ public class JobController {
         if (notEmpty(id)) {
             Agent agent = agentService.getAgent(id);
             model.addAttribute("agent", agent);
-            List<Agent> agents = agentService.getAll();
-            model.addAttribute("agents", agents);
-        } else {
-            List<Agent> agents = agentService.getAll();
-            model.addAttribute("agents", agents);
         }
+        List<Agent> agents = agentService.getAll();
+        model.addAttribute("agents", agents);
         return "/job/add";
     }
 

@@ -15,13 +15,17 @@
         <td id="name_${w.agentId}">${w.name}</td>
         <td>${w.ip}</td>
         <td id="port_${w.agentId}">${w.port}</td>
-        <td id="agent_${d.agentId}">
+        <td id="agent_${w.agentId}">
             <c:if test="${w.status eq false}">
                 <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
             </c:if>
             <c:if test="${w.status eq true}">
                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
             </c:if>
+        </td>
+        <td>
+            <c:if test="${w.proxy eq 0}">直连</c:if>
+            <c:if test="${w.proxy eq 1}">代理</c:if>
         </td>
         <td id="warning_${w.agentId}">
             <c:if test="${w.warning eq false}"><span class="label label-default" style="color: red;font-weight:bold">&nbsp;&nbsp;否&nbsp;&nbsp;</span>  </c:if>

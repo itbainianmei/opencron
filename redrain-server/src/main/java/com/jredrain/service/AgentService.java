@@ -57,6 +57,9 @@ public class AgentService {
     @Autowired
     private MemcacheCache memcacheCache;
 
+    public List<Agent> getAgentByConnType(RedRain.ConnType connType) {
+        return queryDao.sqlQuery(Agent.class,"SELECT * FROM agent WHERE status = 1 AND proxy = "+connType.getType());
+    }
 
     public List<Agent> getAll() {
 
