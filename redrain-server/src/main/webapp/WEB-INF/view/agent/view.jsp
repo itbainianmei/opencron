@@ -328,6 +328,12 @@
                     }else {
                         $("#warning_"+id).html('<span class="label label-warning" style="color: white;font-weight:bold">&nbsp;&nbsp;是&nbsp;&nbsp;</span>');
                     }
+                    if(proxy == "0"){
+                        $("#connType_"+id).html("直连");
+                    }else {
+                        $("#connType_"+id).html("代理");
+                    }
+                    flushConnAgents();
                     return false;
                 }else {
                     alert("修改失败");
@@ -336,6 +342,20 @@
             error : function() {
                 alert("网络繁忙请刷新页面重试!");
                 return false;
+            }
+        });
+    }
+    
+    function flushConnAgents() {
+        $.ajax({
+            url:"${contextPath}/agent/getConnAgents",
+            success : function(obj) {
+                if(obj != null){
+                    $("#proxyAgent").empty();
+                    for (var i in obj){
+                        $("#proxyAgent").append('<option value="'+obj[i].agentId+'" id="agent_'+obj[i].agentId+'">'+obj[i].ip+' ('+obj[i].name+')</option>');
+                    }
+                }
             }
         });
     }
@@ -624,7 +644,7 @@
                             <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                         </c:if>
                     </td>
-                    <td>
+                    <td id="connType_${w.agentId}">
                         <c:if test="${w.proxy eq 0}">直连</c:if>
                         <c:if test="${w.proxy eq 1}">代理</c:if>
                     </td>

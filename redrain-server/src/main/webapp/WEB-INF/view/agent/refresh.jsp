@@ -23,7 +23,7 @@
                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
             </c:if>
         </td>
-        <td>
+        <td id="connType_${w.agentId}">
             <c:if test="${w.proxy eq 0}">直连</c:if>
             <c:if test="${w.proxy eq 1}">代理</c:if>
         </td>

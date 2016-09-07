@@ -135,4 +135,11 @@ public class AgentController {
         model.addAttribute("agent", agent);
         return "/agent/detail";
     }
+
+    @RequestMapping("/getConnAgents")
+    public void getConnAgents(HttpServletResponse response) {
+        List<Agent> agents = agentService.getAgentByConnType(RedRain.ConnType.CONN);
+        JsonMapper json = new JsonMapper();
+        WebUtils.writeJson(response, json.toJson(agents));
+    }
 }
