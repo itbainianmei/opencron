@@ -151,7 +151,8 @@
                     $("#port").val(obj.port);
                     if(obj.proxy==1){
                         showProxy();
-                        $("#agent_"+obj.agentId).attr("selected",true);
+                        $("#proxyAgent").val(obj.proxyAgent);
+
                     }else {
                         hideProxy();
 
@@ -603,7 +604,6 @@
                 <th>ip</th>
                 <th>端口号</th>
                 <th>通信状态</th>
-                <th>连接类型</th>
                 <th>失联报警</th>
                 <th><center>操作</center></th>
             </tr>
@@ -616,17 +616,13 @@
                     <td id="name_${w.agentId}">${w.name}</td>
                     <td>${w.ip}</td>
                     <td id="port_${w.agentId}">${w.port}</td>
-                    <td>
+                    <td id="agent_${d.agentId}">
                         <c:if test="${w.status eq false}">
                             <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
                         </c:if>
                         <c:if test="${w.status eq true}">
                             <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                         </c:if>
-                    </td>
-                    <td>
-                        <c:if test="${w.proxy eq 0}">直连</c:if>
-                        <c:if test="${w.proxy eq 1}">代理</c:if>
                     </td>
                     <td id="warning_${w.agentId}">
                         <c:if test="${w.warning eq false}"><span class="label label-default" style="color: red;font-weight:bold">&nbsp;&nbsp;否&nbsp;&nbsp;</span>  </c:if>
@@ -702,8 +698,10 @@
                             <label for="proxyAgent" class="col-lab control-label">代&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理：</label>
                             <div class="col-md-9">
                             <select id="proxyAgent" name="proxyAgent" class="form-control">
-                                <c:forEach var="d" items="${connAgents}">
-                                    <option value="${d.agentId}" id="agent_${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
+                                <c:forEach var="d" items="${page.result}">
+                                    <c:if test="${d.proxy eq 0}">
+                                        <option value="${d.agentId}">${d.ip}&nbsp;(${d.name})</option>
+                                    </c:if>
                                 </c:forEach>
                             </select>
                             </div>
