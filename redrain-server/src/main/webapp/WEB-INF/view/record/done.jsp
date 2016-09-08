@@ -248,10 +248,10 @@
             <tbody>
             <%--父记录--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
-                <tr <c:if test="${r.category eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
-                    <c:if test="${r.category eq 0}">class="redoGroup${r.recordId}"</c:if>>
-                    <c:if test="${r.category eq 0}">
-                        <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
+                <tr <c:if test="${r.jobType eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
+                    <c:if test="${r.jobType eq 0}">class="redoGroup${r.recordId}"</c:if>>
+                    <c:if test="${r.jobType eq 0}">
+                        <td  class="name_${r.recordId}_1"> <center>${empty r.jobName ? 'batchJob' : r.jobName}</center></td>
                         <td style="display: none;" class="name_${r.recordId}_2" rowspan="${fn:length(r.childRecord)+1}">
                             <center>
                                     ${r.jobName}

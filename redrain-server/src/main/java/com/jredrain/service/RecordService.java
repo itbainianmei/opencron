@@ -47,8 +47,8 @@ public class RecordService {
 
 
     public Page query(HttpSession session, Page<RecordVo> page, RecordVo recordVo, String queryTime, boolean status) {
-        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId "
-                + " LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId AND CASE r.jobType WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3)" : "(0,2)");
+        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId "
+                + " LEFT JOIN agent d ON r.agentId = d.agentId LEFT JOIN user AS u ON r.operateId = u.userId AND CASE r.jobType WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3)" : "(0,2)");
         if (recordVo != null) {
             if (notEmpty(recordVo.getSuccess())) {
                 sql += " AND r.success = " + recordVo.getSuccess() + "";
@@ -130,7 +130,7 @@ public class RecordService {
     }
 
     public RecordVo getDetailById(Long id) {
-        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.jobType,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.operateId,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.recordId = ?", id);
+        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.jobType,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.operateId,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON r.agentId = d.agentId LEFT JOIN user AS u ON r.operateId = u.userId WHERE r.recordId = ?", id);
     }
 
     public void update(Record record) {
