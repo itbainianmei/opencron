@@ -16,6 +16,81 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <script type="text/javascript">
+        var flag = false;
+
+        $(document).ready(function(){
+            $("#checkAllInput").next().attr("id","checkAll");
+            $(".each-box").next().addClass("each-btn");
+
+            $("#reset").click(function () {
+                $("#cmdArea").val("");
+            });
+
+            $("#execute").click(function () {
+
+                var cmd = $("#cmdArea").val();
+                if (!cmd){
+                    alert("请填写命令！");
+                    return false;
+                }
+
+                var ids = "";
+                if ($("input[type='checkbox'][name='agent']").is(':checked')){
+
+                    $('input:checkbox[name=agent]:checked').each(function(){
+                        ids+=$(this).val()+";";
+                    });
+                    if ("" != ids){
+                        ids = ids.substring(0,ids.length-1);
+                        $.ajax({
+                            url:"${contextPath}/job/batchexec",
+                            data:{
+                                "command":cmd,
+                                "agentIds":ids
+                            }
+                        });
+                        alertMsg( "该作业已启动,正在执行中.");
+                    }
+
+                }else {
+                    alert("请选择执行器！");
+                }
+            });
+
+            $("#checkAll").click(function () {
+
+                if ($("input[type='checkbox'][name='agent']").is(':checked')){
+
+                    $("#checkAllInput").prop("checked",false);
+                    $("#checkAll").parent().removeClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",false);
+
+                    $(".each-box").prop("checked",false);
+                    $(".each-box").parent().removeClass("checked");
+                    $(".each-box").parent().attr("aria-checked",false);
+                } else {
+
+                    $("#checkAllInput").prop("checked",true);
+                    $("#checkAll").parent().removeClass("checked").addClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",true);
+
+                    $(".each-box").prop("checked",true);
+                    $(".each-box").parent().removeClass("checked").addClass("checked");
+                    $(".each-box").parent().attr("aria-checked",true);
+                    flag = true;
+                }
+
+            });
+
+            $(".each-btn").click(function () {
+                if (flag){
+                    $("#checkAllInput").prop("checked",false);
+                    $("#checkAll").parent().removeClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",false);
+                    flag = false;
+                }
+            });
+        });
 
     </script>
 </head>
@@ -39,13 +114,13 @@
     <!-- Deafult Table -->
     <div class="block-area" id="defaultStyle">
         <div>
-            <textarea class="form-control m-b-10" style="resize:vertical;min-height: 250px;"></textarea>
+            <textarea class="form-control m-b-10" id="cmdArea" style="resize:vertical;min-height: 250px;"></textarea>
 
         </div>
 
         <div style="float: right">
-            <button class="btn btn-sm btn-alt m-r-5">&nbsp;重&nbsp;置&nbsp;</button>
-            <button class="btn btn-sm btn-alt m-r-5">&nbsp;执&nbsp;行&nbsp;</button>
+            <button class="btn btn-sm btn-alt m-r-5" id="reset">&nbsp;重&nbsp;置&nbsp;</button>
+            <button class="btn btn-sm btn-alt m-r-5" id="execute">&nbsp;执&nbsp;行&nbsp;</button>
         </div>
 
         <h3 class="block-title">选择执行器</h3>
@@ -53,7 +128,7 @@
         <table class="table table-bordered tile" style="font-size: 12px;">
             <thead>
             <tr>
-                <th><input type="checkbox">全选</th>
+                <th><input type="checkbox" id="checkAllInput">全选</th>
                 <th>执行器</th>
                 <th>机器IP</th>
                 <th>端口号</th>
@@ -63,7 +138,9 @@
             <tbody>
             <c:forEach var="w" items="${agents}" varStatus="index">
                 <tr>
-                    <td><input type="checkbox"></td>
+                    <td>
+                        <input type="checkbox" name="agent" value="${w.agentId}" class="each-box">
+                    </td>
                     <td id="name_${w.agentId}">${w.name}</td>
                     <td>${w.ip}</td>
                     <td id="port_${w.agentId}">${w.port}</td>

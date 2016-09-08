@@ -12,7 +12,10 @@
 
 <c:forEach var="r" items="${page.result}" varStatus="index">
     <tr>
-        <td><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></td>
+        <td>
+            <c:if test="${empty r.jobName}">batchJob</c:if></td>
+            <c:if test="${!empty r.jobName}"><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></c:if>
+        </td>
         <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
         <td>
             <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
@@ -29,7 +32,8 @@
         <td>
             <c:if test="${r.execType eq 0}"><span class="label label-default">&nbsp;&nbsp;自&nbsp;动&nbsp;&nbsp;</span></c:if>
             <c:if test="${r.execType eq 1}"><span class="label label-info">&nbsp;&nbsp;手&nbsp;动&nbsp;&nbsp;</span></c:if>
-            <c:if test="${r.execType >= 2}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
+            <c:if test="${r.execType eq 2 or r.execType eq 3}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
+            <c:if test="${r.execType eq 4}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
         </td>
         <td title="${r.command}">${ben:substr(r.command,0 ,30 ,"..." )}</td>
         <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

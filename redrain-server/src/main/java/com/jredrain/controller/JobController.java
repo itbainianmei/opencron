@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
 
 @Controller
@@ -231,9 +230,11 @@ public class JobController {
     }
 
     @RequestMapping("/execute")
-    public void remoteExecute(Long id) {
+    public void remoteExecute(HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         //手动执行
+        Long operateId = Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString());
+        job.setOperateId(operateId);
         job.setExecType(ExecType.OPERATOR.getStatus());
         job.setAgent(agentService.getAgent(job.getAgentId()));
         try {
@@ -247,6 +248,18 @@ public class JobController {
     public String goExec(Model model) {
         model.addAttribute("agents", agentService.getAll());
         return "/job/exec";
+    }
+
+    @RequestMapping("/batchexec")
+    public void batchExec(HttpSession session, String command, String agentIds) {
+        if (notEmpty(agentIds) && notEmpty(command)){
+            Long operateId = Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString());
+            try {
+                this.executeService.batchExecuteJob(operateId,command,agentIds);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @RequestMapping("/detail")

@@ -38,6 +38,8 @@ public class Record implements Serializable {
     @GeneratedValue
     private Long recordId;
     private Long jobId;
+    private Long agentId;
+    private Long operateId;
     private String command;
     private Integer returnCode;
     private Integer success;
@@ -69,10 +71,12 @@ public class Record implements Serializable {
     public Record() {
     }
 
-    public Record(JobVo task) {
-        this.setJobId(task.getJobId());
-        this.setExecType( task.getExecType() );
-        this.setCommand(task.getCommand());//执行的命令
+    public Record(JobVo jobVo) {
+        this.setJobId(jobVo.getJobId());
+        this.setAgentId(jobVo.getAgentId());
+        this.setOperateId(jobVo.getOperateId());
+        this.setExecType( jobVo.getExecType() );
+        this.setCommand(jobVo.getCommand());//执行的命令
         this.setStartTime(new Date());//开始执行的时间
         this.setRedoCount(0L);//运行次数
         this.setSuccess(RedRain.ResultStatus.SUCCESSFUL.getStatus());
@@ -94,6 +98,22 @@ public class Record implements Serializable {
 
     public void setJobId(Long jobId) {
         this.jobId = jobId;
+    }
+
+    public Long getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
+    }
+
+    public Long getOperateId() {
+        return operateId;
+    }
+
+    public void setOperateId(Long operateId) {
+        this.operateId = operateId;
     }
 
     public String getCommand() {

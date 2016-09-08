@@ -251,7 +251,7 @@
                 <tr <c:if test="${r.category eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
                     <c:if test="${r.category eq 0}">class="redoGroup${r.recordId}"</c:if>>
                     <c:if test="${r.category eq 0}">
-                        <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
+                        <td  class="name_${r.recordId}_1"> <center>${empty r.jobName ? 'batchJob' : r.jobName}</center></td>
                         <td style="display: none;" class="name_${r.recordId}_2" rowspan="${fn:length(r.childRecord)+1}">
                             <center>
                                     ${r.jobName}
@@ -303,7 +303,8 @@
                     <td>
                         <c:if test="${r.execType eq 0}"><span class="label label-default">&nbsp;&nbsp;自&nbsp;动&nbsp;&nbsp;</span></c:if>
                         <c:if test="${r.execType eq 1}"><span class="label label-info">&nbsp;&nbsp;手&nbsp;动&nbsp;&nbsp;</span></c:if>
-                        <c:if test="${r.execType >= 2}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
+                        <c:if test="${r.execType eq 2 or r.execType eq 3}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
+                        <c:if test="${r.execType eq 4}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
                     </td>
                     <td title="${r.command}">${ben:substr(r.command,0 ,30 ,"..." )}</td>
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>

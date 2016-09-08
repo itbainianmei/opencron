@@ -60,6 +60,9 @@ public class ExecuteService implements Job {
     @Autowired
     private RedRainCaller cronJobCaller;
 
+    @Autowired
+    private AgentService agentService;
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         String key = jobExecutionContext.getJobDetail().getKey().getName();
@@ -430,4 +433,41 @@ public class ExecuteService implements Job {
         );
     }
 
+    public void batchExecuteJob(Long operateId, String command, String agentIds) {
+        JobVo jobVo = new JobVo();
+        jobVo.setJobId(0L);
+        jobVo.setOperateId(operateId);
+        jobVo.setCommand(command);
+        jobVo.setExecType(ExecType.BATCH.getStatus());
+
+        final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
+
+        String[] arrayIds = agentIds.split(";");
+
+        for (int i = 0; i < agentIds.length(); i++) {
+            Agent agent = agentService.getAgent(Long.parseLong(arrayIds[i]));
+            jobVo.setAgent(agent);
+            jobVo.setAgentId(agent.getAgentId());
+            jobVo.setIp(agent.getIp());
+            jobVo.setPort(agent.getPort());
+            jobVo.setPassword(agent.getPassword());
+            jobQueue.add(jobVo);
+        }
+
+        Thread jobThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (final JobVo jobVo : jobQueue) {
+                    //如果批量现场执行(则启动多线程,所有任务同时执行)
+                    Thread thread = new Thread(new Runnable() {
+                        public void run() {
+                            executeSingletonJob(jobVo);
+                        }
+                    });
+                    thread.start();
+                }
+            }
+        });
+        jobThread.start();
+    }
 }

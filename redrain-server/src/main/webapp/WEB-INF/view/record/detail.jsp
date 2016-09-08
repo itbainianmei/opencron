@@ -39,7 +39,10 @@
             <tbody id="tableContent">
             <tr>
                 <td><i class="glyphicon glyphicon-tasks"></i>&nbsp;任务名称</td>
-                <td><a href="${contextPath}/job/detail?id=${record.jobId}">${record.jobName}</a></td>
+                <td>
+                    <c:if test="${empty record.jobName}">batchJob</c:if></td>
+                    <c:if test="${!empty record.jobName}"><a href="${contextPath}/job/detail?id=${record.jobId}">${record.jobName}</a></c:if>
+                </td>
                 <td><i class="glyphicon glyphicon-th-large"></i>&nbsp;执行命令</td>
                 <td>${record.command}</td>
             </tr>
@@ -89,6 +92,7 @@
                     <c:if test="${record.execType eq 0}">自动</c:if>
                     <c:if test="${record.execType eq 1}">手动</c:if>
                     <c:if test="${record.execType eq 2 or record.execType eq 3}">重跑</c:if>
+                    <c:if test="${record.execType eq 4}">现场</c:if>
                 </td>
 
                 <td><i class="glyphicon glyphicon-repeat"></i>&nbsp;重跑次数</td>
