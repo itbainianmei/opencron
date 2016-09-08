@@ -96,12 +96,12 @@ public class JobService {
         return jobs;
     }
 
-    public List<Job> getJobsByCategory(JobCategory category){
-        String sql = "SELECT * FROM job WHERE status=1 AND category=?";
-        if (JobCategory.FLOW.equals(category)) {
+    public List<Job> getJobsByJobType(JobType jobType){
+        String sql = "SELECT * FROM job WHERE status=1 AND jobType=?";
+        if (JobType.FLOW.equals(jobType)) {
             sql +=" AND flownum=0";
         }
-        return queryDao.sqlQuery(Job.class,sql,category.getCode());
+        return queryDao.sqlQuery(Job.class,sql,jobType.getCode());
     }
 
     public List<JobVo> getCrontabJob() {
@@ -124,8 +124,8 @@ public class JobService {
             if (notEmpty(job.getCronType())) {
                 sql += " AND t.cronType=" + job.getCronType();
             }
-            if (notEmpty(job.getCategory())) {
-                sql += " AND t.category=" + job.getCategory();
+            if (notEmpty(job.getJobType())) {
+                sql += " AND t.jobType=" + job.getJobType();
             }
             if (notEmpty(job.getExecType())) {
                 sql += " AND t.execType=" + job.getExecType();
@@ -148,7 +148,7 @@ public class JobService {
     }
 
     private List<JobVo> queryChildren(JobVo job) {
-        if (job.getCategory().equals(JobCategory.FLOW.getCode())) {
+        if (job.getJobType().equals(JobType.FLOW.getCode())) {
             String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname" +
                     " FROM job AS t LEFT JOIN agent AS d ON t.agentId = d.agentId LEFT JOIN user AS u " +
                     " ON t.operateId = u.userId WHERE t.status=1 AND t.flowId = ? AND t.flowNum>0 ORDER BY t.flowNum ASC";
@@ -219,7 +219,7 @@ public class JobService {
              * 当前作业已有的子作业
              */
             JobVo jobVo = new JobVo();
-            jobVo.setCategory(JobCategory.FLOW.getCode());
+            jobVo.setJobType(JobType.FLOW.getCode());
             jobVo.setFlowId(job.getFlowId());
 
             /**
@@ -256,7 +256,7 @@ public class JobService {
             chind.setOperateId(job.getOperateId());
             chind.setExecType(job.getExecType());
             chind.setUpdateTime(new Date());
-            chind.setCategory(JobCategory.FLOW.getCode());
+            chind.setJobType(JobType.FLOW.getCode());
             chind.setFlowNum(i+1);
             chind.setLastFlag(chind.getFlowNum()==children.size());
             addOrUpdate(chind);

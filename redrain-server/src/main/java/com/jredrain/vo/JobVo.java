@@ -49,7 +49,7 @@ public class JobVo implements Serializable {
      * 0:单一任务
      * 1:流程任务
      */
-    private Integer category;
+    private Integer jobType;
 
     private Long flowId;
 
@@ -243,12 +243,12 @@ public class JobVo implements Serializable {
         this.children = children;
     }
 
-    public Integer getCategory() {
-        return category;
+    public Integer getJobType() {
+        return jobType;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setJobType(Integer jobType) {
+        this.jobType = jobType;
     }
 
     public Long getFlowId() {

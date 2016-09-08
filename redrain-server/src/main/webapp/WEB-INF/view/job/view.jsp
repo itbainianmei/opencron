@@ -296,7 +296,7 @@
             $("#size").change(function(){doUrl();});
             $("#agentId").change(function(){doUrl();});
             $("#cronType").change(function(){doUrl();});
-            $("#category").change(function(){doUrl();});
+            $("#jobType").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
             $("#redo").change(function(){doUrl();});
             $("#jobName").focus(function(){
@@ -370,10 +370,10 @@
             var pageSize = $("#size").val();
             var agentId = $("#agentId").val();
             var cronType = $("#cronType").val();
-            var category = $("#category").val();
+            var jobType = $("#jobType").val();
             var execType = $("#execType").val();
             var redo = $("#redo").val();
-            window.location.href = "${contextPath}/job/view?agentId="+agentId+"&cronType="+cronType+"&category="+category+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
+            window.location.href = "${contextPath}/job/view?agentId="+agentId+"&cronType="+cronType+"&jobType="+jobType+"&execType="+execType+"&redo="+redo+"&pageSize="+pageSize;
         }
 
         function executeJob(id){
@@ -549,11 +549,11 @@
                 </select>
 
                 &nbsp;&nbsp;&nbsp;
-                <label for="category">作业类型：</label>
-                <select id="category" name="category" class="select-self" style="width: 80px;">
+                <label for="jobType">作业类型：</label>
+                <select id="jobType" name="jobType" class="select-self" style="width: 80px;">
                     <option value="">全部</option>
-                    <option value="0" ${category eq 0 ? 'selected' : ''}>单一作业</option>
-                    <option value="1" ${category eq 1 ? 'selected' : ''}>流程作业</option>
+                    <option value="0" ${jobType eq 0 ? 'selected' : ''}>单一作业</option>
+                    <option value="1" ${jobType eq 1 ? 'selected' : ''}>流程作业</option>
                 </select>
 
                 &nbsp;&nbsp;&nbsp;
@@ -597,10 +597,10 @@
             <%--父作业--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tr class="trGroup${r.flowId}">
-                    <c:if test="${r.category eq 0}">
+                    <c:if test="${r.jobType eq 0}">
                         <td id="jobName_${r.jobId}">${r.jobName}</td>
                     </c:if>
-                    <c:if test="${r.category eq 1}">
+                    <c:if test="${r.jobType eq 1}">
                         <td  class="name_${r.flowId}_1">${r.jobName}</td>
                         <td style="display: none;" class="name_${r.flowId}_2" rowspan="${fn:length(r.children)+1}">
                                 ${r.jobName}
@@ -623,8 +623,8 @@
                         <c:if test="${r.cronType eq 1}">quartz</c:if>
                     </td>
                     <td>
-                        <c:if test="${r.category eq 0}">单一作业</c:if>
-                        <c:if test="${r.category eq 1}">流程作业</c:if>
+                        <c:if test="${r.jobType eq 0}">单一作业</c:if>
+                        <c:if test="${r.jobType eq 1}">流程作业</c:if>
                     </td>
                     <td id="cronExp_${r.jobId}">${r.cronExp}</td>
                     <td id="execType_${r.jobId}">
@@ -634,17 +634,17 @@
                     <td >
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <c:if test="${r.category eq 1}">
+                                <c:if test="${r.jobType eq 1}">
                                     <a href="#" title="流程作业" id="job_${r.jobId}" childOpen="off" onclick="showChild('${r.jobId}','${r.flowId}')">
                                         <i style="font-size:14px;" class="fa fa-angle-double-down" id="icon${r.jobId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
-                                <c:if test="${r.category eq 0}">
+                                <c:if test="${r.jobType eq 0}">
                                     <a href="#" title="编辑" onclick="editSingle('${r.jobId}')">
                                         <i class="glyphicon glyphicon-pencil"></i>
                                     </a>
                                 </c:if>
-                                <c:if test="${r.category eq 1}">
+                                <c:if test="${r.jobType eq 1}">
                                     <a title="编辑" onclick="editFlow('${r.jobId}')">
                                         <i class="glyphicon glyphicon-pencil"></i>
                                     </a>
@@ -663,7 +663,7 @@
                     </td>
                 </tr>
                 <%--子作业--%>
-                <c:if test="${r.category eq 1}">
+                <c:if test="${r.jobType eq 1}">
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>

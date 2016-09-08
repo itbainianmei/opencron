@@ -66,7 +66,7 @@ public class Record implements Serializable {
     /**
      * 任务类型(0:单一任务,1:流程任务)
      */
-    private Integer category;
+    private Integer jobType;
 
     public Record() {
     }
@@ -212,12 +212,12 @@ public class Record implements Serializable {
         this.groupId = groupId;
     }
 
-    public Integer getCategory() {
-        return category;
+    public Integer getJobType() {
+        return jobType;
     }
 
-    public void setCategory(Integer category) {
-        this.category = category;
+    public void setJobType(Integer jobType) {
+        this.jobType = jobType;
     }
 
     public Integer getFlowNum() {

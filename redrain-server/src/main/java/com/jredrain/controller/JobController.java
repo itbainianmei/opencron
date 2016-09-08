@@ -78,8 +78,8 @@ public class JobController {
         if (notEmpty(job.getCronType())) {
             model.addAttribute("cronType", job.getCronType());
         }
-        if (notEmpty(job.getCategory())) {
-            model.addAttribute("category", job.getCategory());
+        if (notEmpty(job.getJobType())) {
+            model.addAttribute("jobType", job.getJobType());
         }
         if (notEmpty(job.getExecType())) {
             model.addAttribute("execType", job.getExecType());
@@ -119,11 +119,11 @@ public class JobController {
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
-            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","category","runModel");
+            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","jobType","runModel");
         }
 
         //单任务
-        if ( RedRain.JobCategory.SINGLETON.getCode().equals(job.getCategory()) ) {
+        if ( RedRain.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
             job.setOperateId( ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId() );
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
@@ -220,7 +220,7 @@ public class JobController {
         jober.setCommand(command);
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
-        schedulerService.syncJobTigger(RedRain.JobCategory.FLOW.getCode().equals(jober.getCategory()) ? jober.getFlowId() : jober.getJobId(),executeService);
+        schedulerService.syncJobTigger(RedRain.JobType.FLOW.getCode().equals(jober.getJobType()) ? jober.getFlowId() : jober.getJobId(),executeService);
         WebUtils.writeHtml(response, "success");
     }
 

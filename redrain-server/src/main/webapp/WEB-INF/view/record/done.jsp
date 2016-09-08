@@ -251,7 +251,7 @@
                 <tr <c:if test="${r.category eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
                     <c:if test="${r.category eq 0}">class="redoGroup${r.recordId}"</c:if>>
                     <c:if test="${r.category eq 0}">
-                        <td  class="name_${r.recordId}_1"> <center>${empty r.jobName ? 'batchJob' : r.jobName}</center></td>
+                        <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
                         <td style="display: none;" class="name_${r.recordId}_2" rowspan="${fn:length(r.childRecord)+1}">
                             <center>
                                     ${r.jobName}
@@ -263,7 +263,7 @@
                             </center>
                         </td>
                     </c:if>
-                    <c:if test="${r.category eq 1}">
+                    <c:if test="${r.jobType eq 1}">
                         <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
                         <td style="display: none;" class="name_${r.recordId}_2" id="row_${r.groupId}" constant="${fn:length(r.childJob)+1}" rowspan="${fn:length(r.childJob)+1}">
                             <center>
@@ -310,13 +310,13 @@
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                     <td>
-                        <c:if test="${r.category eq 1}">流程任务</c:if>
-                        <c:if test="${r.category eq 0}">单一任务</c:if>
+                        <c:if test="${r.jobType eq 1}">流程任务</c:if>
+                        <c:if test="${r.jobType eq 0}">单一任务</c:if>
                     </td>
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <c:if test="${r.category eq 1 and r.childJob ne null}">
+                                <c:if test="${r.jobType eq 1 and r.childJob ne null}">
                                     <a href="#" title="流程任务" id="recordFlow_${r.recordId}" childOpen="off" onclick="showChildFlow(${r.recordId},'${r.groupId}')">
                                         <i aria-hidden="true" class="fa fa-angle-double-down" style="font-size:15px;" id="iconFlow${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
@@ -354,8 +354,8 @@
                             <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                             <td>${ben:diffdate(rc.startTime,c.endTime)}</td>
                             <td>
-                                <c:if test="${rc.category eq 1}">流程任务</c:if>
-                                <c:if test="${rc.category eq 0}">单一任务</c:if>
+                                <c:if test="${rc.jobType eq 1}">流程任务</c:if>
+                                <c:if test="${rc.jobType eq 0}">单一任务</c:if>
                             </td>
                             <td>
                                 <center>
@@ -370,7 +370,7 @@
                     </c:forEach>
                 </c:if>
                 <%--流程子任务--%>
-                <c:if test="${r.category eq 1}">
+                <c:if test="${r.jobType eq 1}">
                     <c:forEach var="t" items="${r.childJob}" varStatus="index">
 
                         <tr class="childFlow${r.recordId} flowRecord${r.groupId} redoGroup${t.recordId}" style="display: none;">

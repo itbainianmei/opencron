@@ -24,7 +24,7 @@ CREATE TABLE job (
   jobId bigint(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   agentId bigint(20) NOT NULL COMMENT '执行器的id',
   jobName varchar(50) NOT NULL COMMENT '作业名称',
-  category smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
+  jobType smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
   cronType smallint(10) DEFAULT '0' COMMENT '表达式类型',
   cronExp varchar(16) DEFAULT NULL COMMENT 'crontab表达式',
   command varchar(1000) DEFAULT NULL COMMENT '执行时运行的命令',
@@ -40,7 +40,7 @@ CREATE TABLE job (
   lastFlag smallint(2) DEFAULT '0' COMMENT '是否为流程作业的最后一个子作业',
   runModel smallint(2) DEFAULT '0' COMMENT '运行模式,0:串行,1:并行(针对流程作业)',
   KEY INX_AGENT (agentId),
-  KEY INX_QUERY (category,cronType,execType,status)
+  KEY INX_QUERY (jobType,cronType,execType,status)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 
@@ -88,7 +88,7 @@ CREATE TABLE record (
   pid varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
   groupId bigint(10) DEFAULT NULL,
   flowNum bigint(10) DEFAULT NULL,
-  category smallint(2) DEFAULT '0' COMMENT '0:单作业,1:流程作业'
+  jobType smallint(2) DEFAULT '0' COMMENT '0:单作业,1:流程作业'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 

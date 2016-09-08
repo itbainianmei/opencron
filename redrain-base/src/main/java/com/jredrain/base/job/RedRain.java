@@ -33,7 +33,6 @@ import org.apache.thrift.async.AsyncMethodCallback;
 import org.apache.thrift.server.AbstractNonblockingServer.*;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -287,14 +286,14 @@ public class RedRain implements Serializable {
         }
     }
 
-    public enum JobCategory implements Serializable {
+    public enum JobType implements Serializable {
         SINGLETON(0, "单一任务"),
         FLOW(1, "流程任务");
 
         private Integer code;
         private String description;
 
-        JobCategory(Integer code, String description) {
+        JobType(Integer code, String description) {
             this.code = code;
             this.description = description;
         }
@@ -315,11 +314,11 @@ public class RedRain implements Serializable {
             this.description = description;
         }
 
-        public static JobCategory getJobCategory(Integer category) {
-            if (category==null) return null;
-            for (JobCategory jobCategory : JobCategory.values()) {
-                if (jobCategory.getCode().equals(category)) {
-                    return jobCategory;
+        public static JobType getJobType(Integer type) {
+            if (type==null) return null;
+            for (JobType jobType : JobType.values()) {
+                if (jobType.getCode().equals(type)) {
+                    return jobType;
                 }
             }
             return null;

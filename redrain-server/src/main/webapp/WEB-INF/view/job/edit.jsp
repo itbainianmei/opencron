@@ -55,8 +55,8 @@
             $("#redo0").next().attr("onclick","hideCountDiv1()");
             $("#cronType0").next().attr("onclick","changeTips(0)");
             $("#cronType1").next().attr("onclick","changeTips(1)");
-            $("#category0").next().attr("onclick","subJob(0)");
-            $("#category1").next().attr("onclick","subJob(1)");
+            $("#jobType0").next().attr("onclick","subJob(0)");
+            $("#jobType1").next().attr("onclick","subJob(1)");
 
             $("#jobName").blur(function(){
 
@@ -205,7 +205,7 @@
                 }
             }
 
-            if ($('input[name="category"]:checked').val()=="1"){
+            if ($('input[name="jobType"]:checked').val()=="1"){
                 if($("#subJobDiv:has(li)").length==0) {
                     alert("当前是流程作业,至少要添加一个子作业!");
                     return false;
@@ -546,8 +546,8 @@
                 <div class="form-group">
                     <label class="col-lab control-label"><i class="glyphicon  glyphicon-random"></i>&nbsp;&nbsp;作业类型：</label>
                     <div class="col-md-10">
-                        <label onclick="subJob(0)" for="category0" class="radio-label"><input type="radio" name="category" value="0" id="category0" ${job.category eq 0 ? 'checked' : ''}>单一作业&nbsp;&nbsp;&nbsp;</label>
-                        <label onclick="subJob(1)" for="category1" class="radio-label"><input type="radio" name="category" value="1" id="category1" ${job.category eq 1 ? 'checked' : ''}>流程作业</label>&nbsp;&nbsp;&nbsp;
+                        <label onclick="subJob(0)" for="jobType0" class="radio-label"><input type="radio" name="jobType" value="0" id="jobType0" ${job.jobType eq 0 ? 'checked' : ''}>单一作业&nbsp;&nbsp;&nbsp;</label>
+                        <label onclick="subJob(1)" for="jobType1" class="radio-label"><input type="radio" name="jobType" value="1" id="jobType1" ${job.jobType eq 1 ? 'checked' : ''}>流程作业</label>&nbsp;&nbsp;&nbsp;
                         <br><span class="tips"><b>*&nbsp;</b>单作业: 单一作业&nbsp;流程作业: 多个子作业组成作业</span>
                     </div>
                 </div><br>

@@ -86,9 +86,9 @@ public class ExecuteService implements Job {
 
         //流程作业..
 
-        JobCategory jobCategory = JobCategory.getJobCategory(job.getCategory());
+        JobType jobType = JobType.getJobType(job.getJobType());
 
-        switch (jobCategory) {
+        switch (jobType) {
             case FLOW:
                 final long groupId = System.nanoTime()+Math.abs(new java.util.Random().nextInt());//分配一个流程组Id
                 final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
@@ -149,7 +149,7 @@ public class ExecuteService implements Job {
         Record record = new Record(job);
         record.setRedoCount(0L);
         record.setGroupId(groupId);//组Id
-        record.setCategory(JobCategory.FLOW.getCode());//流程任务
+        record.setJobType(JobType.FLOW.getCode());//流程任务
         record.setFlowNum(job.getFlowNum());
 
         //执行前先保存
@@ -210,7 +210,7 @@ public class ExecuteService implements Job {
                     int index = 0;
                     boolean flag;
                     do {
-                        flag = reExecuteJob(red, job, JobCategory.FLOW);
+                        flag = reExecuteJob(red, job, JobType.FLOW);
                         ++index;
                     } while (!flag && index < job.getRunCount());
 
@@ -230,7 +230,7 @@ public class ExecuteService implements Job {
 
     private boolean executeSingletonJob(JobVo job) {
         Record record = new Record(job);
-        record.setCategory(JobCategory.SINGLETON.getCode());//单一任务
+        record.setJobType(JobType.SINGLETON.getCode());//单一任务
         //执行前先保存
         record = recordService.save(record);
 
@@ -264,7 +264,7 @@ public class ExecuteService implements Job {
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    public boolean reExecuteJob(final Record parentRecord, JobVo job, JobCategory category) {
+    public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
         /**
          * 当前重新执行的新纪录
          */
@@ -272,7 +272,7 @@ public class ExecuteService implements Job {
         Record record = new Record(job);
         record.setParentId(parentRecord.getRecordId());
         record.setGroupId(parentRecord.getGroupId());
-        record.setCategory(category.getCode());
+        record.setJobType(jobType.getCode());
 
         record = recordService.save(record);
         /**
@@ -321,9 +321,9 @@ public class ExecuteService implements Job {
         Long recordId = record.getRecordId();
         List<Record> records = new ArrayList<Record>(0);
         //单一任务
-        if (record.getCategory() == 0) {
+        if (record.getJobType() == JobType.SINGLETON.getCode()) {
             records.add(record);
-        } else if (record.getCategory() == 1) {
+        } else if (record.getJobType() == JobType.FLOW.getCode()) {
             records = recordService.getRunningFlowJob(recordId);
         }
 

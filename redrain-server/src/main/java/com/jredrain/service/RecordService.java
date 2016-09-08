@@ -47,8 +47,8 @@ public class RecordService {
 
 
     public Page query(HttpSession session, Page<RecordVo> page, RecordVo recordVo, String queryTime, boolean status) {
-        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.category,r.groupId,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId "
-                + " LEFT JOIN agent d ON r.agentId = d.agentId LEFT JOIN user AS u ON r.operateId = u.userId AND CASE r.category WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3)" : "(0,2)");
+        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3) THEN r.endTime WHEN r.status IN (0,2) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId "
+                + " LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId AND CASE r.jobType WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3)" : "(0,2)");
         if (recordVo != null) {
             if (notEmpty(recordVo.getSuccess())) {
                 sql += " AND r.success = " + recordVo.getSuccess() + "";
@@ -86,27 +86,27 @@ public class RecordService {
         List<RecordVo> parentRecords = page.getResult();
         for (RecordVo parentRecord : parentRecords) {
             //单一任务有重跑记录的，查出后并把最后一条重跑记录的执行结果记作整个任务的成功、失败状态
-            if (parentRecord.getCategory() == 0 && parentRecord.getRedoCount() > 0) {
-                sql = "SELECT r.recordId,r.jobId,r.category,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
+            if (parentRecord.getJobType() == 0 && parentRecord.getRedoCount() > 0) {
+                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
                 List<RecordVo> records = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getRecordId());
                 parentRecord.setSuccess(records.get(records.size() - 1).getSuccess());
                 parentRecord.setChildRecord(records);
             }
             //流程任务，先查出父任务的重跑记录，再查出各个子任务，最后查询子任务的重跑记录，并以最后一条记录的执行结果记作整个流程任务的成功、失败状态
-            if (parentRecord.getCategory() == 1) {
+            if (parentRecord.getJobType() == 1) {
                 if (parentRecord.getRedoCount() != 0) {
                     List<RecordVo> records = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getRecordId());
                     //流程任务不能保证子任务也有记录，先给父任务一个成功、失败状态
                     parentRecord.setSuccess(RedRain.ResultStatus.FAILED.getStatus());
                     parentRecord.setChildRecord(records);
                 }
-                sql = "SELECT r.recordId,r.jobId,r.category,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastFlag,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u on t.operateId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
+                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastFlag,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u on t.operateId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
                 List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getGroupId());
                 if (notEmpty(childJobs)) {
                     parentRecord.setChildJob(childJobs);
                     for (RecordVo childJob : parentRecord.getChildJob()) {
                         if (childJob.getRedoCount() > 0) {
-                            sql = "SELECT r.recordId,r.jobId,r.category,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.parentId,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.parentId = ?  ORDER BY r.startTime ASC ";
+                            sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.parentId,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r INNER JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.parentId = ?  ORDER BY r.startTime ASC ";
                             List<RecordVo> childRedo = queryDao.sqlQuery(RecordVo.class, sql, childJob.getRecordId());
                             childJob.setChildRecord(childRedo);
                         }
@@ -130,7 +130,7 @@ public class RecordService {
     }
 
     public RecordVo getDetailById(Long id) {
-        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.category,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.operateId,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON r.agentId = d.agentId LEFT JOIN user AS u ON r.operateId = u.userId WHERE r.recordId = ?", id);
+        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.jobType,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.operateId,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON t.agentId = d.agentId LEFT JOIN user AS u ON t.operateId = u.userId WHERE r.recordId = ?", id);
     }
 
     public void update(Record record) {
@@ -146,7 +146,7 @@ public class RecordService {
     }
 
     public List<Record> getReExecuteRecord() {
-        String sql = "SELECT r.*,t.cronExp,d.ip,d.`name` AS agentName,d.password FROM record r INNER JOIN job t ON r.`success`=0 AND r.category=0 AND r.status = 1 AND r.parentId IS NULL AND r.jobId = t.jobId AND t.redo=1 AND r.redoCount<t.runCount INNER JOIN agent d ON t.agentId = d.agentId AND t.status=1";
+        String sql = "SELECT r.*,t.cronExp,d.ip,d.`name` AS agentName,d.password FROM record r INNER JOIN job t ON r.`success`=0 AND r.jobType=0 AND r.status = 1 AND r.parentId IS NULL AND r.jobId = t.jobId AND t.redo=1 AND r.redoCount<t.runCount INNER JOIN agent d ON t.agentId = d.agentId AND t.status=1";
         return queryDao.sqlQuery(Record.class, sql);
     }
 
@@ -169,8 +169,8 @@ public class RecordService {
                 " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
                 " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +
                 " sum(CASE r.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
-                " sum(CASE r.category WHEN 0 THEN 1 ELSE 0 END) singleton,"+
-                " sum(CASE r.category WHEN 1 THEN 1 ELSE 0 END) flow,"+
+                " sum(CASE r.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
+                " sum(CASE r.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
                 " sum(CASE j.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
                 " sum(CASE j.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
                 " sum(CASE r.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+

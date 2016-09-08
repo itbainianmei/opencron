@@ -104,8 +104,8 @@ public class HomeController {
         /**
          * job
          */
-        List<Job> singleton = jobService.getJobsByCategory(RedRain.JobCategory.SINGLETON);
-        List<Job> flow = jobService.getJobsByCategory(RedRain.JobCategory.FLOW);
+        List<Job> singleton = jobService.getJobsByJobType(RedRain.JobType.SINGLETON);
+        List<Job> flow = jobService.getJobsByJobType(RedRain.JobType.FLOW);
 
         model.addAttribute("singleton",singleton.size());
         model.addAttribute("flow",flow.size());
