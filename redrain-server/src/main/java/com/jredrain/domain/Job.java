@@ -59,6 +59,12 @@ public class Job implements Serializable {
     //是否为流程任务的最后一个子任务
     private Boolean lastFlag;
 
+    private Boolean warning;
+
+    private String mobiles;
+
+    private String emailAddress;
+
 
     public Long getJobId() {
         return jobId;
@@ -194,5 +200,29 @@ public class Job implements Serializable {
 
     public void setRunModel(Integer runModel) {
         this.runModel = runModel;
+    }
+
+    public Boolean getWarning() {
+        return warning;
+    }
+
+    public void setWarning(Boolean warning) {
+        this.warning = warning;
+    }
+
+    public String getMobiles() {
+        return mobiles;
+    }
+
+    public void setMobiles(String mobiles) {
+        this.mobiles = mobiles;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }

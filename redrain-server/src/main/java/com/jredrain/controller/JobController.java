@@ -119,7 +119,7 @@ public class JobController {
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
-            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","jobType","runModel");
+            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","jobType","runModel","warning","mobiles","emailAddress");
         }
 
         //单任务
@@ -208,6 +208,12 @@ public class JobController {
         jober.setJobName(job.getJobName());
         jober.setRedo(job.getRedo());
         jober.setRunCount(job.getRunCount());
+        jober.setWarning(job.getWarning());
+        if (jober.getWarning()) {
+            jober.setMobiles(job.getMobiles());
+            jober.setEmailAddress(job.getEmailAddress());
+        }
+        jober.setComment(job.getComment());
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
         schedulerService.syncJobTigger(jober.getJobId(),executeService);

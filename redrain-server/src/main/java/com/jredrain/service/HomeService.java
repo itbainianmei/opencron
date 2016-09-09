@@ -31,7 +31,7 @@ import com.jredrain.tag.Page;
 import com.jredrain.vo.LogVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 
@@ -119,4 +119,13 @@ public class HomeService {
     public Log getLogDetail(Long logId) {
         return queryDao.get(Log.class,logId);
     }
+
+    @Transactional(readOnly = false)
+    public void updateAfterRead(Long logId) {
+        String sql = "update log set isread = 1 where logId = ?";
+        queryDao.createSQLQuery(sql,logId).executeUpdate();
+    }
+
+
+
 }

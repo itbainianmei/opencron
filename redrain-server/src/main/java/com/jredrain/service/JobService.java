@@ -73,7 +73,7 @@ public class JobService {
      * @return
      */
     public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
-        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,d.warning FROM job t LEFT JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password FROM job t LEFT JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
@@ -85,7 +85,7 @@ public class JobService {
     }
 
     public List<JobVo> getJobVoByAgentId(Agent agent, ExecType execType, CronType cronType) {
-        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,d.warning FROM job t INNER JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.agentId=? ";
+        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password FROM job t INNER JOIN agent d ON t.agentId = d.agentId WHERE IFNULL(t.flowNum,0)=0 AND cronType=? AND execType = ? AND t.status=1 and d.agentId=? ";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),agent.getAgentId());
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
@@ -259,6 +259,9 @@ public class JobService {
             chind.setJobType(JobType.FLOW.getCode());
             chind.setFlowNum(i+1);
             chind.setLastFlag(chind.getFlowNum()==children.size());
+            chind.setWarning(job.getWarning());
+            chind.setMobiles(job.getMobiles());
+            chind.setEmailAddress(job.getEmailAddress());
             addOrUpdate(chind);
         }
     }

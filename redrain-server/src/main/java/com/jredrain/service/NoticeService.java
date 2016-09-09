@@ -94,12 +94,13 @@ public class NoticeService {
     }
 
     public void notice(JobVo job) {
+        if (!job.getWarning()) return;
         Agent agent = job.getAgent();
         String message = "执行任务:" + job.getCommand() + "(" + job.getCronExp() + ")失败,请速速处理!";
         String content = getMessage(agent, message);
         logger.info(content);
         try {
-            sendMessage(job.getOperateId(),agent.getAgentId(), agent.getEmailAddress(), agent.getMobiles(), content);
+            sendMessage(job.getOperateId(),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,15 +113,14 @@ public class NoticeService {
 
     public void sendMessage(Long receiverId,Long workId, String emailAddress, String mobiles, String content) {
         Log log = new Log();
+        log.setIsread(0);
         log.setAgentId(workId);
         log.setMessage(content);
         //手机号和邮箱都为空则发送站内信
         if ( CommonUtils.isEmpty(emailAddress,mobiles) ) {
             log.setType(RedRain.MsgType.WEBSITE.getValue());
             log.setSendTime(new Date());
-            log.setIsread(0);
             homeService.saveLog(log);
-
             return;
         }
 
@@ -156,22 +156,22 @@ public class NoticeService {
          * 发送短信并且记录发送日志
          */
         try {
-            log.setType(RedRain.MsgType.SMS.getValue());
+
             for (String mobile : mobiles.split(",")) {
                 //发送POST请求
                 String sendUrl = String.format(config.getSendUrl(), mobile, String.format(config.getTemplate(), content));
 
                 String url = sendUrl.substring(0, sendUrl.indexOf("?"));
                 String postData = sendUrl.substring(sendUrl.indexOf("?") + 1);
-
                 String message = HttpUtils.doPost(url, postData, "UTF-8");
-                log.setReceiver(mobile);
                 log.setResult(message);
-                log.setSendTime(new Date());
-                homeService.saveLog(log);
                 logger.info(message);
                 mobileSuccess = true;
             }
+            log.setReceiver(mobiles);
+            log.setType(RedRain.MsgType.SMS.getValue());
+            log.setSendTime(new Date());
+            homeService.saveLog(log);
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
@@ -182,7 +182,6 @@ public class NoticeService {
         if( !mobileSuccess && !emailSuccess ){
             log.setType(RedRain.MsgType.WEBSITE.getValue());
             log.setSendTime(new Date());
-            log.setIsread(0);
             homeService.saveLog(log);
         }
 

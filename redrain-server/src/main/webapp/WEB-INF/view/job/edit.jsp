@@ -57,6 +57,8 @@
             $("#cronType1").next().attr("onclick","changeTips(1)");
             $("#jobType0").next().attr("onclick","subJob(0)");
             $("#jobType1").next().attr("onclick","subJob(1)");
+            $("#warning1").next().attr("onclick","showContact()");
+            $("#warning0").next().attr("onclick","hideContact()");
 
             $("#jobName").blur(function(){
 
@@ -143,6 +145,8 @@
         function hideCountDiv(){$(".countDiv").hide()}
         function showCountDiv1(){$(".countDiv1").show()}
         function hideCountDiv1(){$(".countDiv1").hide()}
+        function showContact(){$(".contact").show()}
+        function hideContact(){$(".contact").hide()}
 
         function changeTips(type){
             if (type == "0"){
@@ -209,6 +213,36 @@
                 if($("#subJobDiv:has(li)").length==0) {
                     alert("当前是流程作业,至少要添加一个子作业!");
                     return false;
+                }
+            }
+
+            var warning = $('input[type="radio"][name="warning"]:checked').val();
+            if (warning == 1){
+                var mobiles = $("#mobiles").val();
+                if (!mobiles){
+                    alert("请填写手机号码!");
+                    return false;
+                }
+                var mobs = mobiles.split(",");
+                for (var i in mobs){
+                    if(!redrain.testMobile(mobs[i])){
+                        alert("请填写正确的手机号码!");
+                        return false;
+                    }
+                }
+
+                var emails = $("#email").val();
+                if (!emails){
+                    alert("请填写邮箱地址!");
+                    return false;
+                }
+
+                var emas = emails.split(",");
+                for (var i in emas){
+                    if(!redrain.testEmail(emas[i])){
+                        alert("请填写正确的邮箱地址!");
+                        return false;
+                    }
                 }
             }
 
@@ -585,6 +619,31 @@
                         <label for="runModel0" class="radio-label" style="margin-left: 14px;"><input type="radio" name="runModel" value="0" id="runModel0" ${job.runModel eq 0 ? 'checked' : ''}>串行&nbsp;&nbsp;&nbsp;</label>
                         <label for="runModel1" class="radio-label"><input type="radio" name="runModel" value="1" id="runModel1" ${job.runModel eq 1 ? 'checked' : ''}>并行</label>&nbsp;&nbsp;&nbsp;
                         <br><span class="tips"><b>*&nbsp;</b>串行: 按顺序依次执行&nbsp;并行: 同时执行</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-lab control-label"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;&nbsp;失败报警：</label>&nbsp;&nbsp;&nbsp;
+                    <div class="col-md-10">
+                        <label  onclick="showContact()" for="warning1" class="radio-label"><input type="radio" name="warning" value="1" id="warning1" ${job.warning eq true ? 'checked' : ''}>是&nbsp;&nbsp;&nbsp;</label>
+                        <label  onclick="hideContact()" for="warning0" class="radio-label"><input type="radio" name="warning" value="0" id="warning0" ${job.warning eq false ? 'checked' : ''}>否</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </br><span class="tips"><b>*&nbsp;</b>任务执行失败时是否发信息报警</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group contact" style="display: ${job.warning eq true ? 'block' : 'none'}">
+                    <label for="mobiles" class="col-lab control-label"><i class="glyphicon glyphicon-comment"></i>&nbsp;&nbsp;报警手机：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="mobiles" name="mobiles" value="${job.mobiles}">
+                        <span class="tips"><b>*&nbsp;</b>任务执行失败时将发送短信给此手机,多个请以逗号(英文)隔开</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group contact" style="display: ${job.warning eq true ? 'block' : 'none'}">
+                    <label for="email" class="col-lab control-label"><i class="glyphicon glyphicon-envelope"></i>&nbsp;&nbsp;报警邮箱：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="email" name="emailAddress" value="${job.emailAddress}">
+                        <span class="tips"><b>*&nbsp;</b>任务执行失败时将发送报告给此邮箱,多个请以逗号(英文)隔开</span>
                     </div>
                 </div><br>
 

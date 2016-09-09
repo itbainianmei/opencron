@@ -341,6 +341,7 @@ public class HomeController {
     public String detail(Model model, Long logId) {
         model.addAttribute("sender", configService.getSysConfig().getSenderEmail());
         model.addAttribute("log", homeService.getLogDetail(logId));
+        homeService.updateAfterRead(logId);
         return "notice/detail";
     }
 }

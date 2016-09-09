@@ -32,7 +32,7 @@
             list-style: outside none none;
             margin-top: -27px;
             margin-bottom: 29px;
-            margin-left: 60px;
+            margin-left: 100px;
             padding: 4px 15px;
             width: 350px;
         }
@@ -56,6 +56,9 @@
             itemRedo(0);
             $(".countDiv1").hide();
         }
+
+        function showContact(){$(".contact").show()}
+        function hideContact(){$(".contact").hide()}
 
         function changeTips(type){
             if (type == "0"){
@@ -119,6 +122,36 @@
                 }
             }
 
+            var warning = $('input[type="radio"][name="warning"]:checked').val();
+            if (warning == 1){
+                var mobiles = $("#mobiles").val();
+                if (!mobiles){
+                    alert("请填写手机号码!");
+                    return false;
+                }
+                var mobs = mobiles.split(",");
+                for (var i in mobs){
+                    if(!redrain.testMobile(mobs[i])){
+                        alert("请填写正确的手机号码!");
+                        return false;
+                    }
+                }
+
+                var emails = $("#email").val();
+                if (!emails){
+                    alert("请填写邮箱地址!");
+                    return false;
+                }
+
+                var emas = emails.split(",");
+                for (var i in emas){
+                    if(!redrain.testEmail(emas[i])){
+                        alert("请填写正确的邮箱地址!");
+                        return false;
+                    }
+                }
+            }
+
             $.ajax({
                 url:"${contextPath}/job/checkname",
                 data:{
@@ -177,6 +210,8 @@
             $("#cronType1").next().attr("onclick","changeTips(1)");
             $("#jobType0").next().attr("onclick","subJob(0)");
             $("#jobType1").next().attr("onclick","subJob(1)");
+            $("#warning1").next().attr("onclick","showContact()");
+            $("#warning0").next().attr("onclick","hideContact()");
 
             $("#jobName").blur(function(){
                 if(!$("#jobName").val()){
@@ -563,6 +598,31 @@
                 </div><br>
 
                 <div class="form-group">
+                    <label class="col-lab control-label"><i class="glyphicon glyphicon-warning-sign"></i>&nbsp;&nbsp;失败报警：</label>&nbsp;&nbsp;&nbsp;
+                    <div class="col-md-10">
+                        <label  onclick="showContact()" for="warning1" class="radio-label"><input type="radio" name="warning" value="1" id="warning1" checked>是&nbsp;&nbsp;&nbsp;</label>
+                        <label  onclick="hideContact()" for="warning0" class="radio-label"><input type="radio" name="warning" value="0" id="warning0">否</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </br><span class="tips"><b>*&nbsp;</b>任务执行失败时是否发信息报警</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group contact">
+                    <label for="mobiles" class="col-lab control-label"><i class="glyphicon glyphicon-comment"></i>&nbsp;&nbsp;报警手机：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="mobiles" name="mobiles">
+                        <span class="tips"><b>*&nbsp;</b>任务执行失败时将发送短信给此手机,多个请以逗号(英文)隔开</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group contact">
+                    <label for="email" class="col-lab control-label"><i class="glyphicon glyphicon-envelope"></i>&nbsp;&nbsp;报警邮箱：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="email" name="emailAddress">
+                        <span class="tips"><b>*&nbsp;</b>任务执行失败时将发送报告给此邮箱,多个请以逗号(英文)隔开</span>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
                     <label for="comment" class="col-lab control-label"><i class="glyphicon glyphicon-magnet"></i>&nbsp;&nbsp;描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>
                     <div class="col-md-10">
                         <textarea class="form-control input-sm" id="comment" name="comment" style="height: 50px;"></textarea>
@@ -626,8 +686,6 @@
                                 <input type="text" class="form-control " id="runCount1"/>&nbsp;
                             </div>
                         </div>
-
-
 
                         <div class="form-group">
                             <label for="comment1" class="col-lab control-label" title="此作业内容的描述">描&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;述：</label>

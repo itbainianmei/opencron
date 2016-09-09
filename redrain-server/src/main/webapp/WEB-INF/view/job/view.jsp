@@ -21,6 +21,8 @@
         function hideCronExp(){$(".cronExpDiv").hide()}
         function showCountDiv(){$(".countDiv").show()}
         function hideCountDiv(){$(".countDiv").hide()}
+        function showContact(){$(".contact").show()}
+        function hideContact(){$(".contact").hide()}
 
         function editSingle(id){
             $.ajax({
@@ -87,6 +89,25 @@
                                         hideCountDiv();
                                     }
                                     $("#runCount").val(obj.runCount);
+                                    if(obj.warning==true){
+                                        showContact();
+                                        $("#warning1").prop("checked",true);
+                                        $("#warning1").parent().removeClass("checked").addClass("checked");
+                                        $("#warning1").parent().attr("aria-checked",true);
+                                        $("#warning1").parent().prop("onclick","showContact()");
+                                        $("#warning0").parent().removeClass("checked");
+                                        $("#warning0").parent().attr("aria-checked",false);
+                                    }else {
+                                        hideContact();
+                                        $("#warning0").prop("checked",true);
+                                        $("#warning0").parent().removeClass("checked").addClass("checked");
+                                        $("#warning0").parent().attr("aria-checked",true);
+                                        $("#warning1").parent().removeClass("checked");
+                                        $("#warning1").parent().attr("aria-checked",false);
+                                    }
+                                    $("#mobiles").val(obj.mobiles);
+                                    $("#email").val(obj.emailAddress);
+                                    $("#comment").val(obj.comment);
                                     $('#jobModal').modal('show');
                                     return;
                                 }
@@ -179,6 +200,36 @@
                 }
             }
 
+            var warning = $('input[type="radio"][name="warning"]:checked').val();
+            if (warning == 1){
+                var mobiles = $("#mobiles").val();
+                if (!mobiles){
+                    alert("请填写手机号码!");
+                    return false;
+                }
+                var mobs = mobiles.split(",");
+                for (var i in mobs){
+                    if(!redrain.testMobile(mobs[i])){
+                        alert("请填写正确的手机号码!");
+                        return false;
+                    }
+                }
+
+                var emails = $("#email").val();
+                if (!emails){
+                    alert("请填写邮箱地址!");
+                    return false;
+                }
+
+                var emas = emails.split(",");
+                for (var i in emas){
+                    if(!redrain.testEmail(emas[i])){
+                        alert("请填写正确的邮箱地址!");
+                        return false;
+                    }
+                }
+            }
+
             var jobObj = {
                 "id":jobId,
                 "name":jobName,
@@ -191,6 +242,9 @@
                 "jobName":jobName,
                 "redo":redo,
                 "runCount":runCount,
+                "warning":warning,
+                "mobiles": mobiles,
+                "emailAddress" : emails,
                 "comment":$("#comment").val()
             };
 
@@ -243,6 +297,9 @@
                                 "jobName":job.jobName,
                                 "redo":job.redo,
                                 "runCount":job.runCount,
+                                "warning":job.warning,
+                                "mobiles":job.mobiles,
+                                "emailAddress":job.emailAddress,
                                 "comment":job.comment
                             },
                             success:function(data){
@@ -292,6 +349,8 @@
             $("#execType1").next().attr("onclick","hideCronExp()");
             $("#redo1").next().attr("onclick","showCountDiv()");
             $("#redo0").next().attr("onclick","hideCountDiv()");
+            $("#warning1").next().attr("onclick","showContact()");
+            $("#warning0").next().attr("onclick","hideContact()");
 
             $("#size").change(function(){doUrl();});
             $("#agentId").change(function(){doUrl();});
@@ -760,6 +819,24 @@
                         <label for="runCount" class="col-lab control-label" title="执行失败时自动重新执行的截止次数">重跑次数：</label>
                         <div class="col-md-9">
                             <input type="text" class="form-control " id="runCount"/>&nbsp;
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;margin-bottom: 20px">
+                        <label class="col-lab control-label" title="任务执行失败时是否发信息报警">失败报警：</label>&nbsp;&nbsp;
+                        <label  onclick="showContact()" for="warning1" class="radio-label"><input type="radio" name="warning" value="1" id="warning1">是&nbsp;&nbsp;&nbsp;</label>
+                        <label  onclick="hideContact()" for="warning0" class="radio-label"><input type="radio" name="warning" value="0" id="warning0">否</label>
+                    </div>
+                    <div class="form-group contact">
+                        <label for="mobiles" class="col-lab control-label" title="任务执行失败时将发送短信给此手机">报警手机：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="mobiles"/>&nbsp;
+                        </div>
+                    </div>
+                    <div class="form-group contact">
+                        <label for="email" class="col-lab control-label" title="任务执行失败时将发送报告给此邮箱">报警邮箱：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control " id="email"/>&nbsp;
                         </div>
                     </div>
 

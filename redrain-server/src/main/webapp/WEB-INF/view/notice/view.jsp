@@ -97,7 +97,7 @@
                         <c:if test="${log.type eq 1}"><i class="icon" title="短信">&#61704;</i></c:if>
                     </center></td>
                     <td>${log.agentName}</td>
-                    <td>${log.receiver}</td>
+                    <td title="${log.receiver}">${ben:substr(log.receiver,0,20,"...")}</td>
                     <td title="${log.message}">${ben:substr(log.message,0,60,"...")}</td>
                     <td>${log.sendTime}</td>
                     <td>
