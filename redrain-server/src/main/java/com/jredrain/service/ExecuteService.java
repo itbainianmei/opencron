@@ -434,18 +434,18 @@ public class ExecuteService implements Job {
     }
 
     public void batchExecuteJob(Long operateId, String command, String agentIds) {
-        JobVo jobVo = new JobVo();
-        jobVo.setJobId(0L);
-        jobVo.setOperateId(operateId);
-        jobVo.setCommand(command);
-        jobVo.setExecType(ExecType.BATCH.getStatus());
-
         final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
 
         String[] arrayIds = agentIds.split(";");
 
-        for (int i = 0; i < agentIds.length(); i++) {
-            Agent agent = agentService.getAgent(Long.parseLong(arrayIds[i]));
+        for (String agentId:arrayIds) {
+            Agent agent = agentService.getAgent(Long.parseLong(agentId));
+            JobVo jobVo = new JobVo();
+            jobVo.setJobName(agent.getName()+"-batchJob");
+            jobVo.setJobId(0L);
+            jobVo.setOperateId(operateId);
+            jobVo.setCommand(command);
+            jobVo.setExecType(ExecType.BATCH.getStatus());
             jobVo.setAgent(agent);
             jobVo.setAgentId(agent.getAgentId());
             jobVo.setIp(agent.getIp());
