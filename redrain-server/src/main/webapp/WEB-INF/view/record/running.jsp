@@ -166,6 +166,7 @@
                     <option value="0" ${execType eq 0 ? 'selected' : ''}>自动</option>
                     <option value="1" ${execType eq 1 ? 'selected' : ''}>手动</option>
                     <option value="2" ${execType eq 2 ? 'selected' : ''}>重跑</option>
+                    <option value="4" ${execType eq 4 ? 'selected' : ''}>现场</option>
                 </select>
                 &nbsp;&nbsp;&nbsp;
                 <label for="queryTime">开始时间：</label>

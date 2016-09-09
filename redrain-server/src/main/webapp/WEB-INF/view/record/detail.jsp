@@ -40,7 +40,7 @@
             <tr>
                 <td><i class="glyphicon glyphicon-tasks"></i>&nbsp;任务名称</td>
                 <td>
-                    <c:if test="${empty record.jobName}">batchJob</c:if></td>
+                    <c:if test="${empty record.jobName}">batchJob</c:if>
                     <c:if test="${!empty record.jobName}"><a href="${contextPath}/job/detail?id=${record.jobId}">${record.jobName}</a></c:if>
                 </td>
                 <td><i class="glyphicon glyphicon-th-large"></i>&nbsp;执行命令</td>
