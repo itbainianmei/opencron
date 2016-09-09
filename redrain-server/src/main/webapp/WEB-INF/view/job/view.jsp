@@ -350,7 +350,7 @@
 
         function rewidth() {
             var width = $(window).width();
-            $(".redrain_command").css("width",500+(width-1500)+"px");
+            $(".redrain_command").css("width",300+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -688,7 +688,7 @@
                     <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
-                    <td >
+                    <td style="white-space: nowrap;">
                         <div class="redrain_command">
                             <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')"  id="command_${r.jobId}">
                                     ${r.command}
@@ -746,7 +746,7 @@
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
-                            <td >
+                            <td style="white-space: nowrap;">
                                 <div class="redrain_command">
                                     <a href="#" title="${c.command}" onclick="editCmd('${c.jobId}')" id="command_${c.jobId}">
                                             ${c.command}

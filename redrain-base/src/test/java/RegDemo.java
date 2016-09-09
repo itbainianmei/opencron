@@ -19,9 +19,8 @@
  * under the License.
  */
 
-import com.jredrain.base.utils.DigestUtils;
-import com.jredrain.base.utils.Digests;
-import org.hibernate.annotations.SourceType;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by benjobs on 15/12/5.
@@ -31,8 +30,22 @@ public class RegDemo {
     public static void main(String[] args) {
 
 
+        String cpuDetail[] = "2.2%us,1.0%sy,0.0%ni,96.4id,0.5wa,0.0hi,0.0si,0.0st".split(",");
+        for (String detail : cpuDetail) {
+            String key=null,val=null;
+            Matcher valMatcher = Pattern.compile("^\\d+(\\.\\d+)?").matcher(detail);
+            if (valMatcher.find()) {
+                val = valMatcher.group();
+            }
 
-        System.out.println(DigestUtils.toBase64("dankogai"));
+            Matcher keyMatcher = Pattern.compile("[a-zA-Z]+$").matcher(detail);
+            if (keyMatcher.find()) {
+                key = keyMatcher.group();
+            }
+            System.out.println(key+"--->"+val);
+        }
+
+
 
     }
 }
