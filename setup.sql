@@ -76,6 +76,8 @@ CREATE TABLE record (
   recordId bigint(20) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
   parentId bigint(20) DEFAULT NULL COMMENT '重复记录需要记录跑的是哪条父记录',
   jobId bigint(20) NOT NULL COMMENT '该作业对应的作业Id',
+  agentId bigint(20) NOT NULL COMMENT '该记录对应的agentId',
+  operateId bigint(20) NOT NULL COMMENT '操作员id',
   command text NOT NULL COMMENT '执行的命令',
   returnCode int(10) DEFAULT NULL COMMENT '完成的返回值。0--成功，其他都--失败',
   success tinyint(4) DEFAULT NULL COMMENT '完成的返回状态。1--成功，0--失败',
