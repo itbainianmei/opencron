@@ -56,7 +56,7 @@ public class AgentProcessor implements RedRain.Iface {
 
     private final String EXITCODE_KEY = "exitCode";
 
-    private final String EXITCODE_SCRIPT = String.format(" || echo %s:$?", EXITCODE_KEY);
+    private final String EXITCODE_SCRIPT = String.format(" && echo %s:$? || echo %s:$?", EXITCODE_KEY,EXITCODE_KEY);
 
     private AgentMonitor agentMonitor;
 
@@ -296,15 +296,16 @@ public class AgentProcessor implements RedRain.Iface {
     }
 
     private Map<String, String> serializableToMap(Object obj) {
-        if (isEmpty(obj))
+        if (isEmpty(obj)) {
             return Collections.EMPTY_MAP;
+        }
+
         Map<String, String> resultMap = new HashMap<String, String>(0);
         // 拿到属性器数组
         try {
             PropertyDescriptor[] pds = Introspector.getBeanInfo(obj.getClass()).getPropertyDescriptors();
             for (int index = 0; pds.length > 1 && index < pds.length; index++) {
                 if (Class.class == pds[index].getPropertyType() || pds[index].getReadMethod() == null) {
-
                     continue;
                 }
                 Object value = pds[index].getReadMethod().invoke(obj);
@@ -315,6 +316,7 @@ public class AgentProcessor implements RedRain.Iface {
                             || pds[index].getPropertyType() == String.class) {
 
                         resultMap.put(pds[index].getName(), value.toString());
+
                     }else {
                         resultMap.put(pds[index].getName(), JSON.toJSONString(value));
                     }
