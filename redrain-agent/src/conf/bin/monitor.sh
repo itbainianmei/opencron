@@ -53,6 +53,10 @@ mem=$(echo -e "{total:$total,used:$used}");
 #修复ubuntu系统下os名存在\n \l导致解析失败的bug
 hostname=$(echo `hostname`|sed 's/\\.//g');
 os=$(echo `head -n 1 /etc/issue`|sed 's/\\.//g');
+#修复系统版本7.0之后获取os失败问题
+if [ -z "$os" ];then
+ os=$(echo `cat /etc/redhat-release`|sed 's/\\.//g');
+fi
 kernel=$(uname -r);
 machine=$(uname -m);
 

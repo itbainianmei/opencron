@@ -16,8 +16,19 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
+    <style type="text/css">
+        .redrain_command{overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+    </style>
+
     <script type="text/javascript">
+
+        function rewidth() {
+            var width = $(window).width();
+            $(".redrain_command").css("width",500+(width-1500)+"px");
+        }
+
         $(document).ready(function(){
+
             setInterval(function(){
 
                 $("#highlight").fadeOut(3000,function(){
@@ -52,6 +63,8 @@
             $("#agentId").change(function(){doUrl();});
             $("#jobId").change(function(){doUrl();});
             $("#execType").change(function(){doUrl();});
+            rewidth();
+            $(window).resize(rewidth);
         });
         function doUrl() {
             var pageSize = $("#size").val();
@@ -216,7 +229,10 @@
                         <c:if test="${r.execType eq 2 or r.execType eq 3}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
                         <c:if test="${r.execType eq 4}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
                     </td>
-                    <td title="${r.command}">${ben:substr(r.command,0 ,30 ,"..." )}</td>
+                    <td title="${r.command}">
+                        <div class="redrain_command">${r.command}</div>
+                    </td>
+
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                     <td>

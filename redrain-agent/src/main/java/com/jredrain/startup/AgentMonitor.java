@@ -201,7 +201,7 @@ public class AgentMonitor {
                 val = valMatcher.group();
             }
 
-            Matcher keyMatcher = Pattern.compile("\\w+$").matcher(detail);
+            Matcher keyMatcher = Pattern.compile("[a-zA-Z]+$").matcher(detail);
             if (keyMatcher.find()) {
                 key = keyMatcher.group();
             }

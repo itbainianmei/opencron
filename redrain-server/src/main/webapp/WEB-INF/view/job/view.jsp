@@ -15,6 +15,10 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
+    <style type="text/css">
+        .redrain_command{overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+    </style>
+
     <script type="text/javascript">
 
         function showCronExp(){$(".cronExpDiv").show()}
@@ -344,6 +348,11 @@
             });
         }
 
+        function rewidth() {
+            var width = $(window).width();
+            $(".redrain_command").css("width",500+(width-1500)+"px");
+        }
+
         $(document).ready(function(){
             $("#execType0").next().attr("onclick","showCronExp()");
             $("#execType1").next().attr("onclick","hideCronExp()");
@@ -423,7 +432,14 @@
                     }
                 });
             });
+
+            rewidth();
+
+            $(window).resize(rewidth);
+
         });
+        
+
 
         function doUrl(){
             var pageSize = $("#size").val();
@@ -638,15 +654,15 @@
         <table class="table tile" style="font-size: 13px;">
             <thead>
             <tr>
-                <th>名称</th>
-                <th>执行器</th>
-                <th>作业人</th>
-                <th>执行命令</th>
-                <th>规则类型</th>
-                <th>作业类型</th>
-                <th>时间规则</th>
-                <th>运行模式</th>
-                <th><center>
+                <th >名称</th>
+                <th >执行器</th>
+                <th >作业人</th>
+                <th >执行命令</th>
+                <th >规则类型</th>
+                <th >作业类型</th>
+                <th >时间规则</th>
+                <th >运行模式</th>
+                <th ><center>
                     <i class="icon-time bigger-110 hidden-480"></i>
                     操作
                 </center></th>
@@ -672,10 +688,12 @@
                     <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
-                    <td>
-                        <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')" id="command_${r.jobId}">
-                                ${ben:substr(r.command, 0, 50,"..." )}
-                        </a>
+                    <td >
+                        <div class="redrain_command">
+                            <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')"  id="command_${r.jobId}">
+                                    ${r.command}
+                            </a>
+                        </div>
                     </td>
                     <td id="cronType_${r.jobId}">
                         <c:if test="${r.cronType eq 0}">crontab</c:if>
@@ -728,10 +746,12 @@
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
-                            <td>
-                                <a href="#" title="${c.command}" onclick="editCmd('${c.jobId}')" id="command_${c.jobId}">
-                                        ${ben:substr(c.command, 0, 50,"..." )}
-                                </a>
+                            <td >
+                                <div class="redrain_command">
+                                    <a href="#" title="${c.command}" onclick="editCmd('${c.jobId}')" id="command_${c.jobId}">
+                                            ${c.command}
+                                    </a>
+                                </div>
                             </td>
                             <td>
                                 <c:if test="${c.cronType eq 0}">crontab</c:if>
