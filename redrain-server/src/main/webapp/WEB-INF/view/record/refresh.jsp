@@ -13,7 +13,7 @@
 <c:forEach var="r" items="${page.result}" varStatus="index">
     <tr>
         <td>
-            <c:if test="${empty r.jobName}">batchJob</c:if></td>
+            <c:if test="${empty r.jobName}">batchJob</c:if>
             <c:if test="${!empty r.jobName}"><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></c:if>
         </td>
         <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>

@@ -17,14 +17,14 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <style type="text/css">
-        .redrain_command{overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .redrain_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
 
         function rewidth() {
             var width = $(window).width();
-            $(".redrain_command").css("width",500+(width-1500)+"px");
+            $(".redrain_command").show().css("width",500+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -54,6 +54,7 @@
                             window.location.href="${contextPath}";
                         }else {
                             $("#tableContent").html(data);
+                            rewidth();
                         }
                     }
                 });
@@ -207,7 +208,7 @@
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tr>
                     <td>
-                        <c:if test="${empty r.jobName}">batchJob</c:if></td>
+                        <c:if test="${empty r.jobName}">batchJob</c:if>
                         <c:if test="${!empty r.jobName}"><a href="${contextPath}/job/detail?id=${r.jobId}">${r.jobName}</a></c:if>
                     </td>
                     <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>

@@ -46,13 +46,13 @@
             text-align:center;
             font-size: 10px;
         }
-        .redrain_command{overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .redrain_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
         function rewidth() {
             var width = $(window).width();
-            $(".redrain_command").css("width",500+(width-1500)+"px");
+            $(".redrain_command").show().css("width",500+(width-1500)+"px");
         }
 
         $(document).ready(function(){

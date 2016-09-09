@@ -16,7 +16,7 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <style type="text/css">
-        .redrain_command{overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .redrain_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
@@ -350,7 +350,7 @@
 
         function rewidth() {
             var width = $(window).width();
-            $(".redrain_command").css("width",300+(width-1500)+"px");
+            $(".redrain_command").show().css("width",300+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -681,7 +681,7 @@
                                 ${r.jobName}
                             <c:forEach var="c" items="${r.children}" varStatus="index">
                                 <div class="down">
-				<i aria-hidden="true" style="font-size:14px" class="fa fa-arrow-down"></i></div>${c.jobName}
+				                <i aria-hidden="true" style="font-size:14px" class="fa fa-arrow-down"></i></div>${c.jobName}
                             </c:forEach>
                         </td>
                     </c:if>
