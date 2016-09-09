@@ -822,7 +822,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group" style="margin-top: 15px;margin-bottom: 20px">
+                    <div class="form-group" style="margin-top: 0px;margin-bottom: 22px">
                         <label class="col-lab control-label" title="任务执行失败时是否发信息报警">失败报警：</label>&nbsp;&nbsp;
                         <label  onclick="showContact()" for="warning1" class="radio-label"><input type="radio" name="warning" value="1" id="warning1">是&nbsp;&nbsp;&nbsp;</label>
                         <label  onclick="hideContact()" for="warning0" class="radio-label"><input type="radio" name="warning" value="0" id="warning0">否</label>
