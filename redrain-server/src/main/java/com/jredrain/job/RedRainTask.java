@@ -119,8 +119,8 @@ public class RedRainTask implements InitializingBean {
     }
 
     @Scheduled(cron = "0/5 * * * * ?")
-    public void redoJob() {
-        logger.info("[redrain] redojob running...");
+    public void reExecuteJob() {
+        logger.info("[redrain] reExecuteIob running...");
         List<Record> records = recordService.getReExecuteRecord();
         for (final Record record : records) {
             JobVo jobVo = jobService.getJobVoById(record.getJobId());

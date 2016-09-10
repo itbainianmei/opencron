@@ -145,6 +145,10 @@ public class RecordService {
         return queryDao.get(Record.class, recordId);
     }
 
+    /**
+     * 只查询单一任务的
+     * @return
+     */
     public List<Record> getReExecuteRecord() {
         String sql = "SELECT r.*,t.cronExp,d.ip,d.`name` AS agentName,d.password FROM record r INNER JOIN job t ON r.`success`=0 AND r.jobType=0 AND r.status = 1 AND r.parentId IS NULL AND r.jobId = t.jobId AND t.redo=1 AND r.redoCount<t.runCount INNER JOIN agent d ON t.agentId = d.agentId AND t.status=1";
         return queryDao.sqlQuery(Record.class, sql);

@@ -147,7 +147,6 @@ public class ExecuteService implements Job {
 
     private boolean executeFlowJob(JobVo job,long groupId) {
         Record record = new Record(job);
-        record.setRedoCount(0L);
         record.setGroupId(groupId);//组Id
         record.setJobType(JobType.FLOW.getCode());//流程任务
         record.setFlowNum(job.getFlowNum());
@@ -168,30 +167,31 @@ public class ExecuteService implements Job {
         try {
 
             Response result = responseToRecord(job, record);
-            /**
-             * 被kill,直接退出
-             */
-            if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
-                record.setStatus(RunStatus.STOPED.getStatus());
-                record.setSuccess(ResultStatus.KILLED.getStatus());
-                recordService.update(record);
-                recordService.flowJobDone(record);
-                return false;
-            }
 
             if (!result.isSuccess()) {
-                success = false;
-                recordService.update(record);
+                //被kill,直接退出
+                if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
+                    record.setStatus(RunStatus.STOPED.getStatus());
+                    record.setSuccess(ResultStatus.KILLED.getStatus());
+                    recordService.update(record);
+                    recordService.flowJobDone(record);
+                }else {
+                    recordService.update(record);
+                    success = false;
+                }
+                return false;
             } else {
+                //当前任务是流程任务的最后一个任务,则整个任务运行完毕
                 if (job.getLastFlag()) {
                     recordService.update(record);
                     recordService.flowJobDone(record);
                 } else {
+                    //当前任务非流程任务最后一个子任务,全部流程任务为运行中...
                     record.setStatus(RunStatus.RUNNING.getStatus());
                     recordService.update(record);
                 }
+                return true;
             }
-            return result.isSuccess();
         } catch (Exception e) {
             noticeService.notice(job);
             String errorInfo = String.format("execute failed(flow job):jobName:%s,,jobId:%d,,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
@@ -200,10 +200,11 @@ public class ExecuteService implements Job {
             record.setEndTime(new Date());
             record.setMessage(errorInfo);
             recordService.update(record);
-            success = false;
             logger.error(errorInfo, e);
+            success = false;
             return false;
         } finally {
+            //流程任务的重跑靠自身维护...
             if (!success) {
                 Record red = recordService.get(record.getRecordId());
                 if (job.getRedo() == 1 && job.getRunCount() > 0) {
@@ -214,6 +215,7 @@ public class ExecuteService implements Job {
                         ++index;
                     } while (!flag && index < job.getRunCount());
 
+                    //重跑到截止次数还是失败,则发送通知,记录最终运行结果
                     if (!flag) {
                         noticeService.notice(job);
                         recordService.flowJobDone(record);
@@ -237,84 +239,92 @@ public class ExecuteService implements Job {
         try {
             //执行前先检测一次通信是否正常
             checkPing(job, record);
-
             Response response = responseToRecord(job, record);
-            /**
-             * 被kill
-             */
-            if ( StatusCode.KILL.getValue().equals(response.getExitCode()) ) {
-                record.setStatus(RunStatus.STOPED.getStatus());
-                record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
-            } else {//非kill
-                record.setStatus(RunStatus.DONE.getStatus());
-            }
-            recordService.update(record);
-
-            if (record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus())) {
-                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
-            } else {
-                noticeService.notice(job);
+            if (!response.isSuccess()) {
+                //被kill
+                if (StatusCode.KILL.getValue().equals(response.getExitCode())) {
+                    record.setStatus(RunStatus.STOPED.getStatus());
+                    record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
+                }else {
+                    //非kill已完成
+                    record.setStatus(RunStatus.DONE.getStatus());
+                }
+                recordService.update(record);
+                //当前的单一任务只运行一次未设置重跑.
+                if (job.getRedo()==0 || job.getRunCount()==0) {
+                    noticeService.notice(job);
+                }
                 logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), record.getMessage());
+                return false;
+            }else {
+                record.setStatus(RunStatus.DONE.getStatus());
+                recordService.update(record);
+                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
             }
         } catch (Exception e) {
-            noticeService.notice(job);
+            if (job.getRedo()==0 || job.getRunCount()==0) {
+                noticeService.notice(job);
+            }
             String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
             logger.error(errorInfo, e);
         }
+
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
     public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
-        /**
-         * 当前重新执行的新纪录
-         */
-        job.setExecType(ExecType.RERUN.getStatus());
-        Record record = new Record(job);
-        record.setParentId(parentRecord.getRecordId());
-        record.setGroupId(parentRecord.getGroupId());
-        record.setJobType(jobType.getCode());
 
-        record = recordService.save(record);
-        /**
-         * 父记录
-         */
-        parentRecord.setRedoCount(parentRecord.getRedoCount() + 1L);//运行次数
-        //如果已经到了任务重跑的截至次数直接更新为已重跑完成
-        if (job.getRunCount() == parentRecord.getRedoCount()) {
-            parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
-        }
-        recordService.update(parentRecord);
-
-        try {
-            //执行前先检测一次通信是否正常
-            checkPing(job, record);
-
-            Response result = responseToRecord(job, record);
+        //上一个重跑未完成前,当前的重跑任务等待...
+        synchronized ( parentRecord.getRecordId() ) {
             /**
-             * 被kill
+             * 当前重新执行的新纪录
              */
-            if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
-                record.setStatus(RunStatus.STOPED.getStatus());
-                record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
-            } else {
-                record.setStatus(RunStatus.DONE.getStatus());
-            }
+            job.setExecType(ExecType.RERUN.getStatus());
+            Record record = new Record(job);
+            record.setParentId(parentRecord.getRecordId());
+            record.setGroupId(parentRecord.getGroupId());
+            record.setJobType(jobType.getCode());
 
-            //本次重跑的执行成功,则父记录执行完毕
-            if ( ExecType.RERUN_DONE.getStatus().equals(parentRecord.getExecType()) ) {
+            record = recordService.save(record);
+            /**
+             * 父记录
+             */
+            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1L);//运行次数
+            //如果已经到了任务重跑的截至次数直接更新为已重跑完成
+            if (job.getRunCount() == parentRecord.getRedoCount()) {
                 parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
-                recordService.update(parentRecord);
             }
-            recordService.update(record);
-            logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
-        } catch (Exception e) {
-            noticeService.notice(job);
-            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
-            errorExec(record, errorInfo);
-            logger.error(errorInfo, e);
-        }
+            recordService.update(parentRecord);
 
-        return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+            try {
+                //执行前先检测一次通信是否正常
+                checkPing(job, record);
+                Response result = responseToRecord(job, record);
+
+                //当前重跑任务成功,则父记录执行完毕
+                if (result.isSuccess()) {
+                    parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
+                    recordService.update(parentRecord);
+                }else {
+                     //被kill
+                    if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
+                        record.setStatus(RunStatus.STOPED.getStatus());
+                        record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
+                    } else {
+                        record.setStatus(RunStatus.DONE.getStatus());
+                    }
+                }
+                recordService.update(record);
+                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
+            } catch (Exception e) {
+                noticeService.notice(job);
+                String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
+                errorExec(record, errorInfo);
+                logger.error(errorInfo, e);
+            }
+
+            return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+        }
     }
 
     public boolean killJob(Record record) {
@@ -342,7 +352,7 @@ public class ExecuteService implements Job {
         for (Record cord : records) {
             JobVo job = jobService.getJobVoById(cord.getJobId());
             try {
-                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()),job.getAgent());
+                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
                 cord.setStatus(RunStatus.STOPED.getStatus());
                 cord.setEndTime(new Date());
                 recordService.update(cord);

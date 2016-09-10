@@ -227,4 +227,5 @@ public class Record implements Serializable {
     public void setFlowNum(Integer flowNum) {
         this.flowNum = flowNum;
     }
+
 }
