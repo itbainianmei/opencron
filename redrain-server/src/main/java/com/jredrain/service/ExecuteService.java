@@ -63,7 +63,6 @@ public class ExecuteService implements Job {
     @Autowired
     private AgentService agentService;
 
-    @Autowired
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
     @Override
@@ -288,6 +287,10 @@ public class ExecuteService implements Job {
 
         //上一个重跑未完成前,当前的重跑任务等待...
         synchronized ( parentRecord.getRecordId() ) {
+
+            reExecuteThreadMap.put(parentRecord.getRecordId(),reExecuteThreadMap.get(parentRecord.getRecordId()+1));
+
+
             /**
              * 当前重新执行的新纪录
              */
@@ -335,7 +338,6 @@ public class ExecuteService implements Job {
                 logger.error(errorInfo, e);
             }
 
-            reExecuteThreadMap.put(parentRecord.getRecordId(),reExecuteThreadMap.get(parentRecord.getRecordId()+1));
 
             return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
         }
