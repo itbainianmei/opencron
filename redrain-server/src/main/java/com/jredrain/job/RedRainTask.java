@@ -121,18 +121,29 @@ public class RedRainTask implements InitializingBean {
     @Scheduled(cron = "0/5 * * * * ?")
     public void reExecuteJob() {
         logger.info("[redrain] reExecuteIob running...");
-        List<Record> records = recordService.getReExecuteRecord();
-        for (final Record record : records) {
-            JobVo jobVo = jobService.getJobVoById(record.getJobId());
-            try {
-                jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
-                executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
-            } catch (Exception e) {
-                //任务执行失败,发送通知警告
-                noticeService.notice(jobVo);
-                throw new RuntimeException("reexecute job is failed while executing job:" + jobVo.getJobId());
+        final List<Record> records = recordService.getReExecuteRecord();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (final Record record : records) {
+                    final Thread thread = new Thread(new Runnable() {
+                        public void run() {
+                            JobVo jobVo = jobService.getJobVoById(record.getJobId());
+                            try {
+                                jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
+                                executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
+                            } catch (Exception e) {
+                                //任务执行失败,发送通知警告
+                                noticeService.notice(jobVo);
+                                throw new RuntimeException("reexecute job is failed while executing job:" + jobVo.getJobId());
+                            }
+                        }
+                    });
+                    thread.start();
+                }
             }
-        }
+        }).start();
     }
 
 
