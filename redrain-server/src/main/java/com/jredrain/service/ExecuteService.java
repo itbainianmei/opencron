@@ -171,16 +171,11 @@ public class ExecuteService implements Job {
             Response result = responseToRecord(job, record);
 
             if (!result.isSuccess()) {
+                recordService.update(record);
                 //被kill,直接退出
                 if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
-                    record.setStatus(RunStatus.STOPED.getStatus());
-                    record.setSuccess(ResultStatus.KILLED.getStatus());
-                    recordService.update(record);
                     recordService.flowJobDone(record);
                 }else {
-                    //完成任务..
-                    record.setStatus(RunStatus.DONE.getStatus());
-                    recordService.update(record);
                     success = false;
                 }
                 return false;
@@ -244,16 +239,8 @@ public class ExecuteService implements Job {
             //执行前先检测一次通信是否正常
             checkPing(job, record);
             Response response = responseToRecord(job, record);
+            recordService.update(record);
             if (!response.isSuccess()) {
-                //被kill
-                if (StatusCode.KILL.getValue().equals(response.getExitCode())) {
-                    record.setStatus(RunStatus.STOPED.getStatus());
-                    record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
-                }else {
-                    //非kill已完成
-                    record.setStatus(RunStatus.DONE.getStatus());
-                }
-                recordService.update(record);
                 //当前的单一任务只运行一次未设置重跑.
                 if (job.getRedo()==0 || job.getRunCount()==0) {
                     noticeService.notice(job);
@@ -261,8 +248,6 @@ public class ExecuteService implements Job {
                 logger.info("execute failed:jobName:{},jobId:{},ip:{},port:{},info:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), record.getMessage());
                 return false;
             }else {
-                record.setStatus(RunStatus.DONE.getStatus());
-                recordService.update(record);
                 logger.info("execute successful:jobName:{},jobId:{},ip:{},port:", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
             }
         } catch (Exception e) {
@@ -321,17 +306,9 @@ public class ExecuteService implements Job {
                 //当前重跑任务成功,则父记录执行完毕
                 if (result.isSuccess()) {
                     parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
-                    record.setStatus(RunStatus.DONE.getStatus());
                     recordService.update(parentRecord);
-                }else {
-                     //被kill
-                    if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
-                        record.setStatus(RunStatus.STOPED.getStatus());
-                        record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
-                    } else {
-                        record.setStatus(RunStatus.DONE.getStatus());
-                    }
                 }
+
                 recordService.update(record);
                 logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
             } catch (Exception e) {
@@ -423,7 +400,14 @@ public class ExecuteService implements Job {
         logger.info("[redrain]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
         record.setMessage(response.getMessage());
+
         record.setSuccess(response.isSuccess() ? ResultStatus.SUCCESSFUL.getStatus() : ResultStatus.FAILED.getStatus());
+        if (StatusCode.KILL.getValue().equals(response.getExitCode())) {
+            record.setStatus(RunStatus.STOPED.getStatus());
+            record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
+        }else {
+            record.setStatus(RunStatus.DONE.getStatus());
+        }
         record.setStartTime(new Date(response.getStartTime()));
         record.setEndTime(new Date(response.getEndTime()));
         return response;
