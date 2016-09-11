@@ -178,6 +178,8 @@ public class ExecuteService implements Job {
                     recordService.update(record);
                     recordService.flowJobDone(record);
                 }else {
+                    //完成任务..
+                    record.setStatus(RunStatus.DONE.getStatus());
                     recordService.update(record);
                     success = false;
                 }
@@ -319,6 +321,7 @@ public class ExecuteService implements Job {
                 //当前重跑任务成功,则父记录执行完毕
                 if (result.isSuccess()) {
                     parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
+                    record.setStatus(RunStatus.DONE.getStatus());
                     recordService.update(parentRecord);
                 }else {
                      //被kill
