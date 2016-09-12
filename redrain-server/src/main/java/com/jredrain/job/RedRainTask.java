@@ -71,9 +71,6 @@ public class RedRainTask implements InitializingBean {
     @Autowired
     private MemcacheCache memcacheCache;
 
-    private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
-
-
     @Override
     public void afterPropertiesSet() throws Exception {
         clearCache();
@@ -124,38 +121,33 @@ public class RedRainTask implements InitializingBean {
         }
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/1 * * * * ?")
     public void reExecuteJob() {
         logger.info("[redrain] reExecuteIob running...");
         final List<Record> records = recordService.getReExecuteRecord();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (final Record record : records) {
-                    if (!reExecuteThreadMap.containsKey(record.getRecordId())) {
-                        reExecuteThreadMap.put(record.getRecordId(),0);
-                    }else {
-                        if ( reExecuteThreadMap.get(record.getRecordId()) >=record.getRedoCount() ) {
-                            continue;
-                        }
+        if (CommonUtils.notEmpty(records)) {
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (final Record record : records) {
+
+                        final JobVo jobVo = jobService.getJobVoById(record.getJobId());
+
+                        logger.info("[redrain] reexecutejob:jobName:{},jobId:{},recordId:{}", jobVo.getJobName(), jobVo.getJobId(), record.getRecordId());
+
+                        final Thread thread = new Thread(new Runnable() {
+                            public void run() {
+                                jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
+                                executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
+                            }
+                        });
+                        thread.start();
                     }
-
-                    final JobVo jobVo = jobService.getJobVoById(record.getJobId());
-
-                    logger.info("[redrain] reexecutejob:jobName:{},jobId:{},recordId:{}",jobVo.getJobName(),jobVo.getJobId(),record.getRecordId());
-
-                    final Thread thread = new Thread(new Runnable() {
-                        public void run() {
-                            jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
-                            executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
-                            reExecuteThreadMap.put(record.getRecordId(),reExecuteThreadMap.get(record.getRecordId()+1));
-                        }
-                    });
-                    thread.start();
                 }
-            }
-        }).start();
+            }).start();
+        }
 
     }
 

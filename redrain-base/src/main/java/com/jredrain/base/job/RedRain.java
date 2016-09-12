@@ -118,8 +118,7 @@ public class RedRain implements Serializable {
         AUTO(0, "auto", "自动模式,系统调用"),
         OPERATOR(1, "operator", "手动模式,手动调用"),
         RERUN(2, "rerun", "重跑模式"),
-        RERUN_DONE(3, "rerun_done", "重跑完成"),
-        BATCH(4, "batch", "现场执行");
+        BATCH(3, "batch", "现场执行");
 
         private Integer status;
         private String name;
@@ -249,7 +248,9 @@ public class RedRain implements Serializable {
         DONE(1, "done", "已完成"),
         STOPPING(2, "stopping", "正在停止"),
         STOPED(3, "stoped", "已停止"),
-        FLOW_DONE(4, "flowdone", "流程任务的一个节点任务完成");
+        RERUNNING(4, "rerunning", "正在重跑"),
+        RERUNUNDONE(5,"rerunundone","重跑未完成"),
+        RERUNDONE(6,"rerundone","重跑完成");
 
         private Integer status;
         private String name;

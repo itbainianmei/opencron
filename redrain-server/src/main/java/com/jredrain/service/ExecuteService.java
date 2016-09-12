@@ -30,6 +30,8 @@ import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
+import com.sun.org.apache.xerces.internal.impl.dv.xs.BooleanDV;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -63,6 +65,7 @@ public class ExecuteService implements Job {
     @Autowired
     private AgentService agentService;
 
+    private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -262,10 +265,15 @@ public class ExecuteService implements Job {
 
     public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
 
-        //上一个重跑未完成前,当前的重跑任务等待...
-        synchronized ( parentRecord.getRecordId() ) {
+        synchronized (parentRecord.getRecordId()) {
 
+            /*if ( reExecuteThreadMap.get(parentRecord.getRecordId())>=job.getRunCount() ) {
+                return false;
+            }*/
 
+            parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
+            //1000
+            recordService.update(parentRecord);
             /**
              * 当前重新执行的新纪录
              */
@@ -274,17 +282,8 @@ public class ExecuteService implements Job {
             record.setParentId(parentRecord.getRecordId());
             record.setGroupId(parentRecord.getGroupId());
             record.setJobType(jobType.getCode());
-
-            record = recordService.save(record);
-            /**
-             * 父记录
-             */
-            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1L);//运行次数
-            //如果已经到了任务重跑的截至次数直接更新为已重跑完成
-            if (job.getRunCount() == parentRecord.getRedoCount()) {
-                parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
-            }
-            recordService.update(parentRecord);
+            record.setRedoCount(parentRecord.getRedoCount());
+            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
 
             try {
                 //执行前先检测一次通信是否正常
@@ -293,19 +292,31 @@ public class ExecuteService implements Job {
 
                 //当前重跑任务成功,则父记录执行完毕
                 if (result.isSuccess()) {
-                    parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
-                    recordService.update(parentRecord);
+                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+                    //重跑的某一个子任务被Kill,则整个重跑计划结束
+                } else if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
+                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+                } else {
+                    parentRecord.setStatus(RunStatus.RERUNUNDONE.getStatus());
                 }
-
-                recordService.update(record);
                 logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
             } catch (Exception e) {
                 noticeService.notice(job);
                 String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
                 errorExec(record, errorInfo);
                 logger.error(errorInfo, e);
+            } finally {
+                //如果已经到了任务重跑的截至次数直接更新为已重跑完成
+                if (job.getRunCount() == parentRecord.getRedoCount()) {
+                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+                }
+                recordService.save(record);
+                recordService.update(parentRecord);
             }
 
+            /*if (parentRecord.getStatus()==RunStatus.RERUNDONE.getStatus()) {
+                reExecuteThreadMap.put(parentRecord.getRecordId(),job.getRunCount());
+            }*/
 
             return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
         }
