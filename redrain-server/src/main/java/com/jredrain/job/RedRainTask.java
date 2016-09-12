@@ -36,7 +36,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -67,6 +69,9 @@ public class RedRainTask implements InitializingBean {
 
     @Autowired
     private MemcacheCache memcacheCache;
+
+    private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -127,23 +132,28 @@ public class RedRainTask implements InitializingBean {
             @Override
             public void run() {
                 for (final Record record : records) {
+                    if (!reExecuteThreadMap.containsKey(record.getRecordId())) {
+                        reExecuteThreadMap.put(record.getRecordId(),0);
+                    }else {
+                        if ( reExecuteThreadMap.get(record.getRecordId()) >=record.getRedoCount() ) {
+                            continue;
+                        }
+                    }
+                    final JobVo jobVo = jobService.getJobVoById(record.getJobId());
+
                     final Thread thread = new Thread(new Runnable() {
                         public void run() {
-                            JobVo jobVo = jobService.getJobVoById(record.getJobId());
-                            try {
-                                jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
-                                executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
-                            } catch (Exception e) {
-                                //任务执行失败,发送通知警告
-                                noticeService.notice(jobVo);
-                                throw new RuntimeException("reexecute job is failed while executing job:" + jobVo.getJobId());
-                            }
+                            jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
+                            executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
+                            reExecuteThreadMap.put(record.getRecordId(),reExecuteThreadMap.get(record.getRecordId()+1));
                         }
                     });
                     thread.start();
+
                 }
             }
         }).start();
+
     }
 
 

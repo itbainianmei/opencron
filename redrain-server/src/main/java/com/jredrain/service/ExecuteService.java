@@ -63,7 +63,6 @@ public class ExecuteService implements Job {
     @Autowired
     private AgentService agentService;
 
-    private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -263,19 +262,8 @@ public class ExecuteService implements Job {
 
     public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
 
-        if (!reExecuteThreadMap.containsKey(parentRecord.getRecordId())) {
-            reExecuteThreadMap.put(parentRecord.getRecordId(),0);
-        }else {
-            if ( reExecuteThreadMap.get(parentRecord.getRecordId()) >=parentRecord.getRedoCount() ) {
-                reExecuteThreadMap.remove(parentRecord.getRecordId());
-                return true;
-            }
-        }
-
         //上一个重跑未完成前,当前的重跑任务等待...
         synchronized ( parentRecord.getRecordId() ) {
-
-            reExecuteThreadMap.put(parentRecord.getRecordId(),reExecuteThreadMap.get(parentRecord.getRecordId()+1));
 
 
             /**
