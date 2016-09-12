@@ -23,13 +23,14 @@
 package com.jredrain.job;
 
 import com.jredrain.session.MemcacheCache;
-import org.apache.log4j.Logger;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.utils.CommonUtils;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
 import com.jredrain.service.*;
 import com.jredrain.vo.JobVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,7 +45,7 @@ import java.util.Map;
 @Component
 public class RedRainTask implements InitializingBean {
 
-    private final Logger logger = Logger.getLogger(RedRainTask.class);
+    private final Logger logger = LoggerFactory.getLogger(RedRainTask.class);
 
     @Autowired
     private AgentService agentService;
@@ -139,7 +140,10 @@ public class RedRainTask implements InitializingBean {
                             continue;
                         }
                     }
+
                     final JobVo jobVo = jobService.getJobVoById(record.getJobId());
+
+                    logger.info("[redrain] reexecutejob:jobName:{},jobId:{},recordId:{}",jobVo.getJobName(),jobVo.getJobId(),record.getRecordId());
 
                     final Thread thread = new Thread(new Runnable() {
                         public void run() {
@@ -149,7 +153,6 @@ public class RedRainTask implements InitializingBean {
                         }
                     });
                     thread.start();
-
                 }
             }
         }).start();
