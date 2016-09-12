@@ -42,7 +42,7 @@ public class Job implements Serializable {
     private Long operateId;
     private Date updateTime;
     private Integer redo;
-    private Long runCount;
+    private Integer runCount;
 
     /**
      * 0:单一任务
@@ -154,11 +154,11 @@ public class Job implements Serializable {
         this.redo = redo;
     }
 
-    public Long getRunCount() {
+    public Integer getRunCount() {
         return runCount;
     }
 
-    public void setRunCount(Long runCount) {
+    public void setRunCount(Integer runCount) {
         this.runCount = runCount;
     }
 

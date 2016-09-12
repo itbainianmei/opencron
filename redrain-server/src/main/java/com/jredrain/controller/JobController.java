@@ -159,7 +159,7 @@ public class JobController {
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);
                 } else {
-                    chind.setRunCount(Long.parseLong((String) runCount[i]));
+                    chind.setRunCount(Integer.parseInt((String) runCount[i]));
                 }
                 chindren.add(chind);
             }
