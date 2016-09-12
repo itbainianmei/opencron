@@ -130,6 +130,7 @@ public class RedRainTask implements InitializingBean {
         final List<Record> records = recordService.getReExecuteRecord();
 
         new Thread(new Runnable() {
+
             @Override
             public void run() {
 

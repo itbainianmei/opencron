@@ -63,6 +63,8 @@ public class ExecuteService implements Job {
     @Autowired
     private AgentService agentService;
 
+    private Map<Long,Boolean> reExecuteStatus = new HashMap<Long, Boolean>(0);
+
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -262,9 +264,14 @@ public class ExecuteService implements Job {
 
     public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
 
+
         //上一个重跑未完成前,当前的重跑任务等待...
         synchronized ( parentRecord.getRecordId() ) {
 
+            //上一个重跑任务成功了,则本次的重跑不执行
+            if ( reExecuteStatus.get(parentRecord.getRecordId())!=null && reExecuteStatus.get(parentRecord.getRecordId()) ) {
+                return false;
+            }
 
             /**
              * 当前重新执行的新纪录
@@ -305,8 +312,12 @@ public class ExecuteService implements Job {
                 logger.error(errorInfo, e);
             }
 
+            boolean success = record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+            if (success) {
+                this.reExecuteStatus.put(parentRecord.getRecordId(),true);
+            }
 
-            return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+            return success;
         }
     }
 
