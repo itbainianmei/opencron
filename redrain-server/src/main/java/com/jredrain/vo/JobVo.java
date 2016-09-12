@@ -22,7 +22,6 @@
 
 package com.jredrain.vo;
 
-import com.jredrain.base.job.RedRain;
 import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
 
@@ -42,7 +41,7 @@ public class JobVo implements Serializable {
     private Long operateId;
     private Date updateTime;
     private Integer redo;
-    private Long runCount;
+    private Integer runCount;
     private Integer runModel;
 
     /**
@@ -177,11 +176,11 @@ public class JobVo implements Serializable {
         this.redo = redo;
     }
 
-    public Long getRunCount() {
+    public Integer getRunCount() {
         return runCount;
     }
 
-    public void setRunCount(Long runCount) {
+    public void setRunCount(Integer runCount) {
         this.runCount = runCount;
     }
 

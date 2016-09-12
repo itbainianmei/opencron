@@ -47,7 +47,7 @@ public class Record implements Serializable {
     private Date endTime;
     private Integer execType;
     private String message;
-    private Long redoCount;
+    private Integer redoCount;
     private Integer status;
     private String pid;
 
@@ -78,7 +78,7 @@ public class Record implements Serializable {
         this.setExecType( jobVo.getExecType() );
         this.setCommand(jobVo.getCommand());//执行的命令
         this.setStartTime(new Date());//开始执行的时间
-        this.setRedoCount(0L);//运行次数
+        this.setRedoCount(0);//运行次数
         this.setSuccess(RedRain.ResultStatus.SUCCESSFUL.getStatus());
         this.setStatus(RedRain.RunStatus.RUNNING.getStatus());//任务还未完成
         this.setPid(UUID.randomUUID().toString().replace("-", ""));
@@ -172,11 +172,11 @@ public class Record implements Serializable {
         this.message = message;
     }
 
-    public Long getRedoCount() {
+    public Integer getRedoCount() {
         return redoCount;
     }
 
-    public void setRedoCount(Long redoCount) {
+    public void setRedoCount(Integer redoCount) {
         this.redoCount = redoCount;
     }
 

@@ -132,7 +132,9 @@ public class RedRainTask implements InitializingBean {
         new Thread(new Runnable() {
             @Override
             public void run() {
+
                 for (final Record record : records) {
+
                     if (!reExecuteThreadMap.containsKey(record.getRecordId())) {
                         reExecuteThreadMap.put(record.getRecordId(),0);
                     }else {
@@ -145,14 +147,15 @@ public class RedRainTask implements InitializingBean {
 
                     logger.info("[redrain] reexecutejob:jobName:{},jobId:{},recordId:{}",jobVo.getJobName(),jobVo.getJobId(),record.getRecordId());
 
-                    final Thread thread = new Thread(new Runnable() {
+                    new Thread(new Runnable() {
                         public void run() {
                             jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
-                            executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
-                            reExecuteThreadMap.put(record.getRecordId(),reExecuteThreadMap.get(record.getRecordId()+1));
+                            boolean success = executeService.reExecuteJob(record, jobVo, RedRain.JobType.SINGLETON);
+                            //任何一次重跑成功,都当成最后一次重跑..
+                            reExecuteThreadMap.put(record.getRecordId(), success? jobVo.getRunCount(): (reExecuteThreadMap.get(record.getRecordId() + 1)) );
                         }
-                    });
-                    thread.start();
+                    }).start();
+
                 }
             }
         }).start();

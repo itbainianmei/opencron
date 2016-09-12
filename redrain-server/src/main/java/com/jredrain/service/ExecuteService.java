@@ -274,12 +274,11 @@ public class ExecuteService implements Job {
             record.setParentId(parentRecord.getRecordId());
             record.setGroupId(parentRecord.getGroupId());
             record.setJobType(jobType.getCode());
+            record.setRedoCount(parentRecord.getRedoCount());
 
             record = recordService.save(record);
-            /**
-             * 父记录
-             */
-            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1L);//运行次数
+            //父记录的运行次数记录的是所有子记录的总和
+            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
             //如果已经到了任务重跑的截至次数直接更新为已重跑完成
             if (job.getRunCount() == parentRecord.getRedoCount()) {
                 parentRecord.setExecType(ExecType.RERUN_DONE.getStatus());
