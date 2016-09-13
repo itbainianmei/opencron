@@ -70,6 +70,7 @@
             }
             $("#password").val(calcMD5(password));
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/user/checkname",
                 data:{
                     "name":name
@@ -98,6 +99,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/user/checkname",
                     data:{
                         "name":$("#name").val()

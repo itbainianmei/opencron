@@ -74,6 +74,7 @@
         }
 
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/checkname",
             data:{
                 "name":name
@@ -81,6 +82,7 @@
             success:function(data){
                 if (data == "yes"){
                     $.ajax({
+                        type:"POST",
                         url:"${contextPath}/verify/ping",
                         data:{
                             "proxy":proxy||0,
@@ -147,6 +149,7 @@
 
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
         $.ajax({
+            type:"POST",
             url:"${contextPath}/verify/ping",
             data:{
                 "proxy":proxy||0,
@@ -179,6 +182,7 @@
                 return false;
             }
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/agent/checkname",
                 data:{
                     "name":$("#name").val()

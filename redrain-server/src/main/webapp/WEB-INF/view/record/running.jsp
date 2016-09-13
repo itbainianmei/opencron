@@ -36,6 +36,7 @@
                 });
 
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/record/running",
                     data:{
                         "refresh":1,
@@ -87,6 +88,7 @@
             }, function() {
                 $("#process_"+id).html("停止中");
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/record/kill",
                     data:{"recordId":id}
                 });
@@ -107,11 +109,13 @@
             }, function() {
                 $("#process_"+id).html("停止中");
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/record/kill",
                     data:{"recordId":id},
                     success:function(result){
                         if (result == "true"){
                             $.ajax({
+                                type:"POST",
                                 url:"${contextPath}/job/execute",
                                 data:{"id":jobId}
                             });

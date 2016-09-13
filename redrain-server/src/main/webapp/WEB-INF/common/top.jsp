@@ -63,6 +63,7 @@
 
 
 		$.ajax({
+			type:"POST",
 			url: "${contextPath}/notice/uncount",
 			dataType: "html",
 			success: function (data) {
@@ -70,6 +71,7 @@
 					$(".n-count").text(data);
 					$("#msg-icon").show();
 					$.ajax({
+						type:"POST",
 						url: "${contextPath}/notice/unread",
 						dataType: "html",
 						success: function (data) {

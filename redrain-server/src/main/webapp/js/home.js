@@ -48,6 +48,7 @@ var redrainChart = {
         }
 
         $.ajax({
+            type:"POST",
             url: redrainChart.path + "/monitor",
             data: "agentId=" + $("#agentId").val(),
             dataType: "html",
@@ -820,6 +821,7 @@ var redrainChart = {
 
     executeChart: function () {
         $.ajax({
+            type:"POST",
             url: redrainChart.path + "/diffchart",
             data: {
                 "startTime": $("#startTime").val(),

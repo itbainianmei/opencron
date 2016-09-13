@@ -30,12 +30,14 @@
 
         function editSingle(id){
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
                     if ( !eval("("+data+")") ){
 
                         $.ajax({
+                            type:"POST",
                             url:"${contextPath}/job/editsingle",
                             data:{"id":id},
                             success : function(obj) {
@@ -132,6 +134,7 @@
 
         function editFlow(id){
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
@@ -257,6 +260,7 @@
                 doSave(jobObj);
             }else {//需要验证时间规则...
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
@@ -281,6 +285,7 @@
 
         function doSave(job) {
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
                     "id":job.jobId,
@@ -290,6 +295,7 @@
 
                     if (data == "yes"){
                         $.ajax({
+                            type:"POST",
                             url:"${contextPath}/job/edit",
                             data:{
                                 "jobId":job.jobId,
@@ -380,6 +386,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/job/checkname",
                     data:{
                         "id":$("#id").val(),
@@ -413,6 +420,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
@@ -453,6 +461,7 @@
 
         function executeJob(id){
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
@@ -466,6 +475,7 @@
                             confirmButtonText: "执行"
                         }, function() {
                             $.ajax({
+                                type:"POST",
                                 url:"${contextPath}/job/execute",
                                 data:{"id":id}
                             });
@@ -503,12 +513,14 @@
 
         function editCmd(id){
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/canrun",
                 data:{"id":id},
                 success:function(data){
                     if ( !eval("("+data+")") ){
 
                         $.ajax({
+                            type:"POST",
                             url:"${contextPath}/job/editsingle",
                             data:{"id":id},
                             success : function(obj) {
@@ -547,6 +559,7 @@
             }
 
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/editcmd",
                 data:{
                     "jobId":jobId,

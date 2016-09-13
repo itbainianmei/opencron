@@ -36,6 +36,7 @@
                 confirmButtonText: "执行"
             }, function() {
                 $.ajax({
+                    type:"POST",
                     url: "${contextPath}/config/clear",
                     data: {
                         "startTime": startTime,

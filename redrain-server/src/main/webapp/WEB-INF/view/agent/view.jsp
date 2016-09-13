@@ -54,6 +54,7 @@
             });
 
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/agent/view",
                 data:{
                     "refresh":1,
@@ -90,6 +91,7 @@
                 return false;
             }
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/agent/checkname",
                 data:{
                     "id":$("#id").val(),
@@ -132,6 +134,7 @@
 
     function edit(id){
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/editpage",
             data:{"id":id},
             success : function(obj) {
@@ -259,6 +262,7 @@
             return false;
         }
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/checkname",
             data:{
                 "id":id,
@@ -268,6 +272,7 @@
                 if (data == "yes"){
                     if (status == 1){
                         $.ajax({
+                            type:"POST",
                             url:"${contextPath}/verify/ping",
                             data:{
                                 "proxy":proxy,
@@ -306,6 +311,7 @@
 
     function canSave(proxy,id,name,port,warning,mobiles,email){
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/edit",
             data:{
                 "proxy":proxy,
@@ -348,6 +354,7 @@
     
     function flushConnAgents() {
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/getConnAgents",
             success : function(obj) {
                 if(obj != null){
@@ -362,6 +369,7 @@
 
     function editPwd(id){
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/pwdpage",
             data:{"id":id},
             success : function(obj) {
@@ -406,6 +414,7 @@
             return false;
         }
         $.ajax({
+            type:"POST",
             url:"${contextPath}/agent/editpwd",
             data:{
                 "id":id,
@@ -474,6 +483,7 @@
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
 
         $.ajax({
+            type:"POST",
             url:"${contextPath}/verify/ping",
             data:{
                 "proxy":proxy,
@@ -500,6 +510,7 @@
 
     function ssh(agentId,ip,type) {
         $.ajax({
+            type:"POST",
             url:"${contextPath}/term/ssh",
             data:"agentId="+agentId+"&ip="+ip,
             dataType: "html",
@@ -551,8 +562,8 @@
         var ip = $("#sship").val();
         var agent = $("#sshagent").val();
         $.ajax({
+            type:"POST",
             url:"${contextPath}/term/save",
-            type:"post",
             data:{
                 "user":user,
                 "password":pwd,

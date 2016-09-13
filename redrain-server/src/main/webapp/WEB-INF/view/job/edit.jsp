@@ -72,6 +72,7 @@
                     $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写作业名称' + "</font>");
                     return false;}
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/job/checkname",
                     data:{
                         "jobId":jobId,
@@ -112,6 +113,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
@@ -247,6 +249,7 @@
             }
 
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
                     "jobId":jobId,
@@ -257,6 +260,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
+                                type:"POST",
                                 url:"${contextPath}/verify/exp",
                                 data:{
                                     "cronType":cronType,
@@ -336,6 +340,7 @@
             }
 
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
                     "jobId":$("#jobId1").val(),

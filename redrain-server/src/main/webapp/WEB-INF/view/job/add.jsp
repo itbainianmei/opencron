@@ -153,6 +153,7 @@
             }
 
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
                     "name":jobName
@@ -161,6 +162,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
+                                type:"POST",
                                 url:"${contextPath}/verify/exp",
                                 data:{
                                     "cronType":cronType,
@@ -219,6 +221,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/job/checkname",
                     data:{
                         "name":$("#jobName").val()
@@ -257,6 +260,7 @@
                     return false;
                 }
                 $.ajax({
+                    type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
                         "cronType":cronType,
@@ -340,6 +344,7 @@
              * 同一个执行器下只能有一个任务名
              */
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
                     "name":jobName,

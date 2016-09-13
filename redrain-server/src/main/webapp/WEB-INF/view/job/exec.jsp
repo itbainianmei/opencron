@@ -46,8 +46,8 @@
                     if ("" != ids){
                         ids = ids.substring(0,ids.length-1);
                         $.ajax({
-                            url:"${contextPath}/job/batchexec",
                             type:"POST",
+                            url:"${contextPath}/job/batchexec",
                             data:{
                                 "command":cmd,
                                 "agentIds":ids

@@ -19,6 +19,7 @@
 
         function editPwd(id){
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/user/pwdpage",
                 data:{"id":id},
                 success : function(obj) {
@@ -72,6 +73,7 @@
                 return false;
             }
             $.ajax({
+                type:"POST",
                 url:"${contextPath}/user/editpwd",
                 data:{
                     "id":id,
