@@ -22,12 +22,10 @@
 
 package com.jredrain.tag;
 
-import org.apache.commons.lang3.StringUtils;
 import com.jredrain.base.utils.DateUtils;
 import com.jredrain.base.utils.CommonUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 
@@ -35,30 +33,6 @@ import java.util.Date;
  * Created by Administrator on 14-3-25.
  */
 public class CronTag {
-
-    public static String currDayPrevDay(int day) {
-        return DateUtils.getCurrDayPrevDay(day);
-    }
-
-    /**
-     * 获取指定日期的后N天
-     * @param date
-     * @param n
-     * @return
-     */
-    public static String getNextDay(String date, int n) {
-        return DateUtils.getNextDay(date, n);
-    }
-
-    /**
-     * 获取指定日期的前N天
-     * @param date
-     * @param n
-     * @return
-     */
-    public static String getPrevDay(String date, int n) {
-        return DateUtils.getPrevDay(date, n);
-    }
 
     public static String substr(Object obj, int index, int end) {
         return substr(obj, index, end, "");
@@ -78,23 +52,6 @@ public class CronTag {
             return str.substring(index, end) + tempStr;
         }
         return str;
-    }
-
-
-    public static String subwithstr(Object obj, int start, String strx, int index) {
-        if (CommonUtils.isEmpty(obj))
-            return "";
-        String str = obj.toString();
-        if (obj instanceof Date) {
-            str = DateUtils.formatSimpleDate((Date) obj);
-        } else {
-            str = str + "";
-        }
-        int pos = str.indexOf(strx);
-        if (pos + index < 0) {
-            return str;
-        }
-        return str.substring(start, str.indexOf(strx) + index);
     }
 
     public static String getDate(String date, String format) {
@@ -176,80 +133,6 @@ public class CronTag {
             }
         }
 
-    }
-
-    public static String shiftEnter(String str) {
-        String newStr = str.replaceAll("\r\n", "<br>"); // 替换回车换行符
-        newStr = newStr.replaceAll(" ", "&nbsp;");// 替换空格符
-        return newStr;
-    }
-
-    /**
-     * 将lonng型time格式化
-     * @param value
-     * @return
-     */
-    public static String longtimeToDate(String value) {
-        String s = "";
-        if (StringUtils.isNotBlank(value)) {
-            long time = Long.valueOf(value);
-            Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(time);
-            SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            s = dateformat.format(c.getTime());
-        }
-
-        return s;
-    }
-
-    /**
-     * 替换手机号中间位数
-     * @param str
-     * @return
-     */
-    public static String StrReplaceAll(String str) {
-        if (StringUtils.isNotBlank(str) && str.length() >= 11) {
-            return str.substring(0, 3) + "****" + str.substring(7);
-        } else {
-            return str;
-        }
-    }
-
-    /**
-     * 将xxxx-xx字符串替换为xxxx年xx月
-     * @param str
-     * @return
-     */
-    public static String strToDateStr(String str) {
-        if (StringUtils.isNotBlank(str)) {
-            str = str.replace("-", "年");
-            str += "月";
-            return str;
-        } else {
-            return str;
-        }
-    }
-
-    /**
-     * 截取code前4位和后4位，中间用*代替
-     * @param code
-     * @param len（*号显示数量）
-     * @return
-     * @author yaohu
-     */
-    public static String strToCardCode(String code, int len) {
-        String ret = code;
-        if (StringUtils.isNotBlank(code) && code.length() > 8) {
-            String str = "";
-            if (len <= 0) {
-                len = code.length() - 8;
-            }
-            for (int i = 0; i < len; i++) {
-                str += "*";
-            }
-            ret = code.substring(0, 4) + str + code.substring(code.length() - 4, code.length());
-        }
-        return ret;
     }
 
     public static void main(String[] args) {
