@@ -58,6 +58,8 @@ public class AgentProcessor implements RedRain.Iface {
 
     private final String EXITCODE_SCRIPT = String.format(" && echo %s:$? || echo %s:$?", EXITCODE_KEY,EXITCODE_KEY);
 
+    private final String REPLACE_REX = "%s:\\sline\\s[0-9]+:";
+
     private AgentMonitor agentMonitor;
 
     public AgentProcessor(String password, Integer agentPort) {
@@ -199,6 +201,7 @@ public class AgentProcessor implements RedRain.Iface {
                 String text = outputStream.toString();
                 if (notEmpty(text)) {
                     try {
+                        text = text.replaceAll(String.format(REPLACE_REX,shellFile.getAbsolutePath()),"");
                         response.setMessage(text.substring(0, text.lastIndexOf(EXITCODE_KEY)));
                         response.setExitCode(Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim()));
                     } catch (IndexOutOfBoundsException e) {

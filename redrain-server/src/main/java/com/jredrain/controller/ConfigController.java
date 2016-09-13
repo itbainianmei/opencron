@@ -24,6 +24,7 @@ package com.jredrain.controller;
 import com.jredrain.domain.Config;
 import com.jredrain.service.ConfigService;
 import com.jredrain.service.NoticeService;
+import com.jredrain.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,9 @@ public class ConfigController {
 
     @Autowired
     private NoticeService noticeService;
+
+    @Autowired
+    private RecordService recordService;
 
     @RequestMapping("/view")
     public String settings(Model model) {
@@ -60,6 +64,11 @@ public class ConfigController {
         configService.update(config);
         noticeService.updateConfig(config);
         return "redirect:/config/view";
+    }
+
+    @RequestMapping("/clear")
+    public void clearRecord(String startTime,String endTime) {
+        recordService.deleteRecordBetweenTime(startTime, endTime);
     }
 
 }

@@ -148,7 +148,7 @@
                     <label for="spaceTime" class="col-lab control-label"><i class="glyphicon glyphicon-time"></i>&nbsp;&nbsp;发送间隔：</label>
                     <div class="col-md-10">
                         <input type="text" class="form-control input-sm" id="spaceTime" name="spaceTime" value="${config.spaceTime}">
-                        <span class="tips"><b>*&nbsp;</b>告警邮件和短信发送后到下一次发送的时间间隔(分钟)</span>
+                        <span class="tips"><b>*&nbsp;</b>同一执行器失联后告警邮件和短信发送后到下一次发送的时间间隔(分钟)</span>
                     </div>
                 </div><br>
 

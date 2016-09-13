@@ -205,4 +205,12 @@ public class RecordService {
             return queryDao.getCountBySql(sql,1,execType.getStatus());
         }
     }
+
+    @Transactional(readOnly = false)
+    public void deleteRecordBetweenTime(String startTime, String endTime) {
+        if (notEmpty(startTime,endTime)){
+            String sql = "DELETE FROM record WHERE DATE_FORMAT(startTime,'%Y-%m-%d') BETWEEN ? AND ?";
+            queryDao.createSQLQuery(sql,startTime,endTime).executeUpdate();
+        }
+    }
 }
