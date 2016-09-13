@@ -37,9 +37,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Component
@@ -121,7 +119,7 @@ public class RedRainTask implements InitializingBean {
         }
     }
 
-    @Scheduled(cron = "0/1 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void reExecuteJob() {
         logger.info("[redrain] reExecuteIob running...");
         final List<Record> records = recordService.getReExecuteRecord();
