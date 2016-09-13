@@ -279,8 +279,8 @@ public class ExecuteService implements Job {
         record.setParentId(parentRecord.getRecordId());
         record.setGroupId(parentRecord.getGroupId());
         record.setJobType(jobType.getCode());
-        record.setRedoCount(parentRecord.getRedoCount());
         parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
+        record.setRedoCount(parentRecord.getRedoCount());
 
         try {
             //执行前先检测一次通信是否正常
