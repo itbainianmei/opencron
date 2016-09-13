@@ -30,8 +30,6 @@ import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
-import com.sun.org.apache.xerces.internal.impl.dv.xs.BooleanDV;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -272,7 +270,7 @@ public class ExecuteService implements Job {
         }
 
         parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
-        //1000
+
         recordService.update(parentRecord);
         /**
          * 当前重新执行的新纪录
@@ -288,6 +286,7 @@ public class ExecuteService implements Job {
         try {
             //执行前先检测一次通信是否正常
             checkPing(job, record);
+            //10
             Response result = responseToRecord(job, record);
 
             //当前重跑任务成功,则父记录执行完毕
