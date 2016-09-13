@@ -15,6 +15,9 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
+    <link href='${contextPath}/css/jquery.mCustomScrollbar.css' rel='stylesheet'>
+    <script src="${contextPath}/js/jquery.mCustomScrollbar.min.js"></script>
+
     <script type="text/javascript">
         var flag = false;
 
@@ -44,6 +47,7 @@
                         ids = ids.substring(0,ids.length-1);
                         $.ajax({
                             url:"${contextPath}/job/batchexec",
+                            type:"POST",
                             data:{
                                 "command":cmd,
                                 "agentIds":ids
@@ -90,6 +94,12 @@
                     flag = false;
                 }
             });
+
+            $(window).on("load",function(){
+                $("#agent-content").mCustomScrollbar({
+                    theme:"dark"
+                });
+            });
         });
 
     </script>
@@ -125,40 +135,43 @@
 
         <h3 class="block-title">选择执行器</h3>
 
-        <table class="table table-bordered tile" style="font-size: 12px;">
+        <table class="table table-bordered tile" style="font-size: 12px;margin-bottom: 0;">
             <thead>
             <tr>
-                <th><input type="checkbox" id="checkAllInput">全选</th>
-                <th>执行器</th>
-                <th>机器IP</th>
-                <th>端口号</th>
-                <th>连接状态</th>
+                <th width="10%"><input type="checkbox" id="checkAllInput">全选</th>
+                <th width="25%">执行器</th>
+                <th width="25%">机器IP</th>
+                <th width="20%">端口号</th>
+                <th width="20%">连接状态</th>
             </tr>
             </thead>
-            <tbody>
-            <c:forEach var="w" items="${agents}" varStatus="index">
-                <c:if test="${w.status eq true}">
-                    <tr>
-                        <td>
-                            <input type="checkbox" name="agent" value="${w.agentId}" class="each-box">
-                        </td>
-                        <td id="name_${w.agentId}">${w.name}</td>
-                        <td>${w.ip}</td>
-                        <td id="port_${w.agentId}">${w.port}</td>
-                        <td id="agent_${d.agentId}">
-                            <c:if test="${w.status eq false}">
-                                <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
-                            </c:if>
-                            <c:if test="${w.status eq true}">
-                                <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
-                            </c:if>
-                        </td>
-                    </tr>
-                </c:if>
-            </c:forEach>
-
-            </tbody>
         </table>
+        <div id="agent-content" style="height: 600px;overflow: hidden;">
+            <table class="table table-bordered tile" style="font-size: 12px;margin-bottom: 0;">
+                <tbody>
+                <c:forEach var="w" items="${agents}" varStatus="index">
+                    <c:if test="${w.status eq true}">
+                        <tr>
+                            <td width="10%">
+                                <input type="checkbox" name="agent" value="${w.agentId}" class="each-box">
+                            </td>
+                            <td width="25%" id="name_${w.agentId}">${w.name}</td>
+                            <td width="25%">${w.ip}</td>
+                            <td width="20%" id="port_${w.agentId}">${w.port}</td>
+                            <td width="20%" id="agent_${d.agentId}">
+                                <c:if test="${w.status eq false}">
+                                    <span class="label label-danger">&nbsp;&nbsp;失&nbsp;败&nbsp;&nbsp;</span>
+                                </c:if>
+                                <c:if test="${w.status eq true}">
+                                    <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
+                                </c:if>
+                            </td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 <br/><br/>
