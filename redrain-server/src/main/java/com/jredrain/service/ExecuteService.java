@@ -265,61 +265,56 @@ public class ExecuteService implements Job {
 
     public boolean reExecuteJob(final Record parentRecord, JobVo job, JobType jobType) {
 
-        synchronized (parentRecord.getRecordId()) {
-
-            /*if ( reExecuteThreadMap.get(parentRecord.getRecordId())>=job.getRunCount() ) {
-                return false;
-            }*/
-
-            parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
-            //1000
-            recordService.update(parentRecord);
-            /**
-             * 当前重新执行的新纪录
-             */
-            job.setExecType(ExecType.RERUN.getStatus());
-            Record record = new Record(job);
-            record.setParentId(parentRecord.getRecordId());
-            record.setGroupId(parentRecord.getGroupId());
-            record.setJobType(jobType.getCode());
-            record.setRedoCount(parentRecord.getRedoCount());
-            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
-
-            try {
-                //执行前先检测一次通信是否正常
-                checkPing(job, record);
-                Response result = responseToRecord(job, record);
-
-                //当前重跑任务成功,则父记录执行完毕
-                if (result.isSuccess()) {
-                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
-                    //重跑的某一个子任务被Kill,则整个重跑计划结束
-                } else if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
-                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
-                } else {
-                    parentRecord.setStatus(RunStatus.RERUNUNDONE.getStatus());
-                }
-                logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
-            } catch (Exception e) {
-                noticeService.notice(job);
-                String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
-                errorExec(record, errorInfo);
-                logger.error(errorInfo, e);
-            } finally {
-                //如果已经到了任务重跑的截至次数直接更新为已重跑完成
-                if (job.getRunCount() == parentRecord.getRedoCount()) {
-                    parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
-                }
-                recordService.save(record);
-                recordService.update(parentRecord);
-            }
-
-            /*if (parentRecord.getStatus()==RunStatus.RERUNDONE.getStatus()) {
-                reExecuteThreadMap.put(parentRecord.getRecordId(),job.getRunCount());
-            }*/
-
-            return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
+        if (parentRecord.getRedoCount().equals(reExecuteThreadMap.get(parentRecord.getRecordId()))){
+            return false;
+        }else {
+            reExecuteThreadMap.put(parentRecord.getRecordId(),parentRecord.getRedoCount());
         }
+
+        parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
+        //1000
+        recordService.update(parentRecord);
+        /**
+         * 当前重新执行的新纪录
+         */
+        job.setExecType(ExecType.RERUN.getStatus());
+        Record record = new Record(job);
+        record.setParentId(parentRecord.getRecordId());
+        record.setGroupId(parentRecord.getGroupId());
+        record.setJobType(jobType.getCode());
+        record.setRedoCount(parentRecord.getRedoCount());
+        parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
+
+        try {
+            //执行前先检测一次通信是否正常
+            checkPing(job, record);
+            Response result = responseToRecord(job, record);
+
+            //当前重跑任务成功,则父记录执行完毕
+            if (result.isSuccess()) {
+                parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+                //重跑的某一个子任务被Kill,则整个重跑计划结束
+            } else if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
+                parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+            } else {
+                parentRecord.setStatus(RunStatus.RERUNUNDONE.getStatus());
+            }
+            logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
+        } catch (Exception e) {
+            noticeService.notice(job);
+            String errorInfo = String.format("execute failed:jobName:%s,jobId:%d,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
+            errorExec(record, errorInfo);
+            logger.error(errorInfo, e);
+        } finally {
+            //如果已经到了任务重跑的截至次数直接更新为已重跑完成
+            if (job.getRunCount().equals(parentRecord.getRedoCount())) {
+                parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
+            }
+            recordService.save(record);
+            recordService.update(parentRecord);
+        }
+
+        return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
     public boolean killJob(Record record) {
