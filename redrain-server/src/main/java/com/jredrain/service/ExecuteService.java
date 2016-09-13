@@ -192,7 +192,6 @@ public class ExecuteService implements Job {
                 return true;
             }
         } catch (Exception e) {
-            noticeService.notice(job);
             String errorInfo = String.format("execute failed(flow job):jobName:%s,,jobId:%d,,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
             record.setSuccess(ResultStatus.FAILED.getStatus());//程序调用失败
             record.setReturnCode(StatusCode.ERROR_EXEC.getValue());
@@ -286,7 +285,7 @@ public class ExecuteService implements Job {
         try {
             //执行前先检测一次通信是否正常
             checkPing(job, record);
-            //10
+
             Response result = responseToRecord(job, record);
 
             //当前重跑任务成功,则父记录执行完毕
@@ -296,6 +295,10 @@ public class ExecuteService implements Job {
             } else if (StatusCode.KILL.getValue().equals(result.getExitCode())) {
                 parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
             } else {
+                //已经重跑到最后一次了,还是失败了,则认为整个重跑任务失败,发送通知
+                if (job.getRunCount().equals(parentRecord.getRedoCount())) {
+                    noticeService.notice(job);
+                }
                 parentRecord.setStatus(RunStatus.RERUNUNDONE.getStatus());
             }
             logger.info("execute successful:jobName:{},jobId:{},ip:{},port:{}", job.getJobName(), job.getJobId(), job.getIp(), job.getPort());
