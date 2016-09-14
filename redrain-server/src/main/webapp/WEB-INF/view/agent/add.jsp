@@ -105,7 +105,7 @@
                     });
                     return false;
                 }else {
-                    alert("用户已存在!");
+                    alert("执行器名称已存在!");
                     return false;
                 }
             },
