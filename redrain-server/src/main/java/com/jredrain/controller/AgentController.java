@@ -62,6 +62,14 @@ public class AgentController {
         WebUtils.writeHtml(response, result);
     }
 
+
+    @RequestMapping("/checkhost")
+    public void checkhost(HttpServletResponse response, Long id,String ip) {
+        String result = agentService.checkhost(id, ip);
+        WebUtils.writeHtml(response, result);
+    }
+
+
     @RequestMapping("/addpage")
     public String addPage(Model model) {
         List<Agent> agentList = agentService.getAgentByConnType(RedRain.ConnType.CONN);

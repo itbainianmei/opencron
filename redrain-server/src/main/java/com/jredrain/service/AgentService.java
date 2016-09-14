@@ -141,6 +141,16 @@ public class AgentService {
         return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
     }
 
+
+    public String checkhost(Long id, String host) {
+        String sql = "SELECT COUNT(1) FROM agent WHERE ip=? ";
+        if (notEmpty(id)) {
+            sql += " AND agentId != " + id;
+        }
+        return (queryDao.getCountBySql(sql, host)) > 0L ? "no" : "yes";
+    }
+
+
     public String editPwd(Long id, String pwd0, String pwd1, String pwd2) {
         Agent work = this.getAgent(id);
         String password = DigestUtils.md5Hex(pwd0);

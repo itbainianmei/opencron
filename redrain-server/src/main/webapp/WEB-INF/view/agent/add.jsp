@@ -75,37 +75,56 @@
 
         $.ajax({
             type:"POST",
-            url:"${contextPath}/agent/checkname",
+            url:"${contextPath}/agent/checkhost",
             data:{
-                "name":name
+                "ip":ip
             },
             success:function(data){
+
                 if (data == "yes"){
                     $.ajax({
                         type:"POST",
-                        url:"${contextPath}/verify/ping",
+                        url:"${contextPath}/agent/checkname",
                         data:{
-                            "proxy":proxy||0,
-                            "proxyId":proxyId,
-                            "ip":ip,
-                            "port":port,
-                            "password":calcMD5(password)
+                            "name":name
                         },
                         success:function(data){
-                            if (data == "success"){
-                                $("#agent").submit();
-                                return;
+                            if (data == "yes"){
+                                $.ajax({
+                                    type:"POST",
+                                    url:"${contextPath}/verify/ping",
+                                    data:{
+                                        "proxy":proxy||0,
+                                        "proxyId":proxyId,
+                                        "ip":ip,
+                                        "port":port,
+                                        "password":calcMD5(password)
+                                    },
+                                    success:function(data){
+                                        if (data == "success"){
+                                            $("#agent").submit();
+                                            return;
+                                        }else {
+                                            alert("通信失败!请检查IP和端口号及密码");
+                                        }
+                                    },
+                                    error : function() {
+                                        alert("网络繁忙请刷新页面重试!");
+                                    }
+                                });
+                                return false;
                             }else {
-                                alert("通信失败!请检查IP和端口号及密码");
+                                alert("执行器名称已存在!");
+                                return false;
                             }
                         },
                         error : function() {
                             alert("网络繁忙请刷新页面重试!");
+                            return false;
                         }
                     });
-                    return false;
                 }else {
-                    alert("用户已存在!");
+                    alert("该执行器IP已存在!不能重跑添加");
                     return false;
                 }
             },
@@ -113,7 +132,8 @@
                 alert("网络繁忙请刷新页面重试!");
                 return false;
             }
-        });
+        })
+
     }
 
     function pingCheck(){
@@ -175,6 +195,40 @@
     }
 
     $(document).ready(function(){
+        
+        $("#ip").focus(function(){
+            $("#pingResult").html("");
+        }).blur(function () {
+            if(!$("#ip").val()){
+                $("#checkIp").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写执行器IP' + "</font>");
+            }else {
+                if (!redrain.testIp($("#ip").val())){
+                    $("#checkIp").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;IP格式错误,请填写正确的IP地址' + "</font>");
+                    return false;
+                }else {
+                    $.ajax({
+                        type:"POST",
+                        url:"${contextPath}/agent/checkhost",
+                        data:{
+                            "ip":$("#ip").val()
+                        },
+                        success:function(data){
+                            if (data == "yes"){
+                                $("#checkIp").html("<font color='green'>" + '<i class="glyphicon glyphicon-ok-sign"></i>&nbsp;执行器IP可用' + "</font>");
+                                return false;
+                            }else {
+                                $("#checkIp").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;执行器IP已存在' + "</font>");
+                                return false;
+                            }
+                        },
+                        error : function() {
+                            alert("网络繁忙请刷新页面重试!");
+                            return false;
+                        }
+                    });
+                }
+            }
+        });
 
         $("#name").blur(function(){
             if(!$("#name").val()){
@@ -201,14 +255,10 @@
                     return false;
                 }
             });
-        });
-
-        $("#name").focus(function(){
+        }).focus(function(){
             $("#checkName").html('<b>*&nbsp;</b>执行器名称必填');
         });
-        $("#ip").focus(function(){
-            $("#pingResult").html("");
-        });
+
         $("#port").focus(function(){
             $("#pingResult").html("");
         });
@@ -300,6 +350,7 @@
                     <div class="col-md-10">
                         <input type="text" class="form-control input-sm" id="ip" name="ip">
                         <span class="tips"><b>*&nbsp;</b>执行器IP地址只能为点分十进制方式表示,如192.168.0.1</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tips" id="checkIp"></span>
                     </div>
                 </div><br>
 
