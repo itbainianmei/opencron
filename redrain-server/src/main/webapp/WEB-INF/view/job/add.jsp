@@ -673,7 +673,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group contact">
+                        <div class="form-group">
                             <label for="command1" class="col-lab control-label" title="请采用unix/linux的shell支持的命令">执行命令：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="command1"/>&nbsp;

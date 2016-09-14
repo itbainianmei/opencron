@@ -74,96 +74,67 @@
             window.location.href = "${contextPath}/record/done?queryTime=" + queryTime + "&success=" + success + "&agentId=" + agentId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
-        function showChild(id){
-            var open = $("#record_"+id).attr("childOpen");
-            if (open == "off"){
-                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
-                $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
-                $(".child"+id).show();
-                $("#record_"+id).attr("childOpen","on");
-                $(".name_"+id+"_1").hide();
-                $(".name_"+id+"_2").show();
-            }else {
-                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-                $(".redoGroup"+id).css("background-color","");
-                $(".child"+id).hide();
-                $("#record_"+id).attr("childOpen","off");
-                $(".name_"+id+"_1").show();
-                $(".name_"+id+"_2").hide();
-            }
-        }
+        function showRedo(id,length,groupId){
+            var redoIcon = $("#redoIcon_"+id);
+            var rowGroup = $("#row_"+ (groupId ? groupId : id));
+            var row = rowGroup.attr("rowspan");
 
-        function showFatherRedo(id,groupId,length){
-            var open = $("#record_"+id).attr("childOpen");
-            if (open == "off"){
-                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
-                $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
-                $(".child"+id).show();
-                $("#record_"+id).attr("childOpen","on");
-                var row = $("#row_"+groupId).attr("rowspan");
-                $("#row_"+groupId).attr("rowspan",parseInt(row) + parseInt(length));
+            if (redoIcon.attr("redoOpen") == "off"){
+                redoIcon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
+                redoIcon.attr("redoOpen","on");
+                rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
                 $(".redoIndex_"+id).show();
-                $(".name_"+id+"_1").hide();
-                $(".name_"+id+"_2").show();
+                $(".redoGroup_"+id).css("background-color","rgba(0,0,0,0.25)");
+                $("#firstTr_"+(groupId ? groupId : id)).css("background-color","rgba(0,0,0,0.25)");
+                $(".redoGroup_"+id).show();
             }else {
-                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-                $(".redoGroup"+id).css("background-color","");
-                $(".child"+id).hide();
-                $("#record_"+id).attr("childOpen","off");
-                var row = $("#row_"+groupId).attr("rowspan");
-                $("#row_"+groupId).attr("rowspan",parseInt(row) - parseInt(length));
+                redoIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+                redoIcon.attr("redoOpen","off");
+                rowGroup.attr("rowspan",parseInt(row) - parseInt(length));
+                if (rowGroup.attr("rowspan") == 1){
+                    $("#firstTr_"+(groupId ? groupId : id)).css("background-color","");
+                }
                 $(".redoIndex_"+id).hide();
-                $(".name_"+id+"_1").show();
-                $(".name_"+id+"_2").hide();
+                $(".redoGroup_"+id).css("background-color","");
+                $(".redoGroup_"+id).hide();
+
             }
         }
 
-        function showChildRedo(id,groupId,length){
-            var open = $("#record_"+id).attr("childOpen");
-            if (open == "off"){
-                $("#icon"+id).removeClass("fa-chevron-down").addClass("fa-chevron-up");
-                $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.25)");
-                $(".child"+id).show();
-                $("#record_"+id).attr("childOpen","on");
-                var row = $("#row_"+groupId).attr("rowspan");
-                $("#row_"+groupId).attr("rowspan",parseInt(row) + parseInt(length));
-                $(".redoIndex_"+id).show();
-                $(".name_"+id+"_1").hide();
-                $(".name_"+id+"_2").show();
-            }else {
-                $("#icon"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-                $(".redoGroup"+id).css("background-color","rgba(0,0,0,0.1)");
-                $(".child"+id).hide();
-                $("#record_"+id).attr("childOpen","off");
-                var row = $("#row_"+groupId).attr("rowspan");
-                $("#row_"+groupId).attr("rowspan",parseInt(row) - parseInt(length));
-                $(".redoIndex_"+id).hide();
-                $(".name_"+id+"_1").show();
-                $(".name_"+id+"_2").hide();
-            }
-        }
+        function showFlow(id,length,groupId){
+            var flowIcon = $("#flowIcon_"+id);
+            var flowGroup = $(".flowGroup_"+id);
+            var rowGroup = $("#row_"+ groupId);
+            var row = rowGroup.attr("rowspan");
 
-        function showChildFlow(id,flowId){
-            var open = $("#recordFlow_"+id).attr("childOpen");
-            if (open == "off"){
-                $("#iconFlow"+id).removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
-                $(".childFlow"+id).show();
-                $(".flowRecord"+flowId).css("background-color","rgba(0,0,0,0.1)");
-                $("#recordFlow_"+id).attr("childOpen","on");
-                $(".name_"+id+"_1").hide();
-                $(".name_"+id+"_2").show();
+            if (flowIcon.attr("childOpen") == "off"){
+                flowIcon.removeClass("fa-angle-double-down").addClass("fa-angle-double-up");
+                flowIcon.attr("childOpen","on");
+                rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
+                $(".flowIndex_"+id).show();
+                flowGroup.css("background-color","rgba(0,0,0,0.25)");
+                $("#firstTr_"+groupId).css("background-color","rgba(0,0,0,0.25)");
+                flowGroup.show();
+
             }else {
-                $(".flowRecord"+flowId).css("background-color","");
-                $("#iconFlow"+id).removeClass("fa-angle-double-up").addClass("fa-angle-double-down");
-                $(".iconChild"+id).removeClass("fa-chevron-up").addClass("fa-chevron-down");
-                $(".openChild"+id).attr("childOpen","off");
-                $(".childFlow"+id).hide();
-                $(".redoIndex_"+id).hide();
-                $(".childFlowRedo"+id).hide();
-                $("#row_"+flowId).attr("rowspan",$("#row_"+flowId).attr("constant"));
-                $(".name_"+id+"_1").show();
-                $(".name_"+id+"_2").hide();
-                $("#recordFlow_"+id).attr("childOpen","off");
+                flowIcon.removeClass("fa-angle-double-up").addClass("fa-angle-double-down");
+                flowIcon.attr("childOpen","off");
+                rowGroup.attr("rowspan",1);
+                $("#firstTr_"+groupId).css("background-color","");
+                $(".flowIndex_"+id).hide();
+                flowGroup.css("background-color","");
+                flowGroup.hide();
+
+                //收起所有子记录的重跑记录
+                var groupIcon = $(".groupIcon_"+groupId);
+                groupIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+                groupIcon.attr("redoOpen","off");
+                $(".groupIndex_"+groupId).hide();
+                $(".groupRecord_"+groupId).css("background-color","");
+                $(".groupRecord_"+groupId).hide();
+
+
+
             }
         }
 
@@ -257,15 +228,13 @@
             <tbody>
             <%--父记录--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
-                <tr <c:if test="${r.jobType eq 1}">class="flowRecord${r.groupId} redoGroup${r.recordId}"</c:if>
-                    <c:if test="${r.jobType eq 0}">class="redoGroup${r.recordId}"</c:if>>
+                <tr id="firstTr_${empty r.groupId ? r.recordId : r.groupId}">
                     <c:if test="${r.jobType eq 0}">
-                        <td  class="name_${r.recordId}_1"> <center>${empty r.jobName ? 'batchJob' : r.jobName}</center></td>
-                        <td style="display: none;" class="name_${r.recordId}_2" rowspan="${fn:length(r.childRecord)+1}">
+                        <td id="row_${r.recordId}" rowspan="1">
                             <center>
-                                    ${r.jobName}
+                                ${empty r.jobName ? 'batchJob' : r.jobName}
                                 <c:forEach var="c" items="${r.childRecord}" varStatus="index">
-                                    <div>
+                                    <div style="display: none" class="redoIndex_${r.recordId}">
                                         <div class="div-circle"><span class="span-circle">${index.count}</span></div>${c.jobName}
                                     </div>
                                 </c:forEach>
@@ -273,22 +242,23 @@
                         </td>
                     </c:if>
                     <c:if test="${r.jobType eq 1}">
-                        <td  class="name_${r.recordId}_1"> <center>${r.jobName}</center></td>
-                        <td style="display: none;" class="name_${r.recordId}_2" id="row_${r.groupId}" constant="${fn:length(r.childJob)+1}" rowspan="${fn:length(r.childJob)+1}">
+                        <td id="row_${r.groupId}" rowspan="1">
                             <center>
-                                    ${r.jobName}
+                                ${r.jobName}
                                 <c:if test="${r.redoCount ne 0}">
                                     <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
-                                        <div class="redoIndex_${rc.parentId} redoIndex_${r.recordId}" style="display: none">
+                                        <div class="redoIndex_${r.recordId} groupIndex_${r.groupId}" style="display: none">
                                             <div class="div-circle"><span class="span-circle">${index.count}</span></div>${rc.jobName}
                                         </div>
                                     </c:forEach>
                                 </c:if>
                                 <c:forEach var="t" items="${r.childJob}" varStatus="index">
-                                    <div class="down"><i class="fa fa-arrow-down" style="font-size:14px" aria-hidden="true"></i></div>${t.jobName}
+                                    <div class="flowIndex_${r.recordId} " style="display: none">
+                                        <div class="down"><i class="fa fa-arrow-down" style="font-size:14px" aria-hidden="true"></i></div>${t.jobName}
+                                    </div>
                                     <c:if test="${t.redoCount ne 0}">
                                         <c:forEach var="tc" items="${t.childRecord}" varStatus="count">
-                                            <div class="redoIndex_${tc.parentId} redoIndex_${r.recordId}" style="display: none">
+                                            <div class="redoIndex_${t.recordId} groupIndex_${r.groupId}" style="display: none">
                                                 <div class="div-circle"><span class="span-circle">${count.count}</span></div>${tc.jobName}
                                             </div>
                                         </c:forEach>
@@ -326,13 +296,13 @@
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                 <c:if test="${r.jobType eq 1 and r.childJob ne null}">
-                                    <a href="#" title="流程任务" id="recordFlow_${r.recordId}" childOpen="off" onclick="showChildFlow(${r.recordId},'${r.groupId}')">
-                                        <i aria-hidden="true" class="fa fa-angle-double-down" style="font-size:15px;" id="iconFlow${r.recordId}"></i>
+                                    <a href="#" title="流程任务" onclick="showFlow(${r.recordId},'${fn:length(r.childJob)}','${r.groupId}')">
+                                        <i aria-hidden="true" class="fa fa-angle-double-down" style="font-size:15px;" childOpen="off" id="flowIcon_${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <c:if test="${r.redoCount ne 0}">
-                                    <a href="#" title="重跑记录" id="record_${r.recordId}" childOpen="off" onclick="showFatherRedo('${r.recordId}','${r.groupId}','${fn:length(r.childRecord)}')">
-                                        <i aria-hidden="true" class="fa fa-chevron-down" id="icon${r.recordId}"></i>
+                                    <a href="#" title="重跑记录" onclick="showRedo('${r.recordId}','${fn:length(r.childRecord)}',${empty r.groupId ? false : r.groupId})">
+                                        <i aria-hidden="true" class="fa fa-chevron-down groupIcon_${r.groupId}" redoOpen="off" id="redoIcon_${r.recordId}"></i>
                                     </a>&nbsp;&nbsp;
                                 </c:if>
                                 <a href="${contextPath}/record/detail?id=${r.recordId}" title="查看详情">
@@ -345,7 +315,7 @@
                 <%--父记录重跑记录--%>
                 <c:if test="${r.redoCount ne 0}">
                     <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
-                        <tr class="child${r.recordId} redoGroup${r.recordId}" style="display: none;">
+                        <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId}" style="display: none;">
                             <td>${rc.agentName}</td>
                             <td>
                                 <c:if test="${rc.success eq 1}">
@@ -382,7 +352,7 @@
                 <c:if test="${r.jobType eq 1}">
                     <c:forEach var="t" items="${r.childJob}" varStatus="index">
 
-                        <tr class="childFlow${r.recordId} flowRecord${r.groupId} redoGroup${t.recordId}" style="display: none;">
+                        <tr class="flowGroup_${r.recordId}" style="display: none;">
                             <td>${t.agentName}</td>
                             <td>
                                 <c:if test="${t.success eq 1}">
@@ -408,8 +378,8 @@
                                 <center>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                         <c:if test="${t.redoCount ne 0}">
-                                            <a class="openChild${r.recordId}" href="#" title="重跑记录" id="record_${t.recordId}" childOpen="off" onclick="showChildRedo('${t.recordId}','${t.groupId}','${fn:length(t.childRecord)}')">
-                                                <i aria-hidden="true" class="fa fa-chevron-down iconChild${r.recordId}" id="icon${t.recordId}"></i>
+                                            <a href="#" title="重跑记录" onclick="showRedo('${t.recordId}','${fn:length(t.childRecord)}','${t.groupId}')">
+                                                <i aria-hidden="true" class="fa fa-chevron-down groupIcon_${r.groupId}" redoOpen="off" id="redoIcon_${t.recordId}"></i>
                                             </a>&nbsp;&nbsp;
                                         </c:if>
                                         <a href="${contextPath}/record/detail?id=${t.recordId}" title="查看详情">
@@ -422,7 +392,7 @@
                         <%--流程子任务的重跑记录--%>
                         <c:if test="${t.redoCount ne 0}">
                             <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
-                                <tr class="child${t.recordId} redoGroup${t.recordId} childFlowRedo${r.recordId}" style="display: none;">
+                                <tr class="redoGroup_${t.recordId}  groupRecord_${r.groupId}" style="display: none;">
                                     <td>${tc.agentName}</td>
                                     <td>
                                         <c:if test="${tc.success eq 1}">
