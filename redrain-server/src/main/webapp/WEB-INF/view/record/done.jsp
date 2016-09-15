@@ -132,9 +132,6 @@
                 $(".groupIndex_"+groupId).hide();
                 $(".groupRecord_"+groupId).css("background-color","");
                 $(".groupRecord_"+groupId).hide();
-
-
-
             }
         }
 
@@ -331,7 +328,7 @@
                             <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
                             <td title="${rc.command}"><div class="redrain_command">${rc.command}</div> </td>
                             <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                            <td>${ben:diffdate(rc.startTime,c.endTime)}</td>
+                            <td>${ben:diffdate(rc.startTime,rc.endTime)}</td>
                             <td>
                                 <c:if test="${rc.jobType eq 1}">流程任务</c:if>
                                 <c:if test="${rc.jobType eq 0}">单一任务</c:if>
