@@ -20,8 +20,14 @@
         table{
             border-collapse: collapse;
         }
-        .td-redo{
+        .tr-redo>td{
             background-color: rgba(255,255,255,0.15);
+        }
+        .tr-redo-first>td{
+            border-top: none !important;
+        }
+        .tr-next>td{
+            border-top: none !important;
         }
         .redo-first{
             -moz-border-radius: 10px 0 0 10px;
@@ -105,7 +111,7 @@
             window.location.href = "${contextPath}/record/done?queryTime=" + queryTime + "&success=" + success + "&agentId=" + agentId + "&jobId=" + jobId + "&execType=" + execType + "&pageSize=" + pageSize;
         }
 
-        function showRedo(id,length,groupId){
+        function showRedo(id,length,groupId,count){
             var redoIcon = $("#redoIcon_"+id);
             var rowGroup = $("#row_"+ (groupId ? groupId : id));
             var row = rowGroup.attr("rowspan");
@@ -118,6 +124,9 @@
                 $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"rgba(0,0,0,0.35)",
                                                             "border":"2px solid rgba(255,255,255,0.45)"});
                 $(".redoGroup_"+id).show();
+                if (groupId){
+                    $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).addClass("tr-next");
+                }
             }else {
                 redoIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 redoIcon.attr("redoOpen","off");
@@ -126,6 +135,9 @@
                     $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"",
                                                                 "border":"",
                                                                 "border-top":"none"});
+                }
+                if (groupId){
+                    $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).removeClass("tr-next");
                 }
                 $(".redoIndex_"+id).hide();
                 $(".redoGroup_"+id).hide();
@@ -154,6 +166,7 @@
                 rowGroup.attr("rowspan",1);
                 $(".flowIndex_"+id).hide();
                 flowGroup.css("background-color","");
+                flowGroup.removeClass("tr-next");
                 flowGroup.hide();
 
                 //收起所有子记录的重跑记录
@@ -262,7 +275,7 @@
             <c:forEach var="r" items="${page.result}" varStatus="index">
                 <tbody class="tbody_${empty r.groupId ? r.recordId : r.groupId}" style="border-top: none">
 
-                    <tr>
+                    <tr class="tr-flow_${empty r.groupId ? "" : r.groupId}">
                         <c:if test="${r.jobType eq 0}">
                             <td id="row_${r.recordId}" rowspan="1">
                                 <center>
@@ -335,7 +348,7 @@
                                         </a>&nbsp;&nbsp;
                                     </c:if>
                                     <c:if test="${r.redoCount ne 0}">
-                                        <a href="#" title="重跑记录" onclick="showRedo('${r.recordId}','${fn:length(r.childRecord)}',${empty r.groupId ? false : r.groupId})">
+                                        <a href="#" title="重跑记录" onclick="showRedo('${r.recordId}','${fn:length(r.childRecord)}',${empty r.groupId ? false : r.groupId},'1')">
                                             <i aria-hidden="true" class="fa fa-chevron-down groupIcon_${r.groupId}" redoOpen="off" id="redoIcon_${r.recordId}"></i>
                                         </a>&nbsp;&nbsp;
                                     </c:if>
@@ -350,9 +363,9 @@
                     <%--父记录重跑记录--%>
                     <c:if test="${r.redoCount ne 0}">
                         <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
-                            <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId}" style="display: none;">
-                                <td class="td-redo ${index.count eq 1 ? (r.redoCount eq index.count ? "redo-first" : "redo-first-top") : (r.redoCount eq index.count ? "redo-first-bottom" : "")}">${rc.agentName}</td>
-                                <td class="td-redo">
+                            <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId} tr-redo ${index.count eq 1 ? "tr-redo-first" : ""}" style="display: none;">
+                                <td class="${index.count eq 1 ? (r.redoCount eq index.count ? "redo-first" : "redo-first-top") : (r.redoCount eq index.count ? "redo-first-bottom" : "")}" >${rc.agentName}</td>
+                                <td>
                                     <c:if test="${rc.success eq 1}">
                                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                                     </c:if>
@@ -363,15 +376,15 @@
                                         <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
                                     </c:if>
                                 </td>
-                                <td class="td-redo"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
-                                <td class="td-redo" title="${rc.command}"><div class="redrain_command">${rc.command}</div> </td>
-                                <td class="td-redo"><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                <td class="td-redo">${ben:diffdate(rc.startTime,rc.endTime)}</td>
-                                <td class="td-redo">
+                                <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
+                                <td title="${rc.command}"><div class="redrain_command">${rc.command}</div> </td>
+                                <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                <td>${ben:diffdate(rc.startTime,rc.endTime)}</td>
+                                <td>
                                     <c:if test="${rc.jobType eq 1}">流程任务</c:if>
                                     <c:if test="${rc.jobType eq 0}">单一任务</c:if>
                                 </td>
-                                <td class="td-redo ${index.count eq 1 ? (r.redoCount eq index.count ? "redo-last" : "redo-last-top") : (r.redoCount eq index.count ? "redo-last-bottom" : "")}">
+                                <td class="${index.count eq 1 ? (r.redoCount eq index.count ? "redo-last" : "redo-last-top") : (r.redoCount eq index.count ? "redo-last-bottom" : "")}" >
                                     <center>
                                         <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                                 <a href="${contextPath}/record/detail?id=${rc.recordId}" title="查看详情">
@@ -381,7 +394,7 @@
                                     </center>
 
                                 </td>
-                                <td style="border-top: none !important;">&nbsp;</td>
+                                <td style="background-color: rgba(0,0,0,0);border-top: none !important;">&nbsp;</td>
                             </tr>
                         </c:forEach>
                     </c:if>
@@ -389,7 +402,7 @@
                     <c:if test="${r.jobType eq 1}">
                         <c:forEach var="t" items="${r.childJob}" varStatus="index">
 
-                            <tr class="flowGroup_${r.recordId}" style="display: none;">
+                            <tr class="flowGroup_${r.recordId} tr-flow_${empty r.groupId ? "" : r.groupId+index.count}" style="display: none;">
                                 <td>${t.agentName}</td>
                                 <td>
                                     <c:if test="${t.success eq 1}">
@@ -415,7 +428,7 @@
                                     <center>
                                         <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                             <c:if test="${t.redoCount ne 0}">
-                                                <a href="#" title="重跑记录" onclick="showRedo('${t.recordId}','${fn:length(t.childRecord)}','${t.groupId}')">
+                                                <a href="#" title="重跑记录" onclick="showRedo('${t.recordId}','${fn:length(t.childRecord)}','${t.groupId}',${index.count+1})">
                                                     <i aria-hidden="true" class="fa fa-chevron-down groupIcon_${r.groupId}" redoOpen="off" id="redoIcon_${t.recordId}"></i>
                                                 </a>&nbsp;&nbsp;
                                             </c:if>
@@ -430,9 +443,9 @@
                             <%--流程子任务的重跑记录--%>
                             <c:if test="${t.redoCount ne 0}">
                                 <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
-                                    <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId}" style="display: none;">
-                                        <td class="td-redo ${index.count eq 1 ? (t.redoCount eq index.count ? "redo-first" : "redo-first-top") : (t.redoCount eq index.count ? "redo-first-bottom" : "")}">${tc.agentName}</td>
-                                        <td class="td-redo">
+                                    <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId} tr-redo ${index.count eq 1 ? "tr-redo-first" : ""}" style="display: none;">
+                                        <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-first" : "redo-first-top") : (t.redoCount eq index.count ? "redo-first-bottom" : "")} ">${tc.agentName}</td>
+                                        <td>
                                             <c:if test="${tc.success eq 1}">
                                                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
                                             </c:if>
@@ -443,12 +456,12 @@
                                                 <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
                                             </c:if>
                                         </td>
-                                        <td class="td-redo"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
-                                        <td class="td-redo" title="${tc.command}"><div class="redrain_command">${tc.command}</div></td>
-                                        <td class="td-redo"><fmt:formatDate value="${tc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                        <td class="td-redo">${ben:diffdate(tc.startTime,tc.endTime)}</td>
-                                        <td class="td-redo">流程任务</td>
-                                        <td class=" td-redo ${index.count eq 1 ? (t.redoCount eq index.count ? "redo-last" : "redo-last-top") : (t.redoCount eq index.count ? "redo-last-bottom" : "")}">
+                                        <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
+                                        <td title="${tc.command}"><div class="redrain_command">${tc.command}</div></td>
+                                        <td><fmt:formatDate value="${tc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                        <td>${ben:diffdate(tc.startTime,tc.endTime)}</td>
+                                        <td>流程任务</td>
+                                        <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-last" : "redo-last-top") : (t.redoCount eq index.count ? "redo-last-bottom" : "")}" >
                                             <center>
                                                 <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
                                                         <a href="${contextPath}/record/detail?id=${tc.recordId}" title="查看详情">
@@ -457,7 +470,7 @@
                                                 </div>
                                             </center>
                                         </td>
-                                        <td style="border-top: none !important;">&nbsp;</td>
+                                        <td style="background-color: rgba(0,0,0,0);border-top: none !important;">&nbsp;</td>
                                     </tr>
                                 </c:forEach>
                             </c:if>
