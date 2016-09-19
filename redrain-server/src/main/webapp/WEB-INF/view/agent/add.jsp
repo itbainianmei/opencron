@@ -198,6 +198,7 @@
         
         $("#ip").focus(function(){
             $("#pingResult").html("");
+            $("#checkIp").html("");
         }).blur(function () {
             if(!$("#ip").val()){
                 $("#checkIp").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写执行器IP' + "</font>");
