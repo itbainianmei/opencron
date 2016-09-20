@@ -20,45 +20,7 @@
         table{
             border-collapse: collapse;
         }
-        .tr-redo>td{
-            background-color: rgba(255,255,255,0.15);
-        }
-        .tr-redo-first>td{
-            border-top: none !important;
-        }
-        .tr-next>td{
-            border-top: none !important;
-        }
-        .redo-first{
-            -moz-border-radius: 10px 0 0 10px;
-            -webkit-border-radius: 10px 0 0 10px;
-            border-radius:10px 0 0 10px;
-        }
-        .redo-first-top{
-            -moz-border-radius: 10px 0 0 0;
-            -webkit-border-radius: 10px 0 0 0;
-            border-radius:10px 0 0 0;
-        }
-        .redo-first-bottom{
-            -moz-border-radius: 0 0 0 10px;
-            -webkit-border-radius: 0 0 0 10px;
-            border-radius:0 0 0 10px;
-        }
-        .redo-last{
-            -moz-border-radius: 0 10px 10px 0;
-            -webkit-border-radius: 0 10px 10px 0;
-            border-radius: 0 10px 10px 0;
-        }
-        .redo-last-top{
-            -moz-border-radius: 0 10px 0 0;
-            -webkit-border-radius: 0 10px 0 0;
-            border-radius: 0 10px 0 0;
-        }
-        .redo-last-bottom{
-            -moz-border-radius: 0 0 10px 0;
-            -webkit-border-radius: 0 0 10px 0;
-            border-radius: 0 0 10px 0;
-        }
+
         .down{
             height: 12px;
             margin-bottom: 5px;
@@ -121,9 +83,22 @@
                 redoIcon.attr("redoOpen","on");
                 rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
                 $(".redoIndex_"+id).show();
-                $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"rgba(0,0,0,0.35)",
-                                                            "border":"2px solid rgba(255,255,255,0.45)"});
+
+                var tbodyObj =  $(".tbody_"+(groupId ? groupId : id));
+                if(tbodyObj.attr("index")=="0"){
+                    tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
+                }else {
+                    tbodyObj.css({"background-color":"rgba(225,225,225,0.15)"});
+                }
+
                 $(".redoGroup_"+id).show();
+
+                if (count%2==0){
+                    $(".tbody_"+count).css("{background-color:rgba(0,0,0,0.35)}")
+                }else {
+                    $(".tbody_"+count).css("{background-color:rgba(200,200,0,0.35)}")
+                }
+
                 if (groupId){
                     $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).addClass("tr-next");
                 }
@@ -132,9 +107,7 @@
                 redoIcon.attr("redoOpen","off");
                 rowGroup.attr("rowspan",parseInt(row) - parseInt(length));
                 if (rowGroup.attr("rowspan") == 1){
-                    $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"",
-                                                                "border":"",
-                                                                "border-top":"none"});
+                    $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"", "border-top":"none"});
                 }
                 if (groupId){
                     $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).removeClass("tr-next");
@@ -156,8 +129,7 @@
                 flowIcon.attr("childOpen","on");
                 rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
                 $(".flowIndex_"+id).show();
-                $(".tbody_"+groupId).css({"background-color":"rgba(0,0,0,0.35)",
-                                            "border":"2px solid rgba(255,255,255,0.45)"});
+                $(".tbody_"+groupId).css({"background-color":"rgba(0,0,0,0.35)"});
                 flowGroup.show();
 
             }else {
@@ -174,9 +146,7 @@
                 groupIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
                 groupIcon.attr("redoOpen","off");
                 $(".groupIndex_"+groupId).hide();
-                $(".tbody_"+groupId).css({"background-color":"",
-                                            "border":"",
-                                            "border-top":"none"});
+                $(".tbody_"+groupId).css({"background-color":"","border-top":"none"});
                 $(".groupRecord_"+groupId).hide();
 
 
@@ -273,7 +243,7 @@
 
             <%--父记录--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
-                <tbody class="tbody_${empty r.groupId ? r.recordId : r.groupId}" style="border-top: none">
+                <tbody index="${index.index%2}" class="tbody_${empty r.groupId ? r.recordId : r.groupId} tbody_${index.index}" style="border-top: none">
 
                     <tr class="tr-flow_${empty r.groupId ? "" : r.groupId}">
                         <c:if test="${r.jobType eq 0}">
@@ -358,12 +328,11 @@
                                 </div>
                             </center>
                         </td>
-                        <td>&nbsp;</td>
                     </tr>
                     <%--父记录重跑记录--%>
                     <c:if test="${r.redoCount ne 0}">
                         <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
-                            <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId} tr-redo ${index.count eq 1 ? "tr-redo-first" : ""}" style="display: none;">
+                            <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId}" style="display: none;">
                                 <td class="${index.count eq 1 ? (r.redoCount eq index.count ? "redo-first" : "redo-first-top") : (r.redoCount eq index.count ? "redo-first-bottom" : "")}" >${rc.agentName}</td>
                                 <td>
                                     <c:if test="${rc.success eq 1}">
@@ -392,9 +361,7 @@
                                                 </a>&nbsp;&nbsp;
                                         </div>
                                     </center>
-
                                 </td>
-                                <td style="background-color: rgba(0,0,0,0);border-top: none !important;">&nbsp;</td>
                             </tr>
                         </c:forEach>
                     </c:if>
@@ -438,12 +405,11 @@
                                         </div>
                                     </center>
                                 </td>
-                                <td>&nbsp;</td>
                             </tr>
                             <%--流程子任务的重跑记录--%>
                             <c:if test="${t.redoCount ne 0}">
                                 <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
-                                    <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId} tr-redo ${index.count eq 1 ? "tr-redo-first" : ""}" style="display: none;">
+                                    <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId}" style="display: none;">
                                         <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-first" : "redo-first-top") : (t.redoCount eq index.count ? "redo-first-bottom" : "")} ">${tc.agentName}</td>
                                         <td>
                                             <c:if test="${tc.success eq 1}">
@@ -470,7 +436,6 @@
                                                 </div>
                                             </center>
                                         </td>
-                                        <td style="background-color: rgba(0,0,0,0);border-top: none !important;">&nbsp;</td>
                                     </tr>
                                 </c:forEach>
                             </c:if>
