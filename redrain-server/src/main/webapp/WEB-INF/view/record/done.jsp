@@ -114,7 +114,6 @@
                 }
                 $(".redoIndex_"+id).hide();
                 $(".redoGroup_"+id).hide();
-
             }
         }
 
@@ -129,7 +128,12 @@
                 flowIcon.attr("childOpen","on");
                 rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
                 $(".flowIndex_"+id).show();
-                $(".tbody_"+groupId).css({"background-color":"rgba(0,0,0,0.35)"});
+                var tbodyObj =  $(".tbody_"+groupId);
+                if(tbodyObj.attr("index")=="0"){
+                    tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
+                }else {
+                    tbodyObj.css({"background-color":"rgba(225,225,225,0.15)"});
+                }
                 flowGroup.show();
 
             }else {
@@ -148,9 +152,6 @@
                 $(".groupIndex_"+groupId).hide();
                 $(".tbody_"+groupId).css({"background-color":"","border-top":"none"});
                 $(".groupRecord_"+groupId).hide();
-
-
-
             }
         }
 
