@@ -858,7 +858,7 @@ Licensed under the BSD-2-Clause License.
       _ref = row.y;
       for (j = _i = 0, _len = _ref.length; _i < _len; j = ++_i) {
         y = _ref[j];
-        content += "<div class='morris-hover-point' style='color: " + ["rgba(220,220,255,0.8)"] + "'>\n  " + this.options.labels[j] + ":\n  " + (this.yLabelFormat(y)) + "\n</div>";
+        content += "<div class='morris-hover-point' style='color: " + ["rgba(220,220,220,0.8)"] + "'>\n  " + this.options.labels[j] + ":\n  " + (this.yLabelFormat(y)) + "\n</div>";
       }
       if (typeof this.options.hoverCallback === 'function') {
         content = this.options.hoverCallback(index, this.options, content, row.src);
