@@ -52,7 +52,7 @@
 <script src="${contextPath}/js/feeds.min.js"></script> <!-- News Feeds -->
 <script src="${contextPath}/js/raphael.2.1.2-min.js"></script>
 <script src="${contextPath}/js/prettify.min.js"></script>
-<script src="${contextPath}/js/morris.js"></script>
+<script src="${contextPath}/js/morris.min.js"></script>
 <script src="${contextPath}/js/jquery.sparkline.min.js"></script>
 <!-- All JS functions -->
 <script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}"></script>
