@@ -232,11 +232,11 @@
             <tr>
                 <th>任务名称</th>
                 <th>执行器</th>
-                <th>运行状态</th>
-                <th>执行方式</th>
                 <th>执行命令</th>
                 <th>开始时间</th>
                 <th>运行时长</th>
+                <th>运行状态</th>
+                <th>执行方式</th>
                 <th>任务类型</th>
                 <th><center>操作</center></th>
             </tr>
@@ -286,6 +286,10 @@
                             </td>
                         </c:if>
                         <td>${r.agentName}</td>
+
+                        <td title="${r.command}"><div class="redrain_command">${r.command}</div></td>
+                        <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                        <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                         <td>
                             <c:if test="${r.success eq 1}">
                                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -303,9 +307,6 @@
                             <c:if test="${r.execType eq 2}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
                             <c:if test="${r.execType eq 3}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
                         </td>
-                        <td title="${r.command}"><div class="redrain_command">${r.command}</div></td>
-                        <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                        <td>${ben:diffdate(r.startTime,r.endTime)}</td>
                         <td>
                             <c:if test="${r.jobType eq 1}">流程任务</c:if>
                             <c:if test="${r.jobType eq 0}">单一任务</c:if>
@@ -335,6 +336,9 @@
                         <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
                             <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId}" style="display: none;">
                                 <td class="${index.count eq 1 ? (r.redoCount eq index.count ? "redo-first" : "redo-first-top") : (r.redoCount eq index.count ? "redo-first-bottom" : "")}" >${rc.agentName}</td>
+                                <td title="${rc.command}"><div class="redrain_command">${rc.command}</div> </td>
+                                <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                <td>${ben:diffdate(rc.startTime,rc.endTime)}</td>
                                 <td>
                                     <c:if test="${rc.success eq 1}">
                                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -347,9 +351,6 @@
                                     </c:if>
                                 </td>
                                 <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
-                                <td title="${rc.command}"><div class="redrain_command">${rc.command}</div> </td>
-                                <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                <td>${ben:diffdate(rc.startTime,rc.endTime)}</td>
                                 <td>
                                     <c:if test="${rc.jobType eq 1}">流程任务</c:if>
                                     <c:if test="${rc.jobType eq 0}">单一任务</c:if>
@@ -372,6 +373,9 @@
 
                             <tr class="flowGroup_${r.recordId} tr-flow_${empty r.groupId ? "" : r.groupId+index.count}" style="display: none;">
                                 <td>${t.agentName}</td>
+                                <td title="${t.command}"><div class="redrain_command">${t.command}</div></td>
+                                <td><fmt:formatDate value="${t.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                <td>${ben:diffdate(t.startTime,t.endTime)}</td>
                                 <td>
                                     <c:if test="${t.success eq 1}">
                                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -388,9 +392,6 @@
                                     <c:if test="${t.execType eq 1}"><span class="label label-info">&nbsp;&nbsp;手&nbsp;动&nbsp;&nbsp;</span></c:if>
                                     <c:if test="${t.execType eq 2}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
                                 </td>
-                                <td title="${t.command}"><div class="redrain_command">${t.command}</div></td>
-                                <td><fmt:formatDate value="${t.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                <td>${ben:diffdate(t.startTime,t.endTime)}</td>
                                 <td>流程任务</td>
                                 <td>
                                     <center>
@@ -412,6 +413,9 @@
                                 <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
                                     <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId}" style="display: none;">
                                         <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-first" : "redo-first-top") : (t.redoCount eq index.count ? "redo-first-bottom" : "")} ">${tc.agentName}</td>
+                                        <td title="${tc.command}"><div class="redrain_command">${tc.command}</div></td>
+                                        <td><fmt:formatDate value="${tc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                                        <td>${ben:diffdate(tc.startTime,tc.endTime)}</td>
                                         <td>
                                             <c:if test="${tc.success eq 1}">
                                                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -424,9 +428,6 @@
                                             </c:if>
                                         </td>
                                         <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
-                                        <td title="${tc.command}"><div class="redrain_command">${tc.command}</div></td>
-                                        <td><fmt:formatDate value="${tc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                        <td>${ben:diffdate(tc.startTime,tc.endTime)}</td>
                                         <td>流程任务</td>
                                         <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-last" : "redo-last-top") : (t.redoCount eq index.count ? "redo-last-bottom" : "")}" >
                                             <center>
