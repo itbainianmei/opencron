@@ -186,6 +186,7 @@ public class AgentProcessor implements RedRain.Iface {
             exitValue = executor.execute(commandLine);
             exitValue = exitValue == null ? 0 : exitValue;
         } catch (Exception e) {
+
             if (e instanceof ExecuteException) {
                 exitValue = ((ExecuteException) e).getExitValue();
             } else {
@@ -197,23 +198,25 @@ public class AgentProcessor implements RedRain.Iface {
                 logger.info("[redrain]:job execute error:{}", e.getCause().getMessage());
             }
         } finally {
-            if (outputStream != null) {
-                String text = outputStream.toString();
-                if (notEmpty(text)) {
-                    try {
-                        text = text.replaceAll(String.format(REPLACE_REX,shellFile.getAbsolutePath()),"");
-                        response.setMessage(text.substring(0, text.lastIndexOf(EXITCODE_KEY)));
-                        response.setExitCode(Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim()));
-                    } catch (IndexOutOfBoundsException e) {
-                        response.setMessage(text);
-                        response.setExitCode(exitValue);
-                    } catch (NumberFormatException e) {
+            if ( CommonUtils.notEmpty(outputStream.toByteArray()) ) {
+                try {
+                    outputStream.flush();
+                    String text = outputStream.toString();
+                    if (notEmpty(text)) {
+                        try {
+                            text = text.replaceAll(String.format(REPLACE_REX,shellFile.getAbsolutePath()),"");
+                            response.setMessage(text.substring(0, text.lastIndexOf(EXITCODE_KEY)));
+                            response.setExitCode(Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim()));
+                        } catch (IndexOutOfBoundsException e) {
+                            response.setMessage(text);
+                            response.setExitCode(exitValue);
+                        } catch (NumberFormatException e) {
+                            response.setExitCode(exitValue);
+                        }
+                    } else {
                         response.setExitCode(exitValue);
                     }
-                } else {
-                    response.setExitCode(exitValue);
-                }
-                try {
+
                     outputStream.close();
                 } catch (Exception e) {
                     logger.error("[redrain]:error:{}", e);
