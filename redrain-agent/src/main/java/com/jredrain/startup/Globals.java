@@ -18,7 +18,7 @@ public final class Globals {
     /**
      * password
      */
-    public static String REDRAIN_PASSWORD =System.getProperty("redrain.password");
+    public static String REDRAIN_PASSWORD = System.getProperty("redrain.password");
 
     /**
      * password file
