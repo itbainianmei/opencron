@@ -148,6 +148,7 @@ CREATE TABLE `user` (
   `roleId` int(11) DEFAULT NULL COMMENT '角色ID',
   `userName` varchar(50) NOT NULL COMMENT '用户名',
   `password` varchar(50) NOT NULL COMMENT '登录密码',
+  `agentIds` varchar(200) COMMENT '可操作的执行器ID组',
   `headerpic` blob DEFAULT NULL COMMENT '头像',
   `picExtName` varchar(10) DEFAULT NULL COMMENT '图片后缀名',
   `salt` varchar(16) NOT NULL COMMENT '校验码',

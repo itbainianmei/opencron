@@ -46,6 +46,8 @@ public class User implements Serializable {
 
     private String salt;
 
+    private String agentIds;
+
     private String realName;
 
     private String contact;
@@ -107,6 +109,14 @@ public class User implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    public String getAgentIds() {
+        return agentIds;
+    }
+
+    public void setAgentIds(String agentIds) {
+        this.agentIds = agentIds;
     }
 
     public String getRealName() {

@@ -251,8 +251,8 @@ public class JobController {
     }
 
     @RequestMapping("/goexec")
-    public String goExec(Model model) {
-        model.addAttribute("agents", agentService.getAll());
+    public String goExec(HttpSession session, Model model) {
+        model.addAttribute("agents", agentService.getAgentsBySession(session));
         return "/job/exec";
     }
 

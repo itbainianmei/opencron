@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.jredrain.base.job.RedRain;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -47,8 +48,8 @@ public class AgentController {
     private AgentService agentService;
 
     @RequestMapping("/view")
-    public String queryAllAgent(HttpServletRequest request,Model model, Page page) {
-        agentService.getAgent(page);
+    public String queryAllAgent(HttpServletRequest request, HttpSession session, Model model, Page page) {
+        agentService.getAgent(session,page);
         if (request.getParameter("refresh") != null) {
             return "/agent/refresh";
         }

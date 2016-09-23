@@ -25,6 +25,7 @@ package com.jredrain.service;
 import java.util.List;
 
 import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import com.jredrain.session.MemcacheCache;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +37,8 @@ import com.jredrain.vo.JobVo;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpSession;
 
 import static com.jredrain.base.utils.CommonUtils.notEmpty;
 
@@ -53,6 +56,9 @@ public class AgentService {
 
     @Autowired
     private SchedulerService schedulerService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private MemcacheCache memcacheCache;
@@ -82,8 +88,12 @@ public class AgentService {
         return queryDao.sqlQuery(Agent.class,sql,status);
     }
 
-    public Page getAgent(Page page) {
+    public Page getAgent(HttpSession session, Page page) {
         String sql = "SELECT * FROM agent";
+        if (!(Boolean) session.getAttribute("permission")) {
+            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+            sql += " WHERE agentId in ("+user.getAgentIds()+")";
+        }
         queryDao.getPageBySql(page, Agent.class, sql);
         return page;
     }
@@ -174,4 +184,12 @@ public class AgentService {
     }
 
 
+    public List<Agent> getAgentsBySession(HttpSession session) {
+        String sql = "SELECT * FROM agent WHERE status = 1 ";
+        if (!(Boolean) session.getAttribute("permission")) {
+            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+            sql += " AND agentId in ("+user.getAgentIds()+")";
+        }
+        return queryDao.sqlQuery(Agent.class,sql);
+    }
 }

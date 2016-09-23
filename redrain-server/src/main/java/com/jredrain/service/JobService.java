@@ -60,6 +60,9 @@ public class JobService {
     private AgentService agentService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private MemcacheCache memcacheCache;
 
     private Logger logger = LoggerFactory.getLogger(JobService.class);
@@ -134,7 +137,10 @@ public class JobService {
                 sql += " AND t.redo=" + job.getRedo();
             }
             if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND t.operateId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+                Long userId = ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+                sql += " AND t.operateId = " + userId;
+                String agentIds = userService.getUserById(userId).getAgentIds();
+                sql+= " AND t.agentId in ("+agentIds+")";
             }
         }
         page = queryDao.getPageBySql(page, JobVo.class, sql);
@@ -199,7 +205,7 @@ public class JobService {
 
     @Transactional(readOnly = false)
     public int delete(Long jobId) {
-        int count = queryDao.createSQLQuery("update job set status=0 WHERE jobId = " + jobId).executeUpdate();
+        int count = queryDao.createSQLQuery("UPDATE job SET status=0 WHERE jobId = " + jobId).executeUpdate();
         flushCronjob();
         return count;
     }
@@ -265,6 +271,5 @@ public class JobService {
             addOrUpdate(chind);
         }
     }
-
 
 }

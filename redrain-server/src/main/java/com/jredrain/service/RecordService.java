@@ -54,7 +54,7 @@ public class RecordService {
                 sql += " AND r.success = " + recordVo.getSuccess() + "";
             }
             if (notEmpty(recordVo.getAgentId())) {
-                sql += " AND d.agentId = " + recordVo.getAgentId() + " ";
+                sql += " AND r.agentId = " + recordVo.getAgentId() + " ";
             }
             if (notEmpty(recordVo.getJobId())) {
                 sql += " AND r.jobId = " + recordVo.getJobId() + " ";
@@ -69,7 +69,7 @@ public class RecordService {
                 sql += " AND IFNULL(r.flowNum,0) = 0 ";
             }
             if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND t.operateId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+                sql += " AND r.operateId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
             }
         }
         sql += " ORDER BY r.startTime DESC";

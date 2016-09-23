@@ -22,12 +22,14 @@
 package com.jredrain.controller;
 
 import com.jredrain.job.Globals;
+import com.jredrain.service.AgentService;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.JsonMapper;
 import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
 import com.jredrain.service.UserService;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,6 +52,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AgentService agentService;
+
     @RequestMapping("/view")
     public String queryUser(Page page) {
         userService.queryUser(page);
@@ -67,6 +72,7 @@ public class UserController {
     public String addPage(Model model) {
         List<Role> role = userService.getRoleGroup();
         model.addAttribute("role", role);
+        model.addAttribute("agents", agentService.getAll());
         return "/user/add";
     }
 
@@ -82,19 +88,19 @@ public class UserController {
                 && Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString()) != id){
             return "redirect:/user/detail";
         }
-        User user = userService.queryUserById(id);
-        List<Role> role = userService.getRoleGroup();
-        model.addAttribute("role", role);
-        model.addAttribute("u", user);
+        model.addAttribute("u", userService.queryUserById(id));
+        model.addAttribute("role", userService.getRoleGroup());
+        model.addAttribute("agents", agentService.getAll());
         return "/user/edit";
     }
 
     @RequestMapping("/edit")
-    public String edit(HttpSession session, User user) {
+    public String edit(HttpSession session, User user) throws SchedulerException {
         User user1 = userService.getUserById(user.getUserId());
         if (notEmpty(user.getRoleId()) && (Boolean) session.getAttribute("permission")) {
             user1.setRoleId(user.getRoleId());
         }
+        user1.setAgentIds(user.getAgentIds());
         user1.setRealName(user.getRealName());
         user1.setContact(user.getContact());
         user1.setEmail(user.getEmail());

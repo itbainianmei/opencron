@@ -15,6 +15,9 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
+    <link href='${contextPath}/css/jquery.mCustomScrollbar.css' rel='stylesheet'>
+    <script src="${contextPath}/js/jquery.mCustomScrollbar.min.js"></script>
+
     <script type="text/javascript">
 
         function save(){
@@ -145,6 +148,58 @@
                     $("#checkpwd").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;密码不一致' + "</font>");
                 }
             });
+
+
+            $("#checkAllInput").next().attr("id","checkAll");
+            $(".each-box").next().addClass("each-btn");
+
+            $("#role").change(function () {
+                if ($("#role").val() == 999){
+                    $("#agentsDiv").hide();
+                }else {
+                    $("#agentsDiv").show();
+                }
+            });
+
+            $("#checkAll").click(function () {
+
+                if ($("input[type='checkbox'][name='agentIds']").is(':checked')){
+
+                    $("#checkAllInput").prop("checked",false);
+                    $("#checkAll").parent().removeClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",false);
+
+                    $(".each-box").prop("checked",false);
+                    $(".each-box").parent().removeClass("checked");
+                    $(".each-box").parent().attr("aria-checked",false);
+                } else {
+
+                    $("#checkAllInput").prop("checked",true);
+                    $("#checkAll").parent().removeClass("checked").addClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",true);
+
+                    $(".each-box").prop("checked",true);
+                    $(".each-box").parent().removeClass("checked").addClass("checked");
+                    $(".each-box").parent().attr("aria-checked",true);
+                    flag = true;
+                }
+
+            });
+
+            $(".each-btn").click(function () {
+                if (flag){
+                    $("#checkAllInput").prop("checked",false);
+                    $("#checkAll").parent().removeClass("checked");
+                    $("#checkAll").parent().attr("aria-checked",false);
+                    flag = false;
+                }
+            });
+
+            $(window).on("load",function(){
+                $("#agent-content").mCustomScrollbar({
+                    theme:"dark"
+                });
+            });
         });
 
     </script>
@@ -191,12 +246,24 @@
                                 <option value="${r.roleId}">${r.roleName}</option>
                             </c:forEach>
                         </select>
-                    <span class="tips"><b>*&nbsp;</b>角色决定用户的操作权限</span>
+                        <span class="tips"><b>*&nbsp;</b>角色决定用户的操作权限</span>
                     </div>
                 </div><br>
 
+                <div class="form-group" id="agentsDiv">
+                    <label class="col-lab control-label"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器组：</label>
+                    <div class="col-md-10">
+                        <input type="checkbox" id="checkAllInput">全选<span class="tips">&nbsp;&nbsp;&nbsp;<b>*&nbsp;</b>此管理员可操作的执行器操组</span></br>
+                        <div class="form-control m-b-10 input-sm" id="agent-content" style="height: 150px;overflow: hidden;">
+                            <c:forEach var="w" items="${agents}" varStatus="index">
+                                <input type="checkbox" name="agentIds" value="${w.agentId}" class="each-box form-control input-sm">${w.name}&nbsp;&nbsp;${w.ip}<br>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="password" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
+                    <label for="password" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
                     <div class="col-md-10">
                         <input type="password" class="form-control input-sm" id="password" name="password">
                         <span class="tips" id="checkpassword"><b>*&nbsp;</b>密码必填，长度6-20位</span>

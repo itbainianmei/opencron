@@ -63,6 +63,9 @@ public class ExecuteService implements Job {
     @Autowired
     private AgentService agentService;
 
+    @Autowired
+    private UserService userService;
+
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
     @Override
@@ -86,6 +89,7 @@ public class ExecuteService implements Job {
 
     public boolean executeJob(final JobVo job) {
 
+        if (!checkJobPermission(job.getAgentId(),job.getOperateId()))return false;
         //流程作业..
 
         JobType jobType = JobType.getJobType(job.getJobType());
@@ -140,7 +144,7 @@ public class ExecuteService implements Job {
                         return false;
                 }
             case SINGLETON:
-                return executeSingletonJob(job);
+                return executeSingletonJob(job,job.getOperateId());
             default:
                 return false;
         }
@@ -227,8 +231,10 @@ public class ExecuteService implements Job {
 
     }
 
+    private boolean executeSingletonJob(JobVo job, Long userId) {
 
-    private boolean executeSingletonJob(JobVo job) {
+        if (!checkJobPermission(job.getAgentId(),userId))return false;
+
         Record record = new Record(job);
         record.setJobType(JobType.SINGLETON.getCode());//单一任务
         //执行前先保存
@@ -442,7 +448,7 @@ public class ExecuteService implements Job {
         );
     }
 
-    public void batchExecuteJob(Long operateId, String command, String agentIds) {
+    public void batchExecuteJob(final Long operateId, String command, String agentIds) {
         final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
 
         String[] arrayIds = agentIds.split(";");
@@ -470,7 +476,7 @@ public class ExecuteService implements Job {
                     //如果批量现场执行(则启动多线程,所有任务同时执行)
                     Thread thread = new Thread(new Runnable() {
                         public void run() {
-                            executeSingletonJob(jobVo);
+                            executeSingletonJob(jobVo,operateId);
                         }
                     });
                     thread.start();
@@ -478,5 +484,12 @@ public class ExecuteService implements Job {
             }
         });
         jobThread.start();
+    }
+
+    private boolean checkJobPermission(Long jobAgentId, Long userId){
+        String agentIds = userService.getUserById(userId).getAgentIds();
+        agentIds = ","+agentIds+",";
+        String thisAgentId = ","+jobAgentId+",";
+        return agentIds.contains(thisAgentId);
     }
 }
