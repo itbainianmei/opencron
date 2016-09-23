@@ -83,8 +83,12 @@ public class AgentService {
         memcacheCache.put(Globals.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
-    public List<Agent> getAgentByStatus(int status){
+    public List<Agent> getAgentByStatus(int status, HttpSession session){
         String sql = "SELECT * FROM agent WHERE status=?";
+        if (!(Boolean) session.getAttribute("permission")) {
+            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+            sql += " AND agentId in ("+user.getAgentIds()+")";
+        }
         return queryDao.sqlQuery(Agent.class,sql,status);
     }
 
@@ -185,10 +189,10 @@ public class AgentService {
 
 
     public List<Agent> getAgentsBySession(HttpSession session) {
-        String sql = "SELECT * FROM agent WHERE status = 1 ";
+        String sql = "SELECT * FROM agent ";
         if (!(Boolean) session.getAttribute("permission")) {
             User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
-            sql += " AND agentId in ("+user.getAgentIds()+")";
+            sql += " WHERE agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);
     }

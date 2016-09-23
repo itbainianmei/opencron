@@ -88,13 +88,13 @@ public class HomeController {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping("/home")
-    public String index(Model model) {
+    public String index(HttpSession session, Model model) {
 
         /**
          * agent...
          */
-        List<Agent> success = agentService.getAgentByStatus(1);
-        List<Agent> failed = agentService.getAgentByStatus(0);
+        List<Agent> success = agentService.getAgentByStatus(1,session);
+        List<Agent> failed = agentService.getAgentByStatus(0,session);
         model.addAttribute("success",success.size());
         model.addAttribute("failed",failed.size());
 

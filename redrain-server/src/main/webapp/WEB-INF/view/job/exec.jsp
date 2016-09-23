@@ -150,6 +150,7 @@
             <table class="table table-bordered tile" style="font-size: 12px;margin-bottom: 0;">
                 <tbody>
                 <c:forEach var="w" items="${agents}" varStatus="index">
+                    <c:if test="${w.status eq true}">
                         <tr>
                             <td width="10%">
                                 <input type="checkbox" name="agent" value="${w.agentId}" class="each-box">
@@ -166,6 +167,7 @@
                                 </c:if>
                             </td>
                         </tr>
+                    </c:if>
                 </c:forEach>
                 </tbody>
             </table>
