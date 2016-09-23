@@ -86,7 +86,7 @@ public class RedRain implements Serializable {
         NOFOUND(127, "未找到命令或文件"),
         ERROR_EXEC(-100, "连接成功，执行任务失败!"),
         ERROR_PASSWORD(-500, "密码不正确!"),
-        TIME_OUT(504,"连接超时");
+        TIME_OUT(504,"任务超时");
 
         private Integer value;
         private String description;

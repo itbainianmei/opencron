@@ -65,6 +65,9 @@ public class Job implements Serializable {
 
     private String emailAddress;
 
+    //运行超时的截止时间
+    private Integer timeOut;
+
 
     public Long getJobId() {
         return jobId;
@@ -224,5 +227,13 @@ public class Job implements Serializable {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public Integer getTimeOut() {
+        return timeOut;
+    }
+
+    public void setTimeOut(Integer timeOut) {
+        this.timeOut = timeOut;
     }
 }

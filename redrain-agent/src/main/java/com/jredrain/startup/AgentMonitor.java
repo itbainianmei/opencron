@@ -167,8 +167,7 @@ public class AgentMonitor {
             } else {
                 Monitor.Top top = new Monitor.Top();
                 for (Map.Entry<Integer, String> entry : index.entrySet()) {
-                    Method setMethod = ReflectUitls.setter(Monitor.Top.class, entry.getValue());
-                    setMethod.invoke(top, data[entry.getKey()]);
+                    ReflectUitls.setter(Monitor.Top.class, entry.getValue()).invoke(top, data[entry.getKey()]);
                 }
                 topList.add( JSON.toJSONString(top) );
             }
