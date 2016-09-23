@@ -66,7 +66,7 @@ public class RecordController {
     @RequestMapping("/done")
     public String queryDone(HttpSession session, Page page, RecordVo recordVo, String queryTime, Model model) {
 
-        model.addAttribute("agents", agentService.getAll());
+        model.addAttribute("agents", agentService.getAgentsBySession(session));
 
         if (notEmpty(recordVo.getSuccess())) {
             model.addAttribute("success", recordVo.getSuccess());
@@ -99,7 +99,7 @@ public class RecordController {
     @RequestMapping("/running")
     public String queryRunning(HttpSession session, HttpServletRequest request, Page page, RecordVo recordVo, String queryTime, Model model) {
 
-        model.addAttribute("agents", agentService.getAll());
+        model.addAttribute("agents", agentService.getAgentsBySession(session));
 
         if (notEmpty(recordVo.getAgentId())) {
             model.addAttribute("agentId", recordVo.getAgentId());

@@ -307,7 +307,7 @@ public class HomeController {
 
     @RequestMapping("/notice/view")
     public String log(HttpSession session, Model model, Page page, Long agentId, String sendTime) {
-        model.addAttribute("agents", agentService.getAll());
+        model.addAttribute("agents", agentService.getAgentsBySession(session));
         if (notEmpty(agentId)) {
             model.addAttribute("agentId", agentId);
         }

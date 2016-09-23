@@ -69,7 +69,7 @@ public class JobController {
     @RequestMapping("/view")
     public String view(HttpServletRequest request, HttpSession session, Page page, JobVo job, Model model) {
 
-        model.addAttribute("agents", agentService.getAll());
+        model.addAttribute("agents", agentService.getAgentsBySession(session));
 
         model.addAttribute("jobs", jobService.getAll());
         if (notEmpty(job.getAgentId())) {
@@ -101,12 +101,12 @@ public class JobController {
     }
 
     @RequestMapping("/addpage")
-    public String addpage(Model model, Long id) {
+    public String addpage(HttpSession session, Model model, Long id) {
         if (notEmpty(id)) {
             Agent agent = agentService.getAgent(id);
             model.addAttribute("agent", agent);
         }
-        List<Agent> agents = agentService.getAll();
+        List<Agent> agents = agentService.getAgentsBySession(session);
         model.addAttribute("agents", agents);
         return "/job/add";
     }
@@ -189,10 +189,10 @@ public class JobController {
     }
 
     @RequestMapping("/editflow")
-    public String editFlowJob(Model model, Long id) {
+    public String editFlowJob(HttpSession session,Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
         model.addAttribute("job", job);
-        List<Agent> agents = agentService.getAll();
+        List<Agent> agents = agentService.getAgentsBySession(session);
         model.addAttribute("agents", agents);
         return "/job/edit";
     }
