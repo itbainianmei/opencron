@@ -56,7 +56,7 @@ public class AgentProcessor implements RedRain.Iface {
 
     private final String EXITCODE_KEY = "exitCode";
 
-    private final String EXITCODE_SCRIPT = String.format(" && echo %s:$? || echo %s:$?", EXITCODE_KEY,EXITCODE_KEY);
+    private final String EXITCODE_SCRIPT = String.format(" \n echo %s:$?", EXITCODE_KEY);
 
     private final String REPLACE_REX = "%s:\\sline\\s[0-9]+:";
 
@@ -183,8 +183,11 @@ public class AgentProcessor implements RedRain.Iface {
             ExecuteStreamHandler stream = new PumpStreamHandler(outputStream, outputStream);
             executor.setStreamHandler(stream);
             response.setStartTime(new Date().getTime());
-            exitValue = executor.execute(commandLine);
-            exitValue = exitValue == null ? 0 : exitValue;
+            //成功执行完毕时退出值为0,shell标准的退出
+            executor.setExitValue(0);
+            DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+            executor.execute(commandLine, resultHandler);
+            resultHandler.waitFor();
         } catch (Exception e) {
 
             if (e instanceof ExecuteException) {
