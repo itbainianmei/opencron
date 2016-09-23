@@ -189,7 +189,6 @@ public class AgentProcessor implements RedRain.Iface {
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor();
         } catch (Exception e) {
-
             if (e instanceof ExecuteException) {
                 exitValue = ((ExecuteException) e).getExitValue();
             } else {
