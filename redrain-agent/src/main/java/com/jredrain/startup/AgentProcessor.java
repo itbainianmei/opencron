@@ -169,6 +169,11 @@ public class AgentProcessor implements RedRain.Iface {
 
         String pid = request.getParams().get("pid");
 
+        //以分钟为单位
+        Long timeout = CommonUtils.toLong(request.getParams().get("timeout"),0L);
+
+        final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
+
         logger.info("[redrain]:execute:{},pid:{}", command, pid);
 
         File shellFile = CommandUtils.createShellFile(command, pid);
@@ -176,9 +181,10 @@ public class AgentProcessor implements RedRain.Iface {
         Integer exitValue = 1;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Response response = Response.response(request);
+
         try {
             CommandLine commandLine = CommandLine.parse("/bin/bash +x " + shellFile.getAbsolutePath());
-            DefaultExecutor executor = new DefaultExecutor();
+            final DefaultExecutor executor = new DefaultExecutor();
 
             ExecuteStreamHandler stream = new PumpStreamHandler(outputStream, outputStream);
             executor.setStreamHandler(stream);
@@ -186,7 +192,22 @@ public class AgentProcessor implements RedRain.Iface {
             //成功执行完毕时退出值为0,shell标准的退出
             executor.setExitValue(0);
             DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+
+            if (timeout>0) {
+                executor.setWatchdog(watchdog);
+                final Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        //超时,kill...
+                        watchdog.destroyProcess();
+                        timer.cancel();
+                    }
+                },timeout*60*1000);
+            }
+
             executor.execute(commandLine, resultHandler);
+
             resultHandler.waitFor();
         } catch (Exception e) {
             if (e instanceof ExecuteException) {
@@ -218,24 +239,21 @@ public class AgentProcessor implements RedRain.Iface {
                     } else {
                         response.setExitCode(exitValue);
                     }
-
                     outputStream.close();
                 } catch (Exception e) {
                     logger.error("[redrain]:error:{}", e);
                 }
-
-                /**
-                 * 修复脚本里执行ssh可能连接超时导致任务失败的bug..
-                 */
-                String timeoutRegex = "^ssh:.+Connection\\stimed\\sout$";
-                if (response.getMessage().matches(timeoutRegex)) {
-                    //连接超时...
-                    response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
-                }
             } else {
                 response.setExitCode(exitValue);
             }
-            response.setSuccess(response.getExitCode() == RedRain.StatusCode.SUCCESS_EXIT.getValue()).end();
+
+            //运行超时
+            if ( timeout>0 && watchdog.killedProcess() ) {
+                response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
+                response.setSuccess(false).end();
+            }else {
+                response.setSuccess(response.getExitCode() == RedRain.StatusCode.SUCCESS_EXIT.getValue()).end();
+            }
             if (shellFile != null) {
                 shellFile.delete();//删除文件
             }
