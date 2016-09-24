@@ -254,21 +254,22 @@ public class JobService {
         }
 
         for (int i=0;i<children.size();i++) {
-            Job chind = children.get(i);
+            Job child = children.get(i);
             /**
              * 子作业的流程编号都为顶层父任务的jobId
              */
-            chind.setFlowId(job.getJobId());
-            chind.setOperateId(job.getOperateId());
-            chind.setExecType(job.getExecType());
-            chind.setUpdateTime(new Date());
-            chind.setJobType(JobType.FLOW.getCode());
-            chind.setFlowNum(i+1);
-            chind.setLastFlag(chind.getFlowNum()==children.size());
-            chind.setWarning(job.getWarning());
-            chind.setMobiles(job.getMobiles());
-            chind.setEmailAddress(job.getEmailAddress());
-            addOrUpdate(chind);
+            child.setFlowId(job.getJobId());
+            child.setOperateId(job.getOperateId());
+            child.setExecType(job.getExecType());
+            child.setUpdateTime(new Date());
+            child.setJobType(JobType.FLOW.getCode());
+            child.setFlowNum(i+1);
+            child.setLastFlag(child.getFlowNum()==children.size());
+            child.setWarning(job.getWarning());
+            child.setMobiles(job.getMobiles());
+            child.setTimeOut(job.getTimeOut());
+            child.setEmailAddress(job.getEmailAddress());
+            addOrUpdate(child);
         }
     }
 

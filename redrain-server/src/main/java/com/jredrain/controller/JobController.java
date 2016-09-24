@@ -119,7 +119,7 @@ public class JobController {
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
-            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","jobType","runModel","warning","mobiles","emailAddress");
+            BeanUtils.copyProperties(job1,job,"jobName","cronType","cronExp","command","execType","comment","redo","runCount","jobType","runModel","warning","mobiles","emailAddress","timeout");
         }
 
         //单任务
@@ -135,6 +135,7 @@ public class JobController {
             Object[] command = map.get("child.command");
             Object[] redo = map.get("child.redo");
             Object[] runCount = map.get("child.runCount");
+            Object[] timeout = map.get("child.timeout");
             Object[] comment = map.get("child.comment");
             List<Job> chindren = new ArrayList<Job>(0);
             for (int i = 0; i < jobName.length; i++) {
@@ -155,6 +156,7 @@ public class JobController {
                 chind.setCommand((String) command[i]);
                 chind.setCronExp(job.getCronExp());
                 chind.setComment((String) comment[i]);
+                chind.setTimeOut(Integer.parseInt((String) timeout[i]));
                 chind.setRedo(Integer.parseInt((String) redo[i]));
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);

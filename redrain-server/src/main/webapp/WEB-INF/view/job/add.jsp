@@ -150,6 +150,13 @@
                         return false;
                     }
                 }
+
+                var timeout = $("#timeout").val();
+                if(isNaN(timeout)||parseInt(timeout)<0){
+                    alert("请填写正确的超时时间")
+                    return false;
+                }
+
             }
 
             $.ajax({
@@ -214,6 +221,32 @@
             $("#jobType1").next().attr("onclick","subJob(1)");
             $("#warning1").next().attr("onclick","showContact()");
             $("#warning0").next().attr("onclick","hideContact()");
+
+            var execType = $('input[type="radio"][name="execType"]:checked').val();
+            if (execType==0) {
+                showCronExp();
+            }else {
+                hideCronExp();
+            }
+
+            var redo = $('input[type="radio"][name="redo"]:checked').val();
+            if (redo==0) {
+                hideCountDiv();
+            }else {
+                showCountDiv();
+            }
+
+            var warning = $('input[type="radio"][name="warning"]:checked').val();
+            if (warning==1) {
+                showContact();
+            }else {
+                hideContact();
+            }
+
+            subJob( $('input[type="radio"][name="jobType"]:checked').val() );
+
+            changeTips( $('input[type="radio"][name="cronType"]:checked').val() );
+
 
             $("#jobName").blur(function(){
                 if(!$("#jobName").val()){
@@ -290,7 +323,6 @@
 
         function addSubJob(){
             $("#subForm")[0].reset();
-
             $("#redo1").parent().removeClass("checked").addClass("checked");
             $("#redo1").parent().attr("aria-checked",true);
             $("#redo1").parent().prop("onclick","showContact()");
@@ -340,6 +372,12 @@
                 }
             }
 
+            var timeout = $("#timeout1").val();
+            if(isNaN(timeout)||parseInt(timeout)<0){
+                alert("请填写正确的超时时间")
+                return false;
+            }
+
             /**
              * 同一个执行器下只能有一个任务名
              */
@@ -365,6 +403,7 @@
                                     "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
                                     "<input type='hidden' name='child.redo' value='"+$('#itemRedo').val()+"'>"+
                                     "<input type='hidden' name='child.runCount' value='"+$("#runCount1").val()+"'>"+
+                                    "<input type='hidden' name='child.timeout' value='"+$("#timeout1").val()+"'>"+
                                     "<input type='hidden' name='child.comment' value='"+$("#comment1").val()+"'>"
                             "</li>";
                             $("#subJobDiv").append($(addHtml));
@@ -390,6 +429,11 @@
                                 if ($(element).attr("name") == "child.command"){
                                     $(element).attr("value",$("#command1").val());
                                 }
+
+                                if ($(element).attr("name") == "child.timeout"){
+                                    $(element).attr("value",$("#timeout1").val());
+                                }
+
                                 if ($(element).attr("name") == "child.comment"){
                                     $(element).attr("value",$("#comment1").val());
                                 }
@@ -430,6 +474,10 @@
 
                 if ($(element).attr("name") == "child.runCount"){
                     $("#runCount1").val($(element).val());
+                }
+
+                if ($(element).attr("name") == "child.timeout"){
+                    $("#timeout1").val($(element).val());
                 }
 
                 if ($(element).attr("name") == "child.command"){
@@ -575,6 +623,15 @@
                 </div><br>
 
                 <div class="form-group">
+                    <label for="timeout" class="col-lab control-label"><i class="glyphicon glyphicon-ban-circle"></i>&nbsp;&nbsp;超时时间：</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control input-sm" id="timeout" name="timeout" value="0">
+                        <span class="tips"><b>*&nbsp;</b>执行作业允许的最大时间,超过则为超时(0:忽略超时时间,分钟为单位)</span>
+                    </div>
+                </div><br>
+
+
+                <div class="form-group">
                     <label class="col-lab control-label"><i class="glyphicon  glyphicon-random"></i>&nbsp;&nbsp;作业类型：</label>
                     <div class="col-md-10">
                         <label onclick="subJob(0)" for="jobType0" class="radio-label"><input type="radio" name="jobType" value="0" id="jobType0" checked>单一作业&nbsp;&nbsp;&nbsp;</label>
@@ -679,6 +736,16 @@
                                 <input type="text" class="form-control " id="command1"/>&nbsp;
                             </div>
                         </div>
+
+
+                        <div class="form-group">
+                            <label for="timeout1" class="col-lab control-label">超时时间：</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="timeout1" value="0">
+                                <span class="tips"><b>*&nbsp;</b>执行作业允许的最大时间,超过则为超时(0:忽略超时时间,分钟为单位)</span>
+                            </div>
+                        </div><br>
+
 
                         <div class="form-group">
                             <label class="col-lab control-label" title="执行失败时是否自动重新执行">重新执行：</label>&nbsp;&nbsp;
