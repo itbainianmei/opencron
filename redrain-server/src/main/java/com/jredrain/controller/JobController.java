@@ -156,7 +156,7 @@ public class JobController {
                 chind.setCommand((String) command[i]);
                 chind.setCronExp(job.getCronExp());
                 chind.setComment((String) comment[i]);
-                chind.setTimeOut(Integer.parseInt((String) timeout[i]));
+                chind.setTimeout(Integer.parseInt((String) timeout[i]));
                 chind.setRedo(Integer.parseInt((String) redo[i]));
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);
