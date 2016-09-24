@@ -267,7 +267,6 @@ public class JobService {
             child.setLastFlag(child.getFlowNum()==children.size());
             child.setWarning(job.getWarning());
             child.setMobiles(job.getMobiles());
-            child.setTimeout(job.getTimeout());
             child.setEmailAddress(job.getEmailAddress());
             addOrUpdate(child);
         }

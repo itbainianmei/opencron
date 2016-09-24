@@ -200,14 +200,15 @@ public class AgentProcessor implements RedRain.Iface {
                     @Override
                     public void run() {
                         //超时,kill...
-                        watchdog.destroyProcess();
-                        timer.cancel();
+                        if (watchdog.isWatching()) {
+                            watchdog.destroyProcess();
+                            timer.cancel();
+                        }
                     }
                 },timeout*60*1000);
             }
 
             executor.execute(commandLine, resultHandler);
-
             resultHandler.waitFor();
         } catch (Exception e) {
             if (e instanceof ExecuteException) {
@@ -259,6 +260,8 @@ public class AgentProcessor implements RedRain.Iface {
             }
         }
         logger.info("[redrain]:execute result:{}", response.toString());
+        watchdog.stop();
+
         return response;
     }
 
