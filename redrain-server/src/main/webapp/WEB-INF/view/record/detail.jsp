@@ -74,6 +74,9 @@
                     <c:if test="${record.success eq 2}">
                         <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
                     </c:if>
+                    <c:if test="${record.success eq 3}">
+                        <span class="label label-warning">&nbsp;&nbsp;超&nbsp;时&nbsp;&nbsp;</span>
+                    </c:if>
                 </td>
 
                 <td><i class="glyphicon glyphicon-stop"></i>&nbsp;结束时间</td>

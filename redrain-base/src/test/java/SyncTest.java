@@ -1,6 +1,10 @@
 
+import org.apache.commons.exec.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by benjobs on 2016/9/10.
@@ -8,56 +12,50 @@ import java.util.List;
 public class SyncTest {
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
 
-        Thread jobThread = new Thread(new Runnable() {
+        final CommandLine cmdLine = CommandLine.parse("C:\\Developer\\workspace\\bat\\hello.bat");
+        final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
+
+        final Timer timer = new Timer();
+
+        final DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler(){
+            @Override
+            public void onProcessComplete(int exitValue) {
+                super.onProcessComplete(exitValue);
+                watchdog.stop();
+                timer.cancel();
+            }
+
+            @Override
+            public void onProcessFailed(ExecuteException e) {
+                super.onProcessFailed(e);
+                watchdog.stop();
+                timer.cancel();
+            }
+        };
+
+        DefaultExecutor executor = new DefaultExecutor();
+
+        executor.setWatchdog(watchdog);
+
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; i < 4; i++) {
-                    final int finalI = i;
-                    Thread thread = new Thread(new Runnable() {
-                        public void run() {
-                                List<Integer> list = new ArrayList<Integer>();
-                                list.add(1);
-                                list.add(2);
-                                list.add(2);
-                                list.add(1);
-                                list.add(2);
-                                list.add(1);
-                                list.add(2);
-
-                                for (Integer vv : list) {
-                                    try {
-                                        runff(finalI, vv);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                        }
-                    });
-                    thread.start();
+                //超时,kill...
+                if (watchdog.isWatching()) {
+                    watchdog.stop();
+                    System.out.println(watchdog.isWatching());
+                    timer.cancel();
+                    System.out.println("kill....");
+                }
             }
+        },5*1000);
 
-            }
-        });
-        jobThread.start();
+        executor.execute(cmdLine, resultHandler);
+        System.out.println("dog is running?"+watchdog.isWatching());
 
     }
 
-    private static void runff(int index,Integer val) throws InterruptedException {
-
-        synchronized (val) {
-            System.out.println(index+"===>"+val);
-            if (val==1) {
-                Thread.sleep(2000);
-            }
-            /*if (val==2) {
-                Thread.sleep(300);
-            }*/
-        }
-
-
-    }
 
 }

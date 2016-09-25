@@ -160,7 +160,7 @@ public class AgentProcessor implements RedRain.Iface {
     }
 
     @Override
-    public Response execute(Request request) throws TException {
+    public Response execute(final Request request) throws TException {
         if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
@@ -168,11 +168,8 @@ public class AgentProcessor implements RedRain.Iface {
         String command = request.getParams().get("command") + EXITCODE_SCRIPT;
 
         String pid = request.getParams().get("pid");
-
         //以分钟为单位
         Long timeout = CommonUtils.toLong(request.getParams().get("timeout"),0L);
-
-        final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
 
         logger.info("[redrain]:execute:{},pid:{}", command, pid);
 
@@ -181,6 +178,8 @@ public class AgentProcessor implements RedRain.Iface {
         Integer exitValue = 1;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Response response = Response.response(request);
+
+        final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
 
         try {
             CommandLine commandLine = CommandLine.parse("/bin/bash +x " + shellFile.getAbsolutePath());
@@ -191,25 +190,58 @@ public class AgentProcessor implements RedRain.Iface {
             response.setStartTime(new Date().getTime());
             //成功执行完毕时退出值为0,shell标准的退出
             executor.setExitValue(0);
+
             DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
             if (timeout>0) {
+                //设置监控狗...
                 executor.setWatchdog(watchdog);
+
+                //监控超时的计时器
                 final Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         //超时,kill...
                         if (watchdog.isWatching()) {
-                            watchdog.destroyProcess();
+                            /**
+                             * 调用watchdog的destroyProcess无法真正kill进程...
+                             * watchdog.destroyProcess();
+                             */
                             timer.cancel();
+                            watchdog.stop();
+                            //call  kill...
+                            request.setAction(Action.KILL);
+                            try {
+                                kill(request);
+                            } catch (TException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     }
                 },timeout*60*1000);
+
+                //正常执行完毕则清除计时器
+                resultHandler = new DefaultExecuteResultHandler(){
+                    @Override
+                    public void onProcessComplete(int exitValue) {
+                        super.onProcessComplete(exitValue);
+                        timer.cancel();
+                    }
+
+                    @Override
+                    public void onProcessFailed(ExecuteException e) {
+                        super.onProcessFailed(e);
+                        timer.cancel();
+                    }
+                };
             }
 
             executor.execute(commandLine, resultHandler);
+
             resultHandler.waitFor();
+
         } catch (Exception e) {
             if (e instanceof ExecuteException) {
                 exitValue = ((ExecuteException) e).getExitValue();
@@ -249,7 +281,7 @@ public class AgentProcessor implements RedRain.Iface {
             }
 
             //运行超时
-            if ( timeout>0 && watchdog.killedProcess() ) {
+            if ( timeout>0 && !watchdog.isWatching() ) {
                 response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
                 response.setSuccess(false).end();
             }else {
@@ -295,7 +327,7 @@ public class AgentProcessor implements RedRain.Iface {
         logger.info("[redrain]:kill pid:{}", pid);
 
         Response response = Response.response(request);
-        String text = CommandUtils.executeShell(Globals.REDRAIN_KILL_SHELL, request.getParams().get("pid"), EXITCODE_SCRIPT);
+        String text = CommandUtils.executeShell(Globals.REDRAIN_KILL_SHELL, pid, EXITCODE_SCRIPT);
         String message = "";
         Integer exitVal = 0;
 

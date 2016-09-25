@@ -211,6 +211,7 @@
                     <option value="1" ${success eq 1 ? 'selected' : ''}>成功</option>
                     <option value="0" ${success eq 0 ? 'selected' : ''}>失败</option>
                     <option value="0" ${success eq 2 ? 'selected' : ''}>被杀</option>
+                    <option value="0" ${success eq 3 ? 'selected' : ''}>超时</option>
                 </select>
                 &nbsp;&nbsp;&nbsp;
                 <label for="execType">执行方式：</label>
@@ -300,6 +301,9 @@
                             <c:if test="${r.success eq 2}">
                                 <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
                             </c:if>
+                            <c:if test="${r.success eq 3}">
+                                <span class="label label-warning">&nbsp;&nbsp;超&nbsp;时&nbsp;&nbsp;</span>
+                            </c:if>
                         </td>
                         <td>
                             <c:if test="${r.execType eq 0}"><span class="label label-default">&nbsp;&nbsp;自&nbsp;动&nbsp;&nbsp;</span></c:if>
@@ -349,6 +353,9 @@
                                     <c:if test="${rc.success eq 2}">
                                         <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
                                     </c:if>
+                                    <c:if test="${rc.success eq 3}">
+                                        <span class="label label-warning">&nbsp;&nbsp;超&nbsp;时&nbsp;&nbsp;</span>
+                                    </c:if>
                                 </td>
                                 <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>
                                 <td>
@@ -385,6 +392,9 @@
                                     </c:if>
                                     <c:if test="${t.success eq 2}">
                                         <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
+                                    </c:if>
+                                    <c:if test="${t.success eq 3}">
+                                        <span class="label label-warning">&nbsp;&nbsp;超&nbsp;时&nbsp;&nbsp;</span>
                                     </c:if>
                                 </td>
                                 <td>
@@ -425,6 +435,9 @@
                                             </c:if>
                                             <c:if test="${tc.success eq 2}">
                                                 <span class="label label-warning">&nbsp;&nbsp;被&nbsp;杀&nbsp;&nbsp;</span>
+                                            </c:if>
+                                            <c:if test="${tc.success eq 3}">
+                                                <span class="label label-warning">&nbsp;&nbsp;超&nbsp;时&nbsp;&nbsp;</span>
                                             </c:if>
                                         </td>
                                         <td><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></td>

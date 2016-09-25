@@ -25,9 +25,12 @@ package com.jredrain.service;
 import com.jredrain.base.job.Action;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
+import com.jredrain.base.utils.CommandUtils;
 import com.jredrain.base.utils.ParamsMap;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
+import com.jredrain.domain.Role;
+import com.jredrain.domain.User;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
 import org.quartz.Job;
@@ -407,9 +410,13 @@ public class ExecuteService implements Job {
         if (StatusCode.KILL.getValue().equals(response.getExitCode())) {
             record.setStatus(RunStatus.STOPED.getStatus());
             record.setSuccess(ResultStatus.KILLED.getStatus());//被kill任务失败
+        }else if(StatusCode.TIME_OUT.getValue().equals(response.getExitCode())){
+            record.setStatus(RunStatus.STOPED.getStatus());
+            record.setSuccess(ResultStatus.TIMEOUT.getStatus());//超时...
         }else {
             record.setStatus(RunStatus.DONE.getStatus());
         }
+
         record.setStartTime(new Date(response.getStartTime()));
         record.setEndTime(new Date(response.getEndTime()));
         return response;
@@ -487,6 +494,10 @@ public class ExecuteService implements Job {
     }
 
     private boolean checkJobPermission(Long jobAgentId, Long userId){
+        if (userId==null) return false;
+        User user = userService.getUserById(userId);
+        //超级管理员拥有所有执行器的权限
+        if (user!=null&&user.getRoleId()==999) return true;
         String agentIds = userService.getUserById(userId).getAgentIds();
         agentIds = ","+agentIds+",";
         String thisAgentId = ","+jobAgentId+",";

@@ -216,7 +216,8 @@ public class RedRain implements Serializable {
     public enum ResultStatus {
         FAILED(0, "失败"),
         SUCCESSFUL(1, "成功"),
-        KILLED(2, "被杀");
+        KILLED(2, "被杀"),
+        TIMEOUT(3, "超时");
 
         private Integer status;
         private String description;
