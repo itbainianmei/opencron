@@ -211,6 +211,7 @@ public class JobController {
         jober.setRedo(job.getRedo());
         jober.setRunCount(job.getRunCount());
         jober.setWarning(job.getWarning());
+        jober.setTimeout(job.getTimeout());
         if (jober.getWarning()) {
             jober.setMobiles(job.getMobiles());
             jober.setEmailAddress(job.getEmailAddress());

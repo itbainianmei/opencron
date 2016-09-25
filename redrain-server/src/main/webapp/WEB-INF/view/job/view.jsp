@@ -114,6 +114,7 @@
                                     $("#mobiles").val(obj.mobiles);
                                     $("#email").val(obj.emailAddress);
                                     $("#comment").val(obj.comment);
+                                    $("#timeout").val(obj.timeout);
                                     $('#jobModal').modal('show');
                                     return;
                                 }
@@ -190,6 +191,13 @@
                 alert("执行命令不能为空!");
                 return false;
             }
+
+            var timeout = $("#timeout").val();
+            if(isNaN(timeout)||parseInt(timeout)<0){
+                alert("请填写正确的超时时间")
+                return false;
+            }
+
             var redo = $('input[type="radio"][name="redo"]:checked').val();
             var runCount = $("#runCount").val();
             if (!redo){
@@ -245,6 +253,7 @@
                 "cronExp":cronExp,
                 "agentId":agentId,
                 "command":command,
+                "timeout":timeout,
                 "execType":execType,
                 "jobName":jobName,
                 "redo":redo,
@@ -310,7 +319,8 @@
                                 "warning":job.warning,
                                 "mobiles":job.mobiles,
                                 "emailAddress":job.emailAddress,
-                                "comment":job.comment
+                                "comment":job.comment,
+                                "timeout":job.timeout
                             },
                             success:function(data){
                                 if (data == "success"){
@@ -843,6 +853,15 @@
                             <textarea class="form-control " id="cmd" name="cmd" style="height: 80px;"></textarea>&nbsp;
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label for="timeout" class="col-lab control-label" title="执行作业允许的最大时间,超过则为超时(0:忽略超时时间,分钟为单位)">超时时间：</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" id="timeout" name="timeout" value="0">
+                        </div>
+                    </div><br>
+
+
                     <div class="form-group">
                         <label class="col-lab control-label" title="作业失败后是否重新执行此作业">重新执行：</label>&nbsp;&nbsp;
                         <label for="redo1" onclick="showCountDiv()" class="radio-label"><input type="radio" name="redo" value="1" id="redo1"> 是&nbsp;&nbsp;&nbsp;</label>
