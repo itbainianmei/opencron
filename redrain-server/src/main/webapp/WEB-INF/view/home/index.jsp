@@ -85,6 +85,30 @@
             color: rgba(225,225,225,0.9);
         }
 
+        .eye-grey{
+            filter:alpha(opacity=20);
+            -moz-opacity:0.2;
+            opacity:0.2;
+        }
+        .card-link{
+            float: right;
+            margin: 6px 9px;
+            position: relative;
+            z-index: 999;
+        }
+        .eye-grey-nodata{
+            height: 245px;
+            display: none;
+            text-align: center;
+            position: relative;
+            z-index: -1;
+            filter:alpha(opacity=40);
+            -moz-opacity:0.4;
+            opacity:0.4;
+            margin-bottom: -14px;
+        }
+
+
     </style>
 
     <script type="text/javascript">
@@ -135,6 +159,23 @@
                 $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
             });
 
+            $("#agentCount").mouseover(function () { mouseIn("#agentCount","#agentEye") }).mouseout(function () { mouseOut("#agentCount","#agentEye") });
+            $("#jobCount").mouseover(function () { mouseIn("#jobCount","#jobEye") }).mouseout(function () { mouseOut("#jobCount","#jobEye") });
+            $("#successCount").mouseover(function () { mouseIn("#successCount","#successEye") }).mouseout(function () { mouseOut("#successCount","#successEye") });
+            $("#failedCount").mouseover(function () { mouseIn("#failedCount","#failedEye") }).mouseout(function () { mouseOut("#failedCount","#failedEye") });
+
+            
+            function mouseIn(div,icon) {
+                $(div).css({"background-color":"rgba(0,0,0,0.55)"});
+                $(icon).removeClass("eye-grey");
+            }
+            function mouseOut(div,icon) {
+                $(div).css({"background-color":"rgba(0,0,0,0.4)"});
+                $(icon).addClass("eye-grey");
+            }
+            
+            
+
         });
     </script>
 </head>
@@ -155,14 +196,17 @@
         <li><a href="">首页</a></li>
     </ol>
 
-    <h4 class="page-title" ><i class="fa fa-tachometer" aria-hidden="true" style="font-style: 30px;"></i>&nbsp;作业报告</h4>
+    <h4 class="page-title" ><i class="fa fa-tachometer" aria-hidden="true" style="font-size: 30px;"></i>&nbsp;作业报告</h4>
     <!-- Quick Stats -->
     <div class="block-area" id="overview" style="margin-top: 0px">
         <!-- cards -->
         <div class="row cards">
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+                <a href="${contextPath}/agent/view" target="_blank" class="card-link">
+                    <i id="agentEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                </a>
                 <div class="card hover">
-                    <div class="front">
+                    <div id="agentCount" class="front">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
@@ -187,8 +231,11 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+                <a href="${contextPath}/job/view" target="_blank" class="card-link">
+                    <i id="jobEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                </a>
                 <div class="card hover">
-                    <div class="front">
+                    <div id="jobCount" class="front">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 1px;" aria-hidden="true" class="fa fa-tasks"></i></span>
                             <div class="media-body">
@@ -214,8 +261,11 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+                <a href="${contextPath}/record/done?success=1" target="_blank" class="card-link">
+                    <i id="successEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                </a>
                 <div class="card hover">
-                    <div class="front">
+                    <div id="successCount" class="front">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>
                             <div class="media-body">
@@ -240,8 +290,11 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
+                <a href="${contextPath}/record/done?success=0" target="_blank" class="card-link">
+                    <i id="failedEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                </a>
                 <div class="card hover">
-                    <div class="front">
+                    <div id="failedCount" class="front">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: -3px;" class="fa fa-thumbs-o-down" aria-hidden="true"></i></span>
                             <div class="media-body">
@@ -270,14 +323,14 @@
 
     </div>
 
-    <div class="block-area col-xs-12" id="monitor" style="margin-bottom: 15px;">
+    <div class="block-area col-xs-12" id="record-report" style="margin-bottom: 15px;">
         <div class="tile" style="border-bottom-left-radius:0px;border-bottom-right-radius: 0px;">
 
             <h2 class="tile-title" >
                 <i aria-hidden="true" class="fa fa-bar-chart"></i>&nbsp;执行报告
             </h2>
 
-            <div class="col-xs-12" style="background-color: rgba(0,0,0,0.3);">
+            <div id="timeopter" class="col-xs-12" style="background-color: rgba(0,0,0,0.3);">
                 <div style="float: right;margin-bottom: 0px;margin-top: 0px;margin-right:10px;">
                     <label for="startTime" class="label-self">时间&nbsp;: </label>
                     <input type="text" style="border-radius: 2px;width: 90px" id="startTime" name="startTime" value="${startTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>
@@ -287,66 +340,71 @@
                 </div>
             </div>
 
-           <div class="col-xs-7" id="overview_report_div" style="background-color: rgba(0,0,0,0.3);display: none">
-               <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
-           </div>
+            <div id="record-report-havedata">
+                <div class="col-xs-7" id="overview_report_div" style="background-color: rgba(0,0,0,0.3);display: none">
+                   <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
+               </div>
+                <div id="report_detail" class="col-xs-2" style="background-color: rgba(0,0,0,0.3);height: 300px;padding-top:15px;display: none">
+                   <h5 class="subtitle mb5" style="font-size: 20px;">报告明细</h5>
+                   <div class="clearfix"></div>
 
-           <div id="report_detail" class="col-xs-2" style="background-color: rgba(0,0,0,0.3);height: 300px;padding-top:15px;display: none">
-               <h5 class="subtitle mb5" style="font-size: 20px;">报告明细</h5>
-               <div class="clearfix"></div>
+                   <span class="sublabel">运行模式(自动/手动)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-primary" role="progressbar" id="job_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
 
-               <span class="sublabel">运行模式(自动/手动)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-primary" role="progressbar" id="job_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
+                   <span class="sublabel">作业类型(单一/流程）</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
 
-               <span class="sublabel">作业类型(单一/流程）</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-success" role="progressbar" id="job_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
+                   <span class="sublabel">规则类型(crontab/quartz)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-danger" role="progressbar"  id="job_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
 
-               <span class="sublabel">规则类型(crontab/quartz)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-danger" role="progressbar"  id="job_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
+                   <span class="sublabel">重跑状态 (非重跑/重跑)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
 
-               <span class="sublabel">重跑状态 (非重跑/重跑)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-
-               <span class="sublabel">执行状态(成功/失败)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-success" role="progressbar" id="job_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-           </div>
-
-            <div class="col-xs-3 " id="overview_pie_div" style="background-color: rgba(0,0,0,0.3);display: none">
-                 <div id="overview_pie" class="main-chart" style="height: 300px;" ></div>
-            </div>
-
-            <div class="col-xs-12" id="overview_loader" style="background-color: rgba(0,0,0,0.3);height: 300px;">
-                 <div class="loader">
-                     <div class="loader-inner">
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
+                   <span class="sublabel">执行状态(成功/失败)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+               </div>
+                <div class="col-xs-3 " id="overview_pie_div" style="background-color: rgba(0,0,0,0.3);display: none">
+                     <div id="overview_pie" class="main-chart" style="height: 300px;" ></div>
+                </div>
+                <div class="col-xs-12" id="overview_loader" style="background-color: rgba(0,0,0,0.3);height: 300px;">
+                     <div class="loader">
+                         <div class="loader-inner">
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
                          </div>
                      </div>
-                 </div>
+                </div>
             </div>
 
+            <div id="record-report-nodata" class="eye-grey-nodata">
+                <div  style="font-size: 110px;margin-top: 90px;">
+                    <i  class="glyphicon glyphicon-eye-close"></i>
+                    <span style="font-size: 40px;">无数据</span>
+                </div>
+            </div>
 
         </div>
     </div>

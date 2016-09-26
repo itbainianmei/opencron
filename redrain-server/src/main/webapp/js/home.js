@@ -693,6 +693,7 @@ var redrainChart = {
     },
 
     resizeChart: function () {
+
         if ($.isMobile()) {
             $("#overview_pie_div").remove();
             $("#report_detail").remove();
@@ -830,6 +831,11 @@ var redrainChart = {
             success: function (data) {
                 $("#overview_loader").hide();
                 if (data != null) {
+
+                    $("#record-report-havedata").show();
+                    $("#record-report-nodata").hide();
+                    $("#timeopter").css({"background-color":"rgba(0,0,0,0.3)"});
+
                     //折线图
                     var dataArea = [];
                     var successSum = 0;
@@ -876,6 +882,10 @@ var redrainChart = {
                         "operator":operator
                     };
                     redrainChart.resizeChart();
+                }else {
+                    $("#record-report-havedata").hide();
+                    $("#record-report-nodata").show();
+                    $("#timeopter").css({"background-color":""});
                 }
             }
         });
