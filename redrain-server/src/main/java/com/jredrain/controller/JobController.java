@@ -124,7 +124,7 @@ public class JobController {
 
         //单任务
         if ( RedRain.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
-            job.setOperateId( ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId() );
+            job.setOperateId( Globals.getUserIdBySession(session) );
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
         } else { //流程任务
@@ -172,7 +172,7 @@ public class JobController {
             }
 
             if (job.getOperateId() == null) {
-                job.setOperateId( ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+                job.setOperateId( Globals.getUserIdBySession(session));
             }
 
             jobService.saveFlowJob(job, chindren);
@@ -242,7 +242,7 @@ public class JobController {
     public void remoteExecute(HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         //手动执行
-        Long operateId = Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString());
+        Long operateId = Globals.getUserIdBySession(session);
         job.setOperateId(operateId);
         job.setExecType(ExecType.OPERATOR.getStatus());
         job.setAgent(agentService.getAgent(job.getAgentId()));
@@ -262,7 +262,7 @@ public class JobController {
     @RequestMapping("/batchexec")
     public void batchExec(HttpSession session, String command, String agentIds) {
         if (notEmpty(agentIds) && notEmpty(command)){
-            Long operateId = Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString());
+            Long operateId = Globals.getUserIdBySession(session);
             try {
                 this.executeService.batchExecuteJob(operateId,command,agentIds);
             } catch (Exception e) {

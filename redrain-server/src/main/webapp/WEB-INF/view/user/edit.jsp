@@ -167,7 +167,7 @@
                     </div>
                 </div><br>
 
-                <div class="form-group" id="agentsDiv">
+                <div class="form-group" id="agentsDiv" style="display: ${u.roleId eq 999 ? 'none' : 'block'}">
                     <label class="col-lab control-label"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;执行器组：</label>
                     <div class="col-md-10">
                         <input type="checkbox" id="checkAllInput">全选<span class="tips">&nbsp;&nbsp;&nbsp;<b>*&nbsp;</b>此管理员可操作的执行器操组</span></br>

@@ -45,6 +45,8 @@ public class RecordService {
     @Autowired
     private QueryDao queryDao;
 
+    @Autowired
+    private UserService userService;
 
     public Page query(HttpSession session, Page<RecordVo> page, RecordVo recordVo, String queryTime, boolean status) {
         String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3,5,6) THEN r.endTime WHEN r.status IN (0,2,4) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId "
@@ -68,8 +70,9 @@ public class RecordService {
             if (status) {
                 sql += " AND IFNULL(r.flowNum,0) = 0 ";
             }
-            if (!(Boolean) session.getAttribute("permission")) {
-                sql += " AND r.operateId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+            if (!Globals.IsPermission(session)) {
+                User user = userService.getUserBySession(session);
+                sql += " AND r.operateId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
             }
         }
         sql += " ORDER BY r.startTime DESC";
@@ -154,21 +157,46 @@ public class RecordService {
         return queryDao.sqlQuery(Record.class, sql);
     }
 
-    public ChartVo getExecTypePieData() {
-        String sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM (SELECT COUNT(1) count FROM record WHERE execType = 0)a,(SELECT COUNT(1) count FROM record WHERE execType = 1)b,(SELECT COUNT(1) count FROM record WHERE execType IN (2,3))c ";
-        return queryDao.sqlUniqueQuery(ChartVo.class, sql);
+    public ChartVo getExecTypePieData(HttpSession session) {
+        String sql = null;
+        if (!Globals.IsPermission(session)) {
+            sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM " +
+                    "(SELECT COUNT(1) count FROM record WHERE execType = 0 AND operateId = ? AND agentId in ? )a," +
+                    "(SELECT COUNT(1) count FROM record WHERE execType = 1 AND operateId = ? AND agentId in ? )b," +
+                    "(SELECT COUNT(1) count FROM record WHERE execType IN (2,3) AND operateId = ? AND agentId in ? )c ";
+            return this.getDataBySession(sql,session);
+        }else {
+            sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM (SELECT COUNT(1) count FROM record WHERE execType = 0)a,(SELECT COUNT(1) count FROM record WHERE execType = 1)b,(SELECT COUNT(1) count FROM record WHERE execType IN (2,3))c ";
+            return queryDao.sqlUniqueQuery(ChartVo.class, sql);
+        }
     }
 
-    public Object getStatusDonutData() {
-        String sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM (SELECT COUNT(1) count FROM record WHERE success = 1)a,(SELECT COUNT(1) count FROM record WHERE success = 0)b,(SELECT COUNT(1) count FROM record WHERE success = 2)c ";
-        return queryDao.sqlUniqueQuery(ChartVo.class, sql);
+    public ChartVo getStatusDonutData(HttpSession session) {
+        String sql = null;
+        if (!Globals.IsPermission(session)) {
+            sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM " +
+                    "(SELECT COUNT(1) count FROM record WHERE success = 1 AND operateId = ?  AND agentId in ? )a," +
+                    "(SELECT COUNT(1) count FROM record WHERE success = 0 AND operateId = ?  AND agentId in ? )b," +
+                    "(SELECT COUNT(1) count FROM record WHERE success = 2 AND operateId = ?  AND agentId in ? )c ";
+            return this.getDataBySession(sql,session);
+        }else {
+            sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM (SELECT COUNT(1) count FROM record WHERE success = 1)a,(SELECT COUNT(1) count FROM record WHERE success = 0)b,(SELECT COUNT(1) count FROM record WHERE success = 2)c ";
+            return queryDao.sqlUniqueQuery(ChartVo.class, sql);
+        }
+    }
+
+    private ChartVo getDataBySession(String sql,HttpSession session){
+        User user = userService.getUserBySession(session);
+        Long operateId = user.getUserId();
+        String agentIds = user.getAgentIds();
+        return queryDao.sqlUniqueQuery(ChartVo.class, sql, operateId, agentIds, operateId, agentIds, operateId, agentIds);
     }
 
     public Boolean isRunning(Long id) {
         return queryDao.getCountBySql("SELECT COUNT(1) FROM record r LEFT JOIN job t ON r.jobId = t.jobId  WHERE (r.jobId = ? OR t.flowId = ?) AND r.status = 0 ", id, id) > 0L;
     }
 
-    public List<ChartVo> getDiffData(String startTime, String endTime) {
+    public List<ChartVo> getDiffData(String startTime, String endTime, HttpSession session) {
         String sql = "SELECT DATE_FORMAT(r.startTime,'%Y-%m-%d') AS date, " +
                 " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
                 " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +
@@ -181,7 +209,12 @@ public class RecordService {
                 " sum(CASE r.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
                 " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM record r left join job j ON r.jobid=j.jobid "+
-                " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "' GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
+                " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
+            sql += " AND r.operateId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
+        }
+        sql += " GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
         return queryDao.sqlQuery(ChartVo.class, sql);
     }
 
@@ -196,14 +229,18 @@ public class RecordService {
         return queryDao.sqlQuery(Record.class, sql, recordId);
     }
 
-    public Long getRecords(int status, RedRain.ExecType execType) {
+    public Long getRecords(int status, RedRain.ExecType execType, HttpSession session) {
+        String sql = null;
         if(status==1) {
-            String sql = "SELECT COUNT(1) FROM record WHERE success=? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
-            return queryDao.getCountBySql(sql,1,execType.getStatus());
+            sql = "SELECT COUNT(1) FROM record WHERE success=? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }else {
-            String sql = "SELECT COUNT(1) FROM record WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
-            return queryDao.getCountBySql(sql,1,execType.getStatus());
+            sql = "SELECT COUNT(1) FROM record WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
+            sql += " AND operateId = " + user.getUserId() + " AND agentId in ("+user.getAgentIds()+")";
+        }
+        return queryDao.getCountBySql(sql,1,execType.getStatus());
     }
 
     @Transactional(readOnly = false)

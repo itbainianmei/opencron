@@ -97,7 +97,7 @@
             z-index: 999;
         }
         .eye-grey-nodata{
-            height: 245px;
+            height: 235px;
             display: none;
             text-align: center;
             position: relative;
@@ -159,22 +159,13 @@
                 $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
             });
 
-            $("#agentCount").mouseover(function () { mouseIn("#agentCount","#agentEye") }).mouseout(function () { mouseOut("#agentCount","#agentEye") });
-            $("#jobCount").mouseover(function () { mouseIn("#jobCount","#jobEye") }).mouseout(function () { mouseOut("#jobCount","#jobEye") });
-            $("#successCount").mouseover(function () { mouseIn("#successCount","#successEye") }).mouseout(function () { mouseOut("#successCount","#successEye") });
-            $("#failedCount").mouseover(function () { mouseIn("#failedCount","#failedEye") }).mouseout(function () { mouseOut("#failedCount","#failedEye") });
-
-            
-            function mouseIn(div,icon) {
-                $(div).css({"background-color":"rgba(0,0,0,0.55)"});
-                $(icon).removeClass("eye-grey");
-            }
-            function mouseOut(div,icon) {
-                $(div).css({"background-color":"rgba(0,0,0,0.4)"});
-                $(icon).addClass("eye-grey");
-            }
-            
-            
+            $(".count").mouseover(function () {
+                $(this).css({"background-color":"rgba(0,0,0,0.55)"});
+                $(this).parent().prev().find("i:first").removeClass("eye-grey");
+            }).mouseout(function () {
+                $(this).css({"background-color":""});
+                $(this).parent().prev().find("i:first").addClass("eye-grey");
+            });
 
         });
     </script>
@@ -203,10 +194,10 @@
         <div class="row cards">
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
                 <a href="${contextPath}/agent/view" target="_blank" class="card-link">
-                    <i id="agentEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                    <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
-                    <div id="agentCount" class="front">
+                    <div class="front count" val="111">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
@@ -232,10 +223,10 @@
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
                 <a href="${contextPath}/job/view" target="_blank" class="card-link">
-                    <i id="jobEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                    <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
-                    <div id="jobCount" class="front">
+                    <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 1px;" aria-hidden="true" class="fa fa-tasks"></i></span>
                             <div class="media-body">
@@ -262,10 +253,10 @@
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
                 <a href="${contextPath}/record/done?success=1" target="_blank" class="card-link">
-                    <i id="successEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                    <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
-                    <div id="successCount" class="front">
+                    <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>
                             <div class="media-body">
@@ -291,10 +282,10 @@
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
                 <a href="${contextPath}/record/done?success=0" target="_blank" class="card-link">
-                    <i id="failedEye" class="glyphicon glyphicon-eye-open eye-grey"></i>
+                    <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
-                    <div id="failedCount" class="front">
+                    <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: -3px;" class="fa fa-thumbs-o-down" aria-hidden="true"></i></span>
                             <div class="media-body">

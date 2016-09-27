@@ -70,7 +70,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         //普通管理员不可访问的资源
-        if (!(Boolean) session.getAttribute("permission") &&
+        if (!Globals.IsPermission(session) &&
                 (requestURI.contains("/config/")
                         || requestURI.contains("/user/view")
                         || requestURI.contains("/user/add")

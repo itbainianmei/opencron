@@ -104,19 +104,18 @@ public class HomeController {
         /**
          * job
          */
-        List<Job> singleton = jobService.getJobsByJobType(RedRain.JobType.SINGLETON);
-        List<Job> flow = jobService.getJobsByJobType(RedRain.JobType.FLOW);
+        List<Job> singleton = jobService.getJobsByJobType(RedRain.JobType.SINGLETON, session);
+        List<Job> flow = jobService.getJobsByJobType(RedRain.JobType.FLOW, session);
 
         model.addAttribute("singleton",singleton.size());
         model.addAttribute("flow",flow.size());
-        singleton.addAll(flow);
-        model.addAttribute("job",singleton.size());
+        model.addAttribute("job",singleton.size()+flow.size());
 
         /**
          * 成功作业,自动执行
          */
-        Long successAutoRecord = recordService.getRecords(1, RedRain.ExecType.AUTO);
-        Long successOperRecord = recordService.getRecords(1, RedRain.ExecType.OPERATOR);
+        Long successAutoRecord = recordService.getRecords(1, RedRain.ExecType.AUTO, session);
+        Long successOperRecord = recordService.getRecords(1, RedRain.ExecType.OPERATOR, session);
 
         model.addAttribute("successAutoRecord",successAutoRecord);
         model.addAttribute("successOperRecord",successOperRecord);
@@ -125,8 +124,8 @@ public class HomeController {
         /**
          * 失败作业
          */
-        Long failedAutoRecord = recordService.getRecords(0, RedRain.ExecType.AUTO);
-        Long failedOperRecord = recordService.getRecords(0, RedRain.ExecType.OPERATOR);
+        Long failedAutoRecord = recordService.getRecords(0, RedRain.ExecType.AUTO, session);
+        Long failedOperRecord = recordService.getRecords(0, RedRain.ExecType.OPERATOR, session);
         model.addAttribute("failedAutoRecord",failedAutoRecord);
         model.addAttribute("failedOperRecord",failedOperRecord);
         model.addAttribute("failedRecord",failedAutoRecord+failedOperRecord);
@@ -139,19 +138,19 @@ public class HomeController {
     }
 
     @RequestMapping("/darwchart")
-    public void refreshChart(HttpServletResponse response) {
+    public void refreshChart(HttpServletResponse response, HttpSession session) {
         JsonMapper jsonMapper = new JsonMapper();
         JSONObject json = new JSONObject();
         //执行类型占比数据
-        json.put("execType", jsonMapper.toJson(recordService.getExecTypePieData()));
+        json.put("execType", jsonMapper.toJson(recordService.getExecTypePieData(session)));
         //成功失败占比数据
-        json.put("status", jsonMapper.toJson(recordService.getStatusDonutData()));
+        json.put("status", jsonMapper.toJson(recordService.getStatusDonutData(session)));
 
         WebUtils.writeJson(response, json.toString());
     }
 
     @RequestMapping("/diffchart")
-    public void diffChart(HttpServletResponse response,String startTime, String endTime) {
+    public void diffChart(HttpServletResponse response,HttpSession session, String startTime, String endTime) {
         if (isEmpty(startTime)) {
             startTime = DateUtils.getCurrDayPrevDay(7);
         }
@@ -160,7 +159,7 @@ public class HomeController {
         }
         //成功失败折线图数据
         JsonMapper jsonMapper = new JsonMapper();
-        List<ChartVo> voList = recordService.getDiffData(startTime, endTime);
+        List<ChartVo> voList = recordService.getDiffData(startTime, endTime, session);
         if (isEmpty(voList)) {
             WebUtils.writeJson(response, "null");
         }else {

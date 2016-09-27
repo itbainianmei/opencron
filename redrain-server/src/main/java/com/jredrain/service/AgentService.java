@@ -85,8 +85,8 @@ public class AgentService {
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){
         String sql = "SELECT * FROM agent WHERE status=?";
-        if (!(Boolean) session.getAttribute("permission")) {
-            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
             sql += " AND agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql,status);
@@ -94,8 +94,8 @@ public class AgentService {
 
     public Page getAgent(HttpSession session, Page page) {
         String sql = "SELECT * FROM agent";
-        if (!(Boolean) session.getAttribute("permission")) {
-            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
             sql += " WHERE agentId in ("+user.getAgentIds()+")";
         }
         queryDao.getPageBySql(page, Agent.class, sql);
@@ -190,8 +190,8 @@ public class AgentService {
 
     public List<Agent> getAgentsBySession(HttpSession session) {
         String sql = "SELECT * FROM agent ";
-        if (!(Boolean) session.getAttribute("permission")) {
-            User user = userService.getUserById(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId());
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
             sql += " WHERE agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);

@@ -99,10 +99,14 @@ public class JobService {
         return jobs;
     }
 
-    public List<Job> getJobsByJobType(JobType jobType){
+    public List<Job> getJobsByJobType(JobType jobType,HttpSession session){
         String sql = "SELECT * FROM job WHERE status=1 AND jobType=?";
         if (JobType.FLOW.equals(jobType)) {
             sql +=" AND flownum=0";
+        }
+        if (!Globals.IsPermission(session)) {
+            User user = userService.getUserBySession(session);
+            sql += " AND operateId = " + user.getUserId() + " AND agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Job.class,sql,jobType.getCode());
     }
@@ -136,11 +140,9 @@ public class JobService {
             if (notEmpty(job.getRedo())) {
                 sql += " AND t.redo=" + job.getRedo();
             }
-            if (!(Boolean) session.getAttribute("permission")) {
-                Long userId = ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
-                sql += " AND t.operateId = " + userId;
-                String agentIds = userService.getUserById(userId).getAgentIds();
-                sql+= " AND t.agentId in ("+agentIds+")";
+            if (!Globals.IsPermission(session)) {
+                User user = userService.getUserBySession(session);
+                sql += " AND t.operateId = " + user.getUserId() + " AND t.agentId in ("+user.getAgentIds()+")";
             }
         }
         page = queryDao.getPageBySql(page, JobVo.class, sql);

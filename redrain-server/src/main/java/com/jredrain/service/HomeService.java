@@ -68,9 +68,9 @@ public class HomeService {
         if (count == 1L) {
             httpSession.setAttribute(Globals.LOGIN_USER, user);
             if (user.getRoleId() == 999L) {
-                httpSession.setAttribute("permission", true);
+                httpSession.setAttribute(Globals.PERMISSION, true);
             } else {
-                httpSession.setAttribute("permission", false);
+                httpSession.setAttribute(Globals.PERMISSION, false);
             }
             return 200;
         } else {
@@ -86,8 +86,8 @@ public class HomeService {
         if (notEmpty(sendTime)) {
             sql += " AND L.sendTime like '" + sendTime + "%' ";
         }
-        if (!(Boolean) session.getAttribute("permission")) {
-            sql += " AND L.receiverId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+        if (!Globals.IsPermission(session)) {
+            sql += " AND L.receiverId = " + Globals.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(page, LogVo.class, sql);
@@ -96,8 +96,8 @@ public class HomeService {
 
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM log L WHERE isread=0 and type=2 ";
-        if (!(Boolean) session.getAttribute("permission")) {
-            sql += " and L.receiverId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+        if (!Globals.IsPermission(session)) {
+            sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
@@ -105,8 +105,8 @@ public class HomeService {
 
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT count(1) FROM log L WHERE isread=0 and type=2 ";
-        if (!(Boolean) session.getAttribute("permission")) {
-            sql += " and L.receiverId = " + ((User)session.getAttribute(Globals.LOGIN_USER)).getUserId();
+        if (!Globals.IsPermission(session)) {
+            sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
         return queryDao.getCountBySql(sql);
     }

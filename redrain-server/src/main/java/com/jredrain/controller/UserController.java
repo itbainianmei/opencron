@@ -84,8 +84,8 @@ public class UserController {
 
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
-        if (!(Boolean) session.getAttribute("permission")
-                && Long.parseLong(((User)session.getAttribute(Globals.LOGIN_USER)).getUserId().toString()) != id){
+        if (!Globals.IsPermission(session)
+                && !Globals.getUserIdBySession(session).equals(id)){
             return "redirect:/user/detail";
         }
         model.addAttribute("u", userService.queryUserById(id));
@@ -97,7 +97,7 @@ public class UserController {
     @RequestMapping("/edit")
     public String edit(HttpSession session, User user) throws SchedulerException {
         User user1 = userService.getUserById(user.getUserId());
-        if (notEmpty(user.getRoleId()) && (Boolean) session.getAttribute("permission")) {
+        if (notEmpty(user.getRoleId()) && Globals.IsPermission(session)) {
             user1.setRoleId(user.getRoleId());
         }
         user1.setAgentIds(user.getAgentIds());
