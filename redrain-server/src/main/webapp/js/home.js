@@ -36,9 +36,13 @@ var redrainChart = {
         if (!$("#agentId").val()) {
             window.setTimeout(function () {
                 $(".loader").remove();
+                $(".div-havedata").hide();
+                $(".div-nodata").show();
             }, 1000);
             return;
         }
+        $(".div-nodata").hide();
+        $(".div-havedata").show();
         /**
          * 关闭上一个websocket
          */
@@ -829,9 +833,8 @@ var redrainChart = {
             },
             dataType: "json",
             success: function (data) {
-                $("#overview_loader").hide();
                 if (data != null) {
-
+                    $("#overview_loader").hide();
                     $("#record-report-havedata").show();
                     $("#record-report-nodata").hide();
                     $("#timeopter").css({"background-color":"rgba(0,0,0,0.3)"});
@@ -883,9 +886,12 @@ var redrainChart = {
                     };
                     redrainChart.resizeChart();
                 }else {
-                    $("#record-report-havedata").hide();
-                    $("#record-report-nodata").show();
-                    $("#timeopter").css({"background-color":""});
+                    window.setTimeout(function () {
+                        $("#overview_loader").hide();
+                        $("#record-report-havedata").hide();
+                        $("#record-report-nodata").show();
+                        $("#timeopter").css({"background-color":""});
+                    }, 750);
                 }
             }
         });

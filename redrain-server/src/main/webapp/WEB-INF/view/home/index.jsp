@@ -57,7 +57,7 @@
             font-weight: lighter;
         }
 
-        #config-view counts{
+        #config-view .counts{
             font-weight: lighter;
         }
 
@@ -96,18 +96,21 @@
             position: relative;
             z-index: 999;
         }
-        .eye-grey-nodata{
-            height: 235px;
+        .record-div-nodata{
             display: none;
-            text-align: center;
+            height: 235px;
             position: relative;
             z-index: -1;
+            margin-bottom: -14px;
+        }
+        .div-nodata{
+            display: none;
+        }
+        .eye-record-nodata{
             filter:alpha(opacity=40);
             -moz-opacity:0.4;
             opacity:0.4;
-            margin-bottom: -14px;
         }
-
 
     </style>
 
@@ -167,6 +170,11 @@
                 $(this).parent().prev().find("i:first").addClass("eye-grey");
             });
 
+            $(".card-link").mouseover(function (){
+                $(this).find("i:first").removeClass("eye-grey");
+                $(this).next("div").find("div:first").css({"background-color":"rgba(0,0,0,0.55)"});
+            });
+
         });
     </script>
 </head>
@@ -193,11 +201,11 @@
         <!-- cards -->
         <div class="row cards">
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <a href="${contextPath}/agent/view" target="_blank" class="card-link">
+                <a href="${contextPath}/agent/view" title="查看详情" target="_blank" class="card-link">
                     <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
-                    <div class="front count" val="111">
+                    <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
                             <div class="media-body">
@@ -222,7 +230,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <a href="${contextPath}/job/view" target="_blank" class="card-link">
+                <a href="${contextPath}/job/view" title="查看详情" target="_blank" class="card-link">
                     <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
@@ -252,7 +260,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <a href="${contextPath}/record/done?success=1" target="_blank" class="card-link">
+                <a href="${contextPath}/record/done?success=1" title="查看详情" target="_blank" class="card-link">
                     <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
@@ -281,7 +289,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <a href="${contextPath}/record/done?success=0" target="_blank" class="card-link">
+                <a href="${contextPath}/record/done?success=0" title="查看详情" target="_blank" class="card-link">
                     <i class="glyphicon glyphicon-eye-open eye-grey"></i>
                 </a>
                 <div class="card hover">
@@ -390,8 +398,8 @@
                 </div>
             </div>
 
-            <div id="record-report-nodata" class="eye-grey-nodata">
-                <div  style="font-size: 110px;margin-top: 90px;">
+            <div id="record-report-nodata" class="text-center record-div-nodata">
+                <div  style="font-size: 110px;margin-top: 90px;" class="eye-record-nodata">
                     <i  class="glyphicon glyphicon-eye-close"></i>
                     <span style="font-size: 40px;">无数据</span>
                 </div>
@@ -417,7 +425,7 @@
                         </select>
                     </div>
 
-                    <div id="overview-chart" style="background:rgba(0,0,0,0.40);border-bottom-left-radius:2px;border-bottom-right-radius:2px;height: 192px;" class="p-10 text-center">
+                    <div id="overview-chart" class="p-10 text-center div-havedata" style="background:rgba(0,0,0,0.40);border-bottom-left-radius:2px;border-bottom-right-radius:2px;height: 192px;">
 
                         <div class="loader">
                             <div class="loader-inner">
@@ -440,34 +448,47 @@
                         </div>
 
                     </div>
+
+                    <div class="p-10 text-center div-nodata"  style="background:rgba(0,0,0,0.40);border-bottom-left-radius:2px;border-bottom-right-radius:2px;height: 192px;">
+                        <div  style="font-size: 110px;" class="eye-grey">
+                            <i  class="glyphicon glyphicon-eye-close"></i>
+                            <span style="font-size: 40px;">无数据</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="tile" id="top" style="min-height: 250px">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;进程监控</h2>
-                    <div style="margin-left: 15px;margin-right: 15px;">
-                    <table class="table tile table-custom table-sortable " style="font-size: 13px;background-color: rgba(0,0,0,0);">
-                        <tbody id="topbody" style="color: #fafafa;font-size:12px;">
-                            <div class="loader" >
-                                <div class="loader-inner">
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
-                                    </div>
-                                    <div class="loader-line-wrap">
-                                        <div class="loader-line"></div>
+                    <div class="div-havedata" style="margin-left: 15px;margin-right: 15px;">
+                        <table class="table tile table-custom table-sortable " style="font-size: 13px;background-color: rgba(0,0,0,0);">
+                            <tbody id="topbody" style="color: #fafafa;font-size:12px;">
+                                <div class="loader" >
+                                    <div class="loader-inner">
+                                        <div class="loader-line-wrap">
+                                            <div class="loader-line"></div>
+                                        </div>
+                                        <div class="loader-line-wrap">
+                                            <div class="loader-line"></div>
+                                        </div>
+                                        <div class="loader-line-wrap">
+                                            <div class="loader-line"></div>
+                                        </div>
+                                        <div class="loader-line-wrap">
+                                            <div class="loader-line"></div>
+                                        </div>
+                                        <div class="loader-line-wrap">
+                                            <div class="loader-line"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center div-nodata" style="margin-top: 20px">
+                        <div  style="font-size: 110px;" class="eye-grey">
+                            <i  class="glyphicon glyphicon-eye-close"></i>
+                            <span style="font-size: 40px;">无数据</span>
+                        </div>
                     </div>
                 </div>
 
@@ -482,7 +503,7 @@
                         服务器的CPU利用率高,则表明服务器很繁忙。如果前台响应时间越来越大，而后台CPU利用率始终上不去，说明在某个地方有瓶颈了,系统需要调优
                     </p>--%>
                     <div class="p-t-10 p-r-5 p-b-5">
-                        <div style="height: 200px; padding: 0px; position: relative;" id="cpu-chart">
+                        <div class="div-havedata" style="height: 200px; padding: 0px; position: relative;" id="cpu-chart">
                             <div class="loader">
                                 <div class="loader-inner">
                                     <div class="loader-line-wrap">
@@ -501,6 +522,12 @@
                                         <div class="loader-line"></div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="text-center div-nodata" style="height: 200px;margin-top: 20px; position: relative;">
+                            <div  style="font-size: 110px;" class="eye-grey">
+                                <i  class="glyphicon glyphicon-eye-close"></i>
+                                <span style="font-size: 40px;">无数据</span>
                             </div>
                         </div>
                     </div>
@@ -532,11 +559,11 @@
                         </div>
                     </div>
 
-                    <div class="p-t-10 p-r-5 p-b-5">
+                    <div class="p-t-10 p-r-5 p-b-5 div-havedata">
                         <div id="disk-view" class="main-chart" style="height: 250px;margin-top: 10px;"></div>
                     </div>
-                    <div class="s-widget-body" id="disk-item"></div>
-                    <div class="listview narrow" id="config-view" style="margin-top: -17px;display: none;">
+                    <div class="s-widget-body div-havedata" id="disk-item"></div>
+                    <div class="listview narrow div-havedata" id="config-view" style="margin-top: -17px;display: none;">
 
                         <div class="media" id="view-hostname">
                             <div class="pull-right">
@@ -599,6 +626,13 @@
                             <div class="media-body">
                                 <h6><i class="glyphicon glyphicon-fire"></i>&nbsp;&nbsp;CPU频率</h6>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="listview narrow text-center div-nodata" id="config-view-nodata" style="height: 290px;padding-top: 55px">
+                        <div  style="font-size: 110px;" class="eye-grey">
+                            <i  class="glyphicon glyphicon-eye-close"></i>
+                            <span style="font-size: 40px;">无数据</span>
                         </div>
                     </div>
                 </div>
