@@ -133,8 +133,9 @@ public class RecordController {
     }
 
     @RequestMapping("/kill")
-    public void kill(HttpServletResponse response, Long recordId) {
+    public void kill(HttpServletResponse response,HttpSession session, Long recordId) {
         Record record = recordService.get(recordId);
+        if (!jobService.checkJobOwner(record.getOperateId(),session))return;
         Boolean flag = executeService.killJob(record);
         WebUtils.writeHtml(response, flag.toString());
     }

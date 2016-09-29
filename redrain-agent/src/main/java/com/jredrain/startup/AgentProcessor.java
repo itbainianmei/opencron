@@ -177,15 +177,17 @@ public class AgentProcessor implements RedRain.Iface {
 
         File shellFile = CommandUtils.createShellFile(command, pid);
 
-        Integer exitValue = 1;
+        Integer exitValue;
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        Response response = Response.response(request);
+        final Response response = Response.response(request);
 
         final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
 
         final Timer timer = new Timer();
+
+        DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
         try {
             CommandLine commandLine = CommandLine.parse("/bin/bash +x " + shellFile.getAbsolutePath());
@@ -196,8 +198,6 @@ public class AgentProcessor implements RedRain.Iface {
             response.setStartTime(new Date().getTime());
             //成功执行完毕时退出值为0,shell标准的退出
             executor.setExitValue(0);
-
-            DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
             if (timeoutFlag) {
                 //设置监控狗...
@@ -218,6 +218,7 @@ public class AgentProcessor implements RedRain.Iface {
                             request.setAction(Action.KILL);
                             try {
                                 kill(request);
+                                response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
                             } catch (TException e) {
                                 e.printStackTrace();
                             }
@@ -262,6 +263,9 @@ public class AgentProcessor implements RedRain.Iface {
                 logger.info("[redrain]:job execute error:{}", e.getCause().getMessage());
             }
         } finally {
+
+            exitValue = resultHandler.getExitValue();
+
             if ( CommonUtils.notEmpty(outputStream.toByteArray()) ) {
                 try {
                     outputStream.flush();
@@ -270,31 +274,23 @@ public class AgentProcessor implements RedRain.Iface {
                         try {
                             text = text.replaceAll(String.format(REPLACE_REX,shellFile.getAbsolutePath()),"");
                             response.setMessage(text.substring(0, text.lastIndexOf(EXITCODE_KEY)));
-                            response.setExitCode(Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim()));
+                            exitValue = Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim());
                         } catch (IndexOutOfBoundsException e) {
                             response.setMessage(text);
-                            response.setExitCode(exitValue);
-                        } catch (NumberFormatException e) {
-                            response.setExitCode(exitValue);
                         }
-                    } else {
-                        response.setExitCode(exitValue);
                     }
                     outputStream.close();
                 } catch (Exception e) {
                     logger.error("[redrain]:error:{}", e);
                 }
-            } else {
-                response.setExitCode(exitValue);
             }
 
-            //运行超时
-            if ( timeoutFlag && !watchdog.isWatching() ) {
-                response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
+            if ( RedRain.StatusCode.TIME_OUT.getValue() == response.getExitCode() ) {
                 response.setSuccess(false).end();
             }else {
-                response.setSuccess(response.getExitCode() == RedRain.StatusCode.SUCCESS_EXIT.getValue()).end();
+                response.setExitCode(exitValue).setSuccess(response.getExitCode() == RedRain.StatusCode.SUCCESS_EXIT.getValue()).end();
             }
+
             if (shellFile != null) {
                 shellFile.delete();//删除文件
             }

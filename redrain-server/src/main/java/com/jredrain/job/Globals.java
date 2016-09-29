@@ -15,7 +15,7 @@ public final class Globals {
 
     public static final String PERMISSION = "permission";
 
-    public static boolean IsPermission(HttpSession session){
+    public static boolean isPermission(HttpSession session){
         return (Boolean) session.getAttribute(PERMISSION);
     }
 

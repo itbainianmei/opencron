@@ -20,13 +20,11 @@
         <td>
             <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
                 <div style="width:100%;height: 100%;" class="progress-bar">
-                    &nbsp;&nbsp;
-                                <span id="process_${r.recordId}">
-                                    <c:if test="${r.status eq 0}">运行中</c:if>
-                                    <c:if test="${r.status eq 2}">停止中</c:if>
-                                    <c:if test="${r.status eq 4}">重跑中</c:if>
-                                </span>
-                    ...&nbsp;&nbsp;
+                    <span id="process_${r.recordId}">
+                        <c:if test="${r.status eq 0}">运行中</c:if>
+                        <c:if test="${r.status eq 2}">停止中</c:if>
+                        <c:if test="${r.status eq 4}">重跑中</c:if>
+                    </span>
                 </div>
             </div>
         </td>
@@ -36,7 +34,10 @@
             <c:if test="${r.execType eq 2}"><span class="label label-warning">&nbsp;&nbsp;重&nbsp;跑&nbsp;&nbsp;</span></c:if>
             <c:if test="${r.execType eq 3}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
         </td>
-        <td title="${r.command}"><div class="redrain_command">${r.command}</div></td>
+        <td title="${r.command}">
+            <div class="redrain_command">${r.command}</div>
+        </td>
+
         <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
         <td>${ben:diffdate(r.startTime,r.endTime)}</td>
         <td>

@@ -104,7 +104,7 @@ public class JobService {
         if (JobType.FLOW.equals(jobType)) {
             sql +=" AND flownum=0";
         }
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND operateId = " + user.getUserId() + " AND agentId in ("+user.getAgentIds()+")";
         }
@@ -140,7 +140,7 @@ public class JobService {
             if (notEmpty(job.getRedo())) {
                 sql += " AND t.redo=" + job.getRedo();
             }
-            if (!Globals.IsPermission(session)) {
+            if (!Globals.isPermission(session)) {
                 User user = userService.getUserBySession(session);
                 sql += " AND t.operateId = " + user.getUserId() + " AND t.agentId in ("+user.getAgentIds()+")";
             }
@@ -272,6 +272,10 @@ public class JobService {
             child.setEmailAddress(job.getEmailAddress());
             addOrUpdate(child);
         }
+    }
+
+    public boolean checkJobOwner(Long operateId, HttpSession session) {
+        return Globals.isPermission(session) || operateId.equals(Globals.getUserIdBySession(session));
     }
 
 }

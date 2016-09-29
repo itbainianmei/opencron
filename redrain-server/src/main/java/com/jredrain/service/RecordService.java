@@ -70,7 +70,7 @@ public class RecordService {
             if (status) {
                 sql += " AND IFNULL(r.flowNum,0) = 0 ";
             }
-            if (!Globals.IsPermission(session)) {
+            if (!Globals.isPermission(session)) {
                 User user = userService.getUserBySession(session);
                 sql += " AND r.operateId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
             }
@@ -159,7 +159,7 @@ public class RecordService {
 
     public ChartVo getExecTypePieData(HttpSession session) {
         String sql = null;
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM " +
                     "(SELECT COUNT(1) count FROM record WHERE execType = 0 AND operateId = ? AND agentId in ? )a," +
                     "(SELECT COUNT(1) count FROM record WHERE execType = 1 AND operateId = ? AND agentId in ? )b," +
@@ -173,7 +173,7 @@ public class RecordService {
 
     public ChartVo getStatusDonutData(HttpSession session) {
         String sql = null;
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM " +
                     "(SELECT COUNT(1) count FROM record WHERE success = 1 AND operateId = ?  AND agentId in ? )a," +
                     "(SELECT COUNT(1) count FROM record WHERE success = 0 AND operateId = ?  AND agentId in ? )b," +
@@ -210,7 +210,7 @@ public class RecordService {
                 " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM record r left join job j ON r.jobid=j.jobid "+
                 " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND r.operateId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
         }
@@ -236,7 +236,7 @@ public class RecordService {
         }else {
             sql = "SELECT COUNT(1) FROM record WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND operateId = " + user.getUserId() + " AND agentId in ("+user.getAgentIds()+")";
         }

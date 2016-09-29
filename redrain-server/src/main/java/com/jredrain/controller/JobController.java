@@ -25,7 +25,6 @@ import java.util.*;
 
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.job.RedRain.ExecType;
-import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
 import com.jredrain.base.utils.CommonUtils;
@@ -116,6 +115,7 @@ public class JobController {
 
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
+            if (!jobService.checkJobOwner(job1.getOperateId(),session)) return "redirect:/job/view";
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
@@ -184,8 +184,9 @@ public class JobController {
     }
 
     @RequestMapping("/editsingle")
-    public void editSingleJob(HttpServletResponse response, Long id) {
+    public void editSingleJob(HttpServletResponse response,HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);
+        if (!jobService.checkJobOwner(job.getOperateId(),session))return;
         JsonMapper json = new JsonMapper();
         WebUtils.writeJson(response, json.toJson(job));
     }
@@ -193,6 +194,7 @@ public class JobController {
     @RequestMapping("/editflow")
     public String editFlowJob(HttpSession session,Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
+        if (!jobService.checkJobOwner(job.getOperateId(),session))return "redirect:/job/view";
         model.addAttribute("job", job);
         List<Agent> agents = agentService.getAgentsBySession(session);
         model.addAttribute("agents", agents);
@@ -201,8 +203,9 @@ public class JobController {
 
 
     @RequestMapping("/edit")
-    public void edit(HttpServletResponse response, Job job) throws SchedulerException {
+    public void edit(HttpServletResponse response,HttpSession session, Job job) throws SchedulerException {
         Job jober = jobService.getJob(job.getJobId());
+        if (!jobService.checkJobOwner(jober.getOperateId(),session)) return;
         jober.setExecType(job.getExecType());
         jober.setCronType(job.getCronType());
         jober.setCronExp(job.getCronExp());
@@ -224,8 +227,9 @@ public class JobController {
     }
 
     @RequestMapping("/editcmd")
-    public void editCmd(HttpServletResponse response,Long jobId, String command) throws SchedulerException {
+    public void editCmd(HttpServletResponse response,HttpSession session,Long jobId, String command) throws SchedulerException {
         Job jober = jobService.getJob(jobId);
+        if (!jobService.checkJobOwner(jober.getOperateId(),session)) return;
         jober.setCommand(command);
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
@@ -241,6 +245,7 @@ public class JobController {
     @RequestMapping("/execute")
     public void remoteExecute(HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
+        if (!jobService.checkJobOwner(job.getOperateId(),session)) return;
         //手动执行
         Long operateId = Globals.getUserIdBySession(session);
         job.setOperateId(operateId);
@@ -272,15 +277,13 @@ public class JobController {
     }
 
     @RequestMapping("/detail")
-    public String showDetail(Model model, Long id) {
+    public String showDetail(Model model,HttpSession session, Long id) {
         JobVo jobVo = jobService.getJobVoById(id);
+        if (!jobService.checkJobOwner(jobVo.getOperateId(),session)) return "redirect:/job/view";
         model.addAttribute("job", jobVo);
         return "/job/detail";
     }
 
-    @RequestMapping("/remove")
-    public void removeJob(Long jobId, HttpServletResponse response) {
-        WebUtils.writeHtml(response, jobService.delete(jobId) == 1 ? "true" : "false");
-    }
+
 
 }

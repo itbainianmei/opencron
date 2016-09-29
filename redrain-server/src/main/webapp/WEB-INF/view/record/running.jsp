@@ -219,11 +219,10 @@
                     <td>
                         <div class="progress progress-striped progress-success active" style="margin-top:3px;width: 80%;height: 14px;" >
                             <div style="width:100%;height: 100%;" class="progress-bar">
-                                &nbsp;&nbsp;
                                 <span id="process_${r.recordId}">
-                                    <c:if test="${r.status eq 0}">运行中...</c:if>
-                                    <c:if test="${r.status eq 2}">停止中...</c:if>
-                                    <c:if test="${r.status eq 4}">重跑中...</c:if>
+                                    <c:if test="${r.status eq 0}">运行中</c:if>
+                                    <c:if test="${r.status eq 2}">停止中</c:if>
+                                    <c:if test="${r.status eq 4}">重跑中</c:if>
                                 </span>
                             </div>
                         </div>

@@ -86,7 +86,7 @@ public class HomeService {
         if (notEmpty(sendTime)) {
             sql += " AND L.sendTime like '" + sendTime + "%' ";
         }
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             sql += " AND L.receiverId = " + Globals.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC";
@@ -96,7 +96,7 @@ public class HomeService {
 
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM log L WHERE isread=0 and type=2 ";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
@@ -105,7 +105,7 @@ public class HomeService {
 
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT count(1) FROM log L WHERE isread=0 and type=2 ";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
         return queryDao.getCountBySql(sql);

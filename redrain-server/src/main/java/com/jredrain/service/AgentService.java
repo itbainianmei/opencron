@@ -85,7 +85,7 @@ public class AgentService {
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){
         String sql = "SELECT * FROM agent WHERE status=?";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND agentId in ("+user.getAgentIds()+")";
         }
@@ -94,7 +94,7 @@ public class AgentService {
 
     public Page getAgent(HttpSession session, Page page) {
         String sql = "SELECT * FROM agent";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " WHERE agentId in ("+user.getAgentIds()+")";
         }
@@ -190,7 +190,7 @@ public class AgentService {
 
     public List<Agent> getAgentsBySession(HttpSession session) {
         String sql = "SELECT * FROM agent ";
-        if (!Globals.IsPermission(session)) {
+        if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " WHERE agentId in ("+user.getAgentIds()+")";
         }
