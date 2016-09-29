@@ -563,7 +563,7 @@
                         <div id="disk-view" class="main-chart" style="height: 250px;margin-top: 10px;"></div>
                     </div>
                     <div class="s-widget-body div-havedata" id="disk-item"></div>
-                    <div class="listview narrow div-havedata" id="config-view" style="margin-top: -17px;display: none;">
+                    <div class="listview narrow" id="config-view" style="margin-top: -17px;display: none;">
 
                         <div class="media" id="view-hostname">
                             <div class="pull-right">
