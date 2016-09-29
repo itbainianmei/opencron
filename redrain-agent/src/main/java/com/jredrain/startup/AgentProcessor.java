@@ -171,15 +171,21 @@ public class AgentProcessor implements RedRain.Iface {
         //以分钟为单位
         Long timeout = CommonUtils.toLong(request.getParams().get("timeout"),0L);
 
+        boolean timeoutFlag = timeout>0;
+
         logger.info("[redrain]:execute:{},pid:{}", command, pid);
 
         File shellFile = CommandUtils.createShellFile(command, pid);
 
         Integer exitValue = 1;
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
         Response response = Response.response(request);
 
         final ExecuteWatchdog watchdog = new ExecuteWatchdog(Integer.MAX_VALUE);
+
+        final Timer timer = new Timer();
 
         try {
             CommandLine commandLine = CommandLine.parse("/bin/bash +x " + shellFile.getAbsolutePath());
@@ -193,12 +199,10 @@ public class AgentProcessor implements RedRain.Iface {
 
             DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
 
-            if (timeout>0) {
+            if (timeoutFlag) {
                 //设置监控狗...
                 executor.setWatchdog(watchdog);
-
                 //监控超时的计时器
-                final Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
@@ -249,6 +253,10 @@ public class AgentProcessor implements RedRain.Iface {
                 exitValue = RedRain.StatusCode.ERROR_EXEC.getValue();
             }
             if (RedRain.StatusCode.KILL.getValue().equals(exitValue)) {
+                if(timeoutFlag) {
+                    timer.cancel();
+                    watchdog.stop();
+                }
                 logger.info("[redrain]:job has be killed!at pid :{}", request.getParams().get("pid"));
             } else {
                 logger.info("[redrain]:job execute error:{}", e.getCause().getMessage());
@@ -281,7 +289,7 @@ public class AgentProcessor implements RedRain.Iface {
             }
 
             //运行超时
-            if ( timeout>0 && !watchdog.isWatching() ) {
+            if ( timeoutFlag && !watchdog.isWatching() ) {
                 response.setExitCode(RedRain.StatusCode.TIME_OUT.getValue());
                 response.setSuccess(false).end();
             }else {
