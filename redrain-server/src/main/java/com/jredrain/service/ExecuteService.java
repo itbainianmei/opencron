@@ -328,44 +328,54 @@ public class ExecuteService implements Job {
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    public boolean killJob(Record record) {
-        Long recordId = record.getRecordId();
-        List<Record> records = new ArrayList<Record>(0);
+    public void killJob(Record record) {
+
+        final Queue<Record> recordQueue = new LinkedBlockingQueue<Record>();
+
         //单一任务
-        if (record.getJobType() == JobType.SINGLETON.getCode()) {
-            records.add(record);
-        } else if (record.getJobType() == JobType.FLOW.getCode()) {
-            records = recordService.getRunningFlowJob(recordId);
+        if (JobType.SINGLETON.getCode().equals(record.getJobType())) {
+            recordQueue.add(record);
+        } else if (JobType.FLOW.getCode().equals(record.getJobType())) {
+            //流程任务
+            recordQueue.addAll(recordService.getRunningFlowJob(record.getRecordId()));
         }
 
-        /**
-         * 零时的改成停止中...
-         */
-        for (Record cord : records) {
-            cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
-            cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
-            recordService.update(cord);
-        }
+        Thread jobThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (final Record cord : recordQueue) {
+                    //如果kill并行任务(则启动多线程,所有任务同时kill)
+                    Thread thread = new Thread(new Runnable() {
+                        public void run() {
+                            /**
+                             * 临时的改成停止中...
+                             */
+                            cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
+                            cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
+                            recordService.update(cord);
 
-        /**
-         * 向远程机器发送kill指令
-         */
-        for (Record cord : records) {
-            JobVo job = jobService.getJobVoById(cord.getJobId());
-            try {
-                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
-                cord.setStatus(RunStatus.STOPED.getStatus());
-                cord.setEndTime(new Date());
-                recordService.update(cord);
-                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
-            } catch (Exception e) {
-                noticeService.notice(job);
-                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
-                logger.error(errorInfo, e);
-                return false;
+                            JobVo job = jobService.getJobVoById(cord.getJobId());
+                            try {
+                                /**
+                                 * 向远程机器发送kill指令
+                                 */
+                                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
+                                cord.setStatus(RunStatus.STOPED.getStatus());
+                                cord.setEndTime(new Date());
+                                recordService.update(cord);
+                                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
+                            } catch (Exception e) {
+                                noticeService.notice(job);
+                                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
+                                logger.error(errorInfo, e);
+                            }
+                        }
+                    });
+                    thread.start();
+                }
             }
-        }
-        return true;
+        });
+        jobThread.start();
     }
 
     public boolean ping(Agent agent) {

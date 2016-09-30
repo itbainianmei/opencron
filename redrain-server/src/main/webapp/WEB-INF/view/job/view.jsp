@@ -328,6 +328,11 @@
                                     alertMsg("修改成功");
 
                                     $("#jobName_"+job.jobId).html(job.jobName);
+                                    $("#command_"+job.jobId).attr("title",job.command);
+                                    if(job.command.length > 50){
+                                        job.command = job.command.substring(0,50)+"...";
+                                    }
+                                    $("#command_"+job.jobId).html(job.command);
                                     $("#cronType_"+job.jobId).html(job.cronType == "0" ? "crontab" : "quartz");
                                     $("#cronExp_"+job.jobId).html(job.cronExp);
                                     if (job.execType == "0"){

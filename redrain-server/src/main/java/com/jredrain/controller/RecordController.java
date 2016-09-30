@@ -22,11 +22,9 @@
 package com.jredrain.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
 import com.jredrain.service.RecordService;
@@ -133,11 +131,10 @@ public class RecordController {
     }
 
     @RequestMapping("/kill")
-    public void kill(HttpServletResponse response,HttpSession session, Long recordId) {
+    public void kill(HttpSession session, Long recordId) {
         Record record = recordService.get(recordId);
         if (!jobService.checkJobOwner(record.getOperateId(),session))return;
-        Boolean flag = executeService.killJob(record);
-        WebUtils.writeHtml(response, flag.toString());
+        executeService.killJob(record);
     }
 
 }
