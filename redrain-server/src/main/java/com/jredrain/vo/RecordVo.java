@@ -51,6 +51,8 @@ public class RecordVo implements Serializable {
     private String jobName;
     private String ip;
     private User user;
+    private Integer redo;
+    private Integer runCount;
 
     /**
      * 重跑记录对象的父记录
@@ -231,6 +233,22 @@ public class RecordVo implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Integer getRedo() {
+        return redo;
+    }
+
+    public void setRedo(Integer redo) {
+        this.redo = redo;
+    }
+
+    public Integer getRunCount() {
+        return runCount;
+    }
+
+    public void setRunCount(Integer runCount) {
+        this.runCount = runCount;
     }
 
     public Long getParentId() {

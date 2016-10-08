@@ -24,6 +24,7 @@ package com.jredrain.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.jredrain.base.job.RedRain;
 import com.jredrain.tag.Page;
 import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
@@ -133,6 +134,13 @@ public class RecordController {
     @RequestMapping("/kill")
     public void kill(HttpSession session, Long recordId) {
         Record record = recordService.get(recordId);
+        if (RedRain.RunStatus.RERUNNING.getStatus().equals(record.getStatus())){
+            //父记录临时改为停止中
+            record.setStatus(RedRain.RunStatus.STOPPING.getStatus());
+            recordService.update(record);
+            //得到当前正在重跑的子记录
+            record = recordService.getReRunningSubJob(recordId);
+        }
         if (!jobService.checkJobOwner(record.getOperateId(),session))return;
         executeService.killJob(record);
     }

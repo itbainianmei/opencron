@@ -25,11 +25,9 @@ package com.jredrain.service;
 import com.jredrain.base.job.Action;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
-import com.jredrain.base.utils.CommandUtils;
 import com.jredrain.base.utils.ParamsMap;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
-import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
@@ -290,6 +288,7 @@ public class ExecuteService implements Job {
         record.setJobType(jobType.getCode());
         parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
         record.setRedoCount(parentRecord.getRedoCount());
+        record = recordService.save(record);
 
         try {
             //执行前先检测一次通信是否正常

@@ -55,7 +55,6 @@ CREATE TABLE `job` (
   `runCount` int(11) DEFAULT '0' COMMENT '截止重新执行次数',
   `flowId` bigint(10) DEFAULT NULL COMMENT '流程任务的组Id',
   `flowNum` smallint(10) DEFAULT NULL,
-  `status` smallint(2) DEFAULT '1' COMMENT '1:有效,0:无效,2:',
   `lastFlag` smallint(2) DEFAULT '0' COMMENT '是否为流程任务的最后一个子任务',
   `runModel` smallint(1) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)',
   `warning` tinyint(4) DEFAULT '0' COMMENT '失败后是否通知email报警',
@@ -86,6 +85,8 @@ CREATE TABLE `record` (
   `groupId` bigint(10) DEFAULT NULL,
   `flowNum` bigint(10) DEFAULT NULL,
   `jobType` smallint(2) DEFAULT '0' COMMENT '0:单任务,1:流程任务',
+  `redo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此任务,1--重新执行此任务',
+  `runCount` int(11) DEFAULT '0' COMMENT '截止重新执行次数',
   KEY `parentId` (`parentId`),
   KEY `jobId` (`jobId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
