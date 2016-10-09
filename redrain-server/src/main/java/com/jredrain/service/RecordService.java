@@ -158,7 +158,7 @@ public class RecordService {
     }
 
     public ChartVo getExecTypePieData(HttpSession session) {
-        String sql = null;
+        String sql;
         if (!Globals.isPermission(session)) {
             sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM " +
                     "(SELECT COUNT(1) count FROM record WHERE execType = 0 AND operateId = ? AND agentId in ? )a," +
@@ -172,7 +172,7 @@ public class RecordService {
     }
 
     public ChartVo getStatusDonutData(HttpSession session) {
-        String sql = null;
+        String sql;
         if (!Globals.isPermission(session)) {
             sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM " +
                     "(SELECT COUNT(1) count FROM record WHERE success = 1 AND operateId = ?  AND agentId in ? )a," +
@@ -230,7 +230,7 @@ public class RecordService {
     }
 
     public Long getRecords(int status, RedRain.ExecType execType, HttpSession session) {
-        String sql = null;
+        String sql;
         if(status==1) {
             sql = "SELECT COUNT(1) FROM record WHERE success=? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }else {
