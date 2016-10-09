@@ -111,6 +111,9 @@
             -moz-opacity:0.4;
             opacity:0.4;
         }
+        a:visited {
+            color: rgba(225,225,225,1);
+        }
 
     </style>
 
