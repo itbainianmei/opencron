@@ -327,7 +327,7 @@ public class ExecuteService implements Job {
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
-    public void killJob(Record record) {
+    public boolean killJob(Record record) {
 
         final Queue<Record> recordQueue = new LinkedBlockingQueue<Record>();
 
@@ -339,6 +339,7 @@ public class ExecuteService implements Job {
             recordQueue.addAll(recordService.getRunningFlowJob(record.getRecordId()));
         }
 
+        final List<Boolean> result = new ArrayList<Boolean>(0);
         Thread jobThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -367,6 +368,7 @@ public class ExecuteService implements Job {
                                 noticeService.notice(job);
                                 String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
                                 logger.error(errorInfo, e);
+                                result.add(false);
                             }
                         }
                     });
@@ -375,6 +377,14 @@ public class ExecuteService implements Job {
             }
         });
         jobThread.start();
+
+        //确保所有的kill任务都执行完毕,拿到返回的执行结果。检查kill任务中有是否失败的...
+        try {
+            jobThread.join();
+        } catch (InterruptedException e) {
+            logger.error("[redrain] kill job with error:{}",e.getMessage());
+        }
+        return !result.contains(false);
     }
 
     public boolean ping(Agent agent) {
@@ -482,6 +492,8 @@ public class ExecuteService implements Job {
             jobVo.setIp(agent.getIp());
             jobVo.setPort(agent.getPort());
             jobVo.setPassword(agent.getPassword());
+            jobVo.setRedo(0);
+            jobVo.setRunCount(0);
             jobQueue.add(jobVo);
         }
 

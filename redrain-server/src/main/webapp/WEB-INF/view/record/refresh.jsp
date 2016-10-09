@@ -50,9 +50,11 @@
                     <i class="glyphicon glyphicon-stop"></i>
                 </a>&nbsp;&nbsp;
 
-                <a href="#" onclick="restartJob('${r.recordId}','${r.jobId}')" title="结束并重启">
-                    <i class="glyphicon glyphicon-refresh"></i>
-                </a>&nbsp;&nbsp;
+                <c:if test="${r.status ne 4}">
+                    <a href="#" onclick="restartJob('${r.recordId}','${r.jobId}')" title="结束并重启">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                    </a>&nbsp;&nbsp;
+                </c:if>
 
             </div>
         </center>

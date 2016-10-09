@@ -80,6 +80,8 @@ public class Record implements Serializable {
         this.setExecType( jobVo.getExecType() );
         this.setCommand(jobVo.getCommand());//执行的命令
         this.setStartTime(new Date());//开始执行的时间
+        this.setRedo(jobVo.getRedo());//失败是否重新执行
+        this.setRunCount(jobVo.getRunCount());//失败后重新执行次数
         this.setRedoCount(0);//运行次数
         this.setSuccess(RedRain.ResultStatus.SUCCESSFUL.getStatus());
         this.setStatus(RedRain.RunStatus.RUNNING.getStatus());//任务还未完成
