@@ -22,6 +22,7 @@
 
 package com.jredrain.service;
 
+import com.jredrain.base.exception.PingException;
 import com.jredrain.base.job.Action;
 import com.jredrain.base.job.Request;
 import com.jredrain.base.job.Response;
@@ -158,25 +159,20 @@ public class ExecuteService implements Job {
         record.setJobType(JobType.FLOW.getCode());//流程任务
         record.setFlowNum(job.getFlowNum());
 
-        //执行前先保存
-        record = recordService.save(record);
-
-        //执行前先检测一次通信是否正常
-        try {
-            checkPing(job, record);
-        } catch (Exception e) {
-            recordService.flowJobDone(record);//通信失败,流程任务挂起.
-            return false;
-        }
-
         boolean success = true;
 
         try {
 
+            //执行前先保存
+            record = recordService.save(record);
+
+            //执行前先检测一次通信是否正常
+            checkPing(job, record);
+
             Response result = responseToRecord(job, record);
 
             if (!result.isSuccess()) {
-                recordService.update(record);
+                recordService.save(record);
                 //被kill,直接退出
                 if ( StatusCode.KILL.getValue().equals(result.getExitCode()) ) {
                     recordService.flowJobDone(record);
@@ -187,22 +183,25 @@ public class ExecuteService implements Job {
             } else {
                 //当前任务是流程任务的最后一个任务,则整个任务运行完毕
                 if (job.getLastFlag()) {
-                    recordService.update(record);
+                    recordService.save(record);
                     recordService.flowJobDone(record);
                 } else {
                     //当前任务非流程任务最后一个子任务,全部流程任务为运行中...
                     record.setStatus(RunStatus.RUNNING.getStatus());
-                    recordService.update(record);
+                    recordService.save(record);
                 }
                 return true;
             }
-        } catch (Exception e) {
+        } catch (PingException e) {
+            recordService.flowJobDone(record);//通信失败,流程任务挂起.
+            return false;
+        }catch (Exception e) {
             String errorInfo = String.format("execute failed(flow job):jobName:%s,,jobId:%d,,ip:%s,port:%d,info:%s", job.getJobName(), job.getJobId(), job.getIp(), job.getPort(), e.getMessage());
             record.setSuccess(ResultStatus.FAILED.getStatus());//程序调用失败
             record.setReturnCode(StatusCode.ERROR_EXEC.getValue());
             record.setEndTime(new Date());
             record.setMessage(errorInfo);
-            recordService.update(record);
+            recordService.save(record);
             logger.error(errorInfo, e);
             success = false;
             return false;
@@ -245,7 +244,7 @@ public class ExecuteService implements Job {
             //执行前先检测一次通信是否正常
             checkPing(job, record);
             Response response = responseToRecord(job, record);
-            recordService.update(record);
+            recordService.save(record);
             if (!response.isSuccess()) {
                 //当前的单一任务只运行一次未设置重跑.
                 if (job.getRedo()==0 || job.getRunCount()==0) {
@@ -277,7 +276,7 @@ public class ExecuteService implements Job {
 
         parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
 
-        recordService.update(parentRecord);
+        recordService.save(parentRecord);
         /**
          * 当前重新执行的新纪录
          */
@@ -321,29 +320,24 @@ public class ExecuteService implements Job {
                 parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
             }
             recordService.save(record);
-            recordService.update(parentRecord);
+            recordService.save(parentRecord);
         }
 
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
 
     public boolean killJob(Record record) {
-<<<<<<< HEAD
 
         final Queue<Record> recordQueue = new LinkedBlockingQueue<Record>();
 
-=======
-        Long recordId = record.getRecordId();
-        List<Record> records = new ArrayList<Record>(0);
->>>>>>> parent of 86774cc... fix bug
         //单一任务
-        if (record.getJobType() == JobType.SINGLETON.getCode()) {
-            records.add(record);
-        } else if (record.getJobType() == JobType.FLOW.getCode()) {
-            records = recordService.getRunningFlowJob(recordId);
+        if (JobType.SINGLETON.getCode().equals(record.getJobType())) {
+            recordQueue.add(record);
+        } else if (JobType.FLOW.getCode().equals(record.getJobType())) {
+            //流程任务
+            recordQueue.addAll(recordService.getRunningFlowJob(record.getRecordId()));
         }
 
-<<<<<<< HEAD
         final List<Boolean> result = new ArrayList<Boolean>(0);
         Thread jobThread = new Thread(new Runnable() {
             @Override
@@ -357,7 +351,7 @@ public class ExecuteService implements Job {
                              */
                             cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
                             cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
-                            recordService.update(cord);
+                            recordService.save(cord);
 
                             JobVo job = jobService.getJobVoById(cord.getJobId());
                             try {
@@ -367,7 +361,7 @@ public class ExecuteService implements Job {
                                 cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
                                 cord.setStatus(RunStatus.STOPED.getStatus());
                                 cord.setEndTime(new Date());
-                                recordService.update(cord);
+                                recordService.save(cord);
                                 logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
                             } catch (Exception e) {
                                 noticeService.notice(job);
@@ -390,36 +384,6 @@ public class ExecuteService implements Job {
             logger.error("[redrain] kill job with error:{}",e.getMessage());
         }
         return !result.contains(false);
-=======
-        /**
-         * 零时的改成停止中...
-         */
-        for (Record cord : records) {
-            cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
-            cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
-            recordService.update(cord);
-        }
-
-        /**
-         * 向远程机器发送kill指令
-         */
-        for (Record cord : records) {
-            JobVo job = jobService.getJobVoById(cord.getJobId());
-            try {
-                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
-                cord.setStatus(RunStatus.STOPED.getStatus());
-                cord.setEndTime(new Date());
-                recordService.update(cord);
-                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
-            } catch (Exception e) {
-                noticeService.notice(job);
-                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
-                logger.error(errorInfo, e);
-                return false;
-            }
-        }
-        return true;
->>>>>>> parent of 86774cc... fix bug
     }
 
     public boolean ping(Agent agent) {
@@ -476,7 +440,7 @@ public class ExecuteService implements Job {
         return response;
     }
 
-    private void checkPing(JobVo job, Record record) throws Exception {
+    private void checkPing(JobVo job, Record record) throws PingException {
         if (!ping(job.getAgent())) {
             record.setStatus(RunStatus.DONE.getStatus());//已完成
             record.setReturnCode(StatusCode.ERROR_PING.getValue());
@@ -487,8 +451,8 @@ public class ExecuteService implements Job {
             record.setMessage(content);
             record.setSuccess(ResultStatus.FAILED.getStatus());
             record.setEndTime(new Date());
-            recordService.update(record);
-            throw new Exception(content);
+            recordService.save(record);
+            throw new PingException(content);
         }
     }
 
@@ -498,7 +462,7 @@ public class ExecuteService implements Job {
         record.setReturnCode(StatusCode.ERROR_EXEC.getValue());
         record.setEndTime(new Date());
         record.setMessage(errorInfo);
-        recordService.update(record);
+        recordService.save(record);
 
     }
 

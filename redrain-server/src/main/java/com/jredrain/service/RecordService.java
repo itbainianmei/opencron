@@ -22,6 +22,7 @@
 
 package com.jredrain.service;
 
+import com.jredrain.base.exception.ServiceException;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.domain.User;
@@ -136,12 +137,14 @@ public class RecordService {
         return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.jobType,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.operateId,u.userName AS operateUname FROM record r LEFT JOIN job t ON r.jobId = t.jobId LEFT JOIN agent d ON r.agentId = d.agentId LEFT JOIN user AS u ON r.operateId = u.userId WHERE r.recordId = ?", id);
     }
 
-    public void update(Record record) {
-        queryDao.save(record);
-    }
 
     public Record save(Record record) {
-        return (Record) queryDao.save(record);
+        try{
+            return (Record) queryDao.save(record);
+        }catch (Exception e) {
+            throw new ServiceException(e);
+        }
+
     }
 
     public Record get(Long recordId) {
