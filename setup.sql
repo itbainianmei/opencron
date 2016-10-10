@@ -10,7 +10,7 @@ CREATE TABLE `config` (
   `smtpPort` int(10) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL COMMENT '发件人邮箱密码',
   `sendUrl` varchar(1000) DEFAULT NULL COMMENT '发送短信的URL',
-  `spaceTime` int(11) DEFAULT NULL COMMENT '警告发送的处理间隔(分钟)',
+  `spaceTime` int(10) DEFAULT NULL COMMENT '警告发送的处理间隔(分钟)',
   `template` text COMMENT '短信模板',
   `aeskey` varchar(16) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -43,8 +43,8 @@ CREATE TABLE `job` (
   `jobId` int(10) unsigned NOT NULL PRIMARY KEY  AUTO_INCREMENT,
   `agentId` int(10) unsigned NOT NULL COMMENT '执行器的id',
   `jobName` varchar(50) NOT NULL COMMENT '作业名称',
-  `jobType` smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
-  `cronType` smallint(10) DEFAULT '0' COMMENT '表达式类型',
+  `jobType` tinyint(1) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
+  `cronType` tinyint(1) DEFAULT '0' COMMENT '表达式类型',
   `cronExp` varchar(16) DEFAULT NULL COMMENT '表达式',
   `command` varchar(1000) DEFAULT NULL COMMENT '执行时运行的命令',
   `execType` tinyint(1) NOT NULL COMMENT '',
@@ -54,9 +54,9 @@ CREATE TABLE `job` (
   `redo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此任务,1--重新执行此任务',
   `runCount` int(10) DEFAULT '0' COMMENT '截止重新执行次数',
   `flowId` bigint(10) DEFAULT NULL COMMENT '流程任务的组Id',
-  `flowNum` smallint(10) DEFAULT NULL,
-  `lastFlag` smallint(2) DEFAULT '0' COMMENT '是否为流程任务的最后一个子任务',
-  `runModel` smallint(1) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)',
+  `flowNum` smallint(4) DEFAULT NULL,
+  `lastFlag` tinyint(1) DEFAULT '0' COMMENT '是否为流程任务的最后一个子任务',
+  `runModel` tinyint(1) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)',
   `warning` tinyint(1) DEFAULT '0' COMMENT '失败后是否通知email报警',
   `mobiles` text COMMENT '接收通知的手机号',
   `emailAddress` text COMMENT '失败后接受报警的email',
@@ -79,14 +79,14 @@ CREATE TABLE `record` (
   `endTime` datetime DEFAULT NULL COMMENT '任务结束时间',
   `execType` int(10) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
   `message` longtext COMMENT '执行后的外部进程字符串返回结果。',
-  `redoCount` int(11) DEFAULT NULL COMMENT '当前第几次自动重试执行',
+  `redoCount` int(10) DEFAULT NULL COMMENT '当前第几次自动重试执行',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
   `pid` varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
   `groupId` bigint(10) DEFAULT NULL,
   `flowNum` int(10) DEFAULT NULL,
-  `jobType` smallint(2) DEFAULT '0' COMMENT '0:单任务,1:流程任务',
+  `jobType` tinyint(1) DEFAULT '0' COMMENT '0:单任务,1:流程任务',
   `redo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此任务,1--重新执行此任务',
-  `runCount` int(11) DEFAULT '0' COMMENT '截止重新执行次数',
+  `runCount` int(10) DEFAULT '0' COMMENT '截止重新执行次数',
   KEY `parentId` (`parentId`),
   KEY `jobId` (`jobId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -96,7 +96,7 @@ CREATE TABLE `log` (
   `logId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `agentId` int(10) NOT NULL,
   `receiverId` int(20) DEFAULT NULL,
-  `type` smallint(1) NOT NULL COMMENT '0:邮件,1:短信',
+  `type` tinyint(1) NOT NULL COMMENT '0:邮件,1:短信',
   `receiver` varchar(500) NOT NULL COMMENT '收件人',
   `message` varchar(1000) DEFAULT NULL COMMENT '发送信息',
   `result` varchar(1000) DEFAULT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE `monitor` (
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
-  `roleId` int(11) NOT NULL PRIMARY KEY COMMENT '角色ID',
+  `roleId` int(10) NOT NULL PRIMARY KEY COMMENT '角色ID',
   `roleName` varchar(50) NOT NULL COMMENT '角色名称',
   `description` varchar(255) DEFAULT NULL COMMENT '角色描述'
 ) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
@@ -131,14 +131,14 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `term`;
 CREATE TABLE `term` (
-  `termId` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `userId` int(11) DEFAULT NULL,
+  `termId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `userId` int(10) DEFAULT NULL,
   `host` varchar(255) DEFAULT NULL,
   `user` varchar(50) DEFAULT NULL,
   `password` varchar(50) DEFAULT NULL,
   `port` int(10) DEFAULT NULL,
   `privatekey` varchar(255) DEFAULT NULL,
-  `status` smallint(6) DEFAULT '1' COMMENT '连接状态(1:成功,0:失败)',
+  `status` tinyint(1) DEFAULT '1' COMMENT '连接状态(1:成功,0:失败)',
   `logintime` datetime DEFAULT NULL,
   UNIQUE KEY UNQ_INX (userId,host)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
