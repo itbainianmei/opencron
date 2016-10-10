@@ -80,7 +80,7 @@ CREATE TABLE `record` (
   `execType` int(10) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
   `message` longtext COMMENT '执行后的外部进程字符串返回结果。',
   `redoCount` int(11) DEFAULT NULL COMMENT '当前第几次自动重试执行',
-  `status` tinyint(10) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
   `pid` varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
   `groupId` bigint(10) DEFAULT NULL,
   `flowNum` bigint(10) DEFAULT NULL,

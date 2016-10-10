@@ -225,7 +225,7 @@ public class RecordService {
     }
 
     public List<Record> getRunningFlowJob(Long recordId) {
-        String sql = "SELECT r.* FROM record r INNER JOIN (SELECT groupId FROM record WHERE recordId=?) AS t WHERE r.groupId = t.groupId AND r.status IN (0,4)";
+        String sql = "SELECT r.* FROM record r INNER JOIN (SELECT groupId FROM record WHERE recordId=?) AS t WHERE r.groupId = t.groupId";
         return queryDao.sqlQuery(Record.class, sql, recordId);
     }
 

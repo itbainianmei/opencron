@@ -328,17 +328,22 @@ public class ExecuteService implements Job {
     }
 
     public boolean killJob(Record record) {
+<<<<<<< HEAD
 
         final Queue<Record> recordQueue = new LinkedBlockingQueue<Record>();
 
+=======
+        Long recordId = record.getRecordId();
+        List<Record> records = new ArrayList<Record>(0);
+>>>>>>> parent of 86774cc... fix bug
         //单一任务
-        if (JobType.SINGLETON.getCode().equals(record.getJobType())) {
-            recordQueue.add(record);
-        } else if (JobType.FLOW.getCode().equals(record.getJobType())) {
-            //流程任务
-            recordQueue.addAll(recordService.getRunningFlowJob(record.getRecordId()));
+        if (record.getJobType() == JobType.SINGLETON.getCode()) {
+            records.add(record);
+        } else if (record.getJobType() == JobType.FLOW.getCode()) {
+            records = recordService.getRunningFlowJob(recordId);
         }
 
+<<<<<<< HEAD
         final List<Boolean> result = new ArrayList<Boolean>(0);
         Thread jobThread = new Thread(new Runnable() {
             @Override
@@ -385,6 +390,36 @@ public class ExecuteService implements Job {
             logger.error("[redrain] kill job with error:{}",e.getMessage());
         }
         return !result.contains(false);
+=======
+        /**
+         * 零时的改成停止中...
+         */
+        for (Record cord : records) {
+            cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
+            cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
+            recordService.update(cord);
+        }
+
+        /**
+         * 向远程机器发送kill指令
+         */
+        for (Record cord : records) {
+            JobVo job = jobService.getJobVoById(cord.getJobId());
+            try {
+                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
+                cord.setStatus(RunStatus.STOPED.getStatus());
+                cord.setEndTime(new Date());
+                recordService.update(cord);
+                logger.info("killed successful :jobName:{},ip:{},port:{},pid:{}", job.getJobName(), job.getIp(), job.getPort(), cord.getPid());
+            } catch (Exception e) {
+                noticeService.notice(job);
+                String errorInfo = String.format("killed error:jobName:%s,ip:%d,port:%d,pid:%d,failed info:%s", job.getJobName(), job.getIp(), job.getPort(), cord.getPid(), e.getMessage());
+                logger.error(errorInfo, e);
+                return false;
+            }
+        }
+        return true;
+>>>>>>> parent of 86774cc... fix bug
     }
 
     public boolean ping(Agent agent) {
