@@ -4,7 +4,7 @@ USE redrain;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
-  `configId` tinyint(2) NOT NULL PRIMARY KEY,
+  `configId` tinyint(1) NOT NULL PRIMARY KEY,
   `senderEmail` varchar(200) DEFAULT NULL COMMENT '发件人的邮箱地址',
   `smtpHost` varchar(255) DEFAULT NULL,
   `smtpPort` int(10) DEFAULT NULL,
@@ -21,7 +21,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `agent`;
 CREATE TABLE `agent` (
-  `agentId` bigint(20) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `agentId` int(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `status` tinyint(1) DEFAULT NULL COMMENT '通信状态:0通讯异常，1通信正常',
   `ip` varchar(16) NOT NULL COMMENT '机器ip',
   `port` int(4) NOT NULL COMMENT '机器端口号',
@@ -34,14 +34,14 @@ CREATE TABLE `agent` (
   `comment` text NOT NULL COMMENT '简介',
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `proxy` tinyint(1) DEFAULT '0' COMMENT '0:直连,1:代理',
-  `proxyAgent` bigint(20) DEFAULT NULL COMMENT '该执行器的代理执行器id',
+  `proxyAgent` int(10) DEFAULT NULL COMMENT '该执行器的代理执行器id',
    UNIQUE KEY `UN_IP` (`ip`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS `job`;
 CREATE TABLE `job` (
-  `jobId` bigint(20) unsigned NOT NULL PRIMARY KEY  AUTO_INCREMENT,
-  `agentId` bigint(20) unsigned NOT NULL COMMENT '执行器的id',
+  `jobId` int(10) unsigned NOT NULL PRIMARY KEY  AUTO_INCREMENT,
+  `agentId` int(10) unsigned NOT NULL COMMENT '执行器的id',
   `jobName` varchar(50) NOT NULL COMMENT '作业名称',
   `jobType` smallint(10) DEFAULT '0' COMMENT '作业类型,0:单作业,1:流程作业',
   `cronType` smallint(10) DEFAULT '0' COMMENT '表达式类型',
@@ -49,32 +49,32 @@ CREATE TABLE `job` (
   `command` varchar(1000) DEFAULT NULL COMMENT '执行时运行的命令',
   `execType` tinyint(1) NOT NULL COMMENT '',
   `comment` text COMMENT '简介',
-  `operateId` bigint(20) DEFAULT '-1' COMMENT '操作人的id号',
+  `operateId` int(10) DEFAULT '-1' COMMENT '操作人的id号',
   `updateTime` datetime DEFAULT NULL COMMENT '修改日期',
   `redo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此任务,1--重新执行此任务',
-  `runCount` int(11) DEFAULT '0' COMMENT '截止重新执行次数',
+  `runCount` int(10) DEFAULT '0' COMMENT '截止重新执行次数',
   `flowId` bigint(10) DEFAULT NULL COMMENT '流程任务的组Id',
   `flowNum` smallint(10) DEFAULT NULL,
   `lastFlag` smallint(2) DEFAULT '0' COMMENT '是否为流程任务的最后一个子任务',
   `runModel` smallint(1) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)',
-  `warning` tinyint(4) DEFAULT '0' COMMENT '失败后是否通知email报警',
+  `warning` tinyint(1) DEFAULT '0' COMMENT '失败后是否通知email报警',
   `mobiles` text COMMENT '接收通知的手机号',
   `emailAddress` text COMMENT '失败后接受报警的email',
-  `timeOut` INT bigint(10) DEFAULT 0 COMMENT '超时时间,分钟为单位'
+  `timeOut` INT int(10) DEFAULT 0 COMMENT '超时时间,分钟为单位'
   UNIQUE KEY `UN_INX` (`jobId`),
   KEY `INX_AGENT` (`agentId`),
   KEY `INX_QUERY` (`jobType`,`cronType`,`execType`,`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 CREATE TABLE `record` (
-  `recordId` bigint(20) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `parentId` bigint(20) DEFAULT NULL COMMENT '重复记录需要记录跑的是哪条父记录',
-  `jobId` bigint(20) NOT NULL COMMENT '该task任务是哪个task id执行的结果',
-  `agentId` bigint(20) DEFAULT NULL,
-  `operateId` bigint(20) DEFAULT NULL,
+  `recordId` int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `parentId` int(10) DEFAULT NULL COMMENT '重复记录需要记录跑的是哪条父记录',
+  `jobId` int(10) NOT NULL COMMENT '该task任务是哪个task id执行的结果',
+  `agentId` int(10) DEFAULT NULL,
+  `operateId` int(10) DEFAULT NULL,
   `command` text NOT NULL COMMENT '执行的命令',
   `returnCode` int(10) DEFAULT NULL COMMENT '完成的返回值。0--成功，其他都--失败',
-  `success` tinyint(4) DEFAULT NULL COMMENT '完成的返回状态。1--成功，0--失败',
+  `success` tinyint(1) DEFAULT NULL COMMENT '完成的返回状态。1--成功，0--失败',
   `startTime` datetime NOT NULL COMMENT '任务开始时间(如果是自动重执行时,每次执行不修改起始时间)',
   `endTime` datetime DEFAULT NULL COMMENT '任务结束时间',
   `execType` int(10) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
@@ -83,7 +83,7 @@ CREATE TABLE `record` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
   `pid` varchar(50) DEFAULT NULL COMMENT '用于查询进程号的uuid',
   `groupId` bigint(10) DEFAULT NULL,
-  `flowNum` bigint(10) DEFAULT NULL,
+  `flowNum` int(10) DEFAULT NULL,
   `jobType` smallint(2) DEFAULT '0' COMMENT '0:单任务,1:流程任务',
   `redo` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0--不重新执行此任务,1--重新执行此任务',
   `runCount` int(11) DEFAULT '0' COMMENT '截止重新执行次数',
@@ -93,9 +93,9 @@ CREATE TABLE `record` (
 
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE `log` (
-  `logId` bigint(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `agentId` bigint(10) NOT NULL,
-  `receiverId` bigint(20) DEFAULT NULL,
+  `logId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `agentId` int(10) NOT NULL,
+  `receiverId` int(20) DEFAULT NULL,
   `type` smallint(1) NOT NULL COMMENT '0:邮件,1:短信',
   `receiver` varchar(500) NOT NULL COMMENT '收件人',
   `message` varchar(1000) DEFAULT NULL COMMENT '发送信息',
@@ -146,8 +146,8 @@ CREATE TABLE `term` (
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `userId` bigint(20) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
-  `roleId` int(11) DEFAULT NULL COMMENT '角色ID',
+  `userId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
+  `roleId` int(10) DEFAULT NULL COMMENT '角色ID',
   `userName` varchar(50) NOT NULL COMMENT '用户名',
   `password` varchar(50) NOT NULL COMMENT '登录密码',
   `agentIds` varchar(200) COMMENT '可操作的执行器ID组',
