@@ -22,6 +22,7 @@
 
 package com.jredrain.vo;
 
+import com.jredrain.base.job.RedRain;
 import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
 
@@ -82,6 +83,23 @@ public class JobVo implements Serializable {
 
     //运行超时的截止时间
     private Integer timeout;
+
+    public JobVo(){}
+
+    public JobVo(Long operateId, String command, Agent agent) {
+        this.jobId = 0L;
+        this.jobName = agent.getName()+"-batchJob";
+        this.operateId = operateId;
+        this.command = command;
+        this.execType = RedRain.ExecType.BATCH.getStatus();
+        this.agent = agent;
+        this.agentId = agent.getAgentId();
+        this.ip = agent.getIp();
+        this.port = agent.getPort();
+        this.password = agent.getPassword();
+        this.redo = 0;
+        this.runCount = 0;
+    }
 
     public Long getJobId() {
         return jobId;

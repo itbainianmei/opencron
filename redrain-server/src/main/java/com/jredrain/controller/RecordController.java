@@ -28,7 +28,6 @@ import javax.servlet.http.HttpSession;
 import com.jredrain.base.job.RedRain;
 import com.jredrain.base.utils.WebUtils;
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.WebUtils;
 import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
 import com.jredrain.service.RecordService;
@@ -135,16 +134,12 @@ public class RecordController {
     }
 
     @RequestMapping("/kill")
-<<<<<<< HEAD
     public void kill(HttpServletResponse response, HttpSession session, Long recordId) {
-=======
-    public void kill(HttpServletResponse response,HttpSession session, Long recordId) {
->>>>>>> parent of 86774cc... fix bug
         Record record = recordService.get(recordId);
         if (RedRain.RunStatus.RERUNNING.getStatus().equals(record.getStatus())){
             //父记录临时改为停止中
             record.setStatus(RedRain.RunStatus.STOPPING.getStatus());
-            recordService.update(record);
+            recordService.save(record);
             //得到当前正在重跑的子记录
             record = recordService.getReRunningSubJob(recordId);
         }

@@ -156,7 +156,7 @@ public class RecordService {
      * @return
      */
     public List<Record> getReExecuteRecord() {
-        String sql = "SELECT r.*,d.ip,d.`name` AS agentName,d.password FROM record r INNER JOIN agent d ON r.agentId = d.agentId WHERE r.`success`=0 AND r.jobType=0 AND r.status in(1,5) AND r.parentId IS NULL AND r.redo=1 AND r.redoCount<r.runCount ";
+        String sql = "SELECT r.*,d.ip,d.`name` AS agentName,d.password FROM record r INNER JOIN agent d ON r.agentId = d.agentId WHERE r.success=0 AND r.jobType=0 AND r.status in(1,5) AND r.parentId IS NULL AND r.redo=1 AND r.redoCount<r.runCount ";
         return queryDao.sqlQuery(Record.class, sql);
     }
 
@@ -196,7 +196,7 @@ public class RecordService {
     }
 
     public Boolean isRunning(Long id) {
-        return queryDao.getCountBySql("SELECT COUNT(1) FROM record r LEFT JOIN job t ON r.jobId = t.jobId  WHERE (r.jobId = ? OR t.flowId = ?) AND r.status = 0 ", id, id) > 0L;
+        return queryDao.getCountBySql("SELECT COUNT(1) FROM record r LEFT JOIN job t ON r.jobId = t.jobId  WHERE (r.jobId = ? OR t.flowId = ?) AND r.status in (0,2,4) ", id, id) > 0L;
     }
 
     public List<ChartVo> getDiffData(String startTime, String endTime, HttpSession session) {

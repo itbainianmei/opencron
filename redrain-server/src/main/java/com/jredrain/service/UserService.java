@@ -71,7 +71,6 @@ public class UserService {
         user.setPassword(Encodes.encodeHex(hashPassword));
         user.setCreateTime(new Date());
         queryDao.save(user);
-        return;
     }
 
     public User queryUserById(Long id) {

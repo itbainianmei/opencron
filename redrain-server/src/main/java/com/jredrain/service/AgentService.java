@@ -166,15 +166,15 @@ public class AgentService {
 
 
     public String editPwd(Long id, String pwd0, String pwd1, String pwd2) {
-        Agent work = this.getAgent(id);
+        Agent agent = this.getAgent(id);
         String password = DigestUtils.md5Hex(pwd0);
-        if (password.equals(work.getPassword())) {
+        if (password.equals(agent.getPassword())) {
             if (pwd1.equals(pwd2)) {
                 pwd1 = DigestUtils.md5Hex(pwd1);
-                work.setPassword(pwd1);
-                Boolean flag = executeService.password(work,work.getIp(), work.getPort(), password, pwd1);
+                agent.setPassword(pwd1);
+                Boolean flag = executeService.password(agent, pwd1);
                 if (flag) {
-                    this.addOrUpdate(work);
+                    this.addOrUpdate(agent);
                     return "success";
                 } else {
                     return "failure";
