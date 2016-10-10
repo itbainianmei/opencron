@@ -4,7 +4,7 @@ USE redrain;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
-  `configId` tinyint(1) NOT NULL PRIMARY KEY,
+  `configId` int(10) NOT NULL PRIMARY KEY,
   `senderEmail` varchar(200) DEFAULT NULL COMMENT '发件人的邮箱地址',
   `smtpHost` varchar(255) DEFAULT NULL,
   `smtpPort` int(10) DEFAULT NULL,
@@ -77,7 +77,7 @@ CREATE TABLE `record` (
   `success` tinyint(1) DEFAULT NULL COMMENT '完成的返回状态。1--成功，0--失败',
   `startTime` datetime NOT NULL COMMENT '任务开始时间(如果是自动重执行时,每次执行不修改起始时间)',
   `endTime` datetime DEFAULT NULL COMMENT '任务结束时间',
-  `execType` int(10) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
+  `execType` tinyint(1) NOT NULL COMMENT '执行类型,0--crontab执行的记录，1--手动执行执行的记录,2--出错后自动重执行执行的记录,3--表示重复执行完的记录',
   `message` longtext COMMENT '执行后的外部进程字符串返回结果。',
   `redoCount` int(10) DEFAULT NULL COMMENT '当前第几次自动重试执行',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '完成状态 0:正在运行 1:运行完毕 2:正在停止 3:停止完毕',
