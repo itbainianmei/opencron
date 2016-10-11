@@ -60,7 +60,7 @@ CREATE TABLE `job` (
   `warning` tinyint(1) DEFAULT '0' COMMENT '失败后是否通知email报警',
   `mobiles` text COMMENT '接收通知的手机号',
   `emailAddress` text COMMENT '失败后接受报警的email',
-  `timeOut` INT int(10) DEFAULT 0 COMMENT '超时时间,分钟为单位'
+  `timeOut` INT (10) DEFAULT 0 COMMENT '超时时间,分钟为单位',
   UNIQUE KEY `UN_INX` (`jobId`),
   KEY `INX_AGENT` (`agentId`),
   KEY `INX_QUERY` (`jobType`,`cronType`,`execType`,`status`)
