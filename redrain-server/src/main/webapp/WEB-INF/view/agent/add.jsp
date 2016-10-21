@@ -320,11 +320,11 @@
                     </div>
                 </div><br>
 
-                <c:if test="${empty agents}">
+                <c:if test="${empty connAgents}">
                     <!--默认为直连-->
                     <input type="hidden" name="proxy" value="0">
                 </c:if>
-                <c:if test="${!empty agents}">
+                <c:if test="${!empty connAgents}">
                     <div class="form-group">
                         <label class="col-lab control-label"><i class="glyphicon glyphicon-transfer"></i>&nbsp;&nbsp;连接类型：</label>&nbsp;&nbsp;&nbsp;
                         <div class="col-md-10">
