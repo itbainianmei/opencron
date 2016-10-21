@@ -22,9 +22,9 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.exception.ServiceException;
+import com.jredrain.common.exception.ServiceException;
 import com.jredrain.dao.QueryDao;
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 @Service
 public class RecordService {

@@ -25,10 +25,10 @@ package com.jredrain.service;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.mail.HtmlEmail;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.CommonUtils;
-import com.jredrain.base.utils.DateUtils;
-import com.jredrain.base.utils.HttpUtils;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.utils.CommonUtils;
+import com.jredrain.common.utils.DateUtils;
+import com.jredrain.common.utils.HttpUtils;
 import com.jredrain.domain.Config;
 import com.jredrain.domain.Log;
 import com.jredrain.domain.User;
@@ -43,7 +43,7 @@ import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.*;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 /**
  * Created by benjobs on 16/3/18.

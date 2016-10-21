@@ -27,8 +27,8 @@ import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import com.jredrain.base.job.Monitor;
-import com.jredrain.base.utils.*;
+import com.jredrain.common.job.Monitor;
+import com.jredrain.common.utils.*;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -39,9 +39,9 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static com.jredrain.base.utils.CommonUtils.*;
+import static com.jredrain.common.utils.CommonUtils.*;
 
-import static com.jredrain.base.utils.CommandUtils.executeShell;
+import static com.jredrain.common.utils.CommandUtils.executeShell;
 
 /**
  * Created by benjobs on 16/4/7.

@@ -23,9 +23,9 @@ package com.jredrain.startup;
  * Created by benjobs on 16/3/3.
  */
 
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.IOUtils;
-import com.jredrain.base.utils.LoggerFactory;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.utils.IOUtils;
+import com.jredrain.common.utils.LoggerFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TServer;
@@ -43,8 +43,8 @@ import java.net.SocketTimeoutException;
 import java.security.AccessControlException;
 import java.util.Random;
 
-import static com.jredrain.base.utils.CommonUtils.isEmpty;
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.isEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 public class Bootstrap implements Serializable {
 

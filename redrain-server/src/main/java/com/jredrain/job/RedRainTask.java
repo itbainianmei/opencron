@@ -23,8 +23,8 @@
 package com.jredrain.job;
 
 import com.jredrain.session.MemcacheCache;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
 import com.jredrain.service.*;

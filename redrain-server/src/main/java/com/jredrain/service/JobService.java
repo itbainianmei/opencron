@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.User;
 import com.jredrain.domain.Agent;
@@ -34,9 +34,9 @@ import com.jredrain.job.Globals;
 import com.jredrain.session.MemcacheCache;
 import com.jredrain.tag.Page;
 
-import static com.jredrain.base.job.RedRain.*;
+import static com.jredrain.common.job.RedRain.*;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.domain.Job;
 import com.jredrain.vo.JobVo;
 import org.quartz.SchedulerException;
@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 @Service
 public class JobService {

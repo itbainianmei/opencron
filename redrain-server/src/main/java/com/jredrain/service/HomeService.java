@@ -22,8 +22,8 @@
 package com.jredrain.service;
 
 import com.jredrain.dao.QueryDao;
-import com.jredrain.base.utils.Digests;
-import com.jredrain.base.utils.Encodes;
+import com.jredrain.common.utils.Digests;
+import com.jredrain.common.utils.Encodes;
 import com.jredrain.domain.Log;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.List;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 /**
  * Created by ChenHui on 2016/2/17.

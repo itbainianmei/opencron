@@ -23,7 +23,7 @@
 package com.jredrain.dao;
 
 import org.apache.commons.beanutils.ConvertUtils;
-import com.jredrain.base.utils.ExceptionHandler;
+import com.jredrain.common.utils.ExceptionHandler;
 import org.hibernate.transform.BasicTransformerAdapter;
 
 import java.io.Serializable;

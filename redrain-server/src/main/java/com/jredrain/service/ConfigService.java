@@ -21,7 +21,7 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.domain.Config;
 import org.springframework.beans.factory.annotation.Autowired;

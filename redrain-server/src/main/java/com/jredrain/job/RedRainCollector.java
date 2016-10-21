@@ -22,8 +22,8 @@
 package com.jredrain.job;
 
 import it.sauronsoftware.cron4j.*;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.service.ExecuteService;
 import com.jredrain.service.JobService;
 import com.jredrain.vo.JobVo;

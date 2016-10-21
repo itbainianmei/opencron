@@ -24,12 +24,12 @@ package com.jredrain.service;
 
 import java.util.List;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import com.jredrain.session.MemcacheCache;
 import org.apache.commons.codec.digest.DigestUtils;
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.tag.Page;
 import com.jredrain.domain.Agent;
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 @Service
 public class AgentService {

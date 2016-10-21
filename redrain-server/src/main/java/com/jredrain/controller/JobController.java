@@ -23,13 +23,13 @@ package com.jredrain.controller;
 
 import java.util.*;
 
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.job.RedRain.ExecType;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.job.RedRain.ExecType;
 import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.CommonUtils;
-import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.WebUtils;
+import com.jredrain.common.utils.CommonUtils;
+import com.jredrain.common.utils.JsonMapper;
+import com.jredrain.common.utils.WebUtils;
 import com.jredrain.domain.Agent;
 import com.jredrain.domain.Job;
 import com.jredrain.service.*;
@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 @Controller
 @RequestMapping("/job")

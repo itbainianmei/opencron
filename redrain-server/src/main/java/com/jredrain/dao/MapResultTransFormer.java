@@ -23,7 +23,7 @@
 package com.jredrain.dao;
 
 import org.apache.commons.lang3.StringUtils;
-import com.jredrain.base.utils.IgnoreCaseMap;
+import com.jredrain.common.utils.IgnoreCaseMap;
 import org.hibernate.transform.BasicTransformerAdapter;
 
 import java.io.Serializable;

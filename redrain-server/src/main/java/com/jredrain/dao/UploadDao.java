@@ -22,7 +22,7 @@
 
 package com.jredrain.dao;
 
-import com.jredrain.base.utils.IOUtils;
+import com.jredrain.common.utils.IOUtils;
 import com.jredrain.domain.User;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;

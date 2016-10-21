@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.utils.WebUtils;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.utils.WebUtils;
 import com.jredrain.tag.Page;
 import com.jredrain.domain.Record;
 import com.jredrain.service.ExecuteService;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 @Controller
 @RequestMapping("/record")

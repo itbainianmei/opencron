@@ -22,7 +22,7 @@
 
 package com.jredrain.dao;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jredrain.base.utils.CommonUtils.toLong;
+import static com.jredrain.common.utils.CommonUtils.toLong;
 
 
 @SuppressWarnings("unchecked")

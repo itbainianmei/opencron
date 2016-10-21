@@ -22,13 +22,13 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.dao.UploadDao;
 import com.jredrain.job.Globals;
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.Digests;
-import com.jredrain.base.utils.Encodes;
+import com.jredrain.common.utils.Digests;
+import com.jredrain.common.utils.Encodes;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -21,9 +21,9 @@
 
 package com.jredrain.session;
 
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.CommonUtils;
 import org.apache.commons.lang.StringUtils;
-import com.jredrain.base.utils.CookieUtils;
+import com.jredrain.common.utils.CookieUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;

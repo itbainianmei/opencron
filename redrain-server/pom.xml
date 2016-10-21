@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>org.redrain</groupId>
-            <artifactId>redrain-base</artifactId>
+            <artifactId>redrain-common</artifactId>
         </dependency>
 
         <dependency>

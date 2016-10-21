@@ -23,8 +23,8 @@ package com.jredrain.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.*;
-import com.jredrain.base.utils.DigestUtils;
-import com.jredrain.base.utils.WebUtils;
+import com.jredrain.common.utils.DigestUtils;
+import com.jredrain.common.utils.WebUtils;
 import com.jredrain.domain.Term;
 import com.jredrain.domain.User;
 import com.jredrain.domain.Agent;

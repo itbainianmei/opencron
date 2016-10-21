@@ -22,7 +22,7 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import com.jredrain.job.RedRainCollector;
 import com.jredrain.vo.JobVo;
 import org.quartz.*;

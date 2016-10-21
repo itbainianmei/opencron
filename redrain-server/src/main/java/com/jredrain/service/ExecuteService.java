@@ -22,11 +22,11 @@
 
 package com.jredrain.service;
 
-import com.jredrain.base.exception.PingException;
-import com.jredrain.base.job.Action;
-import com.jredrain.base.job.Request;
-import com.jredrain.base.job.Response;
-import com.jredrain.base.utils.ParamsMap;
+import com.jredrain.common.exception.PingException;
+import com.jredrain.common.job.Action;
+import com.jredrain.common.job.Request;
+import com.jredrain.common.job.Response;
+import com.jredrain.common.utils.ParamsMap;
 import com.jredrain.domain.Record;
 import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static com.jredrain.base.job.RedRain.*;
+import static com.jredrain.common.job.RedRain.*;
 
 @Service
 public class ExecuteService implements Job {

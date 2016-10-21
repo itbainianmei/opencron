@@ -22,8 +22,8 @@
 
 package com.jredrain.tag;
 
-import com.jredrain.base.utils.DateUtils;
-import com.jredrain.base.utils.CommonUtils;
+import com.jredrain.common.utils.DateUtils;
+import com.jredrain.common.utils.CommonUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

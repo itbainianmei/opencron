@@ -27,11 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.WebUtils;
+import com.jredrain.common.utils.JsonMapper;
+import com.jredrain.common.utils.WebUtils;
 import com.jredrain.domain.Agent;
 import com.jredrain.service.AgentService;
 import org.springframework.beans.factory.annotation.Autowired;

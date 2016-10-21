@@ -23,10 +23,10 @@
 package com.jredrain.startup;
 
 import com.alibaba.fastjson.JSON;
-import com.jredrain.base.job.*;
+import com.jredrain.common.job.*;
 import org.apache.commons.exec.*;
 import org.apache.thrift.TException;
-import com.jredrain.base.utils.*;
+import com.jredrain.common.utils.*;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -39,7 +39,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static com.jredrain.base.utils.CommonUtils.*;
+import static com.jredrain.common.utils.CommonUtils.*;
 
 /**
  * Created by benjo on 2016/3/25.

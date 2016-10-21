@@ -21,7 +21,7 @@
 
 package com.jredrain.domain;
 
-import com.jredrain.base.job.RedRain;
+import com.jredrain.common.job.RedRain;
 import com.jredrain.vo.JobVo;
 
 import java.io.Serializable;

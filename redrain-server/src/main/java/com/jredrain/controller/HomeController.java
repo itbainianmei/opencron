@@ -22,12 +22,12 @@
 package com.jredrain.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.jredrain.base.utils.*;
+import com.jredrain.common.utils.*;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
 import net.sf.json.JSONObject;
-import com.jredrain.base.job.RedRain;
-import com.jredrain.base.job.Response;
+import com.jredrain.common.job.RedRain;
+import com.jredrain.common.job.Response;
 import com.jredrain.domain.Job;
 import com.jredrain.domain.Agent;
 import com.jredrain.service.*;
@@ -51,8 +51,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import static com.jredrain.base.utils.CommonUtils.isEmpty;
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.isEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 /**
  * Created by ChenHui on 2016/2/17.

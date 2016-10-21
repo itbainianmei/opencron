@@ -24,8 +24,8 @@ package com.jredrain.controller;
 import com.jredrain.job.Globals;
 import com.jredrain.service.AgentService;
 import com.jredrain.tag.Page;
-import com.jredrain.base.utils.JsonMapper;
-import com.jredrain.base.utils.WebUtils;
+import com.jredrain.common.utils.JsonMapper;
+import com.jredrain.common.utils.WebUtils;
 import com.jredrain.domain.Role;
 import com.jredrain.domain.User;
 import com.jredrain.service.UserService;
@@ -40,7 +40,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 
-import static com.jredrain.base.utils.CommonUtils.notEmpty;
+import static com.jredrain.common.utils.CommonUtils.notEmpty;
 
 /**
  * Created by ChenHui on 2016/2/18.
