@@ -120,7 +120,7 @@ public class TermService {
         final Long agentId = agent.getAgentId();
 
         if (sessionMap.get(agentId) == null) {
-            final int port = HttpUtils.generagePort();
+            final int port = HttpUtils.freePort();
             this.sessionMap.put(agentId, port);
 
             /**

@@ -51,8 +51,6 @@ import static com.jredrain.common.utils.CommonUtils.notEmpty;
 @Service
 public class NoticeService {
 
-
-
     private Config config;
 
     @Autowired

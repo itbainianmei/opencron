@@ -60,7 +60,7 @@ public class ExecuteService implements Job {
     private NoticeService noticeService;
 
     @Autowired
-    private RedRainCaller cronJobCaller;
+    private RedRainCaller redRainCaller;
 
     @Autowired
     private AgentService agentService;
@@ -395,7 +395,7 @@ public class ExecuteService implements Job {
                             JobVo job = jobService.getJobVoById(cord.getJobId());
                             try {
                                 //向远程机器发送kill指令
-                                cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
+                                redRainCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
                                 cord.setStatus(RunStatus.STOPED.getStatus());
                                 cord.setEndTime(new Date());
                                 recordService.save(cord);
@@ -427,7 +427,7 @@ public class ExecuteService implements Job {
      * 向执行器发送请求，并封装响应结果
      */
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronJobCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword())
+        Response response = redRainCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword())
                 .putParam("command", job.getCommand()).putParam("pid", record.getPid()).putParam("timeout",job.getTimeout()+"") , job.getAgent());
         logger.info("[redrain]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
@@ -484,7 +484,7 @@ public class ExecuteService implements Job {
     public boolean ping(Agent agent) {
         boolean ping = false;
         try {
-            ping = cronJobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()),agent).isSuccess();
+            ping = redRainCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()),agent).isSuccess();
         } catch (Exception e) {
             logger.error("[redrain]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {
@@ -498,7 +498,7 @@ public class ExecuteService implements Job {
     public boolean password(Agent agent, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronJobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PASSWORD, agent.getPassword())
+            Response response = redRainCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PASSWORD, agent.getPassword())
                     .putParam("newPassword", newPassword),agent);
             ping = response.isSuccess();
         } catch (Exception e) {
@@ -511,7 +511,7 @@ public class ExecuteService implements Job {
      * 监测执行器运行状态
      */
     public Response monitor(Agent agent) throws Exception {
-        return cronJobCaller.call(
+        return redRainCaller.call(
                 Request.request(agent.getIp(), agent.getPort(), Action.MONITOR, agent.getPassword())
                         .setParams( ParamsMap.instance().fill("connType",ConnType.getByType(agent.getProxy()).getName()) ), agent);
     }

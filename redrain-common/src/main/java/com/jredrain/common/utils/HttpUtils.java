@@ -152,7 +152,7 @@ public class HttpUtils {
     public static boolean isLocalPortUsing(int port) {
         boolean flag = true;
         try {
-            flag = isPortUsing("127.0.0.1", port);
+            flag = usingPort("127.0.0.1", port);
         } catch (Exception e) {
         }
         return flag;
@@ -164,7 +164,7 @@ public class HttpUtils {
      * @param port
      * @throws UnknownHostException
      */
-    public static boolean isPortUsing(String host, int port) throws UnknownHostException {
+    public static boolean usingPort(String host, int port) throws UnknownHostException {
         boolean flag = false;
         InetAddress theAddress = InetAddress.getByName(host);
         try {
@@ -176,7 +176,7 @@ public class HttpUtils {
     }
 
 
-    public static int generagePort() {
+    public static int freePort() {
         Random random = new Random();
         int port;
         do {
