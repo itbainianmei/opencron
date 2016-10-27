@@ -70,8 +70,8 @@ public class ExecuteService implements Job {
 
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
-
     private static final String PACKETTOOBIG_ERROR  = "在向MySQL数据库插入数据量过多,需要设定max_allowed_packet";
+
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         String key = jobExecutionContext.getJobDetail().getKey().getName();
