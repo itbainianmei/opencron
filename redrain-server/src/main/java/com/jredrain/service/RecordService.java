@@ -139,12 +139,7 @@ public class RecordService {
 
 
     public Record save(Record record) {
-        try{
-            return (Record) queryDao.save(record);
-        }catch (Exception e) {
-            throw new ServiceException(e);
-        }
-
+        return (Record) queryDao.save(record);
     }
 
     public Record get(Long recordId) {

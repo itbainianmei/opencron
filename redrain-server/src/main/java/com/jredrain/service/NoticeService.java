@@ -24,6 +24,7 @@ package com.jredrain.service;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.apache.commons.lang.text.StrBuilder;
 import org.apache.commons.mail.HtmlEmail;
 import com.jredrain.common.job.RedRain;
 import com.jredrain.common.utils.CommonUtils;
@@ -50,6 +51,7 @@ import static com.jredrain.common.utils.CommonUtils.notEmpty;
  */
 @Service
 public class NoticeService {
+
 
     private Config config;
 
@@ -91,11 +93,16 @@ public class NoticeService {
         }
     }
 
-    public void notice(JobVo job) {
+    public void notice(JobVo job,String msg) {
         if (!job.getWarning()) return;
         Agent agent = job.getAgent();
-        String message = "执行任务:" + job.getCommand() + "(" + job.getCronExp() + ")失败,请速速处理!";
-        String content = getMessage(agent, message);
+        String message = "执行任务:" + job.getCommand() + "(" + job.getCronExp() + ")失败,%s!";
+        if (msg==null) {
+            message = String.format(message,"");
+        }else {
+            message = String.format(message,"["+msg+"]");
+        }
+        String content = getMessage(agent,message);
         logger.info(content);
         try {
             sendMessage(job.getOperateId(),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);

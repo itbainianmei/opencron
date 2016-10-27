@@ -32,6 +32,7 @@ import com.jredrain.domain.Agent;
 import com.jredrain.domain.User;
 import com.jredrain.job.RedRainCaller;
 import com.jredrain.vo.JobVo;
+import com.mysql.jdbc.PacketTooBigException;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -42,7 +43,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import static com.jredrain.common.job.RedRain.*;
 
 @Service
@@ -70,6 +70,8 @@ public class ExecuteService implements Job {
 
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
 
+
+    private static final String PACKETTOOBIG_ERROR  = "在向MySQL数据库插入数据量过多,需要设定max_allowed_packet";
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         String key = jobExecutionContext.getJobDetail().getKey().getName();
@@ -108,10 +110,9 @@ public class ExecuteService implements Job {
 
         Record record = new Record(job);
         record.setJobType(JobType.SINGLETON.getCode());//单一任务
-        //执行前先保存
-        record = recordService.save(record);
-
         try {
+            //执行前先保存
+            record = recordService.save(record);
             //执行前先检测一次通信是否正常
             checkPing(job, record);
             Response response = responseToRecord(job, record);
@@ -119,16 +120,19 @@ public class ExecuteService implements Job {
             if (!response.isSuccess()) {
                 //当前的单一任务只运行一次未设置重跑.
                 if (job.getRedo()==0 || job.getRunCount()==0) {
-                    noticeService.notice(job);
+                    noticeService.notice(job,null);
                 }
                 this.loggerInfo("execute failed:jobName:{} at ip:{},port:{},info:{}", job, record.getMessage());
                 return false;
             }else {
                 this.loggerInfo("execute successful:jobName:{} at ip:{},port:{}", job, null);
             }
-        } catch (Exception e) {
+        } catch (PacketTooBigException e){
+            noticeService.notice(job,PACKETTOOBIG_ERROR);
+            this.loggerError("execute failed:jobName:%s at ip:%s,port:%d,info:%s", job, PACKETTOOBIG_ERROR, e);
+        }catch (Exception e) {
             if (job.getRedo()==0 || job.getRunCount()==0) {
-                noticeService.notice(job);
+                noticeService.notice(job,null);
             }
             this.loggerError("execute failed:jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e);
         }
@@ -242,10 +246,14 @@ public class ExecuteService implements Job {
             recordService.flowJobDone(record);//通信失败,流程任务挂起.
             return false;
         }catch (Exception e) {
+            if (e instanceof com.mysql.jdbc.PacketTooBigException) {
+                record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:", job,PACKETTOOBIG_ERROR, e));
+            }else {
+                record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
+            }
             record.setSuccess(ResultStatus.FAILED.getStatus());//程序调用失败
             record.setReturnCode(StatusCode.ERROR_EXEC.getValue());
             record.setEndTime(new Date());
-            record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
             recordService.save(record);
             success = false;
             return false;
@@ -263,11 +271,11 @@ public class ExecuteService implements Job {
 
                     //重跑到截止次数还是失败,则发送通知,记录最终运行结果
                     if (!flag) {
-                        noticeService.notice(job);
+                        noticeService.notice(job,null);
                         recordService.flowJobDone(record);
                     }
                 } else {
-                    noticeService.notice(job);
+                    noticeService.notice(job,null);
                     recordService.flowJobDone(record);
                 }
             }
@@ -317,20 +325,21 @@ public class ExecuteService implements Job {
         }
 
         parentRecord.setStatus(RunStatus.RERUNNING.getStatus());
-        recordService.save(parentRecord);
-        /**
-         * 当前重新执行的新纪录
-         */
-        job.setExecType(ExecType.RERUN.getStatus());
         Record record = new Record(job);
-        record.setParentId(parentRecord.getRecordId());
-        record.setGroupId(parentRecord.getGroupId());
-        record.setJobType(jobType.getCode());
-        parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
-        record.setRedoCount(parentRecord.getRedoCount());
-        record = recordService.save(record);
 
         try {
+            recordService.save(parentRecord);
+            /**
+             * 当前重新执行的新纪录
+             */
+            job.setExecType(ExecType.RERUN.getStatus());
+            record.setParentId(parentRecord.getRecordId());
+            record.setGroupId(parentRecord.getGroupId());
+            record.setJobType(jobType.getCode());
+            parentRecord.setRedoCount(parentRecord.getRedoCount() + 1);//运行次数
+            record.setRedoCount(parentRecord.getRedoCount());
+            record = recordService.save(record);
+
             //执行前先检测一次通信是否正常
             checkPing(job, record);
 
@@ -345,21 +354,35 @@ public class ExecuteService implements Job {
             } else {
                 //已经重跑到最后一次了,还是失败了,则认为整个重跑任务失败,发送通知
                 if (parentRecord.getRunCount().equals(parentRecord.getRedoCount())) {
-                    noticeService.notice(job);
+                    noticeService.notice(job,null);
                 }
                 parentRecord.setStatus(RunStatus.RERUNUNDONE.getStatus());
             }
             this.loggerInfo("execute successful:jobName:{} at ip:{},port:{}", job, null);
         } catch (Exception e) {
-            noticeService.notice(job);
+            if (e instanceof PacketTooBigException) {
+                noticeService.notice(job, PACKETTOOBIG_ERROR);
+                errorExec(record, this.loggerError("execute failed:jobName:%s at ip:%s,port:%d,info:%s", job, PACKETTOOBIG_ERROR, e));
+            }
+            noticeService.notice(job,e.getMessage());
             errorExec(record, this.loggerError("execute failed:jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
+
         } finally {
             //如果已经到了任务重跑的截至次数直接更新为已重跑完成
             if (parentRecord.getRunCount().equals(parentRecord.getRedoCount())) {
                 parentRecord.setStatus(RunStatus.RERUNDONE.getStatus());
             }
-            recordService.save(record);
-            recordService.save(parentRecord);
+            try {
+                recordService.save(record);
+                recordService.save(parentRecord);
+            }catch (Exception e) {
+                if (e instanceof com.mysql.jdbc.PacketTooBigException) {
+                    record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:"+PACKETTOOBIG_ERROR, job, e.getMessage(), e));
+                }else {
+                    record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
+                }
+            }
+
         }
         return record.getSuccess().equals(ResultStatus.SUCCESSFUL.getStatus());
     }
@@ -390,10 +413,10 @@ public class ExecuteService implements Job {
                             //临时的改成停止中...
                             cord.setStatus(RunStatus.STOPPING.getStatus());//停止中
                             cord.setSuccess(ResultStatus.KILLED.getStatus());//被杀.
-                            recordService.save(cord);
-
-                            JobVo job = jobService.getJobVoById(cord.getJobId());
+                            JobVo job = null;
                             try {
+                                recordService.save(cord);
+                                job = jobService.getJobVoById(cord.getJobId());
                                 //向远程机器发送kill指令
                                 redRainCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
                                 cord.setStatus(RunStatus.STOPED.getStatus());
@@ -401,7 +424,11 @@ public class ExecuteService implements Job {
                                 recordService.save(cord);
                                 loggerInfo("killed successful :jobName:{} at ip:{},port:{},pid:{}", job, cord.getPid());
                             } catch (Exception e) {
-                                noticeService.notice(job);
+                                if (e instanceof PacketTooBigException) {
+                                    noticeService.notice(job,PACKETTOOBIG_ERROR);
+                                    loggerError("killed error:jobName:%s at ip:%s,port:%d,pid:%s", job, cord.getPid()+" failed info: "+PACKETTOOBIG_ERROR, e);
+                                }
+                                noticeService.notice(job,null);
                                 loggerError("killed error:jobName:%s at ip:%s,port:%d,pid:%s", job, cord.getPid()+" failed info: "+e.getMessage(), e);
                                 result.add(false);
                             }
