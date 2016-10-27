@@ -246,7 +246,7 @@ public class ExecuteService implements Job {
             recordService.flowJobDone(record);//通信失败,流程任务挂起.
             return false;
         }catch (Exception e) {
-            if (e instanceof com.mysql.jdbc.PacketTooBigException) {
+            if (e instanceof PacketTooBigException) {
                 record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:", job,PACKETTOOBIG_ERROR, e));
             }else {
                 record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
@@ -376,7 +376,7 @@ public class ExecuteService implements Job {
                 recordService.save(record);
                 recordService.save(parentRecord);
             }catch (Exception e) {
-                if (e instanceof com.mysql.jdbc.PacketTooBigException) {
+                if (e instanceof PacketTooBigException) {
                     record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:"+PACKETTOOBIG_ERROR, job, e.getMessage(), e));
                 }else {
                     record.setMessage(this.loggerError("execute failed(flow job):jobName:%s at ip:%s,port:%d,info:%s", job, e.getMessage(), e));
