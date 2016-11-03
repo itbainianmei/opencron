@@ -130,7 +130,9 @@
             //系统实时监控
             redrainChart.monitor();
 
-            $("#queryChart").click = redrainChart.query;
+            $("#queryChart").click(function () {
+                redrainChart.query();
+            });
 
             $("#agentId").change(
                 function () {
