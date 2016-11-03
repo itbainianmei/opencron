@@ -190,7 +190,7 @@
             </div>
         </div>
 
-        <table class="table tile">
+        <table class="table tile textured">
             <thead>
             <tr>
                 <th>作业名称</th>

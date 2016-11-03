@@ -166,7 +166,7 @@
     </div>
 
     <div class="block-area" id="defaultStyle">
-        <table class="table tile">
+        <table class="table tile textured">
             <tbody id="tableContent">
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-user"></i>&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</td>

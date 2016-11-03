@@ -147,7 +147,7 @@
             </thead>
         </table>
         <div id="agent-content" style="height: 600px;overflow: hidden;">
-            <table class="table table-bordered tile" style="font-size: 12px;margin-bottom: 0;">
+            <table class="table table-bordered tile textured" style="font-size: 12px;margin-bottom: 0;">
                 <tbody>
                 <c:forEach var="w" items="${agents}" varStatus="index">
                     <c:if test="${w.status eq true}">

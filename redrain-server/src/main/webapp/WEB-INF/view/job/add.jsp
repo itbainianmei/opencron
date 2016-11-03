@@ -541,7 +541,7 @@
     </div>
 
     <div class="block-area" id="basic">
-        <div class="tile p-15">
+        <div class="tile p-15 textured">
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"></br>
 
                 <div class="form-group">
