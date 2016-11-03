@@ -21,7 +21,7 @@
     <script src="${contextPath}/js/highcharts/js/modules/exporting.js"></script>
     <script src="${contextPath}/js/socket/socket.io.js"></script>
     <script src="${contextPath}/js/socket/websocket.js"></script>
-    <script src="${contextPath}/js/home.js?${contextPath}" id="homejs"></script>
+    <script src="${contextPath}/js/home.js"></script>
 
     <style type="text/css">
 
@@ -118,7 +118,32 @@
     </style>
 
     <script type="text/javascript">
+
+
         $(document).ready(function () {
+
+            var redrainChart = new RedrainChart('${contextPath}');
+
+            //跨时段查询任务运行比例
+            redrainChart.query();
+
+            //系统实时监控
+            redrainChart.monitor();
+
+            $("#queryChart").click = redrainChart.query;
+
+            $("#agentId").change(
+                function () {
+                    //清理上一个轮询...
+                    if (redrainChart.intervalId != null) {
+                        window.clearInterval(redrainChart.intervalId);
+                        redrainChart.intervalId = null;
+                        redrainChart.clear();
+                    }
+                    redrainChart.monitor();
+                }
+            );
+
             var agent_number = (parseFloat("${success}")/parseFloat("${fn:length(agents)}")*100).toFixed(2);
             if( isNaN(agent_number) ){
                 $("#agent_number").text(0).attr("data-value",0);
@@ -161,7 +186,7 @@
             }
 
             $(window).resize(function(){
-                redrainChart.resizeChart();
+                redrainChart.resize();
                 $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
             });
 
@@ -177,6 +202,8 @@
                 $(this).find("i:first").removeClass("eye-grey");
                 $(this).next("div").find("div:first").css({"background-color":"rgba(0,0,0,0.55)"});
             });
+
+
 
         });
     </script>
@@ -338,7 +365,7 @@
                     <input type="text" style="border-radius: 2px;width: 90px" id="startTime" name="startTime" value="${startTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>
                     <label for="endTime" class="label-self">&nbsp;至&nbsp;</label>
                     <input type="text" style="border-radius: 2px;width: 90px" id="endTime" name="endTime" value="${endTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>&nbsp;
-                    <button onclick="redrainChart.executeChart()" class="btn btn-default btn-sm" style="vertical-align:top;height: 25px;" type="button"><i class="glyphicon glyphicon-search"></i>查询</button>
+                    <button id="queryChart" class="btn btn-default btn-sm" style="vertical-align:top;height: 25px;" type="button"><i class="glyphicon glyphicon-search"></i>查询</button>
                 </div>
             </div>
 

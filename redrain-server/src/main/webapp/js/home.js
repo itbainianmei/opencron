@@ -1,157 +1,220 @@
-var redrainChart = {
-    path: "/",
-    intervalId: null,
-    intervalTime: 2000,
-    gauge: null,
-    gaugeOption: null,
-    screen: 1,//1小屏,2:中屏,3大屏
-    data: null,
-    socket: null,
-    resizeChartData: {},
-    diskLoad:false,
-    cpuLoad:false,
-    configLoad:false,
-    cpuChartObj:{},
-    cpuX:[],
-    cpuY:[],
-    config:[],
-
-    overviewDataArr: [
+function RedrainChart() {
+    this.path = arguments[0] || "/";
+    this.intervalId = null;
+    this.intervalTime = 2000;
+    this.gauge = null;
+    this.gaugeOption = null;
+    this.data = null;
+    this.socket = null;
+    this.resizeChartData = {};
+    this.diskLoad = false;
+    this.cpuLoad = false;
+    this.configLoad = false;
+    this.cpuChartObj = {};
+    this.cpuX = [];
+    this.cpuY = [];
+    this.config = [];
+    this.overviewDataArr = [
         {"key": "us", "title": "用户占用", "color": "rgba(221,68,255,0.90)"},
         {"key": "sy", "title": "系统占用", "color": "rgba(255,255,255,0.90)"},
         {"key": "memUsage", "title": "内存使用率", "color": ""},
         {"key": "id", "title": "Cpu空闲", "color": "rgba(92,184,92,0.90)"},
         {"key": "swap", "title": "Swap空闲", "color": "rgba(240,173,78,0.90)"}
-    ],
+    ];
 
-    monitorData: function () {
+    var width = window.screen.width;
+    //iphone6以下屏幕大小
+    if (width < 375) {
+        this.screen = 1;
+    } else if (width >= 375 && width < 1280) {
+        this.screen = 2;
+    } else {
+        this.screen = 3;
+    }
 
-        if ( (arguments[0]||0) ==1 && redrainChart.intervalId==null ) {
-            return;
-        }
+}
 
-        /**
-         * 没有执行器
-         */
-        if (!$("#agentId").val()) {
-            window.setTimeout(function () {
-                $(".loader").remove();
-                $(".div-havedata").hide();
-                $(".div-nodata").show();
-            }, 1000);
-            return;
-        }
-        $(".div-nodata").hide();
-        $(".div-havedata").show();
-        /**
-         * 关闭上一个websocket
-         */
-        if (redrainChart.socket) {
-            redrainChart.socket.close();
-            redrainChart.socket = null;
-        }
+RedrainChart.prototype.query = function () {
+    var self = this;
+    $.ajax({
+        type: "POST",
+        url: self.path + "/diffchart",
+        data: {
+            "startTime": $("#startTime").val(),
+            "endTime": $("#endTime").val()
+        },
+        dataType: "json",
+        success: function (data) {
+            if (data != null) {
+                $("#overview_loader").hide();
+                $("#record-report-havedata").show();
+                $("#record-report-nodata").hide();
+                $("#timeopter").css({"background-color": "rgba(0,0,0,0.3)"});
 
-        $.ajax({
-            type:"POST",
-            url: redrainChart.path + "/monitor",
-            data: "agentId=" + $("#agentId").val(),
-            dataType: "html",
-            success: function (dataResult) {
+                //折线图
+                var dataArea = [];
+                var successSum = 0;
+                var failureSum = 0;
+                var killedSum = 0;
+                var singleton = 0;
+                var flow = 0;
+                var crontab = 0;
+                var quartz = 0;
+                var rerun = 0;
+                var auto = 0;
+                var operator = 0;
 
-                if (dataResult.toString().indexOf("login") > -1) {
-                    window.location.href = redrainChart.path;
-                }
-                //remobe loader...
-                $(".loader").remove();
-                var connType = dataResult.substring(0,1);
-                var data =  dataResult.substring(2);
-                //代理
-                if (connType == 1) {
-                    redrainChart.data = $.parseJSON(data);
-                    if ( redrainChart.intervalId == null ) {
-                        /**
-                         * 第一个轮询不显示,等下一个轮询开始渲染...
-                         * @type {number}
-                         */
-                        redrainChart.intervalId = window.setInterval(function () {
-                            redrainChart.monitorData(connType);
-                        }, redrainChart.intervalTime);
-                    }else {
-                        redrainChart.doRender();
-                    }
-                }else {//直联-->发送websocket...
-                    if ( redrainChart.intervalId!=null ) {
-                        window.clearInterval( redrainChart.intervalId );
-                        redrainChart.intervalId = null;
-                        redrainChart.clearData();
-                    }
-
-                    redrainChart.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
-                    redrainChart.socket.on("monitor", function (data) {
-                        redrainChart.data = data;
-                        redrainChart.doRender();
+                for (var i in data) {
+                    dataArea.push({
+                        date: data[i].date,
+                        success: data[i].success,
+                        failure: data[i].failure,
+                        killed: data[i].killed
                     });
-                    //when close then clear data...
-                    redrainChart.socket.on("disconnect", function () {
-                        console.log('close');
-                        redrainChart.clearData();
-                    });
+                    successSum += parseInt(data[i].success);
+                    failureSum += parseInt(data[i].failure);
+                    killedSum += parseInt(data[i].killed);
+                    singleton += parseInt(data[i].singleton);
+                    flow += parseInt(data[i].flow);
+                    crontab += parseInt(data[i].crontab);
+                    quartz += parseInt(data[i].quartz);
+                    rerun += parseInt(data[i].rerun);
+                    auto += parseInt(data[i].auto);
+                    operator += parseInt(data[i].operator);
                 }
 
+                self.resizeChartData = {
+                    "dataArea": dataArea,
+                    "success": successSum,
+                    "failure": failureSum,
+                    "killed": killedSum,
+                    "singleton": singleton,
+                    "flow": flow,
+                    "crontab": crontab,
+                    "quartz": quartz,
+                    "rerun": rerun,
+                    "auto": auto,
+                    "operator": operator
+                };
+                self.resize();
+            } else {
+                window.setTimeout(function () {
+                    $("#overview_loader").hide();
+                    $("#record-report-havedata").hide();
+                    $("#record-report-nodata").show();
+                    $("#timeopter").css({"background-color": ""});
+                }, 750);
             }
-        });
-    },
-
-    clearData:function () {
-        if (redrainChart.socket!=null) {
-            redrainChart.socket.close();
-            redrainChart.socket = null;
         }
-        redrainChart.data = [];
-        redrainChart.diskLoad = false;
-        redrainChart.cpuLoad = false;
-        redrainChart.configLoad = false;
-        redrainChart.config = [];
-        redrainChart.cpuChartObj = null;
-        redrainChart.cpuX = [];
-        redrainChart.cpuY = [];
-    },
+    });
+}
 
-    doRender:function () {
-        $(".loader").remove();
-        //解决子页面登录失联,不能跳到登录页面的bug
-        if (!redrainChart.diskLoad) {
-            redrainChart.diskLoad = true;
-            redrainChart.diskChart();
+RedrainChart.prototype.monitor = function () {
+
+    var self = this;
+
+    if ((arguments[0] || 0) == 1 && self.intervalId == null) {
+        return;
+    }
+
+    /**
+     * 没有执行器
+     */
+    if (!$("#agentId").val()) {
+        window.setTimeout(function () {
+            $(".loader").remove();
+            $(".div-havedata").hide();
+            $(".div-nodata").show();
+        }, 1000);
+        return;
+    }
+    $(".div-nodata").hide();
+    $(".div-havedata").show();
+    /**
+     * 关闭上一个websocket
+     */
+    if (self.socket) {
+        self.socket.close();
+        self.socket = null;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: self.path + "/monitor",
+        data: "agentId=" + $("#agentId").val(),
+        dataType: "html",
+        success: function (dataResult) {
+
+            if (dataResult.toString().indexOf("login") > -1) {
+                window.location.href = self.path;
+            }
+            //remobe loader...
+            $(".loader").remove();
+            var connType = dataResult.substring(0, 1);
+            var data = dataResult.substring(2);
+            //代理
+            if (connType == 1) {
+                self.data = $.parseJSON(data);
+                if (self.intervalId == null) {
+                    /**
+                     * 第一个轮询不显示,等下一个轮询开始渲染...
+                     * @type {number}
+                     */
+                    self.intervalId = window.setInterval(function () {
+                        self.monitor(connType);
+                    }, self.intervalTime);
+                } else {
+                    self.render();
+                }
+            } else {//直联-->发送websocket...
+                if (self.intervalId != null) {
+                    window.clearInterval(self.intervalId);
+                    self.intervalId = null;
+                    self.clear();
+                }
+
+                self.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
+                self.socket.on("monitor", function (data) {
+                    self.data = data;
+                    self.render();
+                });
+                //when close then clear data...
+                self.socket.on("disconnect", function () {
+                    console.log('close');
+                    self.clear();
+                });
+            }
+
         }
+    });
+};
 
-        if (!redrainChart.configLoad){
-            redrainChart.config = $.parseJSON(redrainChart.data.config);
-            redrainChart.configLoad = true;
-            redrainChart.configData();
-        }
+RedrainChart.prototype.clear = function () {
+    if (this.socket != null) {
+        this.socket.close();
+        this.socket = null;
+    }
+    this.data = [];
+    this.diskLoad = false;
+    this.cpuLoad = false;
+    this.configLoad = false;
+    this.config = [];
+    this.cpuChartObj = null;
+    this.cpuX = [];
+    this.cpuY = [];
+}
 
-        if (!redrainChart.cpuLoad) {
-            redrainChart.cpuLoad = true;
-            redrainChart.createItemCpu();
-            redrainChart.cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
-            var option = {};
-            redrainChart.cpuChartObj.setOption(option);
-        } else {
-            var opt = redrainChart.cpuChart(redrainChart.cpuX, redrainChart.cpuY);
-            redrainChart.cpuChartObj.setOption(opt);
-            redrainChart.gaugeOption.series[0].data[0].value = parseFloat(redrainChart.data.memUsage);
-            redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
-        }
-        redrainChart.topData();
-    },
-
-    diskChart: function () {
+RedrainChart.prototype.render = function () {
+    var self = this;
+    $(".loader").remove();
+    //解决子页面登录失联,不能跳到登录页面的bug
+    if (!self.diskLoad) {
+        self.diskLoad = true;
         $("#overview-chart").html("").css("height", "auto");
         $("#disk-view").html("");
         $("#disk-item").html("");
 
-        var diskArr = $.parseJSON(redrainChart.data.diskUsage);
+        var diskArr = $.parseJSON(self.data.diskUsage);
         var freeTotal, usedTotal;
 
         for (var i in diskArr) {
@@ -216,11 +279,13 @@ var redrainChart = {
                 ]
             }]
         });
-    },
+    }
 
-    configData:function () {
-        //config...
-        $.each( redrainChart.config, function (name, value) {
+    if (!self.configLoad) {
+        self.config = $.parseJSON(self.data.config);
+        self.configLoad = true;
+
+        $.each(self.config, function (name, value) {
             var css = {
                 "font-size": "15px",
                 "font-weight": "900",
@@ -245,12 +310,14 @@ var redrainChart = {
             }
         });
         $("#config-view").fadeIn(1000);
-    },
 
-    createItemCpu: function () {
+    }
+
+    if (!self.cpuLoad) {
+        self.cpuLoad = true;
         var overdata = [];
-        $.each(redrainChart.overviewDataArr, function (i, elem) {
-            $.each(redrainChart.data, function (name, obj) {
+        $.each(self.overviewDataArr, function (i, elem) {
+            $.each(self.data, function (name, obj) {
                 if (elem.key == name) {
                     if (name == "swap") {
                         overdata.push([elem.key, 100.00 - parseFloat(obj)]);
@@ -260,7 +327,7 @@ var redrainChart = {
 
                 }
             });
-            var _cpuData = $.parseJSON( redrainChart.data.cpuData );
+            var _cpuData = $.parseJSON(self.data.cpuData);
             for (var k in _cpuData) {
                 if (elem.key == k) {
                     overdata.push([k, parseFloat(_cpuData[k])]);
@@ -273,22 +340,22 @@ var redrainChart = {
             var val = obj[1];
             var title = "";
 
-            $.each(redrainChart.overviewDataArr, function (k, v) {
+            $.each(self.overviewDataArr, function (k, v) {
                 if (i == k) {
                     title = v.title;
                 }
             });
 
             if (i == 2) {
-                if (redrainChart.screen == 2) {
+                if (self.screen == 2) {
                     var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 } else {
                     var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 }
-                redrainChart.gauge = echarts.init(document.getElementById('gauge-cpu'));
-                redrainChart.gaugeOption = {
+                self.gauge = echarts.init(document.getElementById('gauge-cpu'));
+                self.gaugeOption = {
                     series: [
                         {
                             name: '内存使用率',
@@ -341,22 +408,22 @@ var redrainChart = {
                         }
                     ]
                 };
-                redrainChart.gaugeOption.series[0].data[0].value = parseFloat(val);
-                redrainChart.gauge.setOption(redrainChart.gaugeOption, true);
+                self.gaugeOption.series[0].data[0].value = parseFloat(val);
+                self.gauge.setOption(self.gaugeOption, true);
 
             } else {
                 var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\"></span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
                 html.easyPieChart({
                     easing: 'easeOutBounce',
-                    barColor: redrainChart.overviewDataArr[i].color,
+                    barColor: self.overviewDataArr[i].color,
                     trackColor: 'rgba(0,0,0,0.3)',
                     scaleColor: 'rgba(255,255,255,0.85)',
                     lineCap: 'square',
                     lineWidth: 4,
                     animate: 3000,
-                    size: redrainChart.screen == 3 ? ((i == 1 || i == 3) ? 90 : 80) : (redrainChart.screen == 1 ? 120 : 135),
+                    size: self.screen == 3 ? ((i == 1 || i == 3) ? 90 : 80) : (self.screen == 1 ? 120 : 135),
                     onStep: function (from, to, percent) {
-                        $(this.el).find('.percent').text(Math.round(percent));
+                        $(self.el).find('.percent').text(Math.round(percent));
                     }
                 });
                 html.data('easyPieChart').update(val);
@@ -366,14 +433,14 @@ var redrainChart = {
                 }
             }
         });
-
-    },
-
-    cpuChart: function (x, y) {
-        $.each(redrainChart.overviewDataArr, function (i, elem) {
+        self.cpuChartObj = echarts.init(document.getElementById('cpu-chart'));
+        var option = {};
+        self.cpuChartObj.setOption(option);
+    } else {
+        $.each(self.overviewDataArr, function (i, elem) {
             var overelem = $("#cpu_" + elem.key);
             if (overelem.length > 0) {
-                $.each(redrainChart.data, function (name, obj) {
+                $.each(self.data, function (name, obj) {
                     if (elem.key == name) {
                         if (name == "swap") {
                             overelem.data('easyPieChart').update(100.00 - parseFloat(obj));
@@ -382,7 +449,7 @@ var redrainChart = {
                         }
                     }
                 });
-                var _cpuData = $.parseJSON( redrainChart.data.cpuData );
+                var _cpuData = $.parseJSON(self.data.cpuData);
                 for (var k in _cpuData) {
                     if (elem.key == k) {
                         overelem.data('easyPieChart').update(parseFloat(_cpuData[k]));
@@ -392,19 +459,20 @@ var redrainChart = {
         });
 
         //添加新的
-        x.push(redrainChart.data.time);
-        y.push(parseFloat($.parseJSON( redrainChart.data.cpuData )["usage"]));
+        self.cpuX.push(self.data.time);
+        self.cpuY.push(parseFloat($.parseJSON(self.data.cpuData)["usage"]));
 
-        if (y.length == 60 * 10) {
-            x.shift();
-            y.shift();
+        if (self.cpuY.length == 60 * 10) {
+            self.cpuX.shift();
+            self.cpuY.shift();
         }
 
-        var max = parseInt(Math.max.apply({}, y)) + 1;
+        var max = parseInt(Math.max.apply({}, self.cpuY)) + 1;
         if (max > 100) {
             max = 100;
         }
-        return cpuOption = {
+
+        var opt = {
             tooltip: {
                 trigger: 'axis',
                 formatter: "监&nbsp;控&nbsp;时&nbsp;间&nbsp;&nbsp;: {b} <br />CPU使用率 : {c}%",
@@ -428,7 +496,7 @@ var redrainChart = {
                 show: false,
                 boundaryGap: false,
                 splitLine: {show: false},
-                data: x
+                data: self.cpuX
             },
             yAxis: {
                 type: 'value',
@@ -477,346 +545,243 @@ var redrainChart = {
                             }])
                         }
                     },
-                    data: y
+                    data: self.cpuY
                 }
             ]
         };
-    },
 
-    topData: function () {
-        //title
-        //@JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
-        var shtml = '<tr>' +
-            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-            '<td class="noborder" title="持续时长">TIME</td>' +
-            '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-            '</tr>';
+        self.cpuChartObj.setOption(opt);
+        self.gaugeOption.series[0].data[0].value = parseFloat(self.data.memUsage);
+        self.gauge.setOption(self.gaugeOption, true);
+    }
 
-        var mhtml = '<tr>' +
-            '<td class="noborder" title="进程ID">PID</td>' +
-            '<td class="noborder" title="进程所属的用户">USER</td>' +
-            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-            '<td class="noborder" title="持续时长">TIME</td>' +
-            '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-            '</tr>';
+    //topInfo...
+    //title
+    //@JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
+    var shtml = '<tr>' +
+        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+        '<td class="noborder" title="持续时长">TIME</td>' +
+        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+        '</tr>';
 
-        var lhtml = '<tr>' +
-            '<td class="noborder" title="进程ID">PID</td>' +
-            '<td class="noborder" title="进程所属的用户">USER</td>' +
-            '<td class="noborder" title="虚拟内存">VIRI</td>' +
-            '<td class="noborder" title="常驻内存">RES</td>' +
-            '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-            '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-            '<td class="noborder" title="持续时长">TIME</td>' +
-            '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-            '</tr>';
+    var mhtml = '<tr>' +
+        '<td class="noborder" title="进程ID">PID</td>' +
+        '<td class="noborder" title="进程所属的用户">USER</td>' +
+        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+        '<td class="noborder" title="持续时长">TIME</td>' +
+        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+        '</tr>';
 
-        $.each($.parseJSON( redrainChart.data.top ), function (i, data) {
-            var text = "<tr>";
-            var obj = $.parseJSON( data );
-            switch (redrainChart.screen) {
-                case 1:
-                    //小屏去掉pid,user,virt,res...
-                    for (var k in obj) {
-                        if ('pid' === k || 'user' === k || 'virt' === k || 'res' === k) {
-                            continue;
-                        }
-                        if ('cpu' === k || 'mem' === k) {
-                            text += ("<td>" + obj[k] + "%</td>");
-                        } else {
-                            text += ("<td>" + obj[k] + "</td>");
-                        }
-                    }
-                    break
-                case 2:
-                    //中屏去掉virt,res
-                    for (var k in obj) {
-                        if ('virt' === k || 'res' === k) {
-                            continue;
-                        }
-                        if ('cpu' === k || 'mem' === k) {
-                            text += ("<td>" + obj[k] + "%</td>");
-                        } else {
-                            text += ("<td>" + obj[k] + "</td>");
-                        }
-                    }
-                    break
-                case 3:
-                    //大屏,全部字段显示。。。
-                    for (var k in obj) {
-                        if ('cpu' === k || 'mem' === k) {
-                            var val = obj[k];
-                            var colorCss = "";
-                            if (val < 60) {
-                                colorCss = "progress-bar-success";
-                            } else if (val < 80) {
-                                colorCss = "progress-bar-warning";
-                            } else {
-                                colorCss = "progress-bar-danger";
-                            }
-                            var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">' +
-                                '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">' + val + '</span>%' +
-                                '</div>' +
-                                '<div class="progress progress-small progress-white">' +
-                                '<div class="progress-bar ' + colorCss + '" role="progressbar" data-percentage="' + val + '%" style="width:' + val + '%" aria-valuemin="0" aria-valuemax="100"></div>' +
-                                '</div></td>';
-                            text += cpu;
-                        } else {
-                            text += ("<td>" + obj[k] + "</td>");
-                        }
-                    }
-                    break;
-            }
-            text += '</tr>';
-            shtml += text;
-            mhtml += text;
-            lhtml += text;
-        });
+    var lhtml = '<tr>' +
+        '<td class="noborder" title="进程ID">PID</td>' +
+        '<td class="noborder" title="进程所属的用户">USER</td>' +
+        '<td class="noborder" title="虚拟内存">VIRI</td>' +
+        '<td class="noborder" title="常驻内存">RES</td>' +
+        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+        '<td class="noborder" title="持续时长">TIME</td>' +
+        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+        '</tr>';
 
-        switch (redrainChart.screen) {
+    $.each($.parseJSON(self.data.top), function (i, data) {
+        var text = "<tr>";
+        var obj = $.parseJSON(data);
+        switch (self.screen) {
             case 1:
-                $("#topbody").html(shtml);
-                break;
+                //小屏去掉pid,user,virt,res...
+                for (var k in obj) {
+                    if ('pid' === k || 'user' === k || 'virt' === k || 'res' === k) {
+                        continue;
+                    }
+                    if ('cpu' === k || 'mem' === k) {
+                        text += ("<td>" + obj[k] + "%</td>");
+                    } else {
+                        text += ("<td>" + obj[k] + "</td>");
+                    }
+                }
+                break
             case 2:
-                $("#topbody").html(mhtml);
+                //中屏去掉virt,res
+                for (var k in obj) {
+                    if ('virt' === k || 'res' === k) {
+                        continue;
+                    }
+                    if ('cpu' === k || 'mem' === k) {
+                        text += ("<td>" + obj[k] + "%</td>");
+                    } else {
+                        text += ("<td>" + obj[k] + "</td>");
+                    }
+                }
                 break
             case 3:
-                $("#topbody").html(lhtml);
-                break
-        }
-
-    },
-
-    resizeChart: function () {
-
-        if ($.isMobile()) {
-            $("#overview_pie_div").remove();
-            $("#report_detail").remove();
-            $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-12")
-        } else {
-            if( $( window).width() < 1024 ){
-                $("#overview_pie_div").removeClass("col-xs-3").removeClass("col-xs-4").hide();
-                $("#report_detail").removeClass("col-xs-2").hide();
-                $("#overview_report_div").removeClass("col-xs-7").removeClass("col-xs-8").addClass("col-xs-12")
-            }else if ( $(window).width() < 1280 ) {//1024 ~ 1280
-                $("#report_detail").removeClass("col-xs-2").hide();
-                $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-8");
-                $("#overview_pie_div").removeClass("col-xs-3").addClass("col-xs-4");
-            }else {//>1280
-                $("#overview_report_div").removeClass("col-xs-8").addClass("col-xs-7");
-                $("#overview_pie_div").removeClass("col-xs-4").addClass("col-xs-3");
-                $("#report_detail").addClass("col-xs-2").show();
-            }
-        }
-
-        //屏幕大于1024显示饼状图
-        if($(window).width()>=1024){
-            $("#overview_pie").html('');
-            $("#overview_pie_div").show();
-            $('#overview_pie').highcharts({
-                chart: {
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: true,
-                    options3d: {
-                        enabled: true,
-                        alpha: 20,
-                        beta: 0
+                //大屏,全部字段显示。。。
+                for (var k in obj) {
+                    if ('cpu' === k || 'mem' === k) {
+                        var val = obj[k];
+                        var colorCss = "";
+                        if (val < 60) {
+                            colorCss = "progress-bar-success";
+                        } else if (val < 80) {
+                            colorCss = "progress-bar-warning";
+                        } else {
+                            colorCss = "progress-bar-danger";
+                        }
+                        var cpu = '<td> <div class="status pull-right bg-transparent-black-1" style="margin-left: 5px;font-size: 10px;">' +
+                            '<span id="agent_number" class="animate-number" data-value="100.00" data-animation-duration="1500">' + val + '</span>%' +
+                            '</div>' +
+                            '<div class="progress progress-small progress-white">' +
+                            '<div class="progress-bar ' + colorCss + '" role="progressbar" data-percentage="' + val + '%" style="width:' + val + '%" aria-valuemin="0" aria-valuemax="100"></div>' +
+                            '</div></td>';
+                        text += cpu;
+                    } else {
+                        text += ("<td>" + obj[k] + "</td>");
                     }
-                },
-                colors: ['rgba(110,186,249,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
-                title: {text: ''},
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: false
-                        },
-                        showInLegend: true,
-                        depth: 25
-                    }
-                },
-                series: [{
-                    type: 'pie',
-                    name: '占比',
-
-                    data: [
-                        ['成功', redrainChart.resizeChartData.success],
-                        ['失败', redrainChart.resizeChartData.failure],
-                        ['被杀', redrainChart.resizeChartData.killed]
-                    ]
-
-                }]
-            });
-        }
-
-        //屏幕大于1280显示占比进度图
-        if ($(window).width() >= 1280){
-
-            var job_type = parseFloat(redrainChart.resizeChartData.auto / (redrainChart.resizeChartData.auto + redrainChart.resizeChartData.operator)) * 100;
-            if (isNaN(job_type)) {
-                $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
-            } else {
-                $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
-            }
-
-            var job_category = parseFloat(redrainChart.resizeChartData.singleton / (redrainChart.resizeChartData.singleton + redrainChart.resizeChartData.flow)) * 100;
-            if (isNaN(job_category)) {
-                $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
-            } else {
-                $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
-            }
-
-            var job_model = parseFloat(redrainChart.resizeChartData.crontab / (redrainChart.resizeChartData.crontab + redrainChart.resizeChartData.quartz)) * 100;
-            if (isNaN(job_model)) {
-                $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
-            } else {
-                $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
-            }
-
-            var job_rerun = parseFloat((redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed - redrainChart.resizeChartData.rerun) / (redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed)) * 100;
-            if (isNaN(job_rerun)) {
-                $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
-            } else {
-                $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
-            }
-
-            var job_status = parseFloat(redrainChart.resizeChartData.success / (redrainChart.resizeChartData.success + redrainChart.resizeChartData.failure + redrainChart.resizeChartData.killed)) * 100;
-            if (isNaN(job_status)) {
-                $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
-            } else {
-                $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
-            }
-        }
-
-        //线型报表
-        $("#overview_report_div").show();
-        $("#overview_report").html('');
-        Morris.Line({
-            element: 'overview_report',
-            data: redrainChart.resizeChartData.dataArea,
-            grid: true,
-            axes: true,
-            xkey: 'date',
-            ykeys: ['success', 'failure', 'killed'],
-            labels: ['成功', '失败', '被杀'],
-            lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
-            lineWidth: 4,
-            pointSize: 5,
-            hideHover: 'auto',
-            smooth: false,
-            resize: true
-        });
-    },
-
-    executeChart: function () {
-        $.ajax({
-            type:"POST",
-            url: redrainChart.path + "/diffchart",
-            data: {
-                "startTime": $("#startTime").val(),
-                "endTime": $("#endTime").val()
-            },
-            dataType: "json",
-            success: function (data) {
-                if (data != null) {
-                    $("#overview_loader").hide();
-                    $("#record-report-havedata").show();
-                    $("#record-report-nodata").hide();
-                    $("#timeopter").css({"background-color":"rgba(0,0,0,0.3)"});
-
-                    //折线图
-                    var dataArea = [];
-                    var successSum = 0;
-                    var failureSum = 0;
-                    var killedSum = 0;
-                    var singleton = 0;
-                    var flow = 0;
-                    var crontab = 0;
-                    var quartz = 0;
-                    var rerun = 0;
-                    var auto = 0;
-                    var operator = 0;
-
-                    for (var i in data) {
-                        dataArea.push({
-                            date: data[i].date,
-                            success: data[i].success,
-                            failure: data[i].failure,
-                            killed: data[i].killed
-                        });
-                        successSum += parseInt(data[i].success);
-                        failureSum += parseInt(data[i].failure);
-                        killedSum += parseInt(data[i].killed);
-                        singleton += parseInt(data[i].singleton);
-                        flow += parseInt(data[i].flow);
-                        crontab += parseInt(data[i].crontab);
-                        quartz += parseInt(data[i].quartz);
-                        rerun += parseInt(data[i].rerun);
-                        auto += parseInt(data[i].auto);
-                        operator += parseInt(data[i].operator);
-                    }
-
-                    redrainChart.resizeChartData = {
-                        "dataArea":dataArea,
-                        "success":successSum,
-                        "failure":failureSum,
-                        "killed":killedSum,
-                        "singleton":singleton,
-                        "flow":flow,
-                        "crontab":crontab,
-                        "quartz":quartz,
-                        "rerun":rerun,
-                        "auto":auto,
-                        "operator":operator
-                    };
-                    redrainChart.resizeChart();
-                }else {
-                    window.setTimeout(function () {
-                        $("#overview_loader").hide();
-                        $("#record-report-havedata").hide();
-                        $("#record-report-nodata").show();
-                        $("#timeopter").css({"background-color":""});
-                    }, 750);
                 }
-            }
+                break;
+        }
+        text += '</tr>';
+        shtml += text;
+        mhtml += text;
+        lhtml += text;
+    });
+
+    switch (self.screen) {
+        case 1:
+            $("#topbody").html(shtml);
+            break;
+        case 2:
+            $("#topbody").html(mhtml);
+            break
+        case 3:
+            $("#topbody").html(lhtml);
+            break
+    }
+};
+
+RedrainChart.prototype.resize = function () {
+    if ($.isMobile()) {
+        $("#overview_pie_div").remove();
+        $("#report_detail").remove();
+        $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-12")
+    } else {
+        if ($(window).width() < 1024) {
+            $("#overview_pie_div").removeClass("col-xs-3").removeClass("col-xs-4").hide();
+            $("#report_detail").removeClass("col-xs-2").hide();
+            $("#overview_report_div").removeClass("col-xs-7").removeClass("col-xs-8").addClass("col-xs-12")
+        } else if ($(window).width() < 1280) {//1024 ~ 1280
+            $("#report_detail").removeClass("col-xs-2").hide();
+            $("#overview_report_div").removeClass("col-xs-7").addClass("col-xs-8");
+            $("#overview_pie_div").removeClass("col-xs-3").addClass("col-xs-4");
+        } else {//>1280
+            $("#overview_report_div").removeClass("col-xs-8").addClass("col-xs-7");
+            $("#overview_pie_div").removeClass("col-xs-4").addClass("col-xs-3");
+            $("#report_detail").addClass("col-xs-2").show();
+        }
+    }
+
+    //屏幕大于1024显示饼状图
+    if ($(window).width() >= 1024) {
+        $("#overview_pie").html('');
+        $("#overview_pie_div").show();
+        $('#overview_pie').highcharts({
+            chart: {
+                backgroundColor: 'rgba(0,0,0,0)',
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: true,
+                options3d: {
+                    enabled: true,
+                    alpha: 20,
+                    beta: 0
+                }
+            },
+            colors: ['rgba(110,186,249,0.45)', 'rgba(252,80,76,0.45)', 'rgba(222,222,222,0.45)'],
+            title: {text: ''},
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true,
+                    depth: 25
+                }
+            },
+            series: [{
+                type: 'pie',
+                name: '占比',
+
+                data: [
+                    ['成功', this.resizeChartData.success],
+                    ['失败', this.resizeChartData.failure],
+                    ['被杀', this.resizeChartData.killed]
+                ]
+
+            }]
         });
     }
-}
 
-$(document).ready(function () {
-    var homejs = document.getElementById('homejs').src;
-    redrainChart.path = homejs.substr(homejs.indexOf("?") + 1);
+    //屏幕大于1280显示占比进度图
+    if ($(window).width() >= 1280) {
 
-    var width = window.screen.width;
-    //iphone6以下屏幕大小
-    if (width < 375) {
-        redrainChart.screen = 1;
-    } else if (width >= 375 && width < 1280) {
-        redrainChart.screen = 2;
-    } else {
-        redrainChart.screen = 3;
-    }
-    redrainChart.monitorData();
-    redrainChart.executeChart();
-
-    $("#agentId").change(
-        function () {
-            //清理上一个轮询...
-            if ( redrainChart.intervalId!=null ) {
-                window.clearInterval( redrainChart.intervalId );
-                redrainChart.intervalId = null;
-                redrainChart.clearData();
-            }
-            redrainChart.monitorData();
+        var job_type = parseFloat(this.resizeChartData.auto / (this.resizeChartData.auto + this.resizeChartData.operator)) * 100;
+        if (isNaN(job_type)) {
+            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+        } else {
+            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
         }
-    );
-});
 
+        var job_category = parseFloat(this.resizeChartData.singleton / (this.resizeChartData.singleton + this.resizeChartData.flow)) * 100;
+        if (isNaN(job_category)) {
+            $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
+        } else {
+            $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
+        }
+
+        var job_model = parseFloat(this.resizeChartData.crontab / (this.resizeChartData.crontab + this.resizeChartData.quartz)) * 100;
+        if (isNaN(job_model)) {
+            $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
+        } else {
+            $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
+        }
+
+        var job_rerun = parseFloat((this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed - this.resizeChartData.rerun) / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100;
+        if (isNaN(job_rerun)) {
+            $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
+        } else {
+            $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
+        }
+
+        var job_status = parseFloat(this.resizeChartData.success / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100;
+        if (isNaN(job_status)) {
+            $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
+        } else {
+            $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
+        }
+    }
+
+    //线型报表
+    $("#overview_report_div").show();
+    $("#overview_report").html('');
+    Morris.Line({
+        element: 'overview_report',
+        data: this.resizeChartData.dataArea,
+        grid: true,
+        axes: true,
+        xkey: 'date',
+        ykeys: ['success', 'failure', 'killed'],
+        labels: ['成功', '失败', '被杀'],
+        lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
+        lineWidth: 4,
+        pointSize: 5,
+        hideHover: 'auto',
+        smooth: false,
+        resize: true
+    });
+}
