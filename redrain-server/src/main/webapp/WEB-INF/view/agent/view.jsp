@@ -17,6 +17,10 @@
 
     <script type="text/javascript" src="${contextPath}/js/socket/socket.io.js"></script>
 
+    <script type="text/javascript" src="${contextPath}/js/term.js"></script>
+
+    <script type="text/javascript" src="${contextPath}/js/ws.js"></script>
+
     <script type="text/javascript">
 
     function showContact(){$(".contact").show()}
@@ -539,11 +543,8 @@
                         }
                     });
 
-                    socket.on("console",function(data, ackServerCallback) {
-                        alert(data);
-                        if (ackServerCallback) {
-                            ackServerCallback();
-                        }
+                    socket.on("success",function(data, ackServerCallback) {
+                        openTerminal();
                     });
 
                     socket.on("disconnect",function () {
@@ -581,6 +582,43 @@
                 }
             }
         });
+    }
+
+    function openTerminal() {
+        var options = {
+            host: $("#sship").val(),
+            port: $("#sshport").val(),
+            username: $("#sshuser").val(),
+            password: $("#sshpwd").val()
+        }
+
+        var client = new WSSHClient();
+        var term = new Terminal({cols: 80, rows: 24, screenKeys: true, useStyle:true});
+        term.on('data', function (data) {
+            client.sendClientData(data);
+        });
+        term.open();
+        $('.terminal').detach().appendTo('#term');
+        term.write('Connecting...');
+        client.connect({
+            onError: function (error) {
+                term.write('Error: ' + error + '\r\n');
+                console.debug('error happened');
+            },
+            onConnect: function () {
+                client.sendInitData(options);
+                client.sendClientData('\r');
+                console.debug('connection established');
+            },
+            onClose: function () {
+                term.write("\rconnection closed")
+                console.debug('connection reset by peer');
+            },
+            onData: function (data) {
+                term.write(data);
+                console.debug('get data:' + data);
+            }
+        })
     }
 
 </script>
@@ -627,7 +665,7 @@
             </c:if>
         </div>
 
-        <table class="table tile">
+        <table class="table tile textured">
             <thead>
             <tr>
                 <th>执行器</th>
@@ -817,6 +855,7 @@
         </div>
     </div>
 
+    <div id="term" align="center"></div>
 
     <!-- 修改密码弹窗 -->
     <div class="modal fade" id="sshModal" tabindex="-1" role="dialog" aria-hidden="true">

@@ -674,7 +674,7 @@
             </div>
         </div>
 
-        <table class="table tile" style="font-size: 13px;">
+        <table class="table tile textured" style="font-size: 13px;">
             <thead>
             <tr>
                 <th >名称</th>

@@ -76,7 +76,7 @@
         </div>
 
 
-        <table class="table tile">
+        <table class="table tile textured">
             <thead>
             <tr>
                 <th>发送方式</th>

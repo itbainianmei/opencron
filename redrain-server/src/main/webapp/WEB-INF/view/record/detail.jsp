@@ -35,7 +35,7 @@
     <div class="block-area" id="defaultStyle">
         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="float: right;margin-bottom: 8px;"><i class="icon">&#61740;</i>&nbsp;返回</button>
 
-        <table class="table tile">
+        <table class="table tile textured">
             <tbody id="tableContent">
             <tr>
                 <td><i class="glyphicon glyphicon-tasks"></i>&nbsp;任务名称</td>

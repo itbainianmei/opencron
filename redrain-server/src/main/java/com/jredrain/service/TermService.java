@@ -145,7 +145,7 @@ public class TermService {
                     try {
                         jschSession.connect();
                         //登录成功,进入console
-                        client.sendEvent("console", new VoidAckCallback() {
+                        client.sendEvent("success", new VoidAckCallback() {
                             @Override
                             protected void onSuccess() {
                                 System.out.println("ack from client: " + client.getSessionId());

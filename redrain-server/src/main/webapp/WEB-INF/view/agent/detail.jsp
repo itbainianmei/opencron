@@ -36,7 +36,7 @@
     <div class="block-area" id="defaultStyle">
         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="float: right;margin-bottom: 8px;"><i class="icon">&#61740;</i>&nbsp;返回</button>
 
-        <table class="table tile">
+        <table class="table tile textured">
             <tbody id="tableContent">
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-leaf"></i>&nbsp;执行器名：</td>

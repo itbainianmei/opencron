@@ -371,7 +371,7 @@
                 </div>
             </div>
 
-            <div id="record-report-havedata">
+            <div id="record-report-havedata" >
                 <div class="col-xs-7" id="overview_report_div" style="background-color: rgba(0,0,0,0.3);display: none">
                    <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
                </div>
@@ -447,7 +447,7 @@
         <div class="row">
             <div class="col-md-8">
                 <!-- overview -->
-                <div class="tile" style="background: none">
+                <div class="tile " style="background: none">
                     <h2 class="tile-title" style="background:rgba(0,0,0,0.40);border-top-left-radius:2px;border-top-right-radius:2px;"><i aria-hidden="true" class="fa fa-area-chart"></i>&nbsp;系统概况</h2>
                     <div class="tile-config dropdown" style="float: right;">
                         <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;"ps  id="agentId">
@@ -489,7 +489,7 @@
                     </div>
                 </div>
 
-                <div class="tile" id="top" style="min-height: 250px">
+                <div class="tile textured" id="top" style="min-height: 250px">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;进程监控</h2>
                     <div class="div-havedata" style="margin-left: 15px;margin-right: 15px;">
                         <table class="table tile table-custom table-sortable " style="font-size: 13px;background-color: rgba(0,0,0,0);">

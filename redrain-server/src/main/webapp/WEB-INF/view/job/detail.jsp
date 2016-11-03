@@ -40,7 +40,7 @@
 
     <div class="block-area" id="defaultStyle">
 
-        <table class="table tile">
+        <table class="table tile textured">
             <tbody id="tableContent">
             <tr>
                 <td class="item"><i class="glyphicon glyphicon-tasks"></i>&nbsp;作业名称：</td>

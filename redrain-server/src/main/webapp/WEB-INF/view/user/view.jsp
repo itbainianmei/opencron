@@ -176,7 +176,7 @@
             <a href="${contextPath}/user/addpage" class="btn btn-sm m-t-10" style="margin-left: 50px;margin-bottom: 8px"><i class="icon">&#61943;</i>添加</a>
         </div>
 
-        <table class="table tile">
+        <table class="table tile textured">
             <thead>
             <tr>
                 <th>用户名</th>
