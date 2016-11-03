@@ -22,7 +22,6 @@
 
 package com.jredrain.service;
 
-import com.jredrain.common.exception.ServiceException;
 import com.jredrain.dao.QueryDao;
 import com.jredrain.common.job.RedRain;
 import com.jredrain.domain.User;
@@ -155,34 +154,6 @@ public class RecordService {
         return queryDao.sqlQuery(Record.class, sql);
     }
 
-    public ChartVo getExecTypePieData(HttpSession session) {
-        String sql;
-        if (!Globals.isPermission(session)) {
-            sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM " +
-                    "(SELECT COUNT(1) count FROM record WHERE execType = 0 AND operateId = ? AND agentId in ? )a," +
-                    "(SELECT COUNT(1) count FROM record WHERE execType = 1 AND operateId = ? AND agentId in ? )b," +
-                    "(SELECT COUNT(1) count FROM record WHERE execType IN (2,3) AND operateId = ? AND agentId in ? )c ";
-            return this.getDataBySession(sql,session);
-        }else {
-            sql = "SELECT a.count AS crontab,b.count AS operator,c.count AS rerun FROM (SELECT COUNT(1) count FROM record WHERE execType = 0)a,(SELECT COUNT(1) count FROM record WHERE execType = 1)b,(SELECT COUNT(1) count FROM record WHERE execType IN (2,3))c ";
-            return queryDao.sqlUniqueQuery(ChartVo.class, sql);
-        }
-    }
-
-    public ChartVo getStatusDonutData(HttpSession session) {
-        String sql;
-        if (!Globals.isPermission(session)) {
-            sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM " +
-                    "(SELECT COUNT(1) count FROM record WHERE success = 1 AND operateId = ?  AND agentId in ? )a," +
-                    "(SELECT COUNT(1) count FROM record WHERE success = 0 AND operateId = ?  AND agentId in ? )b," +
-                    "(SELECT COUNT(1) count FROM record WHERE success = 2 AND operateId = ?  AND agentId in ? )c ";
-            return this.getDataBySession(sql,session);
-        }else {
-            sql = "SELECT a.count AS success,b.count AS failure,c.count AS killed FROM (SELECT COUNT(1) count FROM record WHERE success = 1)a,(SELECT COUNT(1) count FROM record WHERE success = 0)b,(SELECT COUNT(1) count FROM record WHERE success = 2)c ";
-            return queryDao.sqlUniqueQuery(ChartVo.class, sql);
-        }
-    }
-
     private ChartVo getDataBySession(String sql,HttpSession session){
         User user = userService.getUserBySession(session);
         Long operateId = user.getUserId();
@@ -194,7 +165,7 @@ public class RecordService {
         return queryDao.getCountBySql("SELECT COUNT(1) FROM record r LEFT JOIN job t ON r.jobId = t.jobId  WHERE (r.jobId = ? OR t.flowId = ?) AND r.status in (0,2,4) ", id, id) > 0L;
     }
 
-    public List<ChartVo> getDiffData(String startTime, String endTime, HttpSession session) {
+    public List<ChartVo> getRecord(String startTime, String endTime, HttpSession session) {
         String sql = "SELECT DATE_FORMAT(r.startTime,'%Y-%m-%d') AS date, " +
                 " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
                 " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +

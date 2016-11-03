@@ -38,7 +38,7 @@ RedrainChart.prototype.query = function () {
     var self = this;
     $.ajax({
         type: "POST",
-        url: self.path + "/diffchart",
+        url: self.path + "/record",
         data: {
             "startTime": $("#startTime").val(),
             "endTime": $("#endTime").val()
@@ -150,7 +150,7 @@ RedrainChart.prototype.monitor = function () {
             }
             //remobe loader...
             $(".loader").remove();
-            var connType = dataResult.substring(0, 1);
+            var connType = dataResult.toString().charAt(0);
             var data = dataResult.substring(2);
             //代理
             if (connType == 1) {
@@ -556,35 +556,7 @@ RedrainChart.prototype.render = function () {
     }
 
     //topInfo...
-    //title
     //@JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
-    var shtml = '<tr>' +
-        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-        '<td class="noborder" title="持续时长">TIME</td>' +
-        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-        '</tr>';
-
-    var mhtml = '<tr>' +
-        '<td class="noborder" title="进程ID">PID</td>' +
-        '<td class="noborder" title="进程所属的用户">USER</td>' +
-        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-        '<td class="noborder" title="持续时长">TIME</td>' +
-        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-        '</tr>';
-
-    var lhtml = '<tr>' +
-        '<td class="noborder" title="进程ID">PID</td>' +
-        '<td class="noborder" title="进程所属的用户">USER</td>' +
-        '<td class="noborder" title="虚拟内存">VIRI</td>' +
-        '<td class="noborder" title="常驻内存">RES</td>' +
-        '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-        '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-        '<td class="noborder" title="持续时长">TIME</td>' +
-        '<td class="noborder" title="所执行的命令">COMMAND</td>' +
-        '</tr>';
-
     $.each($.parseJSON(self.data.top), function (i, data) {
         var text = "<tr>";
         var obj = $.parseJSON(data);
@@ -642,20 +614,41 @@ RedrainChart.prototype.render = function () {
                 break;
         }
         text += '</tr>';
-        shtml += text;
-        mhtml += text;
-        lhtml += text;
     });
 
     switch (self.screen) {
         case 1:
-            $("#topbody").html(shtml);
+            var shtml = '<tr>' +
+                '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" title="持续时长">TIME</td>' +
+                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '</tr>';
+            $("#topbody").html(shtml+text);
             break;
         case 2:
-            $("#topbody").html(mhtml);
+            var mhtml = '<tr>' +
+                '<td class="noborder" title="进程ID">PID</td>' +
+                '<td class="noborder" title="进程所属的用户">USER</td>' +
+                '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" title="持续时长">TIME</td>' +
+                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '</tr>';
+            $("#topbody").html(mhtml+text);
             break
         case 3:
-            $("#topbody").html(lhtml);
+            var lhtml = '<tr>' +
+                '<td class="noborder" title="进程ID">PID</td>' +
+                '<td class="noborder" title="进程所属的用户">USER</td>' +
+                '<td class="noborder" title="虚拟内存">VIRI</td>' +
+                '<td class="noborder" title="常驻内存">RES</td>' +
+                '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
+                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" title="持续时长">TIME</td>' +
+                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '</tr>';
+            $("#topbody").html(lhtml+text);
             break
     }
 };

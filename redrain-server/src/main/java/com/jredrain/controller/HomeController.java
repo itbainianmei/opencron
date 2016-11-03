@@ -25,7 +25,6 @@ import com.alibaba.fastjson.JSON;
 import com.jredrain.common.utils.*;
 import com.jredrain.domain.User;
 import com.jredrain.job.Globals;
-import net.sf.json.JSONObject;
 import com.jredrain.common.job.RedRain;
 import com.jredrain.common.job.Response;
 import com.jredrain.domain.Job;
@@ -74,9 +73,6 @@ public class HomeController {
 
     @Autowired
     private ExecuteService executeService;
-
-    @Autowired
-    private MonitorService monitorService;
 
     @Autowired
     private JobService jobService;
@@ -137,20 +133,8 @@ public class HomeController {
         return "/home/index";
     }
 
-    @RequestMapping("/darwchart")
-    public void refreshChart(HttpServletResponse response, HttpSession session) {
-        JsonMapper jsonMapper = new JsonMapper();
-        JSONObject json = new JSONObject();
-        //执行类型占比数据
-        json.put("execType", jsonMapper.toJson(recordService.getExecTypePieData(session)));
-        //成功失败占比数据
-        json.put("status", jsonMapper.toJson(recordService.getStatusDonutData(session)));
-
-        WebUtils.writeJson(response, json.toString());
-    }
-
-    @RequestMapping("/diffchart")
-    public void diffChart(HttpServletResponse response,HttpSession session, String startTime, String endTime) {
+    @RequestMapping("/record")
+    public void record(HttpServletResponse response,HttpSession session, String startTime, String endTime) {
         if (isEmpty(startTime)) {
             startTime = DateUtils.getCurrDayPrevDay(7);
         }
@@ -159,7 +143,7 @@ public class HomeController {
         }
         //成功失败折线图数据
         JsonMapper jsonMapper = new JsonMapper();
-        List<ChartVo> voList = recordService.getDiffData(startTime, endTime, session);
+        List<ChartVo> voList = recordService.getRecord(startTime, endTime, session);
         if (isEmpty(voList)) {
             WebUtils.writeJson(response, "null");
         }else {
@@ -183,24 +167,6 @@ public class HomeController {
             WebUtils.writeHtml(response, String.format(format,agent.getProxy(), url));
         } else {//代理
             WebUtils.writeHtml(response, String.format(format,agent.getProxy(),JSON.toJSONString(req.getResult())) );
-        }
-    }
-
-   /* @RequestMapping("/monitor")
-    public void monitor(HttpServletResponse response, Long agentId) throws Exception {
-        Agent agent = agentService.getAgent(agentId);
-        Map<String, String> data = executeService.monitor(agent);
-        JsonMapper jsonMapper = new JsonMapper();
-        PageIOUtils.writeJson(response, jsonMapper.toJson(data));
-    }*/
-
-    @RequestMapping("/cpuchart")
-    public void cpuChart(HttpServletResponse response, Model model, Long agentId) throws Exception {
-        //CPU图表数据
-        if (notEmpty(agentId)) {
-            model.addAttribute("agentId", agentId);
-            JsonMapper jsonMapper = new JsonMapper();
-            WebUtils.writeJson(response, jsonMapper.toJson(monitorService.getCpuData(agentId)));
         }
     }
 
