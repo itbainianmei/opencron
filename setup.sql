@@ -104,20 +104,6 @@ CREATE TABLE `log` (
   `isread` int(10) NOT NULL COMMENT '消息是否已读取,0:未读,1:已读(只针对站内信)'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-
-DROP TABLE IF EXISTS `monitor`;
-CREATE TABLE `monitor` (
-  `monitorId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `agentId` int(10) DEFAULT NULL,
-  `cpuUs` float(10,2) DEFAULT NULL,
-  `cpuSy` float(10,2) DEFAULT NULL,
-  `cpuId` float(10,2) DEFAULT NULL,
-  `memUsed` bigint(10) DEFAULT NULL,
-  `memFree` bigint(10) DEFAULT NULL,
-  `monitTime` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
-
-
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
   `roleId` int(10) NOT NULL PRIMARY KEY COMMENT '角色ID',
