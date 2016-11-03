@@ -557,8 +557,8 @@ RedrainChart.prototype.render = function () {
 
     //topInfo...
     //@JSONType(orders={"pid","user","virt","res","cpu","mem","time","command"})
+    var text = "<tr>";
     $.each($.parseJSON(self.data.top), function (i, data) {
-        var text = "<tr>";
         var obj = $.parseJSON(data);
         switch (self.screen) {
             case 1:
