@@ -49,7 +49,6 @@ RedrainChart.prototype.query = function () {
                 $("#overview_loader").hide();
                 $("#record-report-havedata").show();
                 $("#record-report-nodata").hide();
-                $("#timeopter").css({"background-color": "rgba(0,0,0,0.3)"});
 
                 //折线图
                 var dataArea = [];
@@ -102,7 +101,6 @@ RedrainChart.prototype.query = function () {
                     $("#overview_loader").hide();
                     $("#record-report-havedata").hide();
                     $("#record-report-nodata").show();
-                    $("#timeopter").css({"background-color": ""});
                 }, 750);
             }
         }

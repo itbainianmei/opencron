@@ -171,5 +171,9 @@ dd .uploadify span{color:#fff; text-align: center; }
 }
 
 .textured {
-    background: rgba(0, 0, 0, 0.3) url(/img/dot_pattern.png) repeat;
+    background: rgba(0, 0, 0, 0.35) url(/img/dot_pattern.png) repeat;
+}
+
+.block-color{
+    background-color: rgba(0,0,0,0.3);
 }
