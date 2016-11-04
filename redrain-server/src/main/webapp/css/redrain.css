@@ -171,11 +171,11 @@ dd .uploadify span{color:#fff; text-align: center; }
 }
 
 .textured {
-    background: rgba(0, 0, 0, 0.35) url(/img/dot_pattern.png) repeat;
+    background: rgba(0, 0, 0, 0.30) url(/img/dot_pattern.png) repeat;
 }
 
 .textured2 {
-    background: rgba(0, 0, 0, 0) url(/img/dot_pattern.png) repeat;
+    background: rgba(0, 0, 0, 0.15) url(/img/dot_pattern.png) repeat;
 }
 
 .block-color{

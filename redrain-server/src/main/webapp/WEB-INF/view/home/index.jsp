@@ -568,7 +568,7 @@
             <!--config-->
             <div class="col-md-4" id="info">
 
-                <div class="tile">
+                <div class="tile textured">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-pie-chart"></i>&nbsp;机器信息</h2>
                     <div class="loader">
                         <div class="loader-inner">
