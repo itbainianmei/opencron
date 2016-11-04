@@ -769,6 +769,7 @@ RedrainChart.prototype.resize = function () {
         ykeys: ['success', 'failure', 'killed'],
         labels: ['成功', '失败', '被杀'],
         lineColors: ['rgba(205,224,255,0.5)', 'rgba(237,26,26,0.5)', 'rgba(0,0,0,0.5)'],
+        gridTextColor:'rgba(225,225,225,0.8)',
         lineWidth: 4,
         pointSize: 5,
         hideHover: 'auto',
