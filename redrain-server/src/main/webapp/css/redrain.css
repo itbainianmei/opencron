@@ -174,6 +174,10 @@ dd .uploadify span{color:#fff; text-align: center; }
     background: rgba(0, 0, 0, 0.35) url(/img/dot_pattern.png) repeat;
 }
 
+.textured2 {
+    background: rgba(0, 0, 0, 0) url(/img/dot_pattern.png) repeat;
+}
+
 .block-color{
     background-color: rgba(0,0,0,0.3);
 }

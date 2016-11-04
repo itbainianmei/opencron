@@ -355,87 +355,88 @@
     </div>
 
     <div class="block-area col-xs-12" id="record-report" style="margin-bottom: 15px;">
-        <div class="textured block-color col-xs-12" style="position:relative;border-radius: 2px;border-bottom-left-radius:0px;border-bottom-right-radius: 0px;margin-bottom:0px;">
-            <div class="tile-title" >
-                <i aria-hidden="true" class="fa fa-bar-chart"></i>&nbsp;执行报告
+        <div class="textured2 col-xs-12" style="padding: 0;">
+            <div class="block-color col-xs-12" style="position:relative;border-radius: 2px;border-bottom-left-radius:0px;border-bottom-right-radius: 0px;margin-bottom:0px;">
+                <div class="tile-title" >
+                    <i aria-hidden="true" class="fa fa-bar-chart"></i>&nbsp;执行报告
+                </div>
+                <div id="timeopter">
+                    <div style="float: right;margin-bottom: 0px;margin-top: -10px;margin-right:10px;">
+                        <label for="startTime" class="label-self">时间&nbsp;: </label>
+                        <input type="text" style="border-radius: 2px;width: 90px" id="startTime" name="startTime" value="${startTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>
+                        <label for="endTime" class="label-self">&nbsp;至&nbsp;</label>
+                        <input type="text" style="border-radius: 2px;width: 90px" id="endTime" name="endTime" value="${endTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>&nbsp;
+                        <button id="queryChart" class="btn btn-default btn-sm" style="vertical-align:top;height: 25px;" type="button"><i class="glyphicon glyphicon-search"></i>查询</button>
+                    </div>
+                </div>
             </div>
-            <div id="timeopter">
-                <div style="float: right;margin-bottom: 0px;margin-top: -10px;margin-right:10px;">
-                    <label for="startTime" class="label-self">时间&nbsp;: </label>
-                    <input type="text" style="border-radius: 2px;width: 90px" id="startTime" name="startTime" value="${startTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>
-                    <label for="endTime" class="label-self">&nbsp;至&nbsp;</label>
-                    <input type="text" style="border-radius: 2px;width: 90px" id="endTime" name="endTime" value="${endTime}" onfocus="WdatePicker({onpicked:function(){},dateFmt:'yyyy-MM-dd'})" class="Wdate select-self"/>&nbsp;
-                    <button id="queryChart" class="btn btn-default btn-sm" style="vertical-align:top;height: 25px;" type="button"><i class="glyphicon glyphicon-search"></i>查询</button>
+
+            <div id="record-report-havedata">
+                <div class="col-xs-7 block-color" id="overview_report_div" style="display: none">
+                   <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
+               </div>
+                <div id="report_detail" class="col-xs-2 block-color" style="height: 300px;padding-top:15px;display: none">
+                   <h5 class="subtitle mb5" style="font-size: 20px;">报告明细</h5>
+                   <div class="clearfix"></div>
+
+                   <span class="sublabel">运行模式(自动/手动)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-primary" role="progressbar" id="job_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+
+                   <span class="sublabel">作业类型(单一/流程）</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+
+                   <span class="sublabel">规则类型(crontab/quartz)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-danger" role="progressbar"  id="job_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+
+                   <span class="sublabel">重跑状态 (非重跑/重跑)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+
+                   <span class="sublabel">执行状态(成功/失败)</span>
+                   <div class="progress progress-sm report_detail">
+                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                   </div><!-- progress -->
+               </div>
+                <div class="col-xs-3 block-color" id="overview_pie_div" style="display: none">
+                     <div id="overview_pie" class="main-chart" style="height: 300px;" ></div>
+                </div>
+                <div class="col-xs-12 block-color" id="overview_loader" style="height: 300px;">
+                     <div class="loader">
+                         <div class="loader-inner">
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                             <div class="loader-line-wrap">
+                                 <div class="loader-line"></div>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+
+            <div id="record-report-nodata" class="text-center record-div-nodata col-xs-12 block-color" style="height: 300px;margin-bottom: 0px">
+                <div  style="font-size: 110px;margin-top: 60px" class="eye-record-nodata">
+                    <i  class="glyphicon glyphicon-eye-close"></i>
+                    <span style="font-size: 40px;">无数据</span>
                 </div>
             </div>
         </div>
-
-        <div id="record-report-havedata" >
-            <div class="col-xs-7 textured block-color" id="overview_report_div" style="display: none">
-               <div id="overview_report" style="height: 300px;" class="main-chart" ></div>
-           </div>
-            <div id="report_detail" class="col-xs-2 textured block-color" style="height: 300px;padding-top:15px;display: none">
-               <h5 class="subtitle mb5" style="font-size: 20px;">报告明细</h5>
-               <div class="clearfix"></div>
-
-               <span class="sublabel">运行模式(自动/手动)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-primary" role="progressbar" id="job_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-
-               <span class="sublabel">作业类型(单一/流程）</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-success" role="progressbar" id="job_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-
-               <span class="sublabel">规则类型(crontab/quartz)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-danger" role="progressbar"  id="job_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-
-               <span class="sublabel">重跑状态 (非重跑/重跑)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-
-               <span class="sublabel">执行状态(成功/失败)</span>
-               <div class="progress progress-sm report_detail">
-                   <div class="progress-bar progress-bar-success" role="progressbar" id="job_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-               </div><!-- progress -->
-           </div>
-            <div class="col-xs-3 textured block-color" id="overview_pie_div" style="display: none">
-                 <div id="overview_pie" class="main-chart" style="height: 300px;" ></div>
-            </div>
-            <div class="col-xs-12 textured block-color" id="overview_loader" style="height: 300px;">
-                 <div class="loader">
-                     <div class="loader-inner">
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                         <div class="loader-line-wrap">
-                             <div class="loader-line"></div>
-                         </div>
-                     </div>
-                 </div>
-            </div>
-        </div>
-
-        <div id="record-report-nodata" class="text-center record-div-nodata textured">
-            <div  style="font-size: 110px;margin-top: 90px;" class="eye-record-nodata">
-                <i  class="glyphicon glyphicon-eye-close"></i>
-                <span style="font-size: 40px;">无数据</span>
-            </div>
-        </div>
-
     </div>
 
     <h4 class="page-title" ><i class="icon">&#61881;</i> &nbsp;监控概况</h4>
