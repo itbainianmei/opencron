@@ -61,7 +61,7 @@ kernel=$(uname -r);
 machine=$(uname -m);
 
 #top
-top=$(echo "P"|top -b -n 1|awk 'FNR>6'|head -10|sed -r 's/\s+/ /g');
+top=$(echo "P"|top -b -n 1|awk 'FNR>6'|head -12|sed -r 's/\s+/ /g');
 
 #get cpudata and trim...
 cpucount=$(cat /proc/cpuinfo | grep name | wc -l);
