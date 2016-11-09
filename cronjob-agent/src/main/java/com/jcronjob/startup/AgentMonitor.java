@@ -154,7 +154,7 @@ public class AgentMonitor {
         boolean isFirst = true;
         while (scan.hasNextLine()) {
             String text = scan.nextLine().trim();
-            String data[] = text.split("\\|");
+            String data[] = text.split("\\s+");
             if (isFirst) {
                 for (int i = 0; i < data.length; i++) {
                     for (Field f : fields) {
