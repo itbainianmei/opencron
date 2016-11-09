@@ -158,7 +158,7 @@ public class AgentMonitor {
             if (isFirst) {
                 for (int i = 0; i < data.length; i++) {
                     for (Field f : fields) {
-                        if (f.getName().equalsIgnoreCase(data[i])) {
+                        if (f.getName().equalsIgnoreCase(data[i].replaceAll("%|\\+",""))) {
                             index.put(i, f.getName());
                         }
                     }
