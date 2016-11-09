@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS redrain;
+CREATE DATABASE IF NOT EXISTS cronjob;
 
-USE redrain;
+USE cronjob;
 
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
@@ -151,6 +151,6 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 INSERT INTO `user`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
-VALUES (999,'redrain','f50bd9d20b9e772a137590bfef5bc8d0c9b602be','ece2bae9d384582b','jredrain','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
+VALUES (999,'cronjob','f50bd9d20b9e772a137590bfef5bc8d0c9b602be','ece2bae9d384582b','jcronjob','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
 UNLOCK TABLES;
 

@@ -5,20 +5,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.redrain</groupId>
-    <artifactId>redrain</artifactId>
+    <groupId>org.cronjob</groupId>
+    <artifactId>cronjob</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>redrain-common</module>
-        <module>redrain-server</module>
-        <module>redrain-agent</module>
+        <module>cronjob-common</module>
+        <module>cronjob-server</module>
+        <module>cronjob-agent</module>
     </modules>
     <packaging>pom</packaging>
 
     <scm>
-        <url>scm:git:git@github.com:wolfboys/redrain.git</url>
-        <connection>scm:git:git@github.com:wolfboys/redrain.git</connection>
-        <developerConnection>scm:git:git@github.com:wolfboys/redrain.git</developerConnection>
+        <url>scm:git:git@github.com:wolfboys/cronjob.git</url>
+        <connection>scm:git:git@github.com:wolfboys/cronjob.git</connection>
+        <developerConnection>scm:git:git@github.com:wolfboys/cronjob.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -26,16 +26,16 @@
         <license>
             <name>Apache v2</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>redrain</distribution>
+            <distribution>cronjob</distribution>
         </license>
     </licenses>
 
     <developers>
         <developer>
-            <id>redrain</id>
+            <id>cronjob</id>
             <name>benjobs</name>
             <email>benjobs@qq.com</email>
-            <url>http://www.jredrain.com</url>
+            <url>http://www.jcronjob.com</url>
             <roles>
                 <role>Architect</role>
                 <role>Developer</role>
@@ -65,20 +65,20 @@
         <dependencies>
 
             <dependency>
-                <groupId>org.redrain</groupId>
-                <artifactId>redrain-common</artifactId>
+                <groupId>org.cronjob</groupId>
+                <artifactId>cronjob-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.redrain</groupId>
-                <artifactId>redrain-server</artifactId>
+                <groupId>org.cronjob</groupId>
+                <artifactId>cronjob-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.redrain</groupId>
-                <artifactId>redrain-agent</artifactId>
+                <groupId>org.cronjob</groupId>
+                <artifactId>cronjob-agent</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
