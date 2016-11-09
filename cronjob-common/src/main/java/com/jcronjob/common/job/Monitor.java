@@ -26,8 +26,6 @@ import com.alibaba.fastjson.annotation.JSONType;
 import java.io.Serializable;
 import java.util.*;
 
-import static com.alibaba.fastjson.serializer.SerializerFeature.SortField;
-
 /**
  * Created by benjobs on 16/4/7.
  */
