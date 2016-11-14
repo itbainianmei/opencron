@@ -333,6 +333,7 @@ CronjobChart.prototype.render = function () {
             }
         });
 
+
         $.each(overdata, function (i, obj) {
             var key = obj[0];
             var val = obj[1];
@@ -346,10 +347,10 @@ CronjobChart.prototype.render = function () {
 
             if (i == 2) {
                 if (self.screen == 2) {
-                    var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    var html = "<div style='display: inline-block;position: relative; margin: 3px -15px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 } else {
-                    var html = "<div style='display: inline-block;position: relative; margin: 3px -25px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    var html = "<div style='display: inline-block;position: relative; margin: 3px -15px 0;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 }
                 self.gauge = echarts.init(document.getElementById('gauge-cpu'));
@@ -410,7 +411,7 @@ CronjobChart.prototype.render = function () {
                 self.gauge.setOption(self.gaugeOption, true);
 
             } else {
-                var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\"></span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
+                var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\">"+val+"</span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
                 html.easyPieChart({
                     easing: 'easeOutBounce',
                     barColor: self.overviewDataArr[i].color,
@@ -419,7 +420,7 @@ CronjobChart.prototype.render = function () {
                     lineCap: 'square',
                     lineWidth: 4,
                     animate: 3000,
-                    size: self.screen == 3 ? ((i == 1 || i == 3) ? 90 : 80) : (self.screen == 1 ? 120 : 135),
+                    size: self.screen == 3 ? ((i == 1 || i == 3) ? 120 : 100) : (self.screen == 1 ? 120 : 135),
                     onStep: function (from, to, percent) {
                         $(self.el).find('.percent').text(Math.round(percent));
                     }
@@ -652,6 +653,7 @@ CronjobChart.prototype.render = function () {
 };
 
 CronjobChart.prototype.resize = function () {
+
     if ($.isMobile()) {
         $("#overview_pie_div").remove();
         $("#report_detail").remove();
@@ -777,3 +779,4 @@ CronjobChart.prototype.resize = function () {
         resize: true
     });
 }
+

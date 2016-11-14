@@ -920,7 +920,7 @@ hr {
 .pie-chart-tiny {
     display: inline-block;
     position: relative;
-    margin: 3px 8px 0;
+    margin: 8px 25px 0;    
     top: -10px;
     padding-bottom: 13px;
 }
@@ -929,7 +929,7 @@ hr {
     position: absolute;
     text-align: center;
     width: 100%;
-    margin-top: 27px;
+    margin-top: 35%;
     font-size: 18px;
     font-weight: lighter;
     color: rgba(255, 255, 255, 0.80);
@@ -946,10 +946,10 @@ hr {
 }
 
 .gaugeChart{
-    width: 270px;
-    height: 135px;
-    margin-left:12px;
-    margin-right:12px;
+    width: 300px;
+    height: 150px;
+    margin-left:10px;
+    margin-right:10px;
     opacity: 0.8;
 }
 
