@@ -56,6 +56,12 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
+
+        String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
+        String path = request.getContextPath().replaceAll("/$","");
+        String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
+        request.setAttribute("contextPath",contextPath);
+
         //登陆|上传
         if (requestURI.contains("/login")||requestURI.contains("/upload")) {
             return super.preHandle(request, response, handler);

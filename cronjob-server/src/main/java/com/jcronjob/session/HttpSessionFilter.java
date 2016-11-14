@@ -100,10 +100,9 @@ public class HttpSessionFilter extends OncePerRequestFilter implements Filter {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=utf-8");
         Cookie sessionIdCookie = getOrGenerateSessionId(request, response);
+
         String sessionId = sessionIdCookie.getValue();
-
         HttpSession rawSession = request.getSession();
-
         Map sessionData = loadSessionData(sessionId, rawSession);
         try {
             HttpSession sessionWrapper = new HttpSessionStoreWrapper(rawSession, sessionStore, sessionId, sessionData);

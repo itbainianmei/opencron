@@ -4,13 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<%
-    String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
-    String path = request.getContextPath().replaceAll("/$","");
-    String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
-    pageContext.setAttribute("contextPath",contextPath);
-%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +56,7 @@
             rewidth();
             $(window).resize(rewidth);
         });
+
         function doUrl() {
             var pageSize = $("#size").val();
             var queryTime = $("#queryTime").val();
@@ -74,46 +68,77 @@
         }
 
         function showRedo(id,length,groupId,count){
+
+            try {
+                hideRedo();
+                if (redoRecord && redoRecord.id==id){
+                    redoRecord = null;
+                    return;
+                }
+            }catch (e) {
+            }
+
             var redoIcon = $("#redoIcon_"+id);
             var rowGroup = $("#row_"+ (groupId ? groupId : id));
             var row = rowGroup.attr("rowspan");
 
-            if (redoIcon.attr("redoOpen") == "off"){
-                redoIcon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
-                redoIcon.attr("redoOpen","on");
-                rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
-                $(".redoIndex_"+id).show();
+            redoRecord = {
+                id:id,
+                groupId:groupId,
+                length: parseInt(length),
+                count: parseInt(count),
+            };
 
-                var tbodyObj =  $(".tbody_"+(groupId ? groupId : id));
-                if(tbodyObj.attr("index")=="0"){
-                    tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
-                }else {
-                    tbodyObj.css({"background-color":"rgba(225,225,225,0.15)"});
-                }
+            redoIcon.removeClass("fa-chevron-down").addClass("fa-chevron-up");
+            redoIcon.attr("redoOpen","on");
+            rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
+            $(".redoIndex_"+id).show();
 
-                $(".redoGroup_"+id).show();
-
-                if (count%2==0){
-                    $(".tbody_"+count).css("{background-color:rgba(0,0,0,0.35)}")
-                }else {
-                    $(".tbody_"+count).css("{background-color:rgba(200,200,0,0.35)}")
-                }
-
-                if (groupId){
-                    $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).addClass("tr-next");
-                }
+            var tbodyObj =  $(".tbody_"+(groupId ? groupId : id));
+            if(tbodyObj.attr("index")=="0"){
+                tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
             }else {
-                redoIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
-                redoIcon.attr("redoOpen","off");
-                rowGroup.attr("rowspan",parseInt(row) - parseInt(length));
-                if (rowGroup.attr("rowspan") == 1){
-                    $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"", "border-top":"none"});
+                tbodyObj.css({"background-color":"rgba(225,225,225,0.15)"});
+            }
+
+            $(".redoGroup_"+id).show();
+
+            if (count%2==0){
+                $(".tbody_"+count).css("{background-color:rgba(0,0,0,0.35)}")
+            }else {
+                $(".tbody_"+count).css("{background-color:rgba(200,200,0,0.35)}")
+            }
+
+            if (groupId){
+                $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).addClass("tr-next");
+            }
+        }
+        
+        function hideRedo() {
+            try {
+                if( redoRecord ) {
+                    var id = redoRecord.id;
+                    var groupId = redoRecord.groupId;
+                    var length = redoRecord.length;
+                    var count = redoRecord.count;
+
+                    var redoIcon = $("#redoIcon_"+id);
+                    var rowGroup = $("#row_"+ (groupId ? groupId : id));
+                    var row = rowGroup.attr("rowspan");
+
+                    redoIcon.removeClass("fa-chevron-up").addClass("fa-chevron-down");
+                    redoIcon.attr("redoOpen","off");
+                    rowGroup.attr("rowspan",row - length);
+                    if (rowGroup.attr("rowspan") == 1){
+                        $(".tbody_"+(groupId ? groupId : id)).css({"background-color":"", "border-top":"none"});
+                    }
+                    if (groupId){
+                        $(".tr-flow_"+(parseInt(groupId)+count)).removeClass("tr-next");
+                    }
+                    $(".redoIndex_"+id).hide();
+                    $(".redoGroup_"+id).hide();
                 }
-                if (groupId){
-                    $(".tr-flow_"+(parseInt(groupId)+parseInt(count))).removeClass("tr-next");
-                }
-                $(".redoIndex_"+id).hide();
-                $(".redoGroup_"+id).hide();
+            }catch(e) {
             }
         }
 
@@ -129,11 +154,8 @@
                 rowGroup.attr("rowspan",parseInt(row) + parseInt(length));
                 $(".flowIndex_"+id).show();
                 var tbodyObj =  $(".tbody_"+groupId);
-                if(tbodyObj.attr("index")=="0"){
-                    tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
-                }else {
-                    tbodyObj.css({"background-color":"rgba(225,225,225,0.15)"});
-                }
+                tbodyObj.css({"background-color":"rgba(0,0,0,0.35)"});
+
                 flowGroup.show();
 
             }else {
@@ -245,7 +267,7 @@
 
             <%--父记录--%>
             <c:forEach var="r" items="${page.result}" varStatus="index">
-                <tbody index="${index.index%2}" class="tbody_${empty r.groupId ? r.recordId : r.groupId} tbody_${index.index}" style="border-top: none">
+                <tbody class="tbody_${empty r.groupId ? r.recordId : r.groupId} tbody_${index.index}" style="border-top: none">
 
                     <tr class="tr-flow_${empty r.groupId ? "" : r.groupId}">
                         <c:if test="${r.jobType eq 0}">
