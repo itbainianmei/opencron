@@ -389,8 +389,7 @@
     </script>
 
 </head>
-<body id="skin-blur-violate">
-
+<body id="skin-blur-lights">
 
 <section id="login">
     <header>
