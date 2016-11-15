@@ -243,7 +243,7 @@
 
 </script>
 
-<body id="skin-blur-violate">
+<body id="skin-blur-lights">
 
 <div id="mask" class="mask"></div>
 
