@@ -333,7 +333,6 @@ CronjobChart.prototype.render = function () {
             }
         });
 
-
         $.each(overdata, function (i, obj) {
             var key = obj[0];
             var val = obj[1];
@@ -411,7 +410,7 @@ CronjobChart.prototype.render = function () {
                 self.gauge.setOption(self.gaugeOption, true);
 
             } else {
-                var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\">"+val+"</span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
+                var html = $("<div class=\"pie-chart-tiny\" id=\"cpu_" + key + "\"><span class=\"percent\"></span><span style='font-weight: lighter' class=\"pie-title\" title='" + title + "(" + key + ")'><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>&nbsp;&nbsp;");
                 html.easyPieChart({
                     easing: 'easeOutBounce',
                     barColor: self.overviewDataArr[i].color,
@@ -422,7 +421,7 @@ CronjobChart.prototype.render = function () {
                     animate: 3000,
                     size: self.screen == 3 ? ((i == 1 || i == 3) ? 120 : 100) : (self.screen == 1 ? 120 : 135),
                     onStep: function (from, to, percent) {
-                        $(self.el).find('.percent').text(Math.round(percent));
+                        $(this.el).find('.percent').text(Math.round(percent));
                     }
                 });
                 html.data('easyPieChart').update(val);
