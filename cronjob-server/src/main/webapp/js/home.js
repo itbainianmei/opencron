@@ -325,10 +325,10 @@ CronjobChart.prototype.render = function () {
 
                 }
             });
-            var _cpuData = $.parseJSON(self.data.cpuData);
-            for (var k in _cpuData) {
+            var _data = $.parseJSON(self.data.cpuData);
+            for (var k in _data) {
                 if (elem.key == k) {
-                    overdata.push([k, parseFloat(_cpuData[k])]);
+                    overdata.push([k, parseFloat(_data[k])]);
                 }
             }
         });
@@ -447,10 +447,10 @@ CronjobChart.prototype.render = function () {
                         }
                     }
                 });
-                var _cpuData = $.parseJSON(self.data.cpuData);
-                for (var k in _cpuData) {
+                var _data = $.parseJSON(self.data.cpuData);
+                for (var k in _data) {
                     if (elem.key == k) {
-                        overelem.data('easyPieChart').update(parseFloat(_cpuData[k]));
+                        overelem.data('easyPieChart').update(parseFloat(_data[k]));
                     }
                 }
             }
