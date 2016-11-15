@@ -419,7 +419,7 @@ CronjobChart.prototype.render = function () {
                     lineCap: 'square',
                     lineWidth: 4,
                     animate: 3000,
-                    size: self.screen == 3 ? ((i == 1 || i == 3) ? 120 : 100) : (self.screen == 1 ? 120 : 135),
+                    size: self.screen == 3 ? ((i == 1 || i == 3) ? 120 : 90) : (self.screen == 1 ? 120 : 105),
                     onStep: function (from, to, percent) {
                         $(this.el).find('.percent').text(Math.round(percent));
                     }
