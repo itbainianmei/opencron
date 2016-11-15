@@ -243,7 +243,7 @@
 
 </script>
 
-<body id="skin-blur-lights">
+<body id="skin-cloth">
 
 <div id="mask" class="mask"></div>
 

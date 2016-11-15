@@ -389,7 +389,7 @@
     </script>
 
 </head>
-<body id="skin-blur-lights">
+<body id="skin-cloth">
 
 <section id="login">
     <header>

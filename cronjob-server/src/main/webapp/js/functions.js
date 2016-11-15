@@ -16,6 +16,9 @@ $(document).ready(function(){
 				'</div>' +
 				'<div class="modal-body">' +
 				    '<div class="row template-skins">' +
+					'<a data-skin="skin-cloth" class="col-sm-2 col-xs-4" href="">' +
+					'<img src="'+contextPath+'/img/skin-cloth.jpg" alt="">' +
+					'</a>' +
 					'<a data-skin="skin-blur-violate" class="col-sm-2 col-xs-4" href="">' +
 					    '<img src="'+contextPath+'/img/skin-violate.jpg" alt="">' +
 					'</a>' +
@@ -27,9 +30,6 @@ $(document).ready(function(){
 					'</a>' +
 					'<a data-skin="skin-blur-2" class="col-sm-2 col-xs-4" href="">' +
 						'<img src="'+contextPath+'/img/skin-2.jpg" alt="">' +
-					'</a>' +
-					'<a data-skin="skin-blur-3" class="col-sm-2 col-xs-4" href="">' +
-						'<img src="'+contextPath+'/img/skin-3.jpg" alt="">' +
 					'</a>' +
 					'<a data-skin="skin-blur-4" class="col-sm-2 col-xs-4" href="">' +
 						'<img src="'+contextPath+'/img/skin-4.jpg" alt="">' +
@@ -55,9 +55,7 @@ $(document).ready(function(){
 					'<a data-skin="skin-blur-sunny" class="col-sm-2 col-xs-4" href="">' +
 					    '<img src="'+contextPath+'/img/skin-sunny.jpg" alt="">' +
 					'</a>' +
-					'<a data-skin="skin-cloth" class="col-sm-2 col-xs-4" href="">' +
-					    '<img src="'+contextPath+'/img/skin-cloth.jpg" alt="">' +
-					'</a>' +
+
 					'<a data-skin="skin-blur-chrome" class="col-sm-2 col-xs-4" href="">' +
 					    '<img src="'+contextPath+'/img/skin-chrome.jpg" alt="">' +
 					'</a>' +
