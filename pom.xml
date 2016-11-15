@@ -32,15 +32,23 @@
 
     <developers>
         <developer>
-            <id>cronjob</id>
             <name>benjobs</name>
             <email>benjobs@qq.com</email>
-            <url>http://www.jcronjob.com</url>
+            <url>https://github.com/wolfboys</url>
             <roles>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>
-            <timezone>+4</timezone>
+            <timezone>+8</timezone>
+        </developer>
+        <developer>
+            <name>StarFireflySpring</name>
+            <email>130201237@qq.com</email>
+            <url>https://github.com/StarFireflySpring</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
         </developer>
     </developers>
 
