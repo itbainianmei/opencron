@@ -14,7 +14,7 @@
 <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
 <!-- CSS -->
-<link href="${contextPath}/css/bootstrap.min.css" rel="stylesheet">
+<link href="${contextPath}/css/bootstrap.css" rel="stylesheet">
 <link href="${contextPath}/css/animate.min.css" rel="stylesheet">
 <link href="${contextPath}/css/font-awesome.min.css" rel="stylesheet">
 <link href="${contextPath}/css/font-awesome-ie7.min.css" rel="stylesheet">
@@ -37,7 +37,7 @@
 <script src="${contextPath}/js/jquery.easing.1.3.js"></script> <!-- jQuery Easing - Requirred for Lightbox + Pie Charts-->
 
 <!-- Bootstrap -->
-<script src="${contextPath}/js/bootstrap.min.js"></script>
+<script src="${contextPath}/js/bootstrap.js"></script>
 <script src="${contextPath}/js/easypiechart.js"></script> <!-- EasyPieChart - Animated Pie Charts -->
 
 <!--  Form Related -->

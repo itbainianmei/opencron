@@ -34,7 +34,7 @@ function CronjobChart() {
 
 }
 
-CronjobChart.prototype.query = function () {
+;CronjobChart.prototype.query = function () {
     var self = this;
     $.ajax({
         type: "POST",
@@ -107,7 +107,7 @@ CronjobChart.prototype.query = function () {
     });
 }
 
-CronjobChart.prototype.monitor = function () {
+;CronjobChart.prototype.monitor = function () {
 
     var self = this;
 
@@ -187,7 +187,7 @@ CronjobChart.prototype.monitor = function () {
     });
 };
 
-CronjobChart.prototype.clear = function () {
+;CronjobChart.prototype.clear = function () {
     if (this.socket != null) {
         this.socket.close();
         this.socket = null;
@@ -202,7 +202,7 @@ CronjobChart.prototype.clear = function () {
     this.cpuY = [];
 }
 
-CronjobChart.prototype.render = function () {
+;CronjobChart.prototype.render = function () {
     var self = this;
     $(".loader").remove();
     //解决子页面登录失联,不能跳到登录页面的bug
@@ -651,7 +651,7 @@ CronjobChart.prototype.render = function () {
     }
 };
 
-CronjobChart.prototype.resize = function () {
+;CronjobChart.prototype.resize = function () {
 
     if ($.isMobile()) {
         $("#overview_pie_div").remove();
