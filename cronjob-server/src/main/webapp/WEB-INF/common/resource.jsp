@@ -65,7 +65,7 @@
 
 <!-- MD5 -->
 <script src="${contextPath}/js/md5.js"></script>
-<script src="${contextPath}/js/html5.js"></script>
+<script src="${contextPath}/js/html5/html5shiv/html5shiv.js"></script>
 <script src="${contextPath}/js/gauge.js"></script>
 <script src="${contextPath}/js/jquery.cookie.js"></script>
 <script src="${contextPath}/js/My97DatePicker/WdatePicker.js"></script>
