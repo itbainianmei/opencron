@@ -10,8 +10,9 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>cronjob-common</module>
-        <module>cronjob-server</module>
         <module>cronjob-agent</module>
+        <module>cronjob-server</module>
+        <module>cronjob-plugin</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -80,13 +81,19 @@
 
             <dependency>
                 <groupId>org.cronjob</groupId>
+                <artifactId>cronjob-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.cronjob</groupId>
                 <artifactId>cronjob-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.cronjob</groupId>
-                <artifactId>cronjob-agent</artifactId>
+                <artifactId>cronjob-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -188,6 +195,20 @@
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>2.7</version>
+            </dependency>
+
+            <!-- provided dependencies-->
+            <dependency>
+                <groupId>javax.websocket</groupId>
+                <artifactId>javax.websocket-api</artifactId>
+                <version>1.1</version>
+                <scope>provided</scope>
             </dependency>
 
             <dependency>
