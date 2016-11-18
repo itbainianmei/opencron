@@ -47,7 +47,7 @@
 	<!-- 通过该filter将session存储到memcached中 -->
 	<filter>
 		<filter-name>HttpSessionFilter</filter-name>
-		<filter-class>com.jcronjob.session.HttpSessionFilter</filter-class>
+		<filter-class>com.jcronjob.server.session.HttpSessionFilter</filter-class>
 	</filter>
 
 	<filter-mapping>

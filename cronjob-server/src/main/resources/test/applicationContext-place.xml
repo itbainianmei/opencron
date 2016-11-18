@@ -29,14 +29,14 @@
 
 	<task:annotation-driven/>
 
-	<context:component-scan base-package="com.jcronjob.service,com.jcronjob.dao,com.jcronjob.job" scoped-proxy="targetClass" use-default-filters="true"/>
+	<context:component-scan base-package="com.jcronjob.server.service,com.jcronjob.server.dao,com.jcronjob.server.job" scoped-proxy="targetClass" use-default-filters="true"/>
 
-	<bean id="sessionStore" class="com.jcronjob.session.SessionStore">
+	<bean id="sessionStore" class="com.jcronjob.server.session.SessionStore">
 		<property name="hosts">
 			<value>${memcached.server}</value>
 		</property>
 	</bean>
 
-	<bean class="com.jcronjob.job.CronjobTask" lazy-init="false"/>
+	<bean class="com.jcronjob.server.job.CronjobTask" lazy-init="false"/>
 
 </beans>

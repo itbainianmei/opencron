@@ -10,7 +10,7 @@
 
 	<tag>
 		<name>pager</name>
-		<tag-class>com.jcronjob.tag.PagerTag</tag-class>
+		<tag-class>com.jcronjob.server.tag.PagerTag</tag-class>
 		<body-content>empty</body-content>
 
 		<attribute>
@@ -57,13 +57,13 @@
 
 	<function>
 		<name>substr</name>
-		<function-class>com.jcronjob.tag.CronTag</function-class>
+		<function-class>com.jcronjob.server.tag.CronTag</function-class>
 		<function-signature>java.lang.String substr(java.lang.Object,int,int,java.lang.String)</function-signature>
 	</function>
 
 	<function>
 		<name>diffdate</name>
-		<function-class>com.jcronjob.tag.CronTag</function-class>
+		<function-class>com.jcronjob.server.tag.CronTag</function-class>
 		<function-signature>java.lang.String diffdate(java.util.Date,java.util.Date)</function-signature>
 	</function>
 

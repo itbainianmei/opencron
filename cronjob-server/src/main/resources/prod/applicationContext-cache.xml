@@ -24,11 +24,11 @@
         <property name="useNagleAlgorithm" value="false"/>
     </bean>
 
-    <bean id="cacheManager" class="com.jcronjob.session.MemcacheCacheManager">
+    <bean id="cacheManager" class="com.jcronjob.server.session.MemcacheCacheManager">
         <property name="client" ref="memcachedClient"/>
         <property name="caches">
             <set>
-                <bean class="com.jcronjob.session.MemcacheCache">
+                <bean class="com.jcronjob.server.session.MemcacheCache">
                     <property name="client" ref="memcachedClient"/>
                     <property name="name" value="cronjob"/>
                 </bean>
@@ -36,7 +36,7 @@
         </property>
     </bean>
 
-    <bean id="memcacheCache" class="com.jcronjob.session.MemcacheCache">
+    <bean id="memcacheCache" class="com.jcronjob.server.session.MemcacheCache">
         <property name="client" ref="memcachedClient"/>
         <property name="name" value="CRONJOB"/>
     </bean>
