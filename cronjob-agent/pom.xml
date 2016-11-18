@@ -220,7 +220,7 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>../lib</classpathPrefix>
-                            <mainClass>com.jcronjob.startup.Bootstrap</mainClass>
+                            <mainClass>com.jcronjob.agent.Bootstrap</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

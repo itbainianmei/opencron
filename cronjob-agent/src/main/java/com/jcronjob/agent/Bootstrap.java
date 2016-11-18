@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.jcronjob.startup;
+package com.jcronjob.agent;
 
 /**
  * Created by benjobs on 16/3/3.

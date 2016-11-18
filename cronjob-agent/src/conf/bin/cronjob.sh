@@ -278,7 +278,7 @@ case "$1" in
         -Djava.io.tmpdir="$CRONJOB_TMPDIR" \
         -Dcronjob.port="$CRONJOB_PORT" \
         -Dcronjob.password="$CRONJOB_PASSWORD" \
-        com.jcronjob.startup.Bootstrap start \
+        com.jcronjob.agent.Bootstrap start \
         >> "$CRONJOB_OUT" 2>&1 "&";
 
       if [ ! -z "$CRONJOB_PID" ]; then
@@ -329,7 +329,7 @@ case "$1" in
           eval "\"$RUNJAVA\"" \
             -classpath "\"$CLASSPATH\"" \
             -Dcronjob.home="\"$CRONJOB_HOME\"" \
-             com.jcronjob.startup.Bootstrap stop
+             com.jcronjob.agent.Bootstrap stop
 
           # stop failed. Shutdown port disabled? Try a normal kill.
           if [ $? != 0 ]; then

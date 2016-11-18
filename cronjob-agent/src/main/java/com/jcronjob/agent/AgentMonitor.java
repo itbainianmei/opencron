@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package com.jcronjob.startup;
+package com.jcronjob.agent;
 
 import com.alibaba.fastjson.JSON;
 import com.corundumstudio.socketio.Configuration;
