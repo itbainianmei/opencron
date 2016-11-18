@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jcronjob.plugin;
+package com.jcronjob.plugin.ssh;
 
 /**
- * Value object for applications ssh keys
+ * Value object that contains script information
  */
-public class ApplicationKey {
+public class Script {
     Long id;
-    String privateKey;
-    String publicKey;
-    String passphrase;
-
+    String script="#!/bin/bash\n\n";
+    String displayNm;
 
     public Long getId() {
         return id;
@@ -33,27 +31,20 @@ public class ApplicationKey {
         this.id = id;
     }
 
-    public String getPrivateKey() {
-        return privateKey;
+    public String getScript() {
+        return script;
     }
 
-    public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
+    public void setScript(String script) {
+        this.script = script;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public String getDisplayNm() {
+        return displayNm;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setDisplayNm(String displayNm) {
+        this.displayNm = displayNm;
     }
 
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
 }

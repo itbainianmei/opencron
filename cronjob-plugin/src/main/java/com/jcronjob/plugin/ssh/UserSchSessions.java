@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Sean Kavanagh - sean.p.kavanagh6@gmail.com
+ * Copyright 2013 Sean Kavanagh - sean.p.kavanagh6@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jcronjob.plugin;
+package com.jcronjob.plugin.ssh;
+
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UserSessionsOutput {
+public class UserSchSessions {
 
-    //instance id, host output
-    Map<Integer, SessionOutput> sessionOutputMap = new ConcurrentHashMap<Integer, SessionOutput>();
+    Map<Integer, SchSession> schSessionMap = new ConcurrentHashMap<Integer, SchSession>();
 
 
-    public Map<Integer, SessionOutput> getSessionOutputMap() {
-        return sessionOutputMap;
+    public Map<Integer, SchSession> getSchSessionMap() {
+        return schSessionMap;
     }
 
-    public void setSessionOutputMap(Map<Integer, SessionOutput> sessionOutputMap) {
-        this.sessionOutputMap = sessionOutputMap;
+    public void setSchSessionMap(Map<Integer, SchSession> schSessionMap) {
+        this.schSessionMap = schSessionMap;
     }
+
 }
-
-
-

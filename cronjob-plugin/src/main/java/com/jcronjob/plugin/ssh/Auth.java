@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jcronjob.plugin;
+package com.jcronjob.plugin.ssh;
 
 /**
  * Value object that contains login information

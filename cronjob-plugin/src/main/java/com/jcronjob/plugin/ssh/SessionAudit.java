@@ -13,18 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jcronjob.plugin;
+package com.jcronjob.plugin.ssh;
 
+
+import java.util.Date;
 import java.util.List;
 
 /**
- * Value object that contains profile information
+ * value object for terminal logs and history
  */
-public class Profile {
+public class SessionAudit {
     Long id;
-    String nm;
-    String desc;
     List<HostSystem> hostSystemList;
+    User user;
+    Date sessionTm;
+
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Date getSessionTm() {
+        return sessionTm;
+    }
+
+    public void setSessionTm(Date sessionTm) {
+        this.sessionTm = sessionTm;
+    }
 
     public Long getId() {
         return id;
@@ -40,21 +59,5 @@ public class Profile {
 
     public void setHostSystemList(List<HostSystem> hostSystemList) {
         this.hostSystemList = hostSystemList;
-    }
-
-    public String getNm() {
-        return nm;
-    }
-
-    public void setNm(String nm) {
-        this.nm = nm;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
     }
 }
