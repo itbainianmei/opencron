@@ -55,6 +55,7 @@ CREATE TABLE `job` (
   `runCount` int(10) DEFAULT '0' COMMENT '截止重新执行次数',
   `flowId` bigint(10) DEFAULT NULL COMMENT '流程任务的组Id',
   `flowNum` smallint(4) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '1' COMMENT '任务是否有效',
   `lastFlag` tinyint(1) DEFAULT '0' COMMENT '是否为流程任务的最后一个子任务',
   `runModel` tinyint(1) DEFAULT '0' COMMENT '0:串行,1:并行(针对流程任务)',
   `warning` tinyint(1) DEFAULT '0' COMMENT '失败后是否通知email报警',
