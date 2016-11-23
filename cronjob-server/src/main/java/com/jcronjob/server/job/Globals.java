@@ -15,6 +15,9 @@ public final class Globals {
 
     public static final String PERMISSION = "permission";
 
+    public static final String AES_KEY = "CRONJOB_@KEY_AES";
+    public static final String SSH_SESSION_ID = "ssh_session_id";
+
     public static boolean isPermission(HttpSession session){
         return (Boolean) session.getAttribute(PERMISSION);
     }
