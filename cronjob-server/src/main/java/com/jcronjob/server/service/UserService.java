@@ -25,12 +25,12 @@ package com.jcronjob.server.service;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.dao.UploadDao;
+import com.jcronjob.server.domain.Role;
+import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.common.utils.Digests;
 import com.jcronjob.common.utils.Encodes;
-import com.jcronjob.server.domain.Role;
-import com.jcronjob.server.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class UserService {
     private UploadDao uploadDao;
 
     public Page queryUser(Page page) {
-        String sql = "SELECT u.*,r.roleName FROM user u LEFT JOIN role r ON u.roleId = r.roleId";
+        String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId";
         queryDao.getPageBySql(page, User.class, sql);
         return page;
     }
@@ -74,7 +74,7 @@ public class UserService {
     }
 
     public User queryUserById(Long id) {
-        String sql = "SELECT u.*,r.roleName FROM user u LEFT JOIN role r ON u.roleId = r.roleId WHERE userId = ?";
+        String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId WHERE userId = ?";
         return queryDao.sqlUniqueQuery(User.class, sql, id);
     }
 
@@ -98,7 +98,7 @@ public class UserService {
     }
 
     public String checkName(String name) {
-        String sql = "SELECT COUNT(1) FROM user WHERE userName=?";
+        String sql = "SELECT COUNT(1) FROM T_USER WHERE userName=?";
         return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
     }
 

@@ -25,13 +25,13 @@ package com.jcronjob.server.service;
 import java.util.List;
 
 import com.jcronjob.common.utils.CommonUtils;
+import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.session.MemcacheCache;
+import com.jcronjob.server.tag.Page;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jcronjob.common.job.Cronjob;
-import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.vo.JobVo;
 import org.quartz.SchedulerException;
@@ -64,7 +64,7 @@ public class AgentService {
     private MemcacheCache memcacheCache;
 
     public List<Agent> getAgentByConnType(Cronjob.ConnType connType) {
-        return queryDao.sqlQuery(Agent.class,"SELECT * FROM agent WHERE status = 1 AND proxy = "+connType.getType());
+        return queryDao.sqlQuery(Agent.class,"SELECT * FROM T_AGENT WHERE status = 1 AND proxy = "+connType.getType());
     }
 
     public List<Agent> getAll() {
@@ -84,7 +84,7 @@ public class AgentService {
     }
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){
-        String sql = "SELECT * FROM agent WHERE status=?";
+        String sql = "SELECT * FROM T_AGENT WHERE status=?";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND agentId in ("+user.getAgentIds()+")";
@@ -93,10 +93,10 @@ public class AgentService {
     }
 
     public Page getAgent(HttpSession session, Page page) {
-        String sql = "SELECT * FROM agent";
+        String sql = "SELECT * FROM T_AGENT";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " WHERE agentId in ("+user.getAgentIds()+")";
+            sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         queryDao.getPageBySql(page, Agent.class, sql);
         return page;
@@ -148,7 +148,7 @@ public class AgentService {
     }
 
     public String checkName(Long id, String name) {
-        String sql = "SELECT COUNT(1) FROM agent WHERE name=? ";
+        String sql = "SELECT COUNT(1) FROM T_AGENT WHERE name=? ";
         if (notEmpty(id)) {
             sql += " AND agentId != " + id;
         }
@@ -157,7 +157,7 @@ public class AgentService {
 
 
     public String checkhost(Long id, String host) {
-        String sql = "SELECT COUNT(1) FROM agent WHERE ip=? ";
+        String sql = "SELECT COUNT(1) FROM T_AGENT WHERE ip=? ";
         if (notEmpty(id)) {
             sql += " AND agentId != " + id;
         }
@@ -189,10 +189,10 @@ public class AgentService {
 
 
     public List<Agent> getAgentsBySession(HttpSession session) {
-        String sql = "SELECT * FROM agent ";
+        String sql = "SELECT * FROM T_AGENT ";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " WHERE agentId in ("+user.getAgentIds()+")";
+            sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);
     }

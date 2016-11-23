@@ -22,11 +22,11 @@
 package com.jcronjob.server.service;
 
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.common.utils.Digests;
-import com.jcronjob.common.utils.Encodes;
 import com.jcronjob.server.domain.Log;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
+import com.jcronjob.common.utils.Digests;
+import com.jcronjob.common.utils.Encodes;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.vo.LogVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class HomeService {
         byte[] hashPassword = Digests.sha1(password.getBytes(), salt, 1024);
         password = Encodes.encodeHex(hashPassword);
 
-        String sql = "SELECT COUNT(1) FROM user WHERE userName=? AND password=?";
+        String sql = "SELECT COUNT(1) FROM T_USER WHERE userName=? AND password=?";
         Long count = queryDao.getCountBySql(sql, username, password);
 
         if (count == 1L) {
@@ -79,12 +79,12 @@ public class HomeService {
     }
 
     public Page<LogVo> getLog(HttpSession session, Page page, Long agentId, String sendTime) {
-        String sql = "SELECT L.*,w.name AS agentName FROM log L LEFT JOIN agent w ON L.agentId = w.agentId WHERE 1=1 ";
+        String sql = "SELECT L.*,W.name AS agentName FROM T_LOG L LEFT JOIN T_AGENT W ON L.agentId = W.agentId WHERE 1=1 ";
         if (notEmpty(agentId)) {
             sql += " AND L.agentId = " + agentId;
         }
         if (notEmpty(sendTime)) {
-            sql += " AND L.sendTime like '" + sendTime + "%' ";
+            sql += " AND L.sendTime LIKE '" + sendTime + "%' ";
         }
         if (!Globals.isPermission(session)) {
             sql += " AND L.receiverId = " + Globals.getUserIdBySession(session);
@@ -95,7 +95,7 @@ public class HomeService {
     }
 
     public List<LogVo> getUnReadMessage(HttpSession session) {
-        String sql = "SELECT * FROM log L WHERE isread=0 and type=2 ";
+        String sql = "SELECT * FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!Globals.isPermission(session)) {
             sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
@@ -104,7 +104,7 @@ public class HomeService {
     }
 
     public Long getUnReadCount(HttpSession session) {
-        String sql = "SELECT count(1) FROM log L WHERE isread=0 and type=2 ";
+        String sql = "SELECT COUNT(1) FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!Globals.isPermission(session)) {
             sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
         }
@@ -122,7 +122,7 @@ public class HomeService {
 
     @Transactional(readOnly = false)
     public void updateAfterRead(Long logId) {
-        String sql = "update log set isread = 1 where logId = ?";
+        String sql = "UPDATE T_LOG SET isRead = 1 WHERE logId = ?";
         queryDao.createSQLQuery(sql,logId).executeUpdate();
     }
 

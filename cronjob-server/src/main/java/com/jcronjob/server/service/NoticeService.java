@@ -22,6 +22,9 @@
 
 package com.jcronjob.server.service;
 
+import com.jcronjob.server.domain.Config;
+import com.jcronjob.server.domain.Log;
+import com.jcronjob.server.domain.User;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.mail.HtmlEmail;
@@ -29,9 +32,6 @@ import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.common.utils.DateUtils;
 import com.jcronjob.common.utils.HttpUtils;
-import com.jcronjob.server.domain.Config;
-import com.jcronjob.server.domain.Log;
-import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.vo.JobVo;
 import org.slf4j.Logger;

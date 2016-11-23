@@ -18,43 +18,51 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package com.jcronjob.server.service;
 
-import com.jcronjob.common.utils.CommonUtils;
+import com.jcronjob.server.domain.Term;
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.domain.Config;
+import com.jcronjob.server.domain.TermStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by ChenHui on 2016/2/17.
+ * Created by benjobs on 2016/11/22.
  */
+
 @Service
-public class ConfigService {
+public class StatusService {
 
     @Autowired
     private QueryDao queryDao;
 
-    public Config getSysConfig() {
-        return queryDao.sqlUniqueQuery(Config.class, "SELECT * FROM T_CONFIG WHERE configId = 1");
+    @Transactional(readOnly = false)
+    public void delete(Long termId,Long userId){
+        String sql = "DELETE FROM T_SSH_STATUS WHERE termId=? AND userId=?";
+        queryDao.createSQLQuery(sql,termId,userId).executeUpdate();
+    }
+
+    public TermStatus query(Long termId, Long userId){
+        String sql = "SELECT * FROM T_SSH_STATUS WHERE termId=? AND userId=?";
+        return (TermStatus) queryDao.createSQLQuery(sql,termId,userId).addEntity(TermStatus.class).uniqueResult();
     }
 
     @Transactional(readOnly = false)
-    public String getAeskey() {
-        Config config = getSysConfig();
-        if ( CommonUtils.isEmpty(config.getAeskey()) ) {
-            String aeskey = CommonUtils.uuid(18);
-            config.setAeskey(aeskey);
-            queryDao.createSQLQuery("UPDATE T_CONFIG SET AESKEY=? WHERE configId = 1",aeskey).executeUpdate();
+    public void flush(Long termId, Long userId) {
+        queryDao.getSession().flush();
+        TermStatus status = query(termId,userId);
+        if (status==null) {
+            status = new TermStatus();
+            status.setTermId(termId);
+            status.setUserId(userId);
         }
-        return config.getAeskey();
+        status.setStatus(Term.INITIAL);
+        queryDao.save(status);
     }
 
-
-    public void update(Config config) {
-        queryDao.save(config);
+    public void update(String status, Term term, Long userId) {
+        String sql = "UPDATE T_SSH_STATUS SET status=? WHERE termId=? and userId=?";
+        queryDao.createSQLQuery(sql,status,term.getId(),userId).executeUpdate();
     }
-
 }

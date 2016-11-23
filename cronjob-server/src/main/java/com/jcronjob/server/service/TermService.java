@@ -24,28 +24,20 @@
 
 package com.jcronjob.server.service;
 
-import com.alibaba.fastjson.JSON;
-import com.corundumstudio.socketio.*;
-import com.corundumstudio.socketio.listener.DataListener;
-import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcronjob.common.utils.DigestUtils;
-import com.jcronjob.common.utils.HttpUtils;
-import com.jcronjob.server.dao.QueryDao;
+import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Term;
-import com.jcronjob.server.domain.Agent;
+import com.jcronjob.server.dao.QueryDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import java.util.Date;
+import java.util.Properties;
 
 /**
  *
@@ -82,29 +74,41 @@ import java.util.UUID;
 public class TermService {
 
     @Autowired
-    private QueryDao queryDao;
+    private SSHService sshService;
 
     @Autowired
-    private ConfigService configService;
+    private StatusService statusService;
 
-    private Map<UUID, SocketIOClient> clients = new HashMap<UUID, SocketIOClient>(0);
+    @Autowired
+    private QueryDao queryDao;
 
-    private Map<Long, Integer> sessionMap = new HashMap<Long, Integer>(0);
+    @Value("#{config['ssh.aes_name']}")
+    private String aesKey;
+
+    public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
+
+    public static final int SESSION_TIMEOUT = 60000;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public Term getTerm(Long userId, String host) {
-        return queryDao.sqlUniqueQuery(Term.class,"SELECT * FROM term WHERE userId=? AND host=? And status=1",userId,host);
+    public Term getTerm(Long userId, String host) throws Exception {
+        Term term = queryDao.sqlUniqueQuery(Term.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Term.SUCCESS);
+        if (term!=null) {
+            queryDao.getSession().clear();
+            term.desDecrypt();
+        }
+        return term;
     }
 
     public boolean saveOrUpdate(Term term) {
-
-        Term dbTerm = queryDao.sqlUniqueQuery(Term.class,"SELECT * FROM term WHERE userId=? AND host=?",term.getUserId(),term.getHost());
+        Term dbTerm = queryDao.sqlUniqueQuery(Term.class,"SELECT * FROM T_TERM WHERE userId=? AND host=?",term.getUserId(),term.getHost());
         if (dbTerm!=null) {
-            term.setTermId(dbTerm.getTermId());
+            term.setId(dbTerm.getId());
         }
-
         try {
+            //私钥.
+            term.desEncrypt(CommonUtils.uuid());
+            term.setLogintime(new Date());
             queryDao.save(term);
             return true;
         }catch (Exception e) {
@@ -113,76 +117,24 @@ public class TermService {
         }
     }
 
-    public String getTermUrl(HttpServletRequest request, Agent agent) {
-        /**
-         * 创建一个用户连接websocket的空闲端口,存起来
-         */
-        final Long agentId = agent.getAgentId();
-
-        if (sessionMap.get(agentId) == null) {
-            final int port = HttpUtils.freePort();
-            this.sessionMap.put(agentId, port);
-
-            /**
-             * websocket server start......
-             */
-            Configuration configuration = new Configuration();
-            configuration.setPort(port);
-            final SocketIOServer server = new SocketIOServer(configuration);
-
-            server.addEventListener("login", String.class, new DataListener<String>() {
-                @Override
-                public void onData(final SocketIOClient client, String str, AckRequest ackRequest) throws Exception {
-                    /**
-                     * 确保安全性,从数据库获取解密的私key,进行AES解密
-                     */
-                    String key = configService.getAeskey();
-                    String jsonTerm = DigestUtils.aesDecrypt(key,str);
-                    Term term = JSON.parseObject(jsonTerm,Term.class);
-                    Session jschSession = createJschSession(term);
-                    logger.info("[cronjob]:SSHServer connected:SessionId @ {},port @ {}", client.getSessionId(), port);
-                    clients.put(client.getSessionId(), client);
-                    try {
-                        jschSession.connect();
-                        //登录成功,进入console
-                        client.sendEvent("success", new VoidAckCallback() {
-                            @Override
-                            protected void onSuccess() {
-                                System.out.println("ack from client: " + client.getSessionId());
-                            }
-                        }, "登录成功!webssh功能正在开发中,敬请期待");
-
-                    } catch (JSchException e) {
-                        /**
-                         * ssh 登录失败
-                         */
-                        term.setStatus(0);
-                        saveOrUpdate(term);
-                        ackRequest.sendAckData(termFailCause(e));
-                        logger.info("[cronjob]:SSHServer connect error:", e.getLocalizedMessage());
-                        server.stop();
-                        sessionMap.remove(agentId);
-                    }
-
-                }
-            });
-
-            server.addDisconnectListener(new DisconnectListener() {
-                @Override
-                public void onDisconnect(SocketIOClient client) {
-                    clients.remove(client.getSessionId());
-                    if (clients.isEmpty()) {
-                        sessionMap.remove(agentId);
-                        logger.info("[cronjob]:SSHServer disconnect:SessionId @ {},port @ {} ", client.getSessionId(), port);
-                        server.stop();
-                    }
-                }
-            });
-            server.start();
-            logger.debug("[cronjob] SSHServer started @ {}", port);
+    public String auth(Term term) {
+        Session jschSession = null;
+        try {
+            jschSession = createJschSession(term);
+            jschSession.connect(SESSION_TIMEOUT);
+            return "success";
+        } catch (JSchException e) {
+            if (e.getLocalizedMessage().equals("Auth fail")) {
+                return "authfail";
+            }else if(e.getLocalizedMessage().contentEquals("timeout")){
+                return "timeout";
+            }
+           return "error";
+        }finally {
+            if (jschSession!=null) {
+                jschSession.disconnect();
+            }
         }
-
-        return String.format("http://%s:%s",request.getServerName(),sessionMap.get(agentId));
     }
 
     public Session createJschSession(Term term) throws JSchException {
@@ -190,21 +142,25 @@ public class TermService {
         Session jschSession = jsch.getSession(term.getUser(), term.getHost(), term.getPort());
         jschSession.setPassword(term.getPassword());
 
-        java.util.Properties config = new java.util.Properties();
+        Properties config = new Properties();
         //不记录本次登录的信息到$HOME/.ssh/known_hosts
         config.put("StrictHostKeyChecking", "no");
+        //强制登陆认证
+        config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
+        jschSession.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
         jschSession.setConfig(config);
         return jschSession;
     }
 
-    public String termFailCause(JSchException e) {
-        if (e.getLocalizedMessage().equals("Auth fail")) {
-            return "authfail";
-        }else if(e.getLocalizedMessage().contentEquals("timeout")){
-            return "timeout";
-        }
-
-        return e.getLocalizedMessage();
+    public Term getNextPending(Long userId, Long termId) {
+        String sql = "select t.* from T_SSH_STATUS s inner join T_TERM t on s.termId = t.id where (s.status like ? or s.status like ? or s.status like ?) and s.userId=? and s.termId=?";
+        return queryDao.sqlUniqueQuery(Term.class,sql, Term.INITIAL, Term.AUTH_FAIL, Term.PUBLIC_KEY_FAIL,userId,termId);
     }
+
+    public Term getCurrentTrem(Long termId, Long userId) {
+        String sql = "select t.* from T_SSH_STATUS s inner join T_TERM t on s.termId = t.id and s.termId=? and s.userid=?";
+        return queryDao.sqlUniqueQuery(Term.class,sql,termId,userId);
+    }
+
 
 }
