@@ -31,7 +31,7 @@ import java.io.Serializable;
  * Created by ChenHui on 2016/2/17.
  */
 @Entity
-@Table(name = "config")
+@Table(name = "T_CONFIG")
 public class Config implements Serializable {
 
     @Id

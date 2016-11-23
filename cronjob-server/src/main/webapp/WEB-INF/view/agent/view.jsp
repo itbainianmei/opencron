@@ -511,38 +511,28 @@
             url:"${contextPath}/term/ssh",
             data:"agentId="+agentId+"&ip="+ip,
             dataType: "html",
-            success:function (url) {
-                if (url == "null") {
+            success:function (data) {
+                var  json = eval("("+data+")");
+                if (json.status == "null") {
                     $("#sship").val(ip);
                     $("#sshagent").val(agentId);
                     $("#sshModal").modal("show");
                 }else {
-                    var socketUrl = url.split("?")[0];
-                    var term =  url.split("?")[1];
-                    var socket = io.connect(socketUrl);
-                    socket.emit('login', term ,function(data) {
-                        if( data == "authfail" ) {
-                            if(type==2) {
-                                alert("登录失败,请确认登录口令的正确性");
-                            }else {
-                                $("#sship").val(ip);
-                                $("#sshagent").val(agentId);
-                                $("#sshModal").modal("show");
-                            }
-                            socket.disconnect();
-                        }else if( data == "timeout" ) {
-                            alert("连接到远端主机超时");
-                            socket.disconnect();
+                    if( json.status == "authfail" ) {
+                        if(type==2) {
+                            alert("登录失败,请确认登录口令的正确性");
+                        }else {
+                            $("#sship").val(ip);
+                            $("#sshagent").val(agentId);
+                            $("#sshModal").modal("show");
                         }
-                    });
-
-                    socket.on("success",function(data, ackServerCallback) {
-                        openTerminal();
-                    });
-
-                    socket.on("disconnect",function () {
-                        console.log("close");
-                    });
+                    }else if( json.status == "timeout" ) {
+                        alert("连接到远端主机超时");
+                    }else if( json.status == "error" ) {
+                        alert("连接失败请重试");
+                    }else if(json.status == "success"){
+                        window.location.href="${contextPath}"+json.url;
+                    }
                 }
             }
         });

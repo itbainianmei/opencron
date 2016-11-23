@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "job")
+@Table(name = "T_JOB")
 public class Job implements Serializable {
     @Id
     @GeneratedValue

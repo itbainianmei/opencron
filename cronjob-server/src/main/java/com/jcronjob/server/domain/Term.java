@@ -1,9 +1,8 @@
 package com.jcronjob.server.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.jcronjob.common.utils.DigestUtils;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,28 +11,43 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "term")
+@Table(name = "T_TERM")
 public class Term implements Serializable{
-
 
     @Id
     @GeneratedValue
-    private Long termId;
+    private Long id;
     private Long userId;
     private String host;
     private int port;
     private String user;
     private String password;
-    private String privatekey;
-    private int status;
+    private String status = SUCCESS;
     private Date logintime;
+    private String token;
 
-    public Long getTermId() {
-        return termId;
+    @Transient
+    private Long instanceId;
+    @Transient
+    public static final String INITIAL ="INITIAL";
+    @Transient
+    public static final String AUTH_FAIL ="AUTHFAIL";
+    @Transient
+    public static final String PUBLIC_KEY_FAIL ="KEYAUTHFAIL";
+    @Transient
+    public static final String GENERIC_FAIL ="GENERICFAIL";
+    @Transient
+    public static final String SUCCESS ="SUCCESS";
+    @Transient
+    public static final String HOST_FAIL ="HOSTFAIL";
+
+
+    public Long getId() {
+        return id;
     }
 
-    public void setTermId(Long termId) {
-        this.termId = termId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getUserId() {
@@ -76,19 +90,38 @@ public class Term implements Serializable{
         this.password = password;
     }
 
-    public String getPrivatekey() {
-        return privatekey;
+    public String getToken() {
+        return token;
     }
 
-    public void setPrivatekey(String privatekey) {
-        this.privatekey = privatekey;
+    public void desDecrypt(){
+        try {
+            this.user = DigestUtils.desDecrypt(this.token,user);
+            this.password = DigestUtils.desDecrypt(this.token,password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public int getStatus() {
+    public void desEncrypt(String key){
+        try {
+            this.token = key;
+            this.user = DigestUtils.desEncrypt(key,user);
+            this.password = DigestUtils.desEncrypt(key,password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -98,5 +131,13 @@ public class Term implements Serializable{
 
     public void setLogintime(Date logintime) {
         this.logintime = logintime;
+    }
+
+    public Long getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
     }
 }

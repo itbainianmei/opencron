@@ -33,7 +33,7 @@ import java.util.Date;
  * Created by ChenHui on 2016/3/31.
  */
 @Entity
-@Table(name = "log")
+@Table(name = "T_LOG")
 public class Log implements Serializable {
 
     @Id

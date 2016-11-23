@@ -31,7 +31,7 @@ import java.util.UUID;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "record")
+@Table(name = "T_RECORD")
 public class Record implements Serializable {
 
     @Id

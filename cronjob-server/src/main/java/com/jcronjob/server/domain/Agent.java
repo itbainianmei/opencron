@@ -32,7 +32,7 @@ import com.jcronjob.common.utils.CommonUtils;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "agent")
+@Table(name = "T_AGENT")
 public class Agent implements Serializable {
 
     @Id

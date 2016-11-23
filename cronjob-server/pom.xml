@@ -21,6 +21,12 @@
             <version>0.1.53</version>
         </dependency>
 
+        <!-- provided dependencies-->
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

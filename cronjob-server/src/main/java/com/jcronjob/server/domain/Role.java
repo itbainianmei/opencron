@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Created by ChenHui on 2016/2/17.
  */
 @Entity
-@Table(name = "role")
+@Table(name = "T_ROLE")
 public class Role implements Serializable {
 
     @Id

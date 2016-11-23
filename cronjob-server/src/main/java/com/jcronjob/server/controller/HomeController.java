@@ -23,15 +23,15 @@ package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.*;
+import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.common.job.Response;
-import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.Agent;
-import com.jcronjob.server.service.*;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.vo.ChartVo;
+import com.jcronjob.server.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
