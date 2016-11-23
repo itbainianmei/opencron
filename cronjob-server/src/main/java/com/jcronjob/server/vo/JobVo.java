@@ -23,8 +23,8 @@
 package com.jcronjob.server.vo;
 
 import com.jcronjob.common.job.Cronjob;
-import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.domain.User;
+import com.jcronjob.server.domain.Agent;
 
 import java.io.Serializable;
 import java.util.Date;
