@@ -96,14 +96,35 @@ public abstract class IPUtils {
         return ipAddress;
     }
 
+    public static String getMacAddress() throws SocketException {
+        Enumeration<NetworkInterface> ni = NetworkInterface.getNetworkInterfaces();
+
+        while(ni.hasMoreElements()){
+            NetworkInterface netI = ni.nextElement();
+
+            byte[] bytes = netI.getHardwareAddress();
+            if(netI.isUp() && netI != null && bytes != null && bytes.length == 6){
+                StringBuffer sb = new StringBuffer();
+                for(byte b:bytes){
+                    //与11110000作按位与运算以便读取当前字节高4位
+                    sb.append(Integer.toHexString((b&240)>>4));
+                    //与00001111作按位与运算以便读取当前字节低4位
+                    sb.append(Integer.toHexString(b&15));
+                    sb.append("-");
+                }
+                sb.deleteCharAt(sb.length()-1);
+                return sb.toString().toUpperCase();
+            }
+        }
+        return null;
+    }
+
     public static String getFirstNoLoopbackAddress() {
         Collection<String> allNoLoopbackAddresses = getAllNoLoopbackAddresses();
         return allNoLoopbackAddresses.iterator().next();
     }
 
-    public static void main(String[] args) {
-        for (InetAddress addr : getAllHostAddress()) {
-            System.out.println(IPUtils.getAllNoLoopbackAddresses());
-        }
+    public static void main(String[] args) throws Exception {
+        System.out.println(getMacAddress());
     }
 }
