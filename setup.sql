@@ -2,8 +2,8 @@ CREATE DATABASE IF NOT EXISTS cronjob;
 
 USE cronjob;
 
-DROP TABLE IF EXISTS `config`;
-CREATE TABLE `config` (
+DROP TABLE IF EXISTS `T_CONFIG`;
+CREATE TABLE `T_CONFIG` (
   `configId` int(10) NOT NULL PRIMARY KEY,
   `senderEmail` varchar(200) DEFAULT NULL COMMENT '发件人的邮箱地址',
   `smtpHost` varchar(255) DEFAULT NULL,
@@ -15,12 +15,12 @@ CREATE TABLE `config` (
   `aeskey` varchar(16) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-LOCK TABLES `config` WRITE;
-INSERT INTO `config` VALUES (1,'you_mail_name','smtp.exmail.qq.com',465,'your_mail_pwd','http://your_url',30,'',NULL);
+LOCK TABLES `T_CONFIG` WRITE;
+INSERT INTO `T_CONFIG` VALUES (1,'you_mail_name','smtp.exmail.qq.com',465,'your_mail_pwd','http://your_url',30,'',NULL);
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `agent`;
-CREATE TABLE `agent` (
+DROP TABLE IF EXISTS `T_AGENT`;
+CREATE TABLE `T_AGENT` (
   `agentId` int(10) unsigned PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `status` tinyint(1) DEFAULT NULL COMMENT '通信状态:0通讯异常，1通信正常',
   `ip` varchar(16) NOT NULL COMMENT '机器ip',
@@ -38,8 +38,8 @@ CREATE TABLE `agent` (
    UNIQUE KEY `UN_IP` (`ip`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `job`;
-CREATE TABLE `job` (
+DROP TABLE IF EXISTS `T_JOB`;
+CREATE TABLE `T_JOB` (
   `jobId` int(10) unsigned NOT NULL PRIMARY KEY  AUTO_INCREMENT,
   `agentId` int(10) unsigned NOT NULL COMMENT '执行器的id',
   `jobName` varchar(50) NOT NULL COMMENT '作业名称',
@@ -67,7 +67,7 @@ CREATE TABLE `job` (
   KEY `INX_QUERY` (`jobType`,`cronType`,`execType`,`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-CREATE TABLE `record` (
+CREATE TABLE `T_RECORD` (
   `recordId` int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `parentId` int(10) DEFAULT NULL COMMENT '重复记录需要记录跑的是哪条父记录',
   `jobId` int(10) NOT NULL COMMENT '该task任务是哪个task id执行的结果',
@@ -92,8 +92,8 @@ CREATE TABLE `record` (
   KEY `jobId` (`jobId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `log`;
-CREATE TABLE `log` (
+DROP TABLE IF EXISTS `T_LOG`;
+CREATE TABLE `T_LOG` (
   `logId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `agentId` int(10) NOT NULL,
   `receiverId` int(20) DEFAULT NULL,
@@ -105,34 +105,36 @@ CREATE TABLE `log` (
   `isread` int(10) NOT NULL COMMENT '消息是否已读取,0:未读,1:已读(只针对站内信)'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
+DROP TABLE IF EXISTS `T_ROLE`;
+CREATE TABLE `T_ROLE` (
   `roleId` int(10) NOT NULL PRIMARY KEY COMMENT '角色ID',
   `roleName` varchar(50) NOT NULL COMMENT '角色名称',
   `description` varchar(255) DEFAULT NULL COMMENT '角色描述'
 ) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
-LOCK TABLES `role` WRITE;
-INSERT INTO `role` VALUES (1,'管理员','仅具有查看权限'),(999,'超级管理员','具有所有操作权限');
+LOCK TABLES `T_ROLE` WRITE;
+INSERT INTO `T_ROLE` VALUES (1,'管理员','仅具有查看权限'),(999,'超级管理员','具有所有操作权限');
 UNLOCK TABLES;
 
-DROP TABLE IF EXISTS `term`;
-CREATE TABLE `term` (
-  `termId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+
+DROP TABLE IF EXISTS `T_TERM`;
+CREATE TABLE `T_TERM` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `userId` int(10) DEFAULT NULL,
   `host` varchar(255) DEFAULT NULL,
-  `user` varchar(50) DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
+  `user` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `port` int(10) DEFAULT NULL,
-  `privatekey` varchar(255) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '1' COMMENT '连接状态(1:成功,0:失败)',
+  `status` varchar(255)  DEFAULT 'SUCCESS' COMMENT '连接状态(SUCCESS:成功,其他:失败)',
   `logintime` datetime DEFAULT NULL,
-  UNIQUE KEY UNQ_INX (userId,host)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+  `token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNQ_INX` (`host`) COMMENT '(null)'
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `T_USER`;
+CREATE TABLE `T_USER` (
   `userId` int(10) NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT '用户ID',
   `roleId` int(10) DEFAULT NULL COMMENT '角色ID',
   `userName` varchar(50) NOT NULL COMMENT '用户名',
@@ -150,8 +152,37 @@ CREATE TABLE `user` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 
-LOCK TABLES `user` WRITE;
-INSERT INTO `user`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
+DROP TABLE IF EXISTS `T_SSH_SESSION`;
+CREATE TABLE `T_SSH_SESSION` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `userId` int(10) DEFAULT NULL,
+  `sessionTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`userId`) COMMENT '(null)'
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+
+DROP TABLE IF EXISTS `T_SSH_STATUS`;
+CREATE TABLE `T_SSH_STATUS` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `termId` int(10) DEFAULT '0',
+  `userId` int(10) DEFAULT NULL,
+  `status` varchar(10) NOT NULL DEFAULT 'INITIAL',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+
+
+DROP TABLE IF EXISTS `T_SSH_SCRIPT`;
+CREATE TABLE `T_SSH_SCRIPT` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `userid` int(10) DEFAULT NULL,
+  `name` varchar(10) NOT NULL,
+  `script` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`userid`) COMMENT '(null)'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
+
+LOCK TABLES `T_USER` WRITE;
+INSERT INTO `T_USER`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
 VALUES (999,'cronjob','f50bd9d20b9e772a137590bfef5bc8d0c9b602be','ece2bae9d384582b','jcronjob','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
 UNLOCK TABLES;
 
