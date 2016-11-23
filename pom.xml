@@ -12,7 +12,6 @@
         <module>cronjob-common</module>
         <module>cronjob-agent</module>
         <module>cronjob-server</module>
-        <module>cronjob-plugin</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -88,12 +87,6 @@
             <dependency>
                 <groupId>org.cronjob</groupId>
                 <artifactId>cronjob-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.cronjob</groupId>
-                <artifactId>cronjob-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
