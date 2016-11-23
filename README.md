@@ -1,7 +1,6 @@
 #cronjob
-    a better crontab job,是强大的管理linux crontab任务的系统，基于JAVA开发，可以方便快捷的管理各种复杂的任务计划,包括单一任务,流程任务,各种复制场景下的并行,串行任务,同事有服务器实时监控模块...
+    a better crontab job,集linux crontab任务的系统,系统监控,web终端于一身,基于JAVA开发，可以方便快捷的管理各种复杂的任务计划,包括单一任务,流程任务,各种复制场景下的并行,串行任务,同事有服务器实时监控模块...
     cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即为一个web可视化的中央管理调度平台,cronjob-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装cronjob-agent,cronjob-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器，
-
 
 #cronjob-agent 安装步骤:
     1)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
