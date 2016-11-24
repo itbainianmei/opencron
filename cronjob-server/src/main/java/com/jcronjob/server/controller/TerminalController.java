@@ -77,7 +77,7 @@ public class TerminalController {
             statusService.flush(term.getId(),user.getUserId());
             TerminalSession sshSession  = termService.createSession(user.getUserId());
             session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,sshSession.getId().toString()));
-            termService.openSSHTerm(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
+            termService.openTerminal(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
 
             WebUtils.writeJson(response, String.format(json,"success","/term/open?instanceId="+term.getInstanceId()+"&hostId="+term.getId()));
         }else {

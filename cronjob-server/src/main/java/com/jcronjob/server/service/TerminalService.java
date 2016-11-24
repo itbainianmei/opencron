@@ -74,18 +74,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class TerminalService {
 
-    @Autowired
-    private QueryDao queryDao;
-
     public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
 
     public static final int SESSION_TIMEOUT = 60000;
 
     public static final boolean agentForwarding = false;
 
-    private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
+    @Autowired
+    private QueryDao queryDao;
+
+    @Autowired
+    private StatusService statusService;
 
     private static Map<Long,UserSessionsOutput> userSessionsOutputMap = new ConcurrentHashMap<Long, UserSessionsOutput>();
+
+    private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
 
     public Terminal getTerm(Long userId, String host) throws Exception {
         Terminal term = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
@@ -133,10 +136,8 @@ public class TerminalService {
         }
     }
 
-    @Autowired
-    private StatusService statusService;
 
-    public Terminal openSSHTerm(Terminal term, Long userId, Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
+    public Terminal openTerminal(Terminal term, Long userId, Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
 
         Long instanceId = getNextInstanceId(sessionId, userSessionMap);
         term.setInstanceId(instanceId);
