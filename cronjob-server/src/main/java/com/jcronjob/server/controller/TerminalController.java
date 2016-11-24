@@ -87,6 +87,11 @@ public class TerminalController {
         }
     }
 
+    @RequestMapping("/exit")
+    public void exit(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
+
+    }
+
     @RequestMapping("/open")
     public String open(HttpServletRequest request,Long instanceId,Long hostId ) throws Exception {
         request.setAttribute("instanceId",instanceId);

@@ -22,7 +22,7 @@
  */
 package com.jcronjob.server.service;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import com.jcraft.jsch.*;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
@@ -513,12 +513,11 @@ public class TerminalService {
         }
 
         public void run() {
-            Gson gson = new Gson();
             while (session.isOpen()) {
                 List<SessionOutput> outputList = getOutput(sessionId, user);
                 try {
                     if (outputList != null && !outputList.isEmpty()) {
-                        String json = gson.toJson(outputList);
+                        String json = JSON.toJSONString(outputList);
                         //send json to session
                         this.session.getBasicRemote().sendText(json);
                     }
@@ -535,8 +534,6 @@ public class TerminalService {
 
         private Long sessionId;
         private StringBuilder output = new StringBuilder();
-
-        public SessionOutput() {}
 
         public SessionOutput(Long sessionId, Terminal hostSystem) {
             this.sessionId=sessionId;

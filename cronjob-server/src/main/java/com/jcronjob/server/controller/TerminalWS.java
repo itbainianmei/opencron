@@ -21,7 +21,7 @@
 
 package com.jcronjob.server.controller;
 
-import com.google.gson.Gson;
+import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
@@ -101,34 +101,26 @@ public class TerminalWS {
     public void onMessage(String message) {
         if (session.isOpen() && StringUtils.isNotEmpty(message)) {
 
-            Map jsonRoot = new Gson().fromJson(message, Map.class);
+            Map jsonRoot = JSON.parseObject(message,Map.class);
 
             String command = (String) jsonRoot.get("command");
+            Integer keyCode = (Integer) jsonRoot.get("keyCode");;
+            Long id = ((Integer)jsonRoot.get("id")).longValue();
 
-            Integer keyCode = null;
-            Double keyCodeDbl = (Double) jsonRoot.get("keyCode");
-            if (keyCodeDbl != null) {
-                keyCode = keyCodeDbl.intValue();
-            }
-
-            for (String idStr : (ArrayList<String>) jsonRoot.get("id")) {
-                Long id = Long.parseLong(idStr);
-
-                //get servletRequest.getSession() for user
-                UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
-                if (userSchSessions != null) {
-                    SchSession schSession = userSchSessions.getSchSessionMap().get(id);
-                    if (keyCode != null) {
-                        if (keyMap.containsKey(keyCode)) {
-                            try {
-                                schSession.getCommander().write(keyMap.get(keyCode));
-                            } catch (IOException ex) {
-                                log.error(ex.toString(), ex);
-                            }
+            //get servletRequest.getSession() for user
+            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
+            if (userSchSessions != null) {
+                SchSession schSession = userSchSessions.getSchSessionMap().get(id);
+                if (keyCode != null) {
+                    if (keyMap.containsKey(keyCode)) {
+                        try {
+                            schSession.getCommander().write(keyMap.get(keyCode));
+                        } catch (IOException ex) {
+                            log.error(ex.toString(), ex);
                         }
-                    } else {
-                        schSession.getCommander().print(command);
                     }
+                } else {
+                    schSession.getCommander().print(command);
                 }
             }
 
@@ -152,7 +144,6 @@ public class TerminalWS {
                     schSession.setInputToChannel(null);
                     schSession.setCommander(null);
                     schSession.setOutFromChannel(null);
-                    schSession = null;
                     //remove from map
                     schSessionMap.remove(sessionKey);
                 }

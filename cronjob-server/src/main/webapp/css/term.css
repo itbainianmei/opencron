@@ -161,7 +161,7 @@ div.term {
 }
 
 div.termwrapper {
-    width:98%;
+    width:100%;
     margin: 0 auto;
 }
 
@@ -201,7 +201,7 @@ div.termwrapper div h6 {
     border-radius: 4px;
     margin-top: 5px;
     float: left;
-    width: 50%;
+    width: 100%;
 }
 
 .term {
@@ -343,12 +343,11 @@ a.btn {
 
 .scrollWrapperActive {
     overflow-y: scroll;
-    height:450px;
+    height:100%;
     display: inline-block;
 }
 .uploadScrollWrapperActive{
     overflow-y: scroll;
-    height:200px;
     display: inline-block;
 }
 
