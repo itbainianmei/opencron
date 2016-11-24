@@ -26,12 +26,12 @@ import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.Term;
 import com.jcronjob.server.domain.TermSession;
 import com.jcraft.jsch.*;
-import com.jcronjob.server.model.SShTermObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import  static com.jcronjob.server.service.TerminalObject.*;
 
 import java.io.*;
 import java.util.Date;
@@ -57,14 +57,14 @@ public class SSHService {
     @Autowired
     private StatusService statusService;
 
-    public Term openSSHTerm(Term term, Long userId, Long sessionId, Map<Long, SShTermObject.UserSchSessions> userSessionMap) {
+    public Term openSSHTerm(Term term, Long userId, Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
 
         Long instanceId = getNextInstanceId(sessionId, userSessionMap);
         term.setInstanceId(instanceId);
 
         JSch jsch = new JSch();
 
-        SShTermObject.SchSession schSession = null;
+        SchSession schSession = null;
 
         String retVal = "SUCCESS";
         try {
@@ -84,9 +84,9 @@ public class SSHService {
             InputStream inputStream = channel.getInputStream();
 
             //new session output
-            SShTermObject.SessionOutput sessionOutput = new SShTermObject.SessionOutput(sessionId,term);
+            SessionOutput sessionOutput = new SessionOutput(sessionId,term);
 
-            Runnable run = new SShTermObject.SecureShellTask(sessionOutput, inputStream);
+            Runnable run = new SecureShellTask(sessionOutput, inputStream);
             Thread thread = new Thread(run);
             thread.start();
 
@@ -95,7 +95,7 @@ public class SSHService {
 
             channel.connect();
 
-            schSession = new SShTermObject.SchSession();
+            schSession = new SchSession();
             schSession.setUserId(userId);
             schSession.setTerm(term);
             schSession.setSession(session);
@@ -123,12 +123,12 @@ public class SSHService {
         //add session to map
         if (retVal.equals(Term.SUCCESS)) {
             //get the server maps for user
-            SShTermObject.UserSchSessions userSchSessions = userSessionMap.get(sessionId);
+            UserSchSessions userSchSessions = userSessionMap.get(sessionId);
             //if no user session create a new one
             if (userSchSessions == null) {
-                userSchSessions = new SShTermObject.UserSchSessions();
+                userSchSessions = new UserSchSessions();
             }
-            Map<Long, SShTermObject.SchSession> schSessionMap = userSchSessions.getSchSessionMap();
+            Map<Long, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
             //add server information
             schSessionMap.put(instanceId, schSession);
@@ -143,7 +143,7 @@ public class SSHService {
         return term;
     }
 
-    private Long getNextInstanceId(Long sessionId, Map<Long, SShTermObject.UserSchSessions> userSessionMap) {
+    private Long getNextInstanceId(Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
         Long instanceId = 1L;
         if (userSessionMap.get(sessionId) != null) {
             for (Long id : userSessionMap.get(sessionId).getSchSessionMap().keySet()) {

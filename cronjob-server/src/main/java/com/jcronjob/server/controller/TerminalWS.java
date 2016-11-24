@@ -18,44 +18,51 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.jcronjob.server.job;
+
+package com.jcronjob.server.controller;
 
 import com.google.gson.Gson;
 import com.jcronjob.common.utils.DigestUtils;
-import com.jcronjob.server.controller.TermController;
 import com.jcronjob.server.domain.User;
-import com.jcronjob.server.model.SessionOutputUtil;
+import com.jcronjob.server.job.Globals;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
+import javax.websocket.Session;
+import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
+import javax.websocket.server.ServerEndpointConfig;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import static com.jcronjob.server.model.SShTermObject.*;
-
+import static com.jcronjob.server.service.TerminalObject.*;
 
 
 /**
+ *
  * Created by benjobs on 2016/11/23.
  *
- * 终于一人之力,4天时间攻下webssh...
- * 很多事情没有天分之说,关键看你的态度
- * 努力,坚持.....
- *
  */
+
+
+class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
+    @Override
+    public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
+        HttpSession httpSession = (HttpSession)request.getHttpSession();
+        config.getUserProperties().put(HttpSession.class.getName(),httpSession);
+    }
+}
+
+
 @ServerEndpoint(value = "/terms.ws", configurator = HttpSessionConfigurator.class)
 @SuppressWarnings("unchecked")
-public class TermWebSocket {
+public class TerminalWS {
 
-    private static Logger log = LoggerFactory.getLogger(TermWebSocket.class);
+    private static Logger log = LoggerFactory.getLogger(TerminalWS.class);
 
     private HttpSession httpSession;
     private Session session;
@@ -166,7 +173,7 @@ public class TermWebSocket {
                 //clear and remove session map for user
                 schSessionMap.clear();
                 schSessionMap.remove(sessionId);
-                SessionOutputUtil.removeUserSession(sessionId);
+                removeUserSession(sessionId);
             }
         }
 
@@ -268,5 +275,6 @@ public class TermWebSocket {
 
     }
 
-
 }
+
+
