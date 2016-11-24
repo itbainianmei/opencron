@@ -27,11 +27,6 @@
             <artifactId>javax.websocket-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-        </dependency>
-
         <!-- J2EE servlet -->
         <dependency>
             <groupId>javax.servlet</groupId>
