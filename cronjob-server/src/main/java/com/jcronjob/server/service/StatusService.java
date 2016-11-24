@@ -20,9 +20,9 @@
  */
 package com.jcronjob.server.service;
 
-import com.jcronjob.server.domain.Term;
+import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.domain.TermStatus;
+import com.jcronjob.server.domain.TerminalStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,25 +43,25 @@ public class StatusService {
         queryDao.createSQLQuery(sql,termId,userId).executeUpdate();
     }
 
-    public TermStatus query(Long termId, Long userId){
+    public TerminalStatus query(Long termId, Long userId){
         String sql = "SELECT * FROM T_SSH_STATUS WHERE termId=? AND userId=?";
-        return (TermStatus) queryDao.createSQLQuery(sql,termId,userId).addEntity(TermStatus.class).uniqueResult();
+        return (TerminalStatus) queryDao.createSQLQuery(sql,termId,userId).addEntity(TerminalStatus.class).uniqueResult();
     }
 
     @Transactional(readOnly = false)
     public void flush(Long termId, Long userId) {
         queryDao.getSession().flush();
-        TermStatus status = query(termId,userId);
+        TerminalStatus status = query(termId,userId);
         if (status==null) {
-            status = new TermStatus();
+            status = new TerminalStatus();
             status.setTermId(termId);
             status.setUserId(userId);
         }
-        status.setStatus(Term.INITIAL);
+        status.setStatus(Terminal.INITIAL);
         queryDao.save(status);
     }
 
-    public void update(String status, Term term, Long userId) {
+    public void update(String status, Terminal term, Long userId) {
         String sql = "UPDATE T_SSH_STATUS SET status=? WHERE termId=? and userId=?";
         queryDao.createSQLQuery(sql,status,term.getId(),userId).executeUpdate();
     }

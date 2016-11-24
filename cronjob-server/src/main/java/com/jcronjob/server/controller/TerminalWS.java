@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
+import com.jcronjob.server.session.HttpSessionConfigurator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +33,12 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.Session;
-import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpoint;
-import javax.websocket.server.ServerEndpointConfig;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import static com.jcronjob.server.service.TerminalObject.*;
+import static com.jcronjob.server.service.TerminalService.*;
 
 
 /**
@@ -47,15 +46,6 @@ import static com.jcronjob.server.service.TerminalObject.*;
  * Created by benjobs on 2016/11/23.
  *
  */
-
-
-class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
-    @Override
-    public void modifyHandshake(ServerEndpointConfig config, HandshakeRequest request, HandshakeResponse response) {
-        HttpSession httpSession = (HttpSession)request.getHttpSession();
-        config.getUserProperties().put(HttpSession.class.getName(),httpSession);
-    }
-}
 
 
 @ServerEndpoint(value = "/terms.ws", configurator = HttpSessionConfigurator.class)
@@ -80,7 +70,7 @@ public class TerminalWS {
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         this.sessionId = getSessionId(httpSession);
         this.session = session;
-        this.userSchSessionMap = TermController.userSchSessionMap;
+        this.userSchSessionMap = TerminalController.userSchSessionMap;
         User user = getUser(this.httpSession);
         Runnable run = new SentOutputTask(sessionId, session, user);
         Thread thread = new Thread(run);

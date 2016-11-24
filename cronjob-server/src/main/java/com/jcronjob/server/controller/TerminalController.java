@@ -23,15 +23,14 @@ package com.jcronjob.server.controller;
 
 import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.common.utils.WebUtils;
-import com.jcronjob.server.domain.Term;
-import com.jcronjob.server.domain.TermSession;
+import com.jcronjob.server.domain.Terminal;
+import com.jcronjob.server.domain.TerminalSession;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.StatusService;
-import com.jcronjob.server.service.TermService;
+import com.jcronjob.server.service.TerminalService;
 
-import com.jcronjob.server.service.SSHService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,23 +42,21 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.jcronjob.server.service.TerminalObject.*;
+import static com.jcronjob.server.service.TerminalService.*;
 
 /**
  * benjobs..
  */
 @Controller
 @RequestMapping("term")
-public class TermController {
+public class TerminalController {
 
     @Autowired
-    private TermService termService;
+    private TerminalService termService;
 
     @Autowired
     private StatusService statusService;
 
-    @Autowired
-    private SSHService sshService;
 
     public static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
 
@@ -68,7 +65,7 @@ public class TermController {
         User user = (User) session.getAttribute(Globals.LOGIN_USER);
 
         String json = "{status:'%s',url:'%s'}";
-        final Term term = termService.getTerm(user.getUserId(), agent.getIp());
+        final Terminal term = termService.getTerm(user.getUserId(), agent.getIp());
         if (term == null) {
             WebUtils.writeJson(response, String.format(json,"null","null"));
             return;
@@ -76,11 +73,11 @@ public class TermController {
 
         String authStr = termService.auth(term);
         //登陆认证成功
-        if (authStr.equalsIgnoreCase(Term.SUCCESS)) {
+        if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
             statusService.flush(term.getId(),user.getUserId());
-            TermSession sshSession  = sshService.createSession(user.getUserId());
+            TerminalSession sshSession  = termService.createSession(user.getUserId());
             session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,sshSession.getId().toString()));
-            sshService.openSSHTerm(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
+            termService.openSSHTerm(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
 
             WebUtils.writeJson(response, String.format(json,"success","/term/open?instanceId="+term.getInstanceId()+"&hostId="+term.getId()));
         }else {
@@ -98,7 +95,7 @@ public class TermController {
     }
 
     @RequestMapping("/save")
-    public void save(HttpSession session, HttpServletResponse response, Term term) throws Exception {
+    public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
         if ("success".equals(message)) {
             User user = (User)session.getAttribute(Globals.LOGIN_USER);

@@ -4,22 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 /**
  * Created by benjobs on 2016/11/22.
  */
-
-
 @Entity
-@Table(name = "T_SSH_SESSION")
-public class TermSession {
+@Table(name = "T_SSH_STATUS")
+public class TerminalStatus {
 
     @Id
     @GeneratedValue
     private Long id;
+    private Long termId;
     private Long userId;
-    private Date sessionTime;
+    private String status;
 
     public Long getId() {
         return id;
@@ -27,6 +25,14 @@ public class TermSession {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTermId() {
+        return termId;
+    }
+
+    public void setTermId(Long termId) {
+        this.termId = termId;
     }
 
     public Long getUserId() {
@@ -37,11 +43,11 @@ public class TermSession {
         this.userId = userId;
     }
 
-    public Date getSessionTime() {
-        return sessionTime;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSessionTime(Date sessionTime) {
-        this.sessionTime = sessionTime;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

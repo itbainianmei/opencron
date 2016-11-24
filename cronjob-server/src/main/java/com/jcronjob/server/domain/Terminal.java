@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "T_TERM")
-public class Term implements Serializable{
+public class Terminal implements Serializable{
 
     @Id
     @GeneratedValue
