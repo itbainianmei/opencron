@@ -20,8 +20,6 @@
  *
  *
  */
-
-
 package com.jcronjob.server.service;
 
 import com.google.gson.Gson;
