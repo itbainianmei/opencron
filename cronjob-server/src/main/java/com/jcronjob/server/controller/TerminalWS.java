@@ -64,9 +64,7 @@ public class TerminalWS {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws Exception {
-        //set websocket timeout
         session.setMaxIdleTimeout(0);
-
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         this.sessionId = getSessionId(httpSession);
         this.session = session;
@@ -98,7 +96,6 @@ public class TerminalWS {
         timeout.add(Calendar.MINUTE, 15);
         session.setAttribute(TIMEOUT, sdf.format(timeout.getTime()));
     }
-
 
     @OnMessage
     public void onMessage(String message) {
@@ -141,7 +138,6 @@ public class TerminalWS {
 
     @OnClose
     public void onClose() {
-
         if (userSchSessionMap != null) {
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
             if (userSchSessions != null) {
@@ -166,7 +162,6 @@ public class TerminalWS {
                 removeUserSession(sessionId);
             }
         }
-
     }
 
 
