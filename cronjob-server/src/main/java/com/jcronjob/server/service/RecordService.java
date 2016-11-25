@@ -189,7 +189,7 @@ public class RecordService {
 
     @Transactional(readOnly = false)
     public void flowJobDone(Record record) {
-        String sql = "update record set status=? where groupId=?";
+        String sql = "UPDATE T_RECORD SET status=? WHERE groupId=?";
         queryDao.createSQLQuery(sql, Cronjob.RunStatus.DONE.getStatus(), record.getGroupId()).executeUpdate();
     }
 
