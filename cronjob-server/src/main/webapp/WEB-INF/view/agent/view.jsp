@@ -531,7 +531,13 @@
                     }else if( json.status == "error" ) {
                         alert("连接失败请重试");
                     }else if(json.status == "success"){
-                        window.location.href="${contextPath}"+json.url;
+                        var url = '${contextPath}'+json.url;
+                        var el = document.createElement("a");
+                        document.body.appendChild(el);
+                        el.href = url;
+                        el.target = '_new';
+                        el.click();
+                        document.body.removeChild(el);
                     }
                 }
             }
@@ -565,43 +571,6 @@
                 }
             }
         });
-    }
-
-    function openTerminal() {
-        var options = {
-            host: $("#sship").val(),
-            port: $("#sshport").val(),
-            username: $("#sshuser").val(),
-            password: $("#sshpwd").val()
-        }
-
-        var client = new WSSHClient();
-        var term = new Terminal({cols: 80, rows: 24, screenKeys: true, useStyle:true});
-        term.on('data', function (data) {
-            client.sendClientData(data);
-        });
-        term.open();
-        $('.terminal').detach().appendTo('#term');
-        term.write('Connecting...');
-        client.connect({
-            onError: function (error) {
-                term.write('Error: ' + error + '\r\n');
-                console.debug('error happened');
-            },
-            onConnect: function () {
-                client.sendInitData(options);
-                client.sendClientData('\r');
-                console.debug('connection established');
-            },
-            onClose: function () {
-                term.write("\rconnection closed")
-                console.debug('connection reset by peer');
-            },
-            onData: function (data) {
-                term.write(data);
-                console.debug('get data:' + data);
-            }
-        })
     }
 
 </script>

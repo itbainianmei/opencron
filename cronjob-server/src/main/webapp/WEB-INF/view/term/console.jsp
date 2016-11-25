@@ -9,15 +9,10 @@
 
     <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
 
-    <script type="text/javascript" src="${contextPath}/js/jquery-ui.min.js"></script>
-
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
 
     <script type="text/javascript" src="${contextPath}/js/cronjob.term.js"></script>
 
-    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css"/>
-
-    <link rel="stylesheet" href="${contextPath}/css/term.css"/>
 
     <script type="text/javascript">
 
@@ -139,7 +134,10 @@
             function  createTermMap(id, output){
 
                 termMap[id] = new Terminal({
-                    cols: Math.floor($('.output:first').innerWidth() / 7.2981), rows: 24,
+                    rows: 50,
+                    fdsaf:3333,
+                    fontSize:13,
+                    lineHeight:16,
                     screenKeys: false,
                     useStyle: true,
                     cursorBlink: true,
@@ -204,12 +202,19 @@
 
     </script>
 
-    <title>Cronjob Terms</title>
+    <style type="text/css">
+        .terminal {
+            background-color:#000;
+            color:rgb(222,222,222);
+            font-size: 12px;
+        }
+    </style>
+    <title>Cronjob Terminal</title>
 
 </head>
 <body>
 <!--别动,很神奇,让该框永远得到焦点,主要是阻止按删除键,触发页面退出,返回上个页面-->
-<textarea id="focus" size="1" style="border:none;color:#FFFFFF;width:1px;height:1px"></textarea>
+<textarea id="focus" style="border:none;color:#FFFFFF;width:0px;height:0px;resize:none"></textarea>
 <div class="termwrapper"></div>
 </body>
 </html>
