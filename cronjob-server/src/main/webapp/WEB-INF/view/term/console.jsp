@@ -13,7 +13,6 @@
 
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
 
-
     <script type="text/javascript" src="${contextPath}/js/cronjob.term.js"></script>
 
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css"/>
@@ -21,6 +20,7 @@
     <link rel="stylesheet" href="${contextPath}/css/term.css"/>
 
     <script type="text/javascript">
+
         $(document).ready(function () {
 
             //new CronjobTerm(${instanceId}, ${hostId}, "hadoop",".termwrapper").open();
@@ -196,7 +196,7 @@
                 return instance;
             }
 
-            $(createTermElement(${instanceId}, ${hostId}, "hadoop")).prependTo(".termwrapper");
+            $(createTermElement(${instanceId}, ${hostId}, "${hostName}(${ip})")).prependTo(".termwrapper");
 
             setTerminalEvents($("#run_cmd_" +${instanceId}));
 

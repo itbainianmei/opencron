@@ -28,6 +28,7 @@ import com.jcronjob.server.domain.TerminalSession;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
+import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.service.StatusService;
 import com.jcronjob.server.service.TerminalService;
 
@@ -56,6 +57,9 @@ public class TerminalController {
 
     @Autowired
     private StatusService statusService;
+
+    @Autowired
+    private AgentService agentService;
 
 
     public static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
@@ -93,7 +97,17 @@ public class TerminalController {
     }
 
     @RequestMapping("/open")
-    public String open(HttpServletRequest request,Long instanceId,Long hostId ) throws Exception {
+    public String open(HttpServletRequest request,HttpSession session,Long instanceId,Long hostId ) throws Exception {
+        String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
+        if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
+            Long sessionId = Long.parseLong(sessionIdStr);
+            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
+            SchSession schSession = userSchSessions.getSchSessionMap().get(instanceId);
+            Agent agent =agentService.getByHost(schSession.getTerm().getHost());
+            request.setAttribute("hostName",agent.getName());
+            request.setAttribute("ip",agent.getIp());
+
+        }
         request.setAttribute("instanceId",instanceId);
         request.setAttribute("hostId",hostId);
         return "/term/console";

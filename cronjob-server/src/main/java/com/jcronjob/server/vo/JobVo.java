@@ -341,4 +341,5 @@ public class JobVo implements Serializable {
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
     }
+
 }

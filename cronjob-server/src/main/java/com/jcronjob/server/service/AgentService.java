@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.dao.QueryDao;
+import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.session.MemcacheCache;
@@ -195,5 +196,10 @@ public class AgentService {
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);
+    }
+
+    public Agent getByHost(String host) {
+        String sql = "SELECT * FROM T_AGENT WHERE ip=?";
+        return queryDao.sqlUniqueQuery(Agent.class,sql,host);
     }
 }
