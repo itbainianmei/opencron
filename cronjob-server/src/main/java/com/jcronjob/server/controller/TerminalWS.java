@@ -22,11 +22,11 @@
 package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.session.HttpSessionConfigurator;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,12 +64,13 @@ public class TerminalWS {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws Exception {
-        session.setMaxIdleTimeout(0);
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
         this.sessionId = getSessionId(httpSession);
         this.session = session;
         this.userSchSessionMap = TerminalController.userSchSessionMap;
-        User user = getUser(this.httpSession);
+
+        session.setMaxIdleTimeout(0);
+        User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
         Runnable run = new SentOutputTask(sessionId, session, user);
         Thread thread = new Thread(run);
         thread.start();
@@ -79,33 +80,29 @@ public class TerminalWS {
     public static Long getSessionId(HttpSession session) throws Exception {
         Long sessionId = null;
         String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
-        if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
+        if (CommonUtils.notEmpty(sessionIdStr)) {
             sessionId = Long.parseLong(sessionIdStr);
         }
         return sessionId;
     }
 
-    public User getUser(HttpSession session) {
-        return (User) session.getAttribute(Globals.LOGIN_USER);
-    }
-
     public void setTimeout(HttpSession session) {
         //set session timeout
-        SimpleDateFormat sdf = new SimpleDateFormat("MMddyyyyHHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyyHHmmss");
         Calendar timeout = Calendar.getInstance();
         timeout.add(Calendar.MINUTE, 15);
-        session.setAttribute(TIMEOUT, sdf.format(timeout.getTime()));
+        session.setAttribute(TIMEOUT, dateFormat.format(timeout.getTime()));
     }
 
     @OnMessage
     public void onMessage(String message) {
-        if (session.isOpen() && StringUtils.isNotEmpty(message)) {
+        if (session.isOpen() && CommonUtils.notEmpty(message)) {
 
-            Map jsonRoot = JSON.parseObject(message,Map.class);
+            Map jsonMap = JSON.parseObject(message,Map.class);
 
-            String command = (String) jsonRoot.get("command");
-            Integer keyCode = (Integer) jsonRoot.get("keyCode");;
-            Long id = ((Integer)jsonRoot.get("id")).longValue();
+            String command = (String) jsonMap.get("command");
+            Integer keyCode = (Integer) jsonMap.get("keyCode");;
+            Long id = ((Integer)jsonMap.get("id")).longValue();
 
             //get servletRequest.getSession() for user
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
