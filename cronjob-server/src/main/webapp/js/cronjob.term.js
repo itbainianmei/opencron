@@ -7,11 +7,8 @@ function CronjobTerm() {
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.termFocus = true;
     this.keys = {};
-    this.wsconn = null;
+    this.connect = null;
     this.term = null;
-
-    <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
-    $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore(this.target);
 
     document.title=this.termTitle;
 }
@@ -19,7 +16,7 @@ function CronjobTerm() {
 CronjobTerm.prototype.open = function () {
     this.bind();
     this.create();
-    this.conn();
+    this.request();
     this.focus();
 }
 
@@ -69,6 +66,11 @@ CronjobTerm.prototype.create = function () {
 }
 
 CronjobTerm.prototype.focus = function () {
+
+    if( $("#focus").length === 0  ){
+        <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
+        $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore(this.target);
+    }
     $("#focus").focus().click();
     this.termFocus = true;
     return this;
@@ -90,7 +92,7 @@ CronjobTerm.prototype.bind = function () {
                 && !keys[38] && !keys[39] && !keys[40] && !keys[13] && !keys[8] && !keys[9]
                 && !keys[46] && !keys[45] && !keys[33] && !keys[34] && !keys[35] && !keys[36]) {
                 var command = String.fromCharCode(keyCode);
-                self.wsconn.send(JSON.stringify({id: self.id, command: command}));
+                self.connect.send(JSON.stringify({id: self.id, command: command}));
             }
         }
     }).keydown(function (e) {
@@ -98,7 +100,7 @@ CronjobTerm.prototype.bind = function () {
             var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
             self.keys[keyCode] = true;
             if((e.ctrlKey && !e.altKey) || keyCode == 27 || keyCode == 37 || keyCode == 38 || keyCode == 39 || keyCode == 40 || keyCode == 13 || keyCode == 8 || keyCode == 9 || keyCode == 46 || keyCode == 45 || keyCode == 33 || keyCode == 34 || keyCode == 35 || keyCode == 36) {
-                self.wsconn.send(JSON.stringify({id: self.id, keyCode: keyCode}));
+                self.connect.send(JSON.stringify({id: self.id, keyCode: keyCode}));
             }
             if (e.ctrlKey && (keyCode == 83 || keyCode == 81 || keyCode == 84 || keyCode == 220 || keyCode == 90 || keyCode == 72 || keyCode == 87 || keyCode == 85 || keyCode == 82 || keyCode == 68)) {
                 e.preventDefault();
@@ -118,24 +120,24 @@ CronjobTerm.prototype.bind = function () {
         $('#focus').val('');
         setTimeout(function () {
             var command = $('#focus').val();
-            self.wsconn.send(JSON.stringify({id: self.id, command: command}));
+            self.connect.send(JSON.stringify({id: self.id, command: command}));
         }, 100);
     });
 
     return this;
 }
 
-CronjobTerm.prototype.conn = function () {
+CronjobTerm.prototype.request = function () {
     var url = this.contextPath+'/terms.ws?t=' + new Date().getTime();
-    this.wsconn =  new WebSocket(url);
+    this.connect =  new WebSocket(url);
 
-    this.wsconn.onerror = function (error) {
+    this.connect.onerror = function (error) {
         console.log('WebSocket Error ' + error);
     };
 
     var self = this;
 
-    this.wsconn.onmessage = function (e) {
+    this.connect.onmessage = function (e) {
         var json = jQuery.parseJSON(e.data);
         $.each(json, function (key, val) {
             if (val.output != '') {
