@@ -9,24 +9,24 @@ function CronjobTerm() {
     this.keys = {};
     this.wsconn = null;
     this.term = null;
-    if($("#focus").length==0) {
-        $("<textarea id='focus' size='1' style='border:none;color:#FFFFFF;width:1px;height:1px'></textarea>").appendTo($('body'));
-    }
 
-    this.focus();
+    <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
+    $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore(this.target);
+
+    document.title=this.termTitle;
 }
 
 CronjobTerm.prototype.open = function () {
     this.bind();
     this.create();
     this.conn();
+    this.focus();
 }
 
 CronjobTerm.prototype.create = function () {
     var self = this;
     var term =
         "<div id=\"run_cmd_" +this.id + "\" class=\"run_cmd_active run_cmd\">"
-        + "<h6 class=\"term-header\">" + this.termTitle + "</h6>"
         + "<div class=\"term\">"
         +   "<div id=\"output_" + this.id + "\" class=\"output\"></div>"
         + "</div>"
@@ -69,7 +69,7 @@ CronjobTerm.prototype.create = function () {
 }
 
 CronjobTerm.prototype.focus = function () {
-    $("#focus").focus();
+    $("#focus").focus().click();
     this.termFocus = true;
     return this;
 }
@@ -134,14 +134,18 @@ CronjobTerm.prototype.conn = function () {
     };
 
     var self = this;
+
     this.wsconn.onmessage = function (e) {
         var json = jQuery.parseJSON(e.data);
         $.each(json, function (key, val) {
             if (val.output != '') {
                 if(!self.term) {
                     self.term = new Terminal({
-                        cols: Math.floor($('.output:first').innerWidth() / 7.2981), rows: 24,
-                        screenKeys: false,
+                        cols: 132,
+                        rows: Math.floor($(window).height()/15),
+                        fontSize:12,
+                        lineHeight:15,
+                        screenKeys: true,
                         useStyle: true,
                         cursorBlink: true,
                         convertEol: true
@@ -154,8 +158,6 @@ CronjobTerm.prototype.conn = function () {
             }
         });
     };
-
     return this;
-
 }
 

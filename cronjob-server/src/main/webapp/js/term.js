@@ -358,7 +358,7 @@
     //Terminal.colors[256] = '#f0f0f0';
     //Terminal.colors[257] = '#555753';
     Terminal.colors[256] = '#000000';
-    Terminal.colors[257] = '#f0f0f0';
+    Terminal.colors[257] = '#cccccc';
 
     Terminal._colors = Terminal.colors.slice();
 
@@ -385,7 +385,7 @@
      */
 
     Terminal.defaults = {
-        colors: Terminal.xtermColors,
+        colors: Terminal.tangoColors,
         convertEol: false,
         termName: 'xterm',
         geometry: [80, 24],
@@ -396,8 +396,8 @@
         screenKeys: false,
         debug: false,
         useStyle: false,
-        fontSize:13,
-        lineHeight:16
+        fontSize:12,
+        lineHeight:15
         // programFeatures: false,
         // focusKeys: false,
     };
@@ -641,7 +641,7 @@
      * Insert a default style
      */
 
-    Terminal.insertStyle = function(document, bg, fg,fz) {
+    Terminal.insertStyle = function(document, bg, fg) {
         var style = document.getElementById('term-style');
         if (style) return;
 
@@ -657,14 +657,15 @@
             //+ '  float: left;\n'
             + '  border: ' + bg + ' solid 5px;\n'
             + '  font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;\n'
-            + '  font-size: '+fz+'px;\n',
+            + '  font-size: '+this.fontSize+'px;\n'
+            + '  line-height: '+this.lineHeight+'px;\n'
             + '  color: ' + fg + ';\n'
             + '  background: ' + bg + ';\n'
             + '}\n'
             + '\n'
             + '.terminal-cursor {\n'
-            + '  color: ' + fg + ';\n'
-            + '  background: ' + bg + ';\n'
+            + '  color: ' + bg + ';\n'
+            + '  background: ' + fg + ';\n'
             + '}\n';
 
         // var out = '';
@@ -710,8 +711,6 @@
         this.element.setAttribute('spellcheck', 'false');
         this.element.style.backgroundColor = this.colors[256];
         this.element.style.color = this.colors[257];
-        this.element.style.fontSize = this.options.fontSize+"px";
-        this.element.style.lineHeight = this.options.lineHeight+"px";
 
         // Create the lines for our terminal.
         this.children = [];
@@ -1235,7 +1234,7 @@
                             // bold
                             if (flags & 1) {
                                 if (!Terminal.brokenBold) {
-                                    out += 'font-weight:normal;';
+                                    out += 'font-weight:bold;';
                                 }
                                 // See: XTerm*boldColors
                                 if (fg < 8) fg += 8;
@@ -1278,13 +1277,13 @@
 
                             if (bg !== 256) {
                                 out += 'background-color:'
-                                    + this.colors[fg]
+                                    + this.colors[bg]
                                     + ';';
                             }
 
                             if (fg !== 257) {
                                 out += 'color:'
-                                    + this.colors[bg]
+                                    + this.colors[fg]
                                     + ';';
                             }
 
