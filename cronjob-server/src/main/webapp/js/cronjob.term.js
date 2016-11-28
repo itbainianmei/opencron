@@ -1,11 +1,8 @@
 
 ;function CronjobTerm() {
-
     'use strict';
-
     this.id=arguments[0];
     this.termTitle = arguments[1];
-    this.target = arguments[2];
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.termFocus = true;
     this.keys = {};
@@ -24,15 +21,15 @@
 ;CronjobTerm.prototype.create = function () {
     var self = this;
     var term =
-        "<div  id=\"terminal_" +this.id + "\">"
+        "<div style=\"height:100%;width:100%;background-color:#000000;\" id=\"container" + "\">"
         + "<div class=\"term\">"
         +   "<div id=\"output_" + this.id + "\" class=\"output\"></div>"
         + "</div>"
         +"</div>";
 
-    $(term).prependTo(this.target);
+    $(term).prependTo('body');
 
-    $(this.target).click(function () {
+    $('#container'+this.id).click(function () {
        this.focus();
     }).blur(function () {
         this.unfocus();
@@ -51,7 +48,7 @@
 
     if( $("#focus").length === 0  ){
         <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
-        $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore(this.target);
+        $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore('#container');
     }
     $("#focus").focus().click();
     this.termFocus = true;
@@ -139,7 +136,7 @@
                         cursorBlink: true,
                         convertEol: true
                     });
-                    self.term.open($("#terminal_" + self.id).find('.output'));
+                    self.term.open($("#output_" + self.id));
                     self.term.write(val.output);
                 }else {
                     self.term.write(val.output);

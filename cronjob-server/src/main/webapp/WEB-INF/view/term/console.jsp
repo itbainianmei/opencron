@@ -18,7 +18,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            new CronjobTerm(${id},"${hostName}(${ip})",".termwrapper").open();
+            new CronjobTerm(${id},"${hostName}(${ip})").open();
         });
 
     </script>
@@ -26,16 +26,8 @@
         body{
             margin: 0px;
         }
-        .termwrapper{
-            height: 100%;
-            width:100%;
-            background-color: #000000;
-        }
     </style>
     <title>Cronjob Terminal</title>
-
 </head>
-<body>
-<div class="termwrapper"></div>
-</body>
+<body></body>
 </html>
