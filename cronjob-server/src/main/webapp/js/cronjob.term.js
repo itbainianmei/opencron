@@ -1,15 +1,13 @@
 
 function CronjobTerm() {
     this.id=arguments[0];
-    this.hostId = arguments[1];
-    this.termTitle = arguments[2];
-    this.target = arguments[3];
+    this.termTitle = arguments[1];
+    this.target = arguments[2];
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.termFocus = true;
     this.keys = {};
     this.connect = null;
     this.term = null;
-
     document.title=this.termTitle;
 }
 
@@ -23,37 +21,18 @@ CronjobTerm.prototype.open = function () {
 CronjobTerm.prototype.create = function () {
     var self = this;
     var term =
-        "<div id=\"run_cmd_" +this.id + "\" class=\"run_cmd_active run_cmd\">"
+        "<div id=\"terminal_" +this.id + "\">"
         + "<div class=\"term\">"
         +   "<div id=\"output_" + this.id + "\" class=\"output\"></div>"
         + "</div>"
-        + "<div data-hostId=\""+ this.hostId +"\" class=\"host\"></div>"
         +"</div>";
 
     $(term).prependTo(this.target);
 
-    var element = $("#run_cmd_"+this.id);
-
-    element.mousedown(function (e) {
-        //check for cmd-click / ctr-click
-        if (!e.ctrlKey && !e.metaKey) {
-            $(".run_cmd").removeClass('run_cmd_active');
-        }
-
-        if (element.hasClass('run_cmd_active')) {
-            element.removeClass('run_cmd_active');
-        } else {
-            element.addClass('run_cmd_active')
-        }
-    });
-
-    //set focus to term
-    $(".output").mouseup(function (e) {
-        if(window.getSelection().toString()) {
-            self.unfocus()
-        } else {
-            self.focus();
-        }
+    $('body').click(function () {
+       this.focus();
+    }).blur(function () {
+        this.unfocus();
     });
 
     $(".output").bind('copy', function () {
@@ -76,7 +55,9 @@ CronjobTerm.prototype.focus = function () {
     return this;
 }
 
+
 CronjobTerm.prototype.unfocus = function () {
+    $("#focus").blur();
     this.termFocus = false;
     return this;
 }
@@ -145,14 +126,12 @@ CronjobTerm.prototype.request = function () {
                     self.term = new Terminal({
                         cols: 132,
                         rows: Math.floor($(window).height()/15),
-                        fontSize:12,
-                        lineHeight:15,
                         screenKeys: true,
                         useStyle: true,
                         cursorBlink: true,
                         convertEol: true
                     });
-                    self.term.open($("#run_cmd_" + self.id).find('.output'));
+                    self.term.open($("#terminal_" + self.id).find('.output'));
                     self.term.write(val.output);
                 }else {
                     self.term.write(val.output);

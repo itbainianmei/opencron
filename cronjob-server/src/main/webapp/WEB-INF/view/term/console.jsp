@@ -7,16 +7,18 @@
 <html lang="en">
 <head>
 
+    <link rel="shortcut icon" href="${contextPath}/img/terminl.ico" />
+
     <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
 
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
 
-    <script type="text/javascript" src="${contextPath}/js/cronjob.term.js?t=31fdffs32"></script>
+    <script type="text/javascript" src="${contextPath}/js/cronjob.term.js?jsid=12342"></script>
 
     <script type="text/javascript">
 
         $(document).ready(function () {
-            new CronjobTerm(${instanceId}, ${hostId}, "${hostName}(${ip})",".termwrapper").open();
+            new CronjobTerm(${instanceId},"${hostName}(${ip})",".termwrapper").open();
         });
 
     </script>
