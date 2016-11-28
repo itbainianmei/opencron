@@ -117,7 +117,7 @@ public class TerminalWS {
     @OnClose
     public void onClose() {
         if (userSchSessionMap != null) {
-            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
+            UserSchSessions userSchSessions = userSchSessionMap.remove(sessionId);
             if (userSchSessions != null) {
                 Map<String, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
