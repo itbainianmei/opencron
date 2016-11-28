@@ -24,7 +24,7 @@
 ;CronjobTerm.prototype.create = function () {
     var self = this;
     var term =
-        "<div id=\"terminal_" +this.id + "\">"
+        "<div  id=\"terminal_" +this.id + "\">"
         + "<div class=\"term\">"
         +   "<div id=\"output_" + this.id + "\" class=\"output\"></div>"
         + "</div>"
@@ -32,7 +32,7 @@
 
     $(term).prependTo(this.target);
 
-    $('body').click(function () {
+    $(this.target).click(function () {
        this.focus();
     }).blur(function () {
         this.unfocus();
@@ -57,7 +57,6 @@
     this.termFocus = true;
     return this;
 }
-
 
 ;CronjobTerm.prototype.unfocus = function () {
     $("#focus").blur();
@@ -117,6 +116,7 @@
 
 
     this.connect.onclose = function (e) {
+        alert("close");
         console.log('WebSocket close ');
     };
 

@@ -83,7 +83,7 @@ public class TerminalController {
             session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,sshSession.getId().toString()));
             termService.openTerminal(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
 
-            WebUtils.writeJson(response, String.format(json,"success","/term/open?instanceId="+term.getInstanceId()+"&hostId="+term.getId()));
+            WebUtils.writeJson(response, String.format(json,"success","/term/open?id="+term.getInstanceId()));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
@@ -97,19 +97,18 @@ public class TerminalController {
     }
 
     @RequestMapping("/open")
-    public String open(HttpServletRequest request,HttpSession session,Long instanceId,Long hostId ) throws Exception {
+    public String open(HttpServletRequest request,HttpSession session,Long id ) throws Exception {
         String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
         if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
             Long sessionId = Long.parseLong(sessionIdStr);
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
-            SchSession schSession = userSchSessions.getSchSessionMap().get(instanceId);
+            SchSession schSession = userSchSessions.getSchSessionMap().get(id);
             Agent agent =agentService.getByHost(schSession.getTerm().getHost());
             request.setAttribute("hostName",agent.getName());
             request.setAttribute("ip",agent.getIp());
 
         }
-        request.setAttribute("instanceId",instanceId);
-        request.setAttribute("hostId",hostId);
+        request.setAttribute("id",id);
         return "/term/console";
     }
 
