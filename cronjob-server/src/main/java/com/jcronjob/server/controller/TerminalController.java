@@ -22,7 +22,6 @@
 package com.jcronjob.server.controller;
 
 import com.jcronjob.common.utils.CommonUtils;
-import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.job.Globals;

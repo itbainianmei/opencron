@@ -23,7 +23,6 @@ package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.CommonUtils;
-import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.session.HttpSessionConfigurator;
