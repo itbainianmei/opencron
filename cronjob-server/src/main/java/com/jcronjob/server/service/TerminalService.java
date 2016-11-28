@@ -27,7 +27,6 @@ import com.jcraft.jsch.*;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.domain.TerminalSession;
 import com.jcronjob.server.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,10 +80,7 @@ public class TerminalService {
     @Autowired
     private QueryDao queryDao;
 
-    @Autowired
-    private StatusService statusService;
-
-    private static Map<Long,UserSessionsOutput> userSessionsOutputMap = new ConcurrentHashMap<Long, UserSessionsOutput>();
+    private static Map<String,UserSessionsOutput> userSessionsOutputMap = new ConcurrentHashMap<String, UserSessionsOutput>();
 
     private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
 
@@ -135,9 +131,9 @@ public class TerminalService {
     }
 
 
-    public Terminal openTerminal(Terminal term, Long userId, Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
+    public Terminal openTerminal(Terminal term, Long userId, String sessionId, Map<String, UserSchSessions> userSessionMap) {
 
-        Long instanceId = getNextInstanceId(sessionId, userSessionMap);
+        String instanceId = CommonUtils.uuid();
         term.setInstanceId(instanceId);
 
         JSch jsch = new JSch();
@@ -206,7 +202,7 @@ public class TerminalService {
             if (userSchSessions == null) {
                 userSchSessions = new UserSchSessions();
             }
-            Map<Long, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
+            Map<String, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
             //add server information
             schSessionMap.put(instanceId, schSession);
@@ -216,77 +212,9 @@ public class TerminalService {
 
         }
 
-        statusService.update(retVal,term,userId);
-
         return term;
     }
 
-    private Long getNextInstanceId(Long sessionId, Map<Long, UserSchSessions> userSessionMap) {
-        Long instanceId = 1L;
-        if (userSessionMap.get(sessionId) != null) {
-            for (Long id : userSessionMap.get(sessionId).getSchSessionMap().keySet()) {
-                if (!id.equals(instanceId) && userSessionMap.get(sessionId).getSchSessionMap().get(instanceId) == null) {
-                    return instanceId;
-                }
-                instanceId = instanceId + 1;
-            }
-        }
-        return instanceId;
-    }
-
-
-    public static String getFingerprint(String publicKey) {
-        String fingerprint = null;
-        if (org.apache.commons.lang3.StringUtils.isNotEmpty(publicKey)) {
-            try {
-                KeyPair keyPair = KeyPair.load(new JSch(), null, publicKey.getBytes());
-                if (keyPair != null) {
-                    fingerprint = keyPair.getFingerPrint();
-                }
-            } catch (JSchException ex) {
-                logger.error(ex.toString(), ex);
-            }
-
-        }
-        return fingerprint;
-
-    }
-
-
-    public TerminalSession createSession(Long userId) {
-        TerminalSession session = new TerminalSession();
-        session.setUserId(userId);
-        session.setSessionTime(new Date());
-        return (TerminalSession) queryDao.save(session);
-    }
-
-    public String getKeyType(String publicKey) {
-        String keyType = null;
-        if (org.apache.commons.lang3.StringUtils.isNotEmpty(publicKey)) {
-            try {
-                KeyPair keyPair = KeyPair.load(new JSch(), null, publicKey.getBytes());
-                if (keyPair != null) {
-                    int type = keyPair.getKeyType();
-                    if (KeyPair.DSA == type) {
-                        keyType = "DSA";
-                    } else if (KeyPair.RSA == type) {
-                        keyType = "RSA";
-                    } else if (KeyPair.ECDSA == type) {
-                        keyType = "ECDSA";
-                    } else if (KeyPair.UNKNOWN == type) {
-                        keyType = "UNKNOWN";
-                    } else if (KeyPair.ERROR == type) {
-                        keyType = "ERROR";
-                    }
-                }
-
-            } catch (JSchException ex) {
-                logger.error(ex.toString(), ex);
-            }
-        }
-        return keyType;
-
-    }
 
     public Session createJschSession(Terminal term) throws JSchException {
         JSch jsch = new JSch();
@@ -303,22 +231,12 @@ public class TerminalService {
         return jschSession;
     }
 
-    public Terminal getPendingTerminal(Long userId, Long termId) {
-        String sql = "select t.* from T_SSH_STATUS s inner join T_TERM t on s.termId = t.id where (s.status like ? or s.status like ? or s.status like ?) and s.userId=? and s.termId=?";
-        return queryDao.sqlUniqueQuery(Terminal.class,sql, Terminal.INITIAL, Terminal.AUTH_FAIL, Terminal.PUBLIC_KEY_FAIL,userId,termId);
-    }
-
-    public Terminal getCurrentTerminal(Long termId, Long userId) {
-        String sql = "select t.* from T_SSH_STATUS s inner join T_TERM t on s.termId = t.id and s.termId=? and s.userid=?";
-        return queryDao.sqlUniqueQuery(Terminal.class,sql,termId,userId);
-    }
-
     /**
      * removes session for user session
      *
      * @param sessionId session id
      */
-    public static void removeUserSession(Long sessionId) {
+    public static void removeUserSession(String sessionId) {
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
             userSessionsOutput.getSessionOutputMap().clear();
@@ -332,7 +250,7 @@ public class TerminalService {
      * @param sessionId    session id
      * @param instanceId id of host system instance
      */
-    public static void removeOutput(Long sessionId, Long instanceId) {
+    public static void removeOutput(String sessionId, Long instanceId) {
 
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
@@ -367,7 +285,7 @@ public class TerminalService {
      * @param offset       The initial offset
      * @param count        The length
      */
-    public static void addToOutput(Long sessionId, Long instanceId, char value[], int offset, int count) {
+    public static void addToOutput(String sessionId, Long instanceId, char value[], int offset, int count) {
 
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
@@ -382,7 +300,7 @@ public class TerminalService {
      * @param user user auth object
      * @return session output list
      */
-    public static List<SessionOutput> getOutput(Long sessionId, User user) {
+    public static List<SessionOutput> getOutput(String sessionId, User user) {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
@@ -503,10 +421,10 @@ public class TerminalService {
     public static class SentOutputTask implements Runnable {
 
         private javax.websocket.Session session;
-        private Long sessionId;
+        private String sessionId;
         private User user;
 
-        public SentOutputTask(Long sessionId, javax.websocket.Session session, User user) {
+        public SentOutputTask(String sessionId, javax.websocket.Session session, User user) {
             this.sessionId = sessionId;
             this.session = session;
             this.user = user;
@@ -532,10 +450,10 @@ public class TerminalService {
 
     public static class SessionOutput extends Terminal {
 
-        private Long sessionId;
+        private String sessionId;
         private StringBuilder output = new StringBuilder();
 
-        public SessionOutput(Long sessionId, Terminal hostSystem) {
+        public SessionOutput(String sessionId, Terminal hostSystem) {
             this.sessionId=sessionId;
             this.setId(hostSystem.getId());
             this.setInstanceId(hostSystem.getInstanceId());
@@ -545,11 +463,11 @@ public class TerminalService {
 
         }
 
-        public Long getSessionId() {
+        public String getSessionId() {
             return sessionId;
         }
 
-        public void setSessionId(Long sessionId) {
+        public void setSessionId(String sessionId) {
             this.sessionId = sessionId;
         }
 
@@ -565,13 +483,13 @@ public class TerminalService {
 
     public static class UserSchSessions {
 
-        Map<Long, SchSession> schSessionMap = new ConcurrentHashMap<Long, SchSession>();
+        Map<String, SchSession> schSessionMap = new ConcurrentHashMap<String, SchSession>();
 
-        public Map<Long, SchSession> getSchSessionMap() {
+        public Map<String, SchSession> getSchSessionMap() {
             return schSessionMap;
         }
 
-        public void setSchSessionMap(Map<Long, SchSession> schSessionMap) {
+        public void setSchSessionMap(Map<String, SchSession> schSessionMap) {
             this.schSessionMap = schSessionMap;
         }
     }

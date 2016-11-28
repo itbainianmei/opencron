@@ -21,15 +21,14 @@
 
 package com.jcronjob.server.controller;
 
+import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Terminal;
-import com.jcronjob.server.domain.TerminalSession;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
-import com.jcronjob.server.service.StatusService;
 import com.jcronjob.server.service.TerminalService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +55,9 @@ public class TerminalController {
     private TerminalService termService;
 
     @Autowired
-    private StatusService statusService;
-
-    @Autowired
     private AgentService agentService;
 
-
-    public static Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>();
+    public static Map<String, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<String, UserSchSessions>();
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
@@ -78,10 +73,9 @@ public class TerminalController {
         String authStr = termService.auth(term);
         //登陆认证成功
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
-            statusService.flush(term.getId(),user.getUserId());
-            TerminalSession sshSession  = termService.createSession(user.getUserId());
-            session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,sshSession.getId().toString()));
-            termService.openTerminal(term,user.getUserId(), sshSession.getId(),userSchSessionMap);
+            String uuid = CommonUtils.uuid();
+            session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,uuid));
+            termService.openTerminal(term,user.getUserId(), uuid,userSchSessionMap);
 
             WebUtils.writeJson(response, String.format(json,"success","/term/open?id="+term.getInstanceId()));
         }else {
@@ -92,10 +86,9 @@ public class TerminalController {
     }
 
     @RequestMapping("/open")
-    public String open(HttpServletRequest request,HttpSession session,Long id ) throws Exception {
-        String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
-        if (sessionIdStr != null && !sessionIdStr.trim().equals("")) {
-            Long sessionId = Long.parseLong(sessionIdStr);
+    public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
+        String sessionId = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
+        if (sessionId != null && !sessionId.trim().equals("")) {
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
             SchSession schSession = userSchSessions.getSchSessionMap().get(id);
             Agent agent =agentService.getByHost(schSession.getTerm().getHost());

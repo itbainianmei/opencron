@@ -531,7 +531,7 @@
                         var el = document.createElement("a");
                         document.body.appendChild(el);
                         el.href = url;
-                        el.target = '_new';
+                        el.target = '_blank';
                         el.click();
                         document.body.removeChild(el);
                     }

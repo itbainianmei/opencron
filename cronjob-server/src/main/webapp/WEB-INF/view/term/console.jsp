@@ -18,7 +18,7 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-            new CronjobTerm(${id},"${hostName}(${ip})").open();
+            new CronjobTerm('${id}',"${hostName}(${ip})").open();
         });
 
     </script>

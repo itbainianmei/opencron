@@ -27,7 +27,7 @@ public class Terminal implements Serializable{
     private String token;
 
     @Transient
-    private Long instanceId;
+    private String instanceId;
     @Transient
     public static final String INITIAL ="INITIAL";
     @Transient
@@ -133,11 +133,11 @@ public class Terminal implements Serializable{
         this.logintime = logintime;
     }
 
-    public Long getInstanceId() {
+    public String getInstanceId() {
         return instanceId;
     }
 
-    public void setInstanceId(Long instanceId) {
+    public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
     }
 }

@@ -56,11 +56,11 @@ public class TerminalWS {
 
     private HttpSession httpSession;
     private Session session;
-    private Long sessionId = null;
+    private String sessionId = null;
 
     public static final String TIMEOUT = "timeout";
 
-    private Map<Long, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<Long, UserSchSessions>(0);
+    private Map<String, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<String, UserSchSessions>(0);
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws Exception {
@@ -77,13 +77,8 @@ public class TerminalWS {
     }
 
 
-    public static Long getSessionId(HttpSession session) throws Exception {
-        Long sessionId = null;
-        String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
-        if (CommonUtils.notEmpty(sessionIdStr)) {
-            sessionId = Long.parseLong(sessionIdStr);
-        }
-        return sessionId;
+    public static String getSessionId(HttpSession session) throws Exception {
+        return DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
     }
 
     public void setTimeout(HttpSession session) {
@@ -102,7 +97,7 @@ public class TerminalWS {
 
             String command = (String) jsonMap.get("command");
             Integer keyCode = (Integer) jsonMap.get("keyCode");;
-            Long id = ((Integer)jsonMap.get("id")).longValue();
+            String id = (String) jsonMap.get("id");
 
             //get servletRequest.getSession() for user
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
@@ -130,9 +125,9 @@ public class TerminalWS {
         if (userSchSessionMap != null) {
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
             if (userSchSessions != null) {
-                Map<Long, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
+                Map<String, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
-                for (Long sessionKey : schSessionMap.keySet()) {
+                for (String sessionKey : schSessionMap.keySet()) {
                     SchSession schSession = schSessionMap.get(sessionKey);
                     schSession.getChannel().disconnect();
                     schSession.getSession().disconnect();

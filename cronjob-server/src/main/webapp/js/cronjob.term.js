@@ -134,8 +134,7 @@
         });
     };
 
-    this.connect.onclose = function (e) {
-        alert("close");
+    this.connect.onclose = function () {
         console.log('WebSocket close ');
     };
 
