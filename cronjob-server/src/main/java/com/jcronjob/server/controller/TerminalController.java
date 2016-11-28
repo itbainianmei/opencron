@@ -74,7 +74,8 @@ public class TerminalController {
         //登陆认证成功
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
             String uuid = CommonUtils.uuid();
-            session.setAttribute(Globals.SSH_SESSION_ID, DigestUtils.aesEncrypt(Globals.AES_KEY,uuid));
+
+            session.setAttribute(Globals.SSH_SESSION_ID, uuid);
             termService.openTerminal(term,user.getUserId(), uuid,userSchSessionMap);
 
             WebUtils.writeJson(response, String.format(json,"success","/term/open?id="+term.getInstanceId()));
@@ -87,7 +88,7 @@ public class TerminalController {
 
     @RequestMapping("/open")
     public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
-        String sessionId = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
+        String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
         if (sessionId != null && !sessionId.trim().equals("")) {
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
             SchSession schSession = userSchSessions.getSchSessionMap().get(id);

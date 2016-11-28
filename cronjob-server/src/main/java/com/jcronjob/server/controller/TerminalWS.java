@@ -65,7 +65,7 @@ public class TerminalWS {
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws Exception {
         this.httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
-        this.sessionId = getSessionId(httpSession);
+        this.sessionId = (String) httpSession.getAttribute(Globals.SSH_SESSION_ID);
         this.session = session;
         this.userSchSessionMap = TerminalController.userSchSessionMap;
 
@@ -74,11 +74,6 @@ public class TerminalWS {
         Runnable run = new SentOutputTask(sessionId, session, user);
         Thread thread = new Thread(run);
         thread.start();
-    }
-
-
-    public static String getSessionId(HttpSession session) throws Exception {
-        return DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));
     }
 
     public void setTimeout(HttpSession session) {
