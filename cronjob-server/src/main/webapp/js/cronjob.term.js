@@ -1,5 +1,8 @@
 
-function CronjobTerm() {
+;function CronjobTerm() {
+
+    'use strict';
+
     this.id=arguments[0];
     this.termTitle = arguments[1];
     this.target = arguments[2];
@@ -11,14 +14,14 @@ function CronjobTerm() {
     document.title=this.termTitle;
 }
 
-CronjobTerm.prototype.open = function () {
+;CronjobTerm.prototype.open = function () {
     this.bind();
     this.create();
     this.request();
     this.focus();
 }
 
-CronjobTerm.prototype.create = function () {
+;CronjobTerm.prototype.create = function () {
     var self = this;
     var term =
         "<div id=\"terminal_" +this.id + "\">"
@@ -44,7 +47,7 @@ CronjobTerm.prototype.create = function () {
     return this;
 }
 
-CronjobTerm.prototype.focus = function () {
+;CronjobTerm.prototype.focus = function () {
 
     if( $("#focus").length === 0  ){
         <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
@@ -56,13 +59,13 @@ CronjobTerm.prototype.focus = function () {
 }
 
 
-CronjobTerm.prototype.unfocus = function () {
+;CronjobTerm.prototype.unfocus = function () {
     $("#focus").blur();
     this.termFocus = false;
     return this;
 }
 
-CronjobTerm.prototype.bind = function () {
+;CronjobTerm.prototype.bind = function () {
     var self = this;
     var keys = this.keys;
     $(document).keypress(function (e) {
@@ -108,9 +111,14 @@ CronjobTerm.prototype.bind = function () {
     return this;
 }
 
-CronjobTerm.prototype.request = function () {
+;CronjobTerm.prototype.request = function () {
     var url = this.contextPath+'/terms.ws?t=' + new Date().getTime();
     this.connect =  new WebSocket(url);
+
+
+    this.connect.onclose = function (e) {
+        console.log('WebSocket close ');
+    };
 
     this.connect.onerror = function (error) {
         console.log('WebSocket Error ' + error);
