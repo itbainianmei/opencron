@@ -91,11 +91,6 @@ public class TerminalController {
         }
     }
 
-    @RequestMapping("/exit")
-    public void exit(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
-
-    }
-
     @RequestMapping("/open")
     public String open(HttpServletRequest request,HttpSession session,Long id ) throws Exception {
         String sessionIdStr = DigestUtils.aesDecrypt(Globals.AES_KEY, (String) session.getAttribute(Globals.SSH_SESSION_ID));

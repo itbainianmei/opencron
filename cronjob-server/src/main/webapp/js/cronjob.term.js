@@ -134,10 +134,6 @@
         });
     };
 
-    $(window).close(function () {
-        alert("close");
-    });
-
     this.connect.onclose = function (e) {
         alert("close");
         console.log('WebSocket close ');
