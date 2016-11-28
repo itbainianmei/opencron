@@ -109,7 +109,7 @@
 
 ;CronjobTerm.prototype.request = function () {
     var self = this;
-    var url = this.contextPath+'/terms.ws?t=' + new Date().getTime();
+    var url = this.contextPath+'/terms.ws';
     this.connect =  new WebSocket(url);
 
     this.connect.onmessage = function (e) {
