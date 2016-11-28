@@ -119,7 +119,7 @@
                 if(!self.term) {
                     self.term = new Terminal({
                         cols: 132,
-                        rows: Math.floor($(window).height()/15),
+                        rows: Math.floor($(window).height()/15)-1,
                         screenKeys: true,
                         useStyle: true,
                         cursorBlink: true,

@@ -48,7 +48,6 @@ import static com.jcronjob.server.service.TerminalService.*;
  * benjobs..
  */
 @Controller
-@RequestMapping("term")
 public class TerminalController {
 
     @Autowired
@@ -78,7 +77,7 @@ public class TerminalController {
             session.setAttribute(Globals.SSH_SESSION_ID, uuid);
             termService.openTerminal(term,user.getUserId(), uuid,userSchSessionMap);
 
-            WebUtils.writeJson(response, String.format(json,"success","/term/open?id="+term.getInstanceId()));
+            WebUtils.writeJson(response, String.format(json,"success","/term?id="+term.getInstanceId()));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
@@ -86,7 +85,7 @@ public class TerminalController {
         }
     }
 
-    @RequestMapping("/open")
+    @RequestMapping("/term")
     public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
         String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
         if (sessionId != null && !sessionId.trim().equals("")) {
@@ -101,7 +100,7 @@ public class TerminalController {
         return "/term/console";
     }
 
-    @RequestMapping("/save")
+    @RequestMapping("/addterm")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
         if ("success".equals(message)) {

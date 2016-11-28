@@ -504,7 +504,7 @@
     function ssh(agentId,ip,type) {
         $.ajax({
             type:"POST",
-            url:"${contextPath}/term/ssh",
+            url:"${contextPath}/ssh",
             data:"agentId="+agentId+"&ip="+ip,
             dataType: "html",
             success:function (data) {
@@ -549,7 +549,7 @@
         var agent = $("#sshagent").val();
         $.ajax({
             type:"POST",
-            url:"${contextPath}/term/save",
+            url:"${contextPath}/addterm",
             data:{
                 "user":user,
                 "password":pwd,

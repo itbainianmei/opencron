@@ -25,6 +25,7 @@
     <style type="text/css">
         body{
             margin: 0px;
+            background-color: #000000;
         }
     </style>
     <title>Cronjob Terminal</title>
