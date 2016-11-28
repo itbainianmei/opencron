@@ -10,10 +10,6 @@
 
     <script type="text/javascript" src="${contextPath}/js/socket/socket.io.js"></script>
 
-    <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-
-    <script type="text/javascript" src="${contextPath}/js/ws.js"></script>
-
     <script type="text/javascript">
 
     function showContact(){$(".contact").show()}

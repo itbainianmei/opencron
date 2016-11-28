@@ -108,20 +108,9 @@
 }
 
 ;CronjobTerm.prototype.request = function () {
+    var self = this;
     var url = this.contextPath+'/terms.ws?t=' + new Date().getTime();
     this.connect =  new WebSocket(url);
-
-
-    this.connect.onclose = function (e) {
-        alert("close");
-        console.log('WebSocket close ');
-    };
-
-    this.connect.onerror = function (error) {
-        console.log('WebSocket Error ' + error);
-    };
-
-    var self = this;
 
     this.connect.onmessage = function (e) {
         var json = jQuery.parseJSON(e.data);
@@ -144,6 +133,19 @@
             }
         });
     };
+
+    $(window).close(function () {
+        alert("close");
+    });
+
+    this.connect.onclose = function (e) {
+        alert("close");
+        console.log('WebSocket close ');
+    };
+
+    this.connect.onerror = function (error) {
+        console.log('WebSocket Error ' + error);
+    };
+
     return this;
 }
-
