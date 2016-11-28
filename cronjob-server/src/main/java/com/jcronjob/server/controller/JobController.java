@@ -23,6 +23,7 @@ package com.jcronjob.server.controller;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.common.job.Cronjob.ExecType;
 import com.jcronjob.server.domain.Job;
@@ -30,7 +31,6 @@ import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.service.*;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.common.utils.CommonUtils;
-import com.jcronjob.common.utils.JsonMapper;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.vo.JobVo;
@@ -187,8 +187,7 @@ public class JobController {
     public void editSingleJob(HttpServletResponse response,HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);
         if (!jobService.checkJobOwner(job.getOperateId(),session))return;
-        JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(job));
+        WebUtils.writeJson(response, JSON.toJSONString(job));
     }
 
     @RequestMapping("/editflow")

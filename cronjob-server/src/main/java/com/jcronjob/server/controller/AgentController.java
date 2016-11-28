@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.server.tag.Page;
 import org.apache.commons.codec.digest.DigestUtils;
-import com.jcronjob.common.utils.JsonMapper;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
@@ -100,8 +100,7 @@ public class AgentController {
     @RequestMapping("/editpage")
     public void editPage(HttpServletResponse response, Long id) {
         Agent agent = agentService.getAgent(id);
-        JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(agent));
+        WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
 
     @RequestMapping("/edit")
@@ -128,8 +127,7 @@ public class AgentController {
     @RequestMapping("/pwdpage")
     public void pwdPage(HttpServletResponse response, Long id) {
         Agent agent = agentService.getAgent(id);
-        JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(agent));
+        WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
 
     @RequestMapping("/editpwd")
@@ -148,7 +146,6 @@ public class AgentController {
     @RequestMapping("/getConnAgents")
     public void getConnAgents(HttpServletResponse response) {
         List<Agent> agents = agentService.getAgentByConnType(Cronjob.ConnType.CONN);
-        JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(agents));
+        WebUtils.writeJson(response, JSON.toJSONString(agents));
     }
 }

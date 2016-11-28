@@ -21,10 +21,10 @@
 
 package com.jcronjob.server.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.tag.Page;
-import com.jcronjob.common.utils.JsonMapper;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Role;
 import com.jcronjob.server.domain.User;
@@ -113,8 +113,7 @@ public class UserController {
     @RequestMapping("/pwdpage")
     public void pwdPage(HttpServletResponse response, Long id) {
         User user = userService.queryUserById(id);
-        JsonMapper json = new JsonMapper();
-        WebUtils.writeJson(response, json.toJson(user));
+        WebUtils.writeJson(response, JSON.toJSONString(user));
     }
 
     @RequestMapping("/editpwd")

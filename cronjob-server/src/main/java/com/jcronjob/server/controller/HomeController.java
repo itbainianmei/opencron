@@ -142,12 +142,11 @@ public class HomeController {
             endTime = DateUtils.formatSimpleDate(new Date());
         }
         //成功失败折线图数据
-        JsonMapper jsonMapper = new JsonMapper();
         List<ChartVo> voList = recordService.getRecord(startTime, endTime, session);
         if (isEmpty(voList)) {
             WebUtils.writeJson(response, "null");
         }else {
-            WebUtils.writeJson(response, jsonMapper.toJson(voList));
+            WebUtils.writeJson(response, JSON.toJSONString(voList));
         }
     }
 
