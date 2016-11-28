@@ -62,7 +62,7 @@ public class UserController {
     }
 
     @RequestMapping("/detail")
-    public String detail(Long userId,HttpSession session, Model model) {
+    public String detail(Long userId,Model model) {
         User user = userService.queryUserById(userId);
         model.addAttribute("u", user);
         return "/user/detail";
