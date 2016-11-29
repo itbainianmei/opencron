@@ -81,17 +81,14 @@ public class TerminalController {
     }
 
     @RequestMapping("/term")
-    public String open(HttpServletRequest request,HttpSession session,String token ) throws Exception {
-        String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
-        if (sessionId != null && !sessionId.trim().equals("")) {
-            UserSchSession userSchSession = TerminalSession.get(sessionId);
-            if (userSchSession!=null) {
-                SchSession schSession = userSchSession.getUserSchSession().get(token);
-                Agent agent = agentService.getByHost(schSession.getTerm().getHost());
-                request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
-                request.setAttribute("token",token);
-                return "/term/console";
-            }
+    public String open(HttpServletRequest request,String token ) throws Exception {
+        UserSchSession userSchSession = TerminalSession.get(token);
+        if (userSchSession!=null) {
+            SchSession schSession = userSchSession.getUserSchSession().get(token);
+            Agent agent = agentService.getByHost(schSession.getTerm().getHost());
+            request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
+            request.setAttribute("token",token);
+            return "/term/console";
         }
 
         return "/term/error";
