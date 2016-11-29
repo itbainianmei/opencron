@@ -6,11 +6,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png" />
+    <script src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
+    <script src="${contextPath}/js/sweetalert.min.js"></script>
+    <link href='${contextPath}/css/sweetalert.css' rel='stylesheet'>
 
-    <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <title>Terminal Error</title>
 
