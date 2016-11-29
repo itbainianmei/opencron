@@ -23,7 +23,6 @@ package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.CommonUtils;
-import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.session.HttpSessionConfigurator;
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public class TerminalWS {
 
     public static final String TIMEOUT = "timeout";
 
-    private Map<String, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<String, UserSchSessions>(0);
+    private Map<String, UserSchSession> userSchSessionMap = new ConcurrentHashMap<String, UserSchSession>(0);
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) throws Exception {
@@ -69,8 +68,7 @@ public class TerminalWS {
         this.userSchSessionMap = TerminalController.userSchSessionMap;
 
         session.setMaxIdleTimeout(0);
-        User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
-        Runnable run = new SentOutputTask(sessionId, session, user);
+        Runnable run = new OutputRunner(sessionId, session);
         Thread thread = new Thread(run);
         thread.start();
     }
@@ -94,9 +92,9 @@ public class TerminalWS {
             String id = (String) jsonMap.get("id");
 
             //get servletRequest.getSession() for user
-            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
-            if (userSchSessions != null) {
-                SchSession schSession = userSchSessions.getSchSessionMap().get(id);
+            UserSchSession userSchSession = userSchSessionMap.get(sessionId);
+            if (userSchSession != null) {
+                SchSession schSession = userSchSession.getUserSchSession().get(id);
                 if (keyCode != null) {
                     if (keyMap.containsKey(keyCode)) {
                         try {
@@ -117,9 +115,9 @@ public class TerminalWS {
     @OnClose
     public void onClose() {
         if (userSchSessionMap != null) {
-            UserSchSessions userSchSessions = userSchSessionMap.remove(sessionId);
-            if (userSchSessions != null) {
-                Map<String, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
+            UserSchSession userSchSession = userSchSessionMap.remove(sessionId);
+            if (userSchSession != null) {
+                Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
 
                 for (String sessionKey : schSessionMap.keySet()) {
                     SchSession schSession = schSessionMap.get(sessionKey);

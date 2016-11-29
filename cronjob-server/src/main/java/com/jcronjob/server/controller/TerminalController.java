@@ -55,7 +55,7 @@ public class TerminalController {
     @Autowired
     private AgentService agentService;
 
-    public static Map<String, UserSchSessions> userSchSessionMap = new ConcurrentHashMap<String, UserSchSessions>();
+    public static Map<String, UserSchSession> userSchSessionMap = new ConcurrentHashMap<String, UserSchSession>();
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
@@ -88,8 +88,8 @@ public class TerminalController {
     public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
         String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
         if (sessionId != null && !sessionId.trim().equals("")) {
-            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
-            SchSession schSession = userSchSessions.getSchSessionMap().get(id);
+            UserSchSession userSchSession = userSchSessionMap.get(sessionId);
+            SchSession schSession = userSchSession.getUserSchSession().get(id);
             Agent agent =agentService.getByHost(schSession.getTerm().getHost());
             request.setAttribute("hostName",agent.getName());
             request.setAttribute("ip",agent.getIp());

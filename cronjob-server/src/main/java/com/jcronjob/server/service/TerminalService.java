@@ -27,7 +27,6 @@ import com.jcraft.jsch.*;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +79,7 @@ public class TerminalService {
     @Autowired
     private QueryDao queryDao;
 
-    private static Map<String,UserSessionsOutput> userSessionsOutputMap = new ConcurrentHashMap<String, UserSessionsOutput>();
+    private static Map<String,UserSessionOutput> userSessionsOutputMap = new ConcurrentHashMap<String, UserSessionOutput>();
 
     private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
 
@@ -131,7 +130,7 @@ public class TerminalService {
     }
 
 
-    public Terminal openTerminal(Terminal term, Long userId, String sessionId, Map<String, UserSchSessions> userSessionMap) {
+    public Terminal openTerminal(Terminal term, Long userId, String sessionId, Map<String, UserSchSession> userSessionMap) {
 
         String instanceId = CommonUtils.uuid();
         term.setInstanceId(instanceId);
@@ -160,7 +159,7 @@ public class TerminalService {
             //new session output
             SessionOutput sessionOutput = new SessionOutput(sessionId,term);
 
-            Runnable run = new SecureShellTask(sessionOutput, inputStream);
+            Runnable run = new TerminalTask(sessionOutput, inputStream);
             Thread thread = new Thread(run);
             thread.start();
 
@@ -197,18 +196,18 @@ public class TerminalService {
         //add session to map
         if (retVal.equals(Terminal.SUCCESS)) {
             //get the server maps for user
-            UserSchSessions userSchSessions = userSessionMap.get(sessionId);
+            UserSchSession userSchSession = userSessionMap.get(sessionId);
             //if no user session create a new one
-            if (userSchSessions == null) {
-                userSchSessions = new UserSchSessions();
+            if (userSchSession == null) {
+                userSchSession = new UserSchSession();
             }
-            Map<String, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
+            Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
 
             //add server information
             schSessionMap.put(instanceId, schSession);
-            userSchSessions.setSchSessionMap(schSessionMap);
+            userSchSession.setUserSchSession(schSessionMap);
             //add back to map
-            userSessionMap.put(sessionId, userSchSessions);
+            userSessionMap.put(sessionId, userSchSession);
 
         }
 
@@ -237,9 +236,9 @@ public class TerminalService {
      * @param sessionId session id
      */
     public static void removeUserSession(String sessionId) {
-        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
-        if (userSessionsOutput != null) {
-            userSessionsOutput.getSessionOutputMap().clear();
+        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        if (userSessionOutput != null) {
+            userSessionOutput.getSessionOutputMap().clear();
         }
         userSessionsOutputMap.remove(sessionId);
     }
@@ -252,9 +251,9 @@ public class TerminalService {
      */
     public static void removeOutput(String sessionId, Long instanceId) {
 
-        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
-        if (userSessionsOutput != null) {
-            userSessionsOutput.getSessionOutputMap().remove(instanceId);
+        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        if (userSessionOutput != null) {
+            userSessionOutput.getSessionOutputMap().remove(instanceId);
         }
     }
 
@@ -265,12 +264,12 @@ public class TerminalService {
      */
     public static void addOutput(SessionOutput sessionOutput) {
 
-        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
-        if (userSessionsOutput == null) {
-            userSessionsOutputMap.put(sessionOutput.getSessionId(), new UserSessionsOutput());
-            userSessionsOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
+        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
+        if (userSessionOutput == null) {
+            userSessionsOutputMap.put(sessionOutput.getSessionId(), new UserSessionOutput());
+            userSessionOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
         }
-        userSessionsOutput.getSessionOutputMap().put(sessionOutput.getId(), sessionOutput);
+        userSessionOutput.getSessionOutputMap().put(sessionOutput.getId(), sessionOutput);
 
 
     }
@@ -287,9 +286,9 @@ public class TerminalService {
      */
     public static void addToOutput(String sessionId, Long instanceId, char value[], int offset, int count) {
 
-        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
-        if (userSessionsOutput != null) {
-            userSessionsOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
+        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        if (userSessionOutput != null) {
+            userSessionOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
         }
     }
 
@@ -297,19 +296,18 @@ public class TerminalService {
      * returns list of output lines
      *
      * @param sessionId session id object
-     * @param user user auth object
      * @return session output list
      */
-    public static List<SessionOutput> getOutput(String sessionId, User user) {
+    public static List<SessionOutput> getOutput(String sessionId) {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
-        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
-        if (userSessionsOutput != null) {
-            for (Long key : userSessionsOutput.getSessionOutputMap().keySet()) {
+        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        if (userSessionOutput != null) {
+            for (Long key : userSessionOutput.getSessionOutputMap().keySet()) {
                 try {
-                    SessionOutput sessionOutput = userSessionsOutput.getSessionOutputMap().get(key);
+                    SessionOutput sessionOutput = userSessionOutput.getSessionOutputMap().get(key);
                     if (sessionOutput!=null && CommonUtils.notEmpty(sessionOutput.getOutput())) {
                         outputList.add(sessionOutput);
-                        userSessionsOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId, sessionOutput));
+                        userSessionOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId, sessionOutput));
                     }
                 } catch (Exception ex) {
                     logger.error(ex.toString(), ex);
@@ -389,12 +387,12 @@ public class TerminalService {
     }
 
 
-    public static class SecureShellTask implements Runnable {
+    public static class TerminalTask implements Runnable {
 
         private InputStream outFromChannel;
         private SessionOutput sessionOutput;
 
-        public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel) {
+        public TerminalTask(SessionOutput sessionOutput, InputStream outFromChannel) {
             this.sessionOutput = sessionOutput;
             this.outFromChannel = outFromChannel;
         }
@@ -418,21 +416,19 @@ public class TerminalService {
 
     }
 
-    public static class SentOutputTask implements Runnable {
+    public static class OutputRunner implements Runnable {
 
         private javax.websocket.Session session;
         private String sessionId;
-        private User user;
 
-        public SentOutputTask(String sessionId, javax.websocket.Session session, User user) {
+        public OutputRunner(String sessionId, javax.websocket.Session session) {
             this.sessionId = sessionId;
             this.session = session;
-            this.user = user;
         }
 
         public void run() {
             while (session.isOpen()) {
-                List<SessionOutput> outputList = getOutput(sessionId, user);
+                List<SessionOutput> outputList = getOutput(sessionId);
                 try {
                     if (outputList != null && !outputList.isEmpty()) {
                         String json = JSON.toJSONString(outputList);
@@ -481,21 +477,21 @@ public class TerminalService {
     }
 
 
-    public static class UserSchSessions {
+    public static class UserSchSession {
 
-        Map<String, SchSession> schSessionMap = new ConcurrentHashMap<String, SchSession>();
+        Map<String, SchSession> userSchSession = new ConcurrentHashMap<String, SchSession>();
 
-        public Map<String, SchSession> getSchSessionMap() {
-            return schSessionMap;
+        public Map<String, SchSession> getUserSchSession() {
+            return userSchSession;
         }
 
-        public void setSchSessionMap(Map<String, SchSession> schSessionMap) {
-            this.schSessionMap = schSessionMap;
+        public void setUserSchSession(Map<String, SchSession> userSchSession) {
+            this.userSchSession = userSchSession;
         }
     }
 
 
-    public static class UserSessionsOutput {
+    public static class UserSessionOutput {
 
         //instance id, host output
         Map<Long, SessionOutput> sessionOutputMap = new ConcurrentHashMap<Long,SessionOutput>();
