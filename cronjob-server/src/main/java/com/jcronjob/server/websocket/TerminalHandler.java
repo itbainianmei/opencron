@@ -31,6 +31,7 @@ import org.springframework.web.socket.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.jcronjob.server.service.TerminalService.*;
 
@@ -40,11 +41,11 @@ public class TerminalHandler implements WebSocketHandler {
 
 	private static Logger log = LoggerFactory.getLogger(TerminalHandler.class);
 
-	private String sessionId = null;
+	private Map<Long,String> sessionIds = new ConcurrentHashMap<Long, String>(0);
 
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		this.sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
-		Runnable run = new OutputRunner(sessionId, session);
+		sessionIds.put(Thread.currentThread().getId(),(String) session.getAttributes().get(Globals.SSH_SESSION_ID));
+		Runnable run = new OutputRunner(sessionIds.get(Thread.currentThread().getId()), session);
 		Thread thread = new Thread(run);
 		thread.start();
 	}
@@ -57,12 +58,12 @@ public class TerminalHandler implements WebSocketHandler {
 
 			String command = (String) jsonMap.get("command");
 			Integer keyCode = (Integer) jsonMap.get("keyCode");
-			String id = (String) jsonMap.get("token");
+			String token = (String) jsonMap.get("token");
 
 			//get servletRequest.getSession() for user
-			UserSchSession userSchSession =  TerminalSession.get(sessionId);
+			UserSchSession userSchSession =  TerminalSession.get(token);
 			if (userSchSession != null) {
-				SchSession schSession = userSchSession.getUserSchSession().get(id);
+				SchSession schSession = userSchSession.getUserSchSession().get(token);
 				if (keyCode != null) {
 					if (KeyCodeMap.containsKey(keyCode)) {
 						try {
@@ -85,6 +86,7 @@ public class TerminalHandler implements WebSocketHandler {
 
 
 	public void afterConnectionClosed(WebSocketSession session,CloseStatus closeStatus) throws Exception {
+		String sessionId = sessionIds.get(Thread.currentThread().getId());
 		UserSchSession userSchSession = TerminalSession.remove(sessionId);
 		if (userSchSession != null) {
 			Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
@@ -106,6 +108,7 @@ public class TerminalHandler implements WebSocketHandler {
 			schSessionMap.remove(sessionId);
 			removeUserSession(sessionId);
 		}
+		sessionIds.remove(Thread.currentThread().getId());
 
 	}
 

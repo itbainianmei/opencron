@@ -154,7 +154,7 @@ public class TerminalService {
             InputStream inputStream = channel.getInputStream();
 
             //new session output
-            SessionOutput sessionOutput = new SessionOutput(sessionId,term);
+            SessionOutput sessionOutput = new SessionOutput(sessionId);
 
             Runnable run = new TerminalTask(sessionOutput, inputStream);
             Thread thread = new Thread(run);
@@ -302,7 +302,7 @@ public class TerminalService {
                     SessionOutput sessionOutput = userSessionOutput.getSessionOutputMap().get(key);
                     if (sessionOutput!=null && CommonUtils.notEmpty(sessionOutput.getOutput())) {
                         outputList.add(sessionOutput);
-                        userSessionOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId, sessionOutput));
+                        userSessionOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId));
                     }
                 } catch (Exception ex) {
                     logger.error(ex.toString(), ex);
@@ -439,17 +439,13 @@ public class TerminalService {
     }
 
 
-    public static class SessionOutput extends Terminal {
+    public static class SessionOutput {
 
         private String sessionId;
         private StringBuilder output = new StringBuilder();
 
-        public SessionOutput(String sessionId, Terminal terminal) {
+        public SessionOutput(String sessionId) {
             this.sessionId=sessionId;
-            this.setId(terminal.getId());
-            this.setUser(terminal.getUser());
-            this.setHost(terminal.getHost());
-            this.setPort(terminal.getPort());
 
         }
 
