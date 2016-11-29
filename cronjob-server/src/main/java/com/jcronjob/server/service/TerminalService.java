@@ -431,7 +431,7 @@ public class TerminalService {
                 List<SessionOutput> outputList = getOutput(sessionId);
                 try {
                     if (outputList != null && !outputList.isEmpty()) {
-                        String json = JSON.toJSONString(outputList);
+                        String json =  JSON.toJSONString(outputList);
                         //send json to session
                         this.session.getBasicRemote().sendText(json);
                     }

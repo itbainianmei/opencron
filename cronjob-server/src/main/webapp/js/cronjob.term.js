@@ -30,11 +30,20 @@
     $(term).prependTo('body');
 
     $('#container'+this.id).click(function () {
-       this.focus();
+        self.focus();
     }).blur(function () {
-        this.unfocus();
+        self.unfocus();
     });
 
+    //set focus to term
+    $(".output").mouseup(function (e) {
+        if(window.getSelection().toString()) {
+            self.unfocus();
+        } else {
+            self.focus();
+        }
+    });
+    //绑定拷贝事件
     $(".output").bind('copy', function () {
         setTimeout(function () {
             self.focus();
@@ -64,6 +73,7 @@
 ;CronjobTerm.prototype.bind = function () {
     var self = this;
     var keys = this.keys;
+
     $(document).keypress(function (e) {
         if (self.termFocus) {
             var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
@@ -126,10 +136,8 @@
                         convertEol: true
                     });
                     self.term.open($("#output_" + self.id));
-                    self.term.write(val.output);
-                }else {
-                    self.term.write(val.output);
                 }
+                self.term.write(val.output);
             }
         });
     };

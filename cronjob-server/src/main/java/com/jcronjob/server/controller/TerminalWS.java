@@ -73,13 +73,7 @@ public class TerminalWS {
         thread.start();
     }
 
-    public void setTimeout(HttpSession session) {
-        //set session timeout
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyyHHmmss");
-        Calendar timeout = Calendar.getInstance();
-        timeout.add(Calendar.MINUTE, 15);
-        session.setAttribute(TIMEOUT, dateFormat.format(timeout.getTime()));
-    }
+
 
     @OnMessage
     public void onMessage(String message) {
@@ -139,6 +133,13 @@ public class TerminalWS {
         }
     }
 
+    public void setTimeout(HttpSession session) {
+        //set session timeout
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMddyyyyHHmmss");
+        Calendar timeout = Calendar.getInstance();
+        timeout.add(Calendar.MINUTE, 15);
+        session.setAttribute(TIMEOUT, dateFormat.format(timeout.getTime()));
+    }
 
     /**
      * Maps key press events to the ascii values
