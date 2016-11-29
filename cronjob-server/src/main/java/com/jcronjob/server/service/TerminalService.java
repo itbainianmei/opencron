@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.io.*;
 import java.util.*;
@@ -78,8 +80,6 @@ public class TerminalService {
 
     @Autowired
     private QueryDao queryDao;
-
-    private static Map<String,UserSessionOutput> userSessionsOutputMap = new ConcurrentHashMap<String, UserSessionOutput>();
 
     private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
 
@@ -130,7 +130,7 @@ public class TerminalService {
     }
 
 
-    public Terminal openTerminal(Terminal term, Long userId, String sessionId, Map<String, UserSchSession> userSessionMap) {
+    public Terminal openTerminal(Terminal term, Long userId, String sessionId) {
 
         String instanceId = CommonUtils.uuid();
         term.setInstanceId(instanceId);
@@ -196,7 +196,7 @@ public class TerminalService {
         //add session to map
         if (retVal.equals(Terminal.SUCCESS)) {
             //get the server maps for user
-            UserSchSession userSchSession = userSessionMap.get(sessionId);
+            UserSchSession userSchSession = TerminalSession.get(sessionId);
             //if no user session create a new one
             if (userSchSession == null) {
                 userSchSession = new UserSchSession();
@@ -207,7 +207,7 @@ public class TerminalService {
             schSessionMap.put(instanceId, schSession);
             userSchSession.setUserSchSession(schSessionMap);
             //add back to map
-            userSessionMap.put(sessionId, userSchSession);
+            TerminalSession.put(sessionId, userSchSession);
 
         }
 
@@ -236,11 +236,11 @@ public class TerminalService {
      * @param sessionId session id
      */
     public static void removeUserSession(String sessionId) {
-        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
             userSessionOutput.getSessionOutputMap().clear();
         }
-        userSessionsOutputMap.remove(sessionId);
+        TerminalOutput.remove(sessionId);
     }
 
     /**
@@ -251,7 +251,7 @@ public class TerminalService {
      */
     public static void removeOutput(String sessionId, Long instanceId) {
 
-        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
             userSessionOutput.getSessionOutputMap().remove(instanceId);
         }
@@ -264,10 +264,10 @@ public class TerminalService {
      */
     public static void addOutput(SessionOutput sessionOutput) {
 
-        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
+        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionOutput.getSessionId());
         if (userSessionOutput == null) {
-            userSessionsOutputMap.put(sessionOutput.getSessionId(), new UserSessionOutput());
-            userSessionOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
+            TerminalOutput.put(sessionOutput.getSessionId(), new UserSessionOutput());
+            userSessionOutput = TerminalOutput.get(sessionOutput.getSessionId());
         }
         userSessionOutput.getSessionOutputMap().put(sessionOutput.getId(), sessionOutput);
 
@@ -286,7 +286,7 @@ public class TerminalService {
      */
     public static void addToOutput(String sessionId, Long instanceId, char value[], int offset, int count) {
 
-        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
             userSessionOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
         }
@@ -300,7 +300,7 @@ public class TerminalService {
      */
     public static List<SessionOutput> getOutput(String sessionId) {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
-        UserSessionOutput userSessionOutput = userSessionsOutputMap.get(sessionId);
+        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
             for (Long key : userSessionOutput.getSessionOutputMap().keySet()) {
                 try {
@@ -418,22 +418,22 @@ public class TerminalService {
 
     public static class OutputRunner implements Runnable {
 
-        private javax.websocket.Session session;
+        private WebSocketSession session;
         private String sessionId;
 
-        public OutputRunner(String sessionId, javax.websocket.Session session) {
+        public OutputRunner(String sessionId, WebSocketSession session) {
             this.sessionId = sessionId;
             this.session = session;
         }
 
         public void run() {
-            while (session.isOpen()) {
+            while (session!=null && session.isOpen()) {
                 List<SessionOutput> outputList = getOutput(sessionId);
                 try {
                     if (outputList != null && !outputList.isEmpty()) {
                         String json =  JSON.toJSONString(outputList);
                         //send json to session
-                        this.session.getBasicRemote().sendText(json);
+                        this.session.sendMessage(new TextMessage(json));
                     }
                     Thread.sleep(25);
                 } catch (Exception ex) {
@@ -506,4 +506,137 @@ public class TerminalService {
 
     }
 
+    public static class TerminalSession {
+
+        private static Map<String, UserSchSession> session = new ConcurrentHashMap<String, UserSchSession>(0);
+
+        public static UserSchSession get(String key){
+            return session.get(key);
+        }
+
+        public static void put(String key,UserSchSession schSession){
+            session.put(key,schSession);
+        }
+
+        public static UserSchSession remove(String key) {
+            return session.remove(key);
+        }
+    }
+
+    public static class TerminalOutput {
+        private static Map<String, UserSessionOutput> out = new ConcurrentHashMap<String, UserSessionOutput>(0);
+
+        public static UserSessionOutput get(String key){
+            return out.get(key);
+        }
+
+        public static void put(String key,UserSessionOutput schSession){
+            out.put(key,schSession);
+        }
+
+        public static UserSessionOutput remove(String key) {
+           return out.remove(key);
+        }
+    }
+
+
+    public static class KeyCodeMap {
+        private static Map<Integer, byte[]> keyMap = new HashMap<Integer, byte[]>();
+        static {
+            //ESC
+            keyMap.put(27, new byte[]{(byte) 0x1b});
+            //ENTER
+            keyMap.put(13, new byte[]{(byte) 0x0d});
+            //LEFT
+            keyMap.put(37, new byte[]{(byte) 0x1b, (byte) 0x4f, (byte) 0x44});
+            //UP
+            keyMap.put(38, new byte[]{(byte) 0x1b, (byte) 0x4f, (byte) 0x41});
+            //RIGHT
+            keyMap.put(39, new byte[]{(byte) 0x1b, (byte) 0x4f, (byte) 0x43});
+            //DOWN
+            keyMap.put(40, new byte[]{(byte) 0x1b, (byte) 0x4f, (byte) 0x42});
+            //BS
+            keyMap.put(8, new byte[]{(byte) 0x7f});
+            //TAB
+            keyMap.put(9, new byte[]{(byte) 0x09});
+            //CTR
+            keyMap.put(17, new byte[]{});
+            //DEL
+            keyMap.put(46, "\033[3~".getBytes());
+            //CTR-A
+            keyMap.put(65, new byte[]{(byte) 0x01});
+            //CTR-B
+            keyMap.put(66, new byte[]{(byte) 0x02});
+            //CTR-C
+            keyMap.put(67, new byte[]{(byte) 0x03});
+            //CTR-D
+            keyMap.put(68, new byte[]{(byte) 0x04});
+            //CTR-E
+            keyMap.put(69, new byte[]{(byte) 0x05});
+            //CTR-F
+            keyMap.put(70, new byte[]{(byte) 0x06});
+            //CTR-G
+            keyMap.put(71, new byte[]{(byte) 0x07});
+            //CTR-H
+            keyMap.put(72, new byte[]{(byte) 0x08});
+            //CTR-I
+            keyMap.put(73, new byte[]{(byte) 0x09});
+            //CTR-J
+            keyMap.put(74, new byte[]{(byte) 0x0A});
+            //CTR-K
+            keyMap.put(75, new byte[]{(byte) 0x0B});
+            //CTR-L
+            keyMap.put(76, new byte[]{(byte) 0x0C});
+            //CTR-M
+            keyMap.put(77, new byte[]{(byte) 0x0D});
+            //CTR-N
+            keyMap.put(78, new byte[]{(byte) 0x0E});
+            //CTR-O
+            keyMap.put(79, new byte[]{(byte) 0x0F});
+            //CTR-P
+            keyMap.put(80, new byte[]{(byte) 0x10});
+            //CTR-Q
+            keyMap.put(81, new byte[]{(byte) 0x11});
+            //CTR-R
+            keyMap.put(82, new byte[]{(byte) 0x12});
+            //CTR-S
+            keyMap.put(83, new byte[]{(byte) 0x13});
+            //CTR-T
+            keyMap.put(84, new byte[]{(byte) 0x14});
+            //CTR-U
+            keyMap.put(85, new byte[]{(byte) 0x15});
+            //CTR-V
+            keyMap.put(86, new byte[]{(byte) 0x16});
+            //CTR-W
+            keyMap.put(87, new byte[]{(byte) 0x17});
+            //CTR-X
+            keyMap.put(88, new byte[]{(byte) 0x18});
+            //CTR-Y
+            keyMap.put(89, new byte[]{(byte) 0x19});
+            //CTR-Z
+            keyMap.put(90, new byte[]{(byte) 0x1A});
+            //CTR-[
+            keyMap.put(219, new byte[]{(byte) 0x1B});
+            //CTR-]
+            keyMap.put(221, new byte[]{(byte) 0x1D});
+            //INSERT
+            keyMap.put(45, "\033[2~".getBytes());
+            //PG UP
+            keyMap.put(33, "\033[5~".getBytes());
+            //PG DOWN
+            keyMap.put(34, "\033[6~".getBytes());
+            //END
+            keyMap.put(35, "\033[4~".getBytes());
+            //HOME
+            keyMap.put(36, "\033[1~".getBytes());
+        }
+
+        public static byte[] get(Integer key){
+            return keyMap.get(key);
+        }
+
+        public static boolean containsKey(Integer keyCode) {
+            return keyMap.containsKey(keyCode);
+        }
+    }
 }

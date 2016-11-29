@@ -6,7 +6,7 @@
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.termFocus = true;
     this.keys = {};
-    this.connect = null;
+    this.websocket = null;
     this.term = null;
     document.title=this.termTitle;
 }
@@ -82,7 +82,7 @@
                 && !keys[38] && !keys[39] && !keys[40] && !keys[13] && !keys[8] && !keys[9]
                 && !keys[46] && !keys[45] && !keys[33] && !keys[34] && !keys[35] && !keys[36]) {
                 var command = String.fromCharCode(keyCode);
-                self.connect.send(JSON.stringify({id: self.id, command: command}));
+                self.websocket.send(JSON.stringify({id: self.id, command: command}));
             }
         }
     }).keydown(function (e) {
@@ -90,7 +90,7 @@
             var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
             self.keys[keyCode] = true;
             if((e.ctrlKey && !e.altKey) || keyCode == 27 || keyCode == 37 || keyCode == 38 || keyCode == 39 || keyCode == 40 || keyCode == 13 || keyCode == 8 || keyCode == 9 || keyCode == 46 || keyCode == 45 || keyCode == 33 || keyCode == 34 || keyCode == 35 || keyCode == 36) {
-                self.connect.send(JSON.stringify({id: self.id, keyCode: keyCode}));
+                self.websocket.send(JSON.stringify({id: self.id, keyCode: keyCode}));
             }
             if (e.ctrlKey && (keyCode == 83 || keyCode == 81 || keyCode == 84 || keyCode == 220 || keyCode == 90 || keyCode == 72 || keyCode == 87 || keyCode == 85 || keyCode == 82 || keyCode == 68)) {
                 e.preventDefault();
@@ -110,7 +110,7 @@
         $('#focus').val('');
         setTimeout(function () {
             var command = $('#focus').val();
-            self.connect.send(JSON.stringify({id: self.id, command: command}));
+            self.websocket.send(JSON.stringify({id: self.id, command: command}));
         }, 100);
     });
 
@@ -119,10 +119,17 @@
 
 ;CronjobTerm.prototype.request = function () {
     var self = this;
-    var url = this.contextPath+'/terms.ws';
-    this.connect =  new WebSocket(url);
+    var url = this.contextPath+'/terminal.ws';
+    if ('WebSocket' in window) {
+        this.websocket = new WebSocket(url);
+    } else if ('MozWebSocket' in window) {
+        this.websocket = new MozWebSocket(url);
+    } else {
+        url = "http://"+window.location.host+"/terminal.wsjs";
+        this.websocket = new SockJS(url);
+    }
 
-    this.connect.onmessage = function (e) {
+    this.websocket.onmessage = function (e) {
         var json = jQuery.parseJSON(e.data);
         $.each(json, function (key, val) {
             if (val.output != '') {
@@ -142,11 +149,11 @@
         });
     };
 
-    this.connect.onclose = function () {
+    this.websocket.onclose = function () {
         console.log('WebSocket close ');
     };
 
-    this.connect.onerror = function (error) {
+    this.websocket.onerror = function (error) {
         console.log('WebSocket Error ' + error);
     };
 

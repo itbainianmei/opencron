@@ -29,7 +29,7 @@
 
 	<task:annotation-driven/>
 
-	<context:component-scan base-package="com.jcronjob.server.service,com.jcronjob.server.dao,com.jcronjob.server.job" scoped-proxy="targetClass" use-default-filters="true"/>
+	<context:component-scan base-package="com.jcronjob.server.service,com.jcronjob.server.dao,com.jcronjob.server.job,com.jcronjob.server.websocket" scoped-proxy="targetClass" use-default-filters="true"/>
 
 	<bean id="sessionStore" class="com.jcronjob.server.session.SessionStore">
 		<property name="hosts">

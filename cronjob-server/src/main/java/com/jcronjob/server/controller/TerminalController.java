@@ -38,8 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static com.jcronjob.server.service.TerminalService.*;
 
@@ -54,8 +52,6 @@ public class TerminalController {
 
     @Autowired
     private AgentService agentService;
-
-    public static Map<String, UserSchSession> userSchSessionMap = new ConcurrentHashMap<String, UserSchSession>();
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
@@ -74,7 +70,7 @@ public class TerminalController {
             String uuid = CommonUtils.uuid();
 
             session.setAttribute(Globals.SSH_SESSION_ID, uuid);
-            termService.openTerminal(term,user.getUserId(), uuid,userSchSessionMap);
+            termService.openTerminal(term,user.getUserId(), uuid);
 
             WebUtils.writeJson(response, String.format(json,"success","/term?id="+term.getInstanceId()));
         }else {
@@ -88,7 +84,7 @@ public class TerminalController {
     public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
         String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
         if (sessionId != null && !sessionId.trim().equals("")) {
-            UserSchSession userSchSession = userSchSessionMap.get(sessionId);
+            UserSchSession userSchSession = TerminalSession.get(sessionId);
             if (userSchSession!=null) {
                 SchSession schSession = userSchSession.getUserSchSession().get(id);
                 Agent agent = agentService.getByHost(schSession.getTerm().getHost());
