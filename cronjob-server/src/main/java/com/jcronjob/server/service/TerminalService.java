@@ -132,9 +132,6 @@ public class TerminalService {
 
     public Terminal openTerminal(Terminal term, Long userId, String sessionId) {
 
-        String instanceId = CommonUtils.uuid();
-        term.setInstanceId(instanceId);
-
         JSch jsch = new JSch();
 
         SchSession schSession = null;
@@ -204,7 +201,7 @@ public class TerminalService {
             Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
 
             //add server information
-            schSessionMap.put(instanceId, schSession);
+            schSessionMap.put(sessionId, schSession);
             userSchSession.setUserSchSession(schSessionMap);
             //add back to map
             TerminalSession.put(sessionId, userSchSession);
@@ -247,13 +244,12 @@ public class TerminalService {
      * removes session output for host system
      *
      * @param sessionId    session id
-     * @param instanceId id of host system instance
      */
-    public static void removeOutput(String sessionId, Long instanceId) {
+    public static void removeOutput(String sessionId) {
 
         UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
-            userSessionOutput.getSessionOutputMap().remove(instanceId);
+            userSessionOutput.getSessionOutputMap().remove(sessionId);
         }
     }
 
@@ -269,7 +265,7 @@ public class TerminalService {
             TerminalOutput.put(sessionOutput.getSessionId(), new UserSessionOutput());
             userSessionOutput = TerminalOutput.get(sessionOutput.getSessionId());
         }
-        userSessionOutput.getSessionOutputMap().put(sessionOutput.getId(), sessionOutput);
+        userSessionOutput.getSessionOutputMap().put(sessionOutput.getSessionId(), sessionOutput);
 
 
     }
@@ -279,16 +275,15 @@ public class TerminalService {
      * adds a new output
      *
      * @param sessionId    session id
-     * @param instanceId id of host system instance
      * @param value        Array that is the source of characters
      * @param offset       The initial offset
      * @param count        The length
      */
-    public static void addToOutput(String sessionId, Long instanceId, char value[], int offset, int count) {
+    public static void addToOutput(String sessionId,char value[], int offset, int count) {
 
         UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
-            userSessionOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
+            userSessionOutput.getSessionOutputMap().get(sessionId).getOutput().append(value, offset, count);
         }
     }
 
@@ -302,7 +297,7 @@ public class TerminalService {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
         UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
         if (userSessionOutput != null) {
-            for (Long key : userSessionOutput.getSessionOutputMap().keySet()) {
+            for (String key : userSessionOutput.getSessionOutputMap().keySet()) {
                 try {
                     SessionOutput sessionOutput = userSessionOutput.getSessionOutputMap().get(key);
                     if (sessionOutput!=null && CommonUtils.notEmpty(sessionOutput.getOutput())) {
@@ -405,10 +400,10 @@ public class TerminalService {
                 char[] buff = new char[1024];
                 int read;
                 while((read = br.read(buff)) != -1) {
-                    addToOutput(sessionOutput.getSessionId(), sessionOutput.getId(), buff,0,read);
+                    addToOutput(sessionOutput.getSessionId(), buff,0,read);
                     Thread.sleep(50);
                 }
-                removeOutput(sessionOutput.getSessionId(), sessionOutput.getId());
+                removeOutput(sessionOutput.getSessionId());
             } catch (Exception ex) {
                 logger.error(ex.toString(), ex);
             }
@@ -449,13 +444,12 @@ public class TerminalService {
         private String sessionId;
         private StringBuilder output = new StringBuilder();
 
-        public SessionOutput(String sessionId, Terminal hostSystem) {
+        public SessionOutput(String sessionId, Terminal terminal) {
             this.sessionId=sessionId;
-            this.setId(hostSystem.getId());
-            this.setInstanceId(hostSystem.getInstanceId());
-            this.setUser(hostSystem.getUser());
-            this.setHost(hostSystem.getHost());
-            this.setPort(hostSystem.getPort());
+            this.setId(terminal.getId());
+            this.setUser(terminal.getUser());
+            this.setHost(terminal.getHost());
+            this.setPort(terminal.getPort());
 
         }
 
@@ -494,13 +488,13 @@ public class TerminalService {
     public static class UserSessionOutput {
 
         //instance id, host output
-        Map<Long, SessionOutput> sessionOutputMap = new ConcurrentHashMap<Long,SessionOutput>();
+        Map<String, SessionOutput> sessionOutputMap = new ConcurrentHashMap<String,SessionOutput>();
 
-        public Map<Long, SessionOutput> getSessionOutputMap() {
+        public Map<String, SessionOutput> getSessionOutputMap() {
             return sessionOutputMap;
         }
 
-        public void setSessionOutputMap(Map<Long, SessionOutput> sessionOutputMap) {
+        public void setSessionOutputMap(Map<String, SessionOutput> sessionOutputMap) {
             this.sessionOutputMap = sessionOutputMap;
         }
 

@@ -26,8 +26,6 @@ public class Terminal implements Serializable{
     private Date logintime;
     private String token;
 
-    @Transient
-    private String instanceId;
     public static final String INITIAL ="INITIAL";
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
@@ -132,11 +130,4 @@ public class Terminal implements Serializable{
         this.logintime = logintime;
     }
 
-    public String getInstanceId() {
-        return instanceId;
-    }
-
-    public void setInstanceId(String instanceId) {
-        this.instanceId = instanceId;
-    }
 }

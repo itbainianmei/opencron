@@ -56,8 +56,8 @@ public class TerminalHandler implements WebSocketHandler {
 			Map jsonMap = JSON.parseObject(message.getPayload().toString(),Map.class);
 
 			String command = (String) jsonMap.get("command");
-			Integer keyCode = (Integer) jsonMap.get("keyCode");;
-			String id = (String) jsonMap.get("id");
+			Integer keyCode = (Integer) jsonMap.get("keyCode");
+			String id = (String) jsonMap.get("token");
 
 			//get servletRequest.getSession() for user
 			UserSchSession userSchSession =  TerminalSession.get(sessionId);

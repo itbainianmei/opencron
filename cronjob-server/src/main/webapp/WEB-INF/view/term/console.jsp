@@ -17,7 +17,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            new CronjobTerm('${id}',"${name}").open();
+            new CronjobTerm('${token}',"${name}").open();
         });
     </script>
     <title>Cronjob Terminal</title>

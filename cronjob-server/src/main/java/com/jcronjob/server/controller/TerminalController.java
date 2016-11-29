@@ -72,7 +72,7 @@ public class TerminalController {
             session.setAttribute(Globals.SSH_SESSION_ID, uuid);
             termService.openTerminal(term,user.getUserId(), uuid);
 
-            WebUtils.writeJson(response, String.format(json,"success","/term?id="+term.getInstanceId()));
+            WebUtils.writeJson(response, String.format(json,"success","/term?token="+uuid));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
@@ -81,15 +81,15 @@ public class TerminalController {
     }
 
     @RequestMapping("/term")
-    public String open(HttpServletRequest request,HttpSession session,String id ) throws Exception {
+    public String open(HttpServletRequest request,HttpSession session,String token ) throws Exception {
         String sessionId = (String) session.getAttribute(Globals.SSH_SESSION_ID);
         if (sessionId != null && !sessionId.trim().equals("")) {
             UserSchSession userSchSession = TerminalSession.get(sessionId);
             if (userSchSession!=null) {
-                SchSession schSession = userSchSession.getUserSchSession().get(id);
+                SchSession schSession = userSchSession.getUserSchSession().get(token);
                 Agent agent = agentService.getByHost(schSession.getTerm().getHost());
                 request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
-                request.setAttribute("id",id);
+                request.setAttribute("token",token);
                 return "/term/console";
             }
         }
