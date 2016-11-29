@@ -16,19 +16,11 @@
     <script type="text/javascript" src="${contextPath}/js/cronjob.term.js"></script>
 
     <script type="text/javascript">
-
         $(document).ready(function () {
-            new CronjobTerm('${id}',"${hostName}(${ip})").open();
+            new CronjobTerm('${id}',"${name}").open();
         });
-
     </script>
-    <style type="text/css">
-        body{
-            margin: 0px;
-            background-color: #000000;
-        }
-    </style>
     <title>Cronjob Terminal</title>
 </head>
-<body></body>
+<body style="margin: 0px;background-color: #000000"></body>
 </html>
