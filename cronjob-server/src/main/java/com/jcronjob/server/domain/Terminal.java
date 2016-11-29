@@ -28,7 +28,6 @@ public class Terminal implements Serializable{
 
     @Transient
     private String instanceId;
-    @Transient
     public static final String INITIAL ="INITIAL";
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
