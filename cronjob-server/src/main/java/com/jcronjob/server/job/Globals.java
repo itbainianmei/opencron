@@ -17,10 +17,6 @@ public final class Globals {
 
     public static final String SSH_SESSION_ID = "ssh_session_id";
 
-
-    public static final String SCH_SESSION_MAP = "sch_session_map";
-
-
     public static boolean isPermission(HttpSession session){
         return (Boolean) session.getAttribute(PERMISSION);
     }
