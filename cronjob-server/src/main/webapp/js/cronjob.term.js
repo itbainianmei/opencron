@@ -8,6 +8,7 @@
     this.keys = {};
     this.websocket = null;
     this.term = null;
+    this.termElement = null;
     document.title=this.termTitle;
 }
 
@@ -20,20 +21,14 @@
 
 ;CronjobTerm.prototype.create = function () {
     var self = this;
-    var term =
-        "<div style=\"height:100%;width:100%;background-color:#000000;\" id=\"container" + "\">"
-        + "<div class=\"term\">"
-        +   "<div id=\"output_" + this.id + "\" class=\"output\"></div>"
-        + "</div>"
-        +"</div>";
 
-    $(term).prependTo('body');
+    this.termElement = $("<div style=\"height:100%;width:100%;background-color:#000000;\"></div>");
 
-    $('#container'+this.id).click(function () {
+    this.termElement.click(function () {
         self.focus();
     }).blur(function () {
         self.unfocus();
-    });
+    }).prependTo('body');
 
     //set focus to term
     $(".output").mouseup(function (e) {
@@ -57,7 +52,7 @@
 
     if( $("#focus").length === 0  ){
         <!--别动,很神奇,让该框永远得到焦点,并且接受用户的输入,阻止按删除,TAB等键,触发页面退出等...-->
-        $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore('#container');
+        $("<textarea id='focus' size='1' style='border:none;width:1px;height:1px;position: absolute;top: -1000px;'></textarea>").insertBefore(this.termElement);
     }
     $("#focus").focus().click();
     this.termFocus = true;
@@ -114,7 +109,27 @@
         }, 100);
     });
 
+    $(window).resize(function() {
+        self.resize();
+    });
+
     return this;
+}
+
+;CronjobTerm.prototype.resize = function () {
+    this.term.resize(this.getSize().cols,this.getSize().rows);
+}
+
+;CronjobTerm.prototype.getSize = function () {
+    var text="qwertyuiopasdfghjklzxcvbnm";
+    var span = $("<span>", { text: text });
+    this.termElement.append(span);
+    var charWidth = span.width() / 26;
+    span.remove();
+    return {
+        cols: Math.floor($(window).width() / charWidth),
+        rows: Math.floor($(window).height() / 15) - 1
+    };
 }
 
 ;CronjobTerm.prototype.request = function () {
@@ -129,32 +144,40 @@
         this.websocket = new SockJS(url);
     }
 
-    this.websocket.onmessage = function (e) {
-        var json = jQuery.parseJSON(e.data);
-        $.each(json, function (key, val) {
-            if (val.output != '') {
-                if(!self.term) {
-                    self.term = new Terminal({
-                        cols: 132,
-                        rows: Math.floor($(window).height()/15)-1,
-                        screenKeys: true,
-                        useStyle: true,
-                        cursorBlink: true,
-                        convertEol: true
-                    });
-                    self.term.open($("#output_" + self.id));
-                }
-                self.term.write(val.output);
+    this.websocket.onmessage = function(e) {
+        var data = jQuery.parseJSON(e.data);
+        if (data.error !== undefined) {
+            self.websocket.onerror(data.error);
+        } else {
+            if (!self.term){
+                console.log(self.getSize());
+                self.term = new Terminal({
+                    termName: "xterm",
+                    cols: self.getSize().cols,
+                    rows: self.getSize().rows,
+                    fontSize:12,
+                    lineHeight:15,
+                    useStyle: true,
+                    screenKeys: true,
+                    cursorBlink: true,
+                    convertEol: true
+                });
+                self.term.open(self.termElement);
             }
-        });
+            $.each(data, function (key, val) {
+                if (val.output != '') {
+                    self.term.write(val.output);
+                }
+            });
+        }
     };
 
-    this.websocket.onclose = function () {
-        console.log('WebSocket close ');
+    this.websocket.onclose = function(e) {
+        self.term.destroy();
     };
 
-    this.websocket.onerror = function (error) {
-        console.log('WebSocket Error ' + error);
+    this.websocket.onerror = function(e) {
+        console.log("Socket error:", e);
     };
 
     return this;
