@@ -192,20 +192,7 @@ public class TerminalService {
 
         //add session to map
         if (retVal.equals(Terminal.SUCCESS)) {
-            //get the server maps for user
-            UserSchSession userSchSession = TerminalSession.get(sessionId);
-            //if no user session create a new one
-            if (userSchSession == null) {
-                userSchSession = new UserSchSession();
-            }
-            Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
-
-            //add server information
-            schSessionMap.put(sessionId, schSession);
-            userSchSession.setUserSchSession(schSessionMap);
-            //add back to map
-            TerminalSession.put(sessionId, userSchSession);
-
+            TerminalSession.put(sessionId, schSession);
         }
 
         return term;
@@ -233,10 +220,6 @@ public class TerminalService {
      * @param sessionId session id
      */
     public static void removeUserSession(String sessionId) {
-        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
-        if (userSessionOutput != null) {
-            userSessionOutput.getSessionOutputMap().clear();
-        }
         TerminalOutput.remove(sessionId);
     }
 
@@ -247,9 +230,9 @@ public class TerminalService {
      */
     public static void removeOutput(String sessionId) {
 
-        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
-        if (userSessionOutput != null) {
-            userSessionOutput.getSessionOutputMap().remove(sessionId);
+        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
+        if (sessionOutput != null) {
+            TerminalOutput.remove(sessionId);
         }
     }
 
@@ -259,15 +242,8 @@ public class TerminalService {
      * @param sessionOutput session output object
      */
     public static void addOutput(SessionOutput sessionOutput) {
-
-        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionOutput.getSessionId());
-        if (userSessionOutput == null) {
-            TerminalOutput.put(sessionOutput.getSessionId(), new UserSessionOutput());
-            userSessionOutput = TerminalOutput.get(sessionOutput.getSessionId());
-        }
-        userSessionOutput.getSessionOutputMap().put(sessionOutput.getSessionId(), sessionOutput);
-
-
+        TerminalOutput.remove(sessionOutput.getSessionId());
+        TerminalOutput.put(sessionOutput.getSessionId(),sessionOutput);
     }
 
 
@@ -281,9 +257,9 @@ public class TerminalService {
      */
     public static void addToOutput(String sessionId,char value[], int offset, int count) {
 
-        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
-        if (userSessionOutput != null) {
-            userSessionOutput.getSessionOutputMap().get(sessionId).getOutput().append(value, offset, count);
+        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
+        if (sessionOutput != null) {
+            sessionOutput.getOutput().append(value, offset, count);
         }
     }
 
@@ -295,21 +271,11 @@ public class TerminalService {
      */
     public static List<SessionOutput> getOutput(String sessionId) {
         List<SessionOutput> outputList = new ArrayList<SessionOutput>();
-        UserSessionOutput userSessionOutput = TerminalOutput.get(sessionId);
-        if (userSessionOutput != null) {
-            for (String key : userSessionOutput.getSessionOutputMap().keySet()) {
-                try {
-                    SessionOutput sessionOutput = userSessionOutput.getSessionOutputMap().get(key);
-                    if (sessionOutput!=null && CommonUtils.notEmpty(sessionOutput.getOutput())) {
-                        outputList.add(sessionOutput);
-                        userSessionOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId));
-                    }
-                } catch (Exception ex) {
-                    logger.error(ex.toString(), ex);
-                }
-
-            }
+        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
+        if (sessionOutput!=null) {
+            TerminalOutput.put(sessionId,new SessionOutput(sessionId));
         }
+        outputList.add(sessionOutput);
         return outputList;
     }
 
@@ -423,10 +389,11 @@ public class TerminalService {
 
         public void run() {
             while (session!=null && session.isOpen()) {
-                List<SessionOutput> outputList = getOutput(sessionId);
+                List<SessionOutput> sessionOutput = getOutput(sessionId);
                 try {
-                    if (outputList != null && !outputList.isEmpty()) {
-                        String json =  JSON.toJSONString(outputList);
+                    if (CommonUtils.notEmpty(sessionOutput)) {
+                        //必须返回一个集合,不然写给前端解析失败
+                        String json =  JSON.toJSONString(sessionOutput);
                         //send json to session
                         this.session.sendMessage(new TextMessage(json));
                     }
@@ -466,65 +433,35 @@ public class TerminalService {
         }
     }
 
-
-    public static class UserSchSession {
-
-        Map<String, SchSession> userSchSession = new ConcurrentHashMap<String, SchSession>();
-
-        public Map<String, SchSession> getUserSchSession() {
-            return userSchSession;
-        }
-
-        public void setUserSchSession(Map<String, SchSession> userSchSession) {
-            this.userSchSession = userSchSession;
-        }
-    }
-
-
-    public static class UserSessionOutput {
-
-        //instance id, host output
-        Map<String, SessionOutput> sessionOutputMap = new ConcurrentHashMap<String,SessionOutput>();
-
-        public Map<String, SessionOutput> getSessionOutputMap() {
-            return sessionOutputMap;
-        }
-
-        public void setSessionOutputMap(Map<String, SessionOutput> sessionOutputMap) {
-            this.sessionOutputMap = sessionOutputMap;
-        }
-
-    }
-
     public static class TerminalSession {
 
-        private static Map<String, UserSchSession> session = new ConcurrentHashMap<String, UserSchSession>(0);
+        private static Map<String, SchSession> session = new ConcurrentHashMap<String, SchSession>(0);
 
-        public static UserSchSession get(String key){
+        public static SchSession get(String key){
             return session.get(key);
         }
 
-        public static void put(String key,UserSchSession schSession){
+        public static void put(String key,SchSession schSession){
             session.put(key,schSession);
         }
 
-        public static UserSchSession remove(String key) {
+        public static SchSession remove(String key) {
             return session.remove(key);
         }
     }
 
     public static class TerminalOutput {
-        private static Map<String, UserSessionOutput> out = new ConcurrentHashMap<String, UserSessionOutput>(0);
+        private static Map<String, SessionOutput> out = new ConcurrentHashMap<String, SessionOutput>(0);
 
-        public static UserSessionOutput get(String key){
+        public static SessionOutput get(String key){
             return out.get(key);
         }
 
-        public static void put(String key,UserSessionOutput schSession){
+        public static void put(String key,SessionOutput schSession){
             out.put(key,schSession);
         }
 
-        public static UserSessionOutput remove(String key) {
+        public static SessionOutput remove(String key) {
            return out.remove(key);
         }
     }

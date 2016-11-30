@@ -82,9 +82,8 @@ public class TerminalController {
 
     @RequestMapping("/term")
     public String open(HttpServletRequest request,String token ) throws Exception {
-        UserSchSession userSchSession = TerminalSession.get(token);
-        if (userSchSession!=null) {
-            SchSession schSession = userSchSession.getUserSchSession().get(token);
+        SchSession schSession = TerminalSession.get(token);
+        if (schSession!=null) {
             Agent agent = agentService.getByHost(schSession.getTerm().getHost());
             request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
             request.setAttribute("token",token);

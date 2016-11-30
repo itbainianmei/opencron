@@ -39,7 +39,7 @@ import static com.jcronjob.server.service.TerminalService.*;
 @Component
 public class TerminalHandler implements WebSocketHandler {
 
-	private static Logger log = LoggerFactory.getLogger(TerminalHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(TerminalHandler.class);
 
 	private Map<Long,String> sessionIds = new ConcurrentHashMap<Long, String>(0);
 
@@ -61,20 +61,17 @@ public class TerminalHandler implements WebSocketHandler {
 			String token = (String) jsonMap.get("token");
 
 			//get servletRequest.getSession() for user
-			UserSchSession userSchSession =  TerminalSession.get(token);
-			if (userSchSession != null) {
-				SchSession schSession = userSchSession.getUserSchSession().get(token);
-				if (keyCode != null) {
-					if (KeyCodeMap.containsKey(keyCode)) {
-						try {
-							schSession.getCommander().write(KeyCodeMap.get(keyCode));
-						} catch (IOException ex) {
-							log.error(ex.toString(), ex);
-						}
+			SchSession schSession = TerminalSession.get(token);
+			if (keyCode != null && schSession!=null) {
+				if (KeyCodeMap.containsKey(keyCode)) {
+					try {
+						schSession.getCommander().write(KeyCodeMap.get(keyCode));
+					} catch (IOException ex) {
+						logger.error(ex.toString(), ex);
 					}
-				} else {
-					schSession.getCommander().print(command);
 				}
+			} else {
+				schSession.getCommander().print(command);
 			}
 		}
 	}
@@ -87,29 +84,18 @@ public class TerminalHandler implements WebSocketHandler {
 
 	public void afterConnectionClosed(WebSocketSession session,CloseStatus closeStatus) throws Exception {
 		String sessionId = sessionIds.get(Thread.currentThread().getId());
-		UserSchSession userSchSession = TerminalSession.remove(sessionId);
-		if (userSchSession != null) {
-			Map<String, SchSession> schSessionMap = userSchSession.getUserSchSession();
-
-			for (String sessionKey : schSessionMap.keySet()) {
-				SchSession schSession = schSessionMap.get(sessionKey);
-				schSession.getChannel().disconnect();
-				schSession.getSession().disconnect();
-				schSession.setChannel(null);
-				schSession.setSession(null);
-				schSession.setInputToChannel(null);
-				schSession.setCommander(null);
-				schSession.setOutFromChannel(null);
-				//remove from map
-				schSessionMap.remove(sessionKey);
-			}
-			//clear and remove session map for user
-			schSessionMap.clear();
-			schSessionMap.remove(sessionId);
+		SchSession schSession = TerminalSession.remove(sessionId);
+		if (schSession != null) {
+			schSession.getChannel().disconnect();
+			schSession.getSession().disconnect();
+			schSession.setChannel(null);
+			schSession.setSession(null);
+			schSession.setInputToChannel(null);
+			schSession.setCommander(null);
+			schSession.setOutFromChannel(null);
 			removeUserSession(sessionId);
 		}
 		sessionIds.remove(Thread.currentThread().getId());
-
 	}
 
 	public boolean supportsPartialMessages() {
