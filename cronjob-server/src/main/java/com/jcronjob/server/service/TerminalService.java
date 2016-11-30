@@ -130,7 +130,7 @@ public class TerminalService {
     }
 
 
-    public Terminal openTerminal(Terminal term, Long userId, String sessionId) {
+    public Terminal openTerminal(Terminal terminal, String sessionId) {
 
         JSch jsch = new JSch();
 
@@ -139,8 +139,8 @@ public class TerminalService {
         String retVal = "SUCCESS";
         try {
             //create session
-            Session session = jsch.getSession(term.getUser(),term.getHost(), term.getPort());
-            session.setPassword(term.getPassword());
+            Session session = jsch.getSession(terminal.getUser(), terminal.getHost(), terminal.getPort());
+            session.setPassword(terminal.getPassword());
             session.setConfig("StrictHostKeyChecking", "no");
             session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
             session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
@@ -154,9 +154,9 @@ public class TerminalService {
             InputStream inputStream = channel.getInputStream();
 
             //new session output
-            SessionOutput sessionOutput = new SessionOutput(sessionId);
+            Message message = new Message(sessionId);
 
-            Runnable run = new TerminalTask(sessionOutput, inputStream);
+            Runnable run = new MessageReceiver(message, inputStream);
             Thread thread = new Thread(run);
             thread.start();
 
@@ -166,8 +166,7 @@ public class TerminalService {
             channel.connect();
 
             schSession = new SchSession();
-            schSession.setUserId(userId);
-            schSession.setTerm(term);
+            schSession.setTerminal(terminal);
             schSession.setSession(session);
             schSession.setChannel(channel);
             schSession.setCommander(commander);
@@ -186,16 +185,16 @@ public class TerminalService {
             }
         }
 
-        term.setStatus(retVal);
+        terminal.setStatus(retVal);
 
-        saveOrUpdate(term);
+        saveOrUpdate(terminal);
 
         //add session to map
         if (retVal.equals(Terminal.SUCCESS)) {
             TerminalSession.put(sessionId, schSession);
         }
 
-        return term;
+        return terminal;
     }
 
 
@@ -220,7 +219,7 @@ public class TerminalService {
      * @param sessionId session id
      */
     public static void removeUserSession(String sessionId) {
-        TerminalOutput.remove(sessionId);
+        TerminalMessage.remove(sessionId);
     }
 
     /**
@@ -230,20 +229,20 @@ public class TerminalService {
      */
     public static void removeOutput(String sessionId) {
 
-        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
-        if (sessionOutput != null) {
-            TerminalOutput.remove(sessionId);
+        Message message = TerminalMessage.get(sessionId);
+        if (message != null) {
+            TerminalMessage.remove(sessionId);
         }
     }
 
     /**
      * adds a new output
      *
-     * @param sessionOutput session output object
+     * @param message session output object
      */
-    public static void addOutput(SessionOutput sessionOutput) {
-        TerminalOutput.remove(sessionOutput.getSessionId());
-        TerminalOutput.put(sessionOutput.getSessionId(),sessionOutput);
+    public static void addOutput(Message message) {
+        TerminalMessage.remove(message.getSessionId());
+        TerminalMessage.put(message.getSessionId(), message);
     }
 
 
@@ -257,9 +256,9 @@ public class TerminalService {
      */
     public static void addToOutput(String sessionId,char value[], int offset, int count) {
 
-        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
-        if (sessionOutput != null) {
-            sessionOutput.getOutput().append(value, offset, count);
+        Message message = TerminalMessage.get(sessionId);
+        if (message != null) {
+            message.getOutput().append(value, offset, count);
         }
     }
 
@@ -269,48 +268,38 @@ public class TerminalService {
      * @param sessionId session id object
      * @return session output list
      */
-    public static List<SessionOutput> getOutput(String sessionId) {
-        List<SessionOutput> outputList = new ArrayList<SessionOutput>();
-        SessionOutput sessionOutput = TerminalOutput.get(sessionId);
-        if (sessionOutput!=null) {
-            TerminalOutput.put(sessionId,new SessionOutput(sessionId));
+    public static List<Message> getOutput(String sessionId) {
+        List<Message> outputList = new ArrayList<Message>();
+        Message message = TerminalMessage.get(sessionId);
+        if (message !=null) {
+            TerminalMessage.put(sessionId,new Message(sessionId));
         }
-        outputList.add(sessionOutput);
+        outputList.add(message);
         return outputList;
     }
 
     public static class SchSession {
 
-        private Long userId;
-        private Terminal term;
-        private com.jcraft.jsch.Session session;
+        private Terminal terminal;
+        private Session session;
         private Channel channel;
         private PrintStream commander;
         private InputStream outFromChannel;
         private OutputStream inputToChannel;
 
-
-        public Long getUserId() {
-            return userId;
+        public Terminal getTerminal() {
+            return terminal;
         }
 
-        public void setUserId(Long userId) {
-            this.userId = userId;
+        public void setTerminal(Terminal terminal) {
+            this.terminal = terminal;
         }
 
-        public Terminal getTerm() {
-            return term;
-        }
-
-        public void setTerm(Terminal term) {
-            this.term = term;
-        }
-
-        public com.jcraft.jsch.Session getSession() {
+        public Session getSession() {
             return session;
         }
 
-        public void setSession(com.jcraft.jsch.Session session) {
+        public void setSession(Session session) {
             this.session = session;
         }
 
@@ -348,13 +337,13 @@ public class TerminalService {
     }
 
 
-    public static class TerminalTask implements Runnable {
+    public static class MessageReceiver implements Runnable {
 
         private InputStream outFromChannel;
-        private SessionOutput sessionOutput;
+        private Message message;
 
-        public TerminalTask(SessionOutput sessionOutput, InputStream outFromChannel) {
-            this.sessionOutput = sessionOutput;
+        public MessageReceiver(Message message, InputStream outFromChannel) {
+            this.message = message;
             this.outFromChannel = outFromChannel;
         }
 
@@ -362,14 +351,14 @@ public class TerminalService {
             InputStreamReader isr = new InputStreamReader(outFromChannel);
             BufferedReader br = new BufferedReader(isr);
             try {
-                addOutput(sessionOutput);
+                addOutput(message);
                 char[] buff = new char[1024];
                 int read;
                 while((read = br.read(buff)) != -1) {
-                    addToOutput(sessionOutput.getSessionId(), buff,0,read);
+                    addToOutput(message.getSessionId(), buff,0,read);
                     Thread.sleep(50);
                 }
-                removeOutput(sessionOutput.getSessionId());
+                removeOutput(message.getSessionId());
             } catch (Exception ex) {
                 logger.error(ex.toString(), ex);
             }
@@ -377,24 +366,23 @@ public class TerminalService {
 
     }
 
-    public static class OutputRunner implements Runnable {
+    public static class MessageSender implements Runnable {
 
         private WebSocketSession session;
         private String sessionId;
 
-        public OutputRunner(String sessionId, WebSocketSession session) {
+        public MessageSender(String sessionId, WebSocketSession session) {
             this.sessionId = sessionId;
             this.session = session;
         }
 
         public void run() {
             while (session!=null && session.isOpen()) {
-                List<SessionOutput> sessionOutput = getOutput(sessionId);
+                List<Message> message = getOutput(sessionId);
                 try {
-                    if (CommonUtils.notEmpty(sessionOutput)) {
+                    if (CommonUtils.notEmpty(message)) {
+                        String json =  JSON.toJSONString(message);
                         //必须返回一个集合,不然写给前端解析失败
-                        String json =  JSON.toJSONString(sessionOutput);
-                        //send json to session
                         this.session.sendMessage(new TextMessage(json));
                     }
                     Thread.sleep(25);
@@ -406,12 +394,12 @@ public class TerminalService {
     }
 
 
-    public static class SessionOutput {
+    public static class Message {
 
         private String sessionId;
         private StringBuilder output = new StringBuilder();
 
-        public SessionOutput(String sessionId) {
+        public Message(String sessionId) {
             this.sessionId=sessionId;
 
         }
@@ -450,24 +438,25 @@ public class TerminalService {
         }
     }
 
-    public static class TerminalOutput {
-        private static Map<String, SessionOutput> out = new ConcurrentHashMap<String, SessionOutput>(0);
+    public static class TerminalMessage {
 
-        public static SessionOutput get(String key){
-            return out.get(key);
+        private static Map<String, Message> message = new ConcurrentHashMap<String, Message>(0);
+
+        public static Message get(String key){
+            return message.get(key);
         }
 
-        public static void put(String key,SessionOutput schSession){
-            out.put(key,schSession);
+        public static void put(String key,Message schSession){
+            message.put(key,schSession);
         }
 
-        public static SessionOutput remove(String key) {
-           return out.remove(key);
+        public static Message remove(String key) {
+           return message.remove(key);
         }
     }
 
 
-    public static class KeyCodeMap {
+    public static class TerminalKeyMap {
         private static Map<Integer, byte[]> keyMap = new HashMap<Integer, byte[]>();
         static {
             //ESC

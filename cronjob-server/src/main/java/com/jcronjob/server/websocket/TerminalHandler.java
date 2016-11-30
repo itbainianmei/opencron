@@ -45,7 +45,7 @@ public class TerminalHandler implements WebSocketHandler {
 
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		sessionIds.put(Thread.currentThread().getId(),(String) session.getAttributes().get(Globals.SSH_SESSION_ID));
-		Runnable run = new OutputRunner(sessionIds.get(Thread.currentThread().getId()), session);
+		Runnable run = new MessageSender(sessionIds.get(Thread.currentThread().getId()), session);
 		Thread thread = new Thread(run);
 		thread.start();
 	}
@@ -63,9 +63,9 @@ public class TerminalHandler implements WebSocketHandler {
 			//get servletRequest.getSession() for user
 			SchSession schSession = TerminalSession.get(token);
 			if (keyCode != null && schSession!=null) {
-				if (KeyCodeMap.containsKey(keyCode)) {
+				if (TerminalKeyMap.containsKey(keyCode)) {
 					try {
-						schSession.getCommander().write(KeyCodeMap.get(keyCode));
+						schSession.getCommander().write(TerminalKeyMap.get(keyCode));
 					} catch (IOException ex) {
 						logger.error(ex.toString(), ex);
 					}

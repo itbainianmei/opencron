@@ -70,7 +70,7 @@ public class TerminalController {
             String uuid = CommonUtils.uuid();
 
             session.setAttribute(Globals.SSH_SESSION_ID, uuid);
-            termService.openTerminal(term,user.getUserId(), uuid);
+            termService.openTerminal(term,uuid);
 
             WebUtils.writeJson(response, String.format(json,"success","/term?token="+uuid));
         }else {
@@ -84,7 +84,7 @@ public class TerminalController {
     public String open(HttpServletRequest request,String token ) throws Exception {
         SchSession schSession = TerminalSession.get(token);
         if (schSession!=null) {
-            Agent agent = agentService.getByHost(schSession.getTerm().getHost());
+            Agent agent = agentService.getByHost(schSession.getTerminal().getHost());
             request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
             request.setAttribute("token",token);
             return "/term/console";
