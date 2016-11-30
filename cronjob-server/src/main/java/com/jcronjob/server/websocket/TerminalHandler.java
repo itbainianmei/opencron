@@ -41,11 +41,11 @@ public class TerminalHandler implements WebSocketHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(TerminalHandler.class);
 
-	private Map<Long,String> sessionIds = new ConcurrentHashMap<Long, String>(0);
+	private Map<String,String> termSessionMap = new ConcurrentHashMap<String, String>(0);
 
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		sessionIds.put(Thread.currentThread().getId(),(String) session.getAttributes().get(Globals.SSH_SESSION_ID));
-		Runnable run = new MessageSender(sessionIds.get(Thread.currentThread().getId()), session);
+		termSessionMap.put(session.getId(),(String) session.getAttributes().get(Globals.SSH_SESSION_ID));
+		Runnable run = new MessageSender(termSessionMap.get(session.getId()), session);
 		Thread thread = new Thread(run);
 		thread.start();
 	}
@@ -60,7 +60,6 @@ public class TerminalHandler implements WebSocketHandler {
 			Integer keyCode = (Integer) jsonMap.get("keyCode");
 			String token = (String) jsonMap.get("token");
 
-			//get servletRequest.getSession() for user
 			SchSession schSession = TerminalSession.get(token);
 			if (keyCode != null && schSession!=null) {
 				if (TerminalKeyMap.containsKey(keyCode)) {
@@ -83,7 +82,7 @@ public class TerminalHandler implements WebSocketHandler {
 
 
 	public void afterConnectionClosed(WebSocketSession session,CloseStatus closeStatus) throws Exception {
-		String sessionId = sessionIds.get(Thread.currentThread().getId());
+		String sessionId = termSessionMap.get(session.getId());
 		SchSession schSession = TerminalSession.remove(sessionId);
 		if (schSession != null) {
 			schSession.getChannel().disconnect();
@@ -95,7 +94,7 @@ public class TerminalHandler implements WebSocketHandler {
 			schSession.setOutFromChannel(null);
 			removeUserSession(sessionId);
 		}
-		sessionIds.remove(Thread.currentThread().getId());
+		termSessionMap.remove(Thread.currentThread().getId());
 	}
 
 	public boolean supportsPartialMessages() {
