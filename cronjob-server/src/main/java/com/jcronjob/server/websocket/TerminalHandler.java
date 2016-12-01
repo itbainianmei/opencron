@@ -104,11 +104,11 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 
-	private TerminalClient getClient(WebSocketSession socketSession,Terminal terminal){
-		this.terminalClient = this.terminalClientMap.get(socketSession.getId());
+	private TerminalClient getClient(WebSocketSession session,Terminal terminal){
+		this.terminalClient = this.terminalClientMap.get(session.getId());
 		if (this.terminalClient==null && terminal!=null) {
 			this.terminalClient = new TerminalClient(terminal);
-			this.terminalClientMap.put(socketSession.getId(),this.terminalClient);
+			this.terminalClientMap.put(session.getId(),this.terminalClient);
 		}
 		return this.terminalClient;
 	}
