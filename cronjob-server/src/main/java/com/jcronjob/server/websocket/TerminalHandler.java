@@ -53,7 +53,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 					session.sendMessage(new TextMessage("Try to connect...\r"));
 					getClient(session,terminal);
 					if (terminalClient.connect()) {
-						terminalClient.startShellOutPutTask(session);
+						terminalClient.sendMessage(session);
 					} else {
 						terminalClient.disconnect();
 						session.sendMessage(new TextMessage("Connect failed, please confirm the username or password try agin."));

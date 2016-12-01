@@ -80,8 +80,6 @@ public class TerminalService {
     @Autowired
     private QueryDao queryDao;
 
-    private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
-
     public Terminal getTerm(Long userId, String host) throws Exception {
         Terminal term = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
         if (term!=null) {
@@ -185,8 +183,8 @@ public class TerminalService {
             }
         }
 
-        public void startShellOutPutTask(WebSocketSession session) {
-            new ShellOutPutTask(session, inputStream).start();
+        public void sendMessage(WebSocketSession session) {
+            new MessageSender(session, inputStream).start();
         }
 
         public void disconnect() {
@@ -201,12 +199,12 @@ public class TerminalService {
         }
 
 
-        class ShellOutPutTask extends Thread {
+        class MessageSender extends Thread {
 
             private final WebSocketSession session;
             private final InputStream out;
 
-            public ShellOutPutTask(WebSocketSession session, InputStream out) {
+            public MessageSender(WebSocketSession session, InputStream out) {
                 super();
                 this.session = session;
                 this.out = out;
