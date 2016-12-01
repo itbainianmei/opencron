@@ -27,6 +27,13 @@ public class Terminal implements Serializable{
     private String token;
 
     public static final String INITIAL ="INITIAL";
+
+    @Transient
+    private String instanceId;
+
+    @Transient
+    private Agent agent;
+
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
     @Transient
@@ -38,6 +45,13 @@ public class Terminal implements Serializable{
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
 
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
 
     public Long getId() {
         return id;
@@ -130,4 +144,11 @@ public class Terminal implements Serializable{
         this.logintime = logintime;
     }
 
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
 }

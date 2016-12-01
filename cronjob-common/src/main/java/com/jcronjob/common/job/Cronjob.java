@@ -79,14 +79,14 @@ import org.slf4j.LoggerFactory;
 public class Cronjob implements Serializable {
 
     public enum StatusCode implements Serializable {
-        SUCCESS_EXIT(0, "正常退出"),
-        ERROR_EXIT(1, "异常退出"),
-        ERROR_PING(-99, "连接失败,ping不通"),
-        KILL(137, "进程被kill"),
-        NOTFOUND(127, "未找到命令或文件"),
-        ERROR_EXEC(-100, "连接成功，执行任务失败!"),
-        ERROR_PASSWORD(-500, "密码不正确!"),
-        TIME_OUT(504,"任务超时");
+        SUCCESS_EXIT(0x0, "正常退出"),
+        ERROR_EXIT(0x1, "异常退出"),
+        ERROR_PING(-0x63, "连接失败,ping不通"),
+        KILL(0x89, "进程被kill"),
+        NOTFOUND(0x7f, "未找到命令或文件"),
+        ERROR_EXEC(-0x64, "连接成功，执行任务失败!"),
+        ERROR_PASSWORD(-0x1f4, "密码不正确!"),
+        TIME_OUT(0x1f8,"任务超时");
 
         private Integer value;
         private String description;
@@ -115,10 +115,10 @@ public class Cronjob implements Serializable {
 
     public enum ExecType implements Serializable {
 
-        AUTO(0, "auto", "自动模式,系统调用"),
-        OPERATOR(1, "operator", "手动模式,手动调用"),
-        RERUN(2, "rerun", "重跑模式"),
-        BATCH(3, "batch", "现场执行");
+        AUTO(0x0, "auto", "自动模式,系统调用"),
+        OPERATOR(0x1, "operator", "手动模式,手动调用"),
+        RERUN(0x2, "rerun", "重跑模式"),
+        BATCH(0x3, "batch", "现场执行");
 
         private Integer status;
         private String name;
@@ -166,8 +166,8 @@ public class Cronjob implements Serializable {
 
     public enum CronType implements Serializable {
 
-        CRONTAB(0, "crontab", "crontab表达式"),
-        QUARTZ(1, "quartz", "quartz表达式");
+        CRONTAB(0x0, "crontab", "crontab表达式"),
+        QUARTZ(0x1, "quartz", "quartz表达式");
 
         private Integer type;
         private String name;
@@ -214,10 +214,10 @@ public class Cronjob implements Serializable {
     }
 
     public enum ResultStatus {
-        FAILED(0, "失败"),
-        SUCCESSFUL(1, "成功"),
-        KILLED(2, "被杀"),
-        TIMEOUT(3, "超时");
+        FAILED(0x0, "失败"),
+        SUCCESSFUL(0x1, "成功"),
+        KILLED(0x2, "被杀"),
+        TIMEOUT(0x3, "超时");
 
         private Integer status;
         private String description;
@@ -245,13 +245,13 @@ public class Cronjob implements Serializable {
     }
 
     public enum RunStatus implements Serializable {
-        RUNNING(0, "running", "正在运行"),
-        DONE(1, "done", "已完成"),
-        STOPPING(2, "stopping", "正在停止"),
-        STOPED(3, "stoped", "已停止"),
-        RERUNNING(4, "rerunning", "正在重跑"),
-        RERUNUNDONE(5,"rerunundone","重跑未完成"),
-        RERUNDONE(6,"rerundone","重跑完成");
+        RUNNING(0x0, "running", "正在运行"),
+        DONE(0x1, "done", "已完成"),
+        STOPPING(0x2, "stopping", "正在停止"),
+        STOPED(0x3, "stoped", "已停止"),
+        RERUNNING(0x4, "rerunning", "正在重跑"),
+        RERUNUNDONE(0x5,"rerunundone","重跑未完成"),
+        RERUNDONE(0x6,"rerundone","重跑完成");
 
         private Integer status;
         private String name;
@@ -289,8 +289,8 @@ public class Cronjob implements Serializable {
     }
 
     public enum JobType implements Serializable {
-        SINGLETON(0, "单一任务"),
-        FLOW(1, "流程任务");
+        SINGLETON(0x0, "单一任务"),
+        FLOW(0x1, "流程任务");
 
         private Integer code;
         private String description;
@@ -328,9 +328,9 @@ public class Cronjob implements Serializable {
     }
 
     public enum MsgType {
-        EMAIL(0, "邮件"),
-        SMS(1, "短信"),
-        WEBSITE(2, "站内信");
+        EMAIL(0x0, "邮件"),
+        SMS(0x1, "短信"),
+        WEBSITE(0x2, "站内信");
 
         private Integer value;
         private String desc;
@@ -358,8 +358,8 @@ public class Cronjob implements Serializable {
     }
 
     public enum RunModel {
-        SEQUENCE(0, "串行"),
-        SAMETIME(1, "并行");
+        SEQUENCE(0x0, "串行"),
+        SAMETIME(0x1, "并行");
         private Integer value;
         private String desc;
 
@@ -395,8 +395,8 @@ public class Cronjob implements Serializable {
     }
 
     public enum ConnType{
-        CONN(0,"conn","直连"),
-        PROXY(1,"proxy","代理");
+        CONN(0x0,"conn","直连"),
+        PROXY(0x1,"proxy","代理");
 
         private Integer type;
         private String name;

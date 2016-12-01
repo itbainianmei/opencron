@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 import static com.jcronjob.server.service.TerminalService.*;
 
 /**
@@ -54,24 +53,25 @@ public class TerminalController {
     private AgentService agentService;
 
     @RequestMapping("/ssh")
-    public void ssh(HttpSession session,HttpServletResponse response, final Agent agent) throws Exception {
+    public void ssh(HttpSession session,HttpServletResponse response, Agent agent) throws Exception {
         User user = (User) session.getAttribute(Globals.LOGIN_USER);
 
         String json = "{status:'%s',url:'%s'}";
-        final Terminal term = termService.getTerm(user.getUserId(), agent.getIp());
-        if (term == null) {
+        final Terminal terminal = termService.getTerm(user.getUserId(), agent.getIp());
+        if (terminal == null) {
             WebUtils.writeJson(response, String.format(json,"null","null"));
             return;
         }
 
-        String authStr = termService.auth(term);
+        String authStr = termService.auth(terminal);
         //登陆认证成功
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
+            agent = agentService.getByHost(agent.getIp());
             String uuid = CommonUtils.uuid();
-
-            session.setAttribute(Globals.SSH_SESSION_ID, uuid);
-            termService.openTerminal(term,uuid);
-
+            terminal.setInstanceId(uuid);
+            terminal.setAgent(agent);
+            TerminalSession.put(uuid,terminal);
+            session.setAttribute(Globals.SSH_SESSION_ID,uuid);
             WebUtils.writeJson(response, String.format(json,"success","/term?token="+uuid));
         }else {
             //重新输入密码进行认证...
@@ -82,14 +82,12 @@ public class TerminalController {
 
     @RequestMapping("/term")
     public String open(HttpServletRequest request,String token ) throws Exception {
-        SchSession schSession = TerminalSession.get(token);
-        if (schSession!=null) {
-            Agent agent = agentService.getByHost(schSession.getTerminal().getHost());
-            request.setAttribute("name",agent.getName()+"("+agent.getIp()+")");
+        Terminal terminal = TerminalSession.get(token);
+        if (terminal!=null) {
+            request.setAttribute("name",terminal.getAgent().getName()+"("+terminal.getAgent().getIp()+")");
             request.setAttribute("token",token);
             return "/term/console";
         }
-
         return "/term/error";
     }
 

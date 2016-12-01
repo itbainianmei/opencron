@@ -22,6 +22,7 @@
 package com.jcronjob.server.domain;
 
 import com.jcronjob.common.job.Cronjob;
+import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.vo.JobVo;
 
 import java.io.Serializable;
@@ -85,7 +86,7 @@ public class Record implements Serializable {
         this.setRedoCount(0);//运行次数
         this.setSuccess(Cronjob.ResultStatus.SUCCESSFUL.getStatus());
         this.setStatus(Cronjob.RunStatus.RUNNING.getStatus());//任务还未完成
-        this.setPid(UUID.randomUUID().toString().replace("-", ""));
+        this.setPid(CommonUtils.uuid());
     }
 
     public Long getRecordId() {

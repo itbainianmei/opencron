@@ -62,7 +62,6 @@ public class ConfigController {
     public String edit(Config config) {
         config.setConfigId(configService.getSysConfig().getConfigId());
         configService.update(config);
-        noticeService.updateConfig(config);
         return "redirect:/config/view";
     }
 

@@ -52,8 +52,6 @@ import static com.jcronjob.common.utils.CommonUtils.notEmpty;
 public class NoticeService {
 
 
-    private Config config;
-
     @Autowired
     private ConfigService configService;
 
@@ -69,16 +67,11 @@ public class NoticeService {
 
     @PostConstruct
     public void initConfig() throws Exception {
-        this.config = configService.getSysConfig();
         Configuration configuration = new Configuration();
         File file = new File(getClass().getClassLoader().getResource("/").getPath().replace("classes","common"));
         configuration.setDirectoryForTemplateLoading(file);
         configuration.setDefaultEncoding("UTF-8");
         this.template = configuration.getTemplate("email.template");
-    }
-
-    public void updateConfig(Config newConfig){
-        this.config = newConfig;
     }
 
     public void notice(Agent agent) {
@@ -133,6 +126,8 @@ public class NoticeService {
          */
         boolean emailSuccess = false;
         boolean mobileSuccess = false;
+
+        Config config = configService.getSysConfig();
         try {
             log.setType(Cronjob.MsgType.EMAIL.getValue());
             HtmlEmail email = new HtmlEmail();

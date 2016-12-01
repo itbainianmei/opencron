@@ -26,6 +26,13 @@
             <version>0.1.53</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/ch.ethz.ganymed/ganymed-ssh2 -->
+        <dependency>
+            <groupId>ch.ethz.ganymed</groupId>
+            <artifactId>ganymed-ssh2</artifactId>
+            <version>262</version>
+        </dependency>
+
         <!-- provided dependencies-->
         <dependency>
             <groupId>javax.websocket</groupId>

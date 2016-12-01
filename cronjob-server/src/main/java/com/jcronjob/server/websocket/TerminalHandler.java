@@ -21,85 +21,96 @@
 
 package com.jcronjob.server.websocket;
 
-import com.alibaba.fastjson.JSON;
-import com.jcronjob.common.utils.CommonUtils;
-import com.jcronjob.server.job.Globals;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.jcronjob.server.domain.Terminal;
+import com.jcronjob.server.job.Globals;
 import static com.jcronjob.server.service.TerminalService.*;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 
-@Component
-public class TerminalHandler implements WebSocketHandler {
+public class TerminalHandler extends TextWebSocketHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(TerminalHandler.class);
+	private Map<String,TerminalClient> terminalClientMap = new ConcurrentHashMap<String, TerminalClient>(0);
 
-	private Map<String,String> termSessionMap = new ConcurrentHashMap<String, String>(0);
+	private TerminalClient terminalClient;
 
+	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		termSessionMap.put(session.getId(),(String) session.getAttributes().get(Globals.SSH_SESSION_ID));
-		Runnable run = new MessageSender(termSessionMap.get(session.getId()), session);
-		Thread thread = new Thread(run);
-		thread.start();
-	}
-
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-
-		if (session.isOpen() && CommonUtils.notEmpty(message)) {
-
-			Map jsonMap = JSON.parseObject(message.getPayload().toString(),Map.class);
-
-			String command = (String) jsonMap.get("command");
-			Integer keyCode = (Integer) jsonMap.get("keyCode");
-			String token = (String) jsonMap.get("token");
-
-			SchSession schSession = TerminalSession.get(token);
-			if (keyCode != null && schSession!=null) {
-				if (TerminalKeyMap.containsKey(keyCode)) {
-					try {
-						schSession.getCommander().write(TerminalKeyMap.get(keyCode));
-					} catch (IOException ex) {
-						logger.error(ex.toString(), ex);
+		super.afterConnectionEstablished(session);
+		String sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
+		if (sessionId != null) {
+			Terminal terminal = TerminalSession.remove(sessionId);
+			if (terminal!=null) {
+				try {
+					session.sendMessage(new TextMessage("Try to connect...\r"));
+					getClient(session,terminal);
+					if (terminalClient.connect()) {
+						terminalClient.startShellOutPutTask(session);
+					} else {
+						terminalClient.disconnect();
+						session.sendMessage(new TextMessage("Connect failed, please confirm the username or password try agin."));
+						session.close();
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} else {
-				schSession.getCommander().print(command);
+			}else {
+				this.terminalClient.disconnect();
+				session.sendMessage(new TextMessage("Connect failed, please confirm the username or password try agin."));
+				session.close();
 			}
 		}
 	}
 
 
-	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-
-	}
-
-
-	public void afterConnectionClosed(WebSocketSession session,CloseStatus closeStatus) throws Exception {
-		String sessionId = termSessionMap.get(session.getId());
-		SchSession schSession = TerminalSession.remove(sessionId);
-		if (schSession != null) {
-			schSession.getChannel().disconnect();
-			schSession.getSession().disconnect();
-			schSession.setChannel(null);
-			schSession.setSession(null);
-			schSession.setInputToChannel(null);
-			schSession.setCommander(null);
-			schSession.setOutFromChannel(null);
-			removeUserSession(sessionId);
+	@Override
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		super.handleTextMessage(session, message);
+		try {
+			getClient(session,null);
+			if (terminalClient != null) {
+				//receive a close cmd ?
+				if (Arrays.equals("exit".getBytes(), message.asBytes())) {
+					if (terminalClient != null) {
+						terminalClient.disconnect();
+					}
+					session.close();
+					return ;
+				}
+				terminalClient.write(new String(message.asBytes(), "UTF-8"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			session.sendMessage(new TextMessage("An error occured, websocket is closed."));
+			session.close();
 		}
-		termSessionMap.remove(Thread.currentThread().getId());
 	}
 
-	public boolean supportsPartialMessages() {
-		return false;
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		super.afterConnectionClosed(session, status);
+		terminalClient = this.terminalClientMap.remove(session.getId());
+		if (terminalClient != null) {
+			terminalClient.disconnect();
+		}
 	}
 
+
+	private TerminalClient getClient(WebSocketSession socketSession,Terminal terminal){
+		this.terminalClient = this.terminalClientMap.get(socketSession.getId());
+		if (this.terminalClient==null && terminal!=null) {
+			this.terminalClient = new TerminalClient(terminal);
+			this.terminalClientMap.put(socketSession.getId(),this.terminalClient);
+		}
+		return this.terminalClient;
+	}
 }
 

@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -68,6 +69,8 @@ public class CronjobTask implements InitializingBean {
     @Autowired
     private MemcacheCache memcacheCache;
 
+    private String sqlPath;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         clearCache();
@@ -75,10 +78,11 @@ public class CronjobTask implements InitializingBean {
         schedulerService.startCrontab();
     }
 
+
     /**
      * 执行器通信监控,每10秒通信一次
      */
-    //@Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void ping() {
         logger.info("[cronjob]:checking Agent connection...");
         List<Agent> agents = agentService.getAll();
@@ -118,7 +122,7 @@ public class CronjobTask implements InitializingBean {
         }
     }
 
-    //@Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void reExecuteJob() {
         logger.info("[cronjob] reExecuteIob running...");
         final List<Record> records = recordService.getReExecuteRecord();
@@ -152,6 +156,14 @@ public class CronjobTask implements InitializingBean {
     private void clearCache() {
         memcacheCache.evict(Globals.CACHED_AGENT_ID);
         memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
+    }
+
+    public String getSqlPath() {
+        return sqlPath;
+    }
+
+    public void setSqlPath(String sqlPath) {
+        this.sqlPath = sqlPath;
     }
 
 

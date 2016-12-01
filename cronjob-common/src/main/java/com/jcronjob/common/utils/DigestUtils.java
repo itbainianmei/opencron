@@ -47,6 +47,7 @@ public abstract class DigestUtils {
     /**
      * Return a hexadecimal string representation of the MD5 digest of the given
      * bytes.
+     *
      * @param bytes the bytes to calculate the digest over
      * @return a hexadecimal digest string
      */
@@ -57,7 +58,8 @@ public abstract class DigestUtils {
     /**
      * Append a hexadecimal string representation of the MD5 digest of the given
      * bytes to the given {@link StringBuilder}.
-     * @param bytes the bytes to calculate the digest over
+     *
+     * @param bytes   the bytes to calculate the digest over
      * @param builder the string builder to append the digest to
      * @return the given string builder
      */
@@ -72,12 +74,10 @@ public abstract class DigestUtils {
     private static MessageDigest getDigest(String algorithm) {
         try {
             return MessageDigest.getInstance(algorithm);
-        }
-        catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             throw new IllegalStateException("Could not find MessageDigest with algorithm \"" + algorithm + "\"", ex);
         }
     }
-
 
 
     private static byte[] digest(String algorithm, byte[] bytes) {
@@ -118,42 +118,45 @@ public abstract class DigestUtils {
 
     /**
      * Description 根据键值进行加密
+     *
      * @param data
      * @param key  加密键byte数组
      * @return
      * @throws Exception
      */
-    public static String desEncrypt(String key,String data) throws Exception {
-        byte[] bt = desEncrypt(key.getBytes(),data.getBytes());
+    public static String desEncrypt(String key, String data) throws Exception {
+        byte[] bt = desEncrypt(key.getBytes(), data.getBytes());
         String strs = new BASE64Encoder().encode(bt);
         return strs;
     }
 
     /**
      * Description 根据键值进行解密
+     *
      * @param data
      * @param key  加密键byte数组
      * @return
      * @throws java.io.IOException
      * @throws Exception
      */
-    public static String desDecrypt(String key,String data)throws Exception {
+    public static String desDecrypt(String key, String data) throws Exception {
         if (data == null)
             return null;
         BASE64Decoder decoder = new BASE64Decoder();
         byte[] buf = decoder.decodeBuffer(data);
-        byte[] bt = desDecrypt(key.getBytes(),buf);
+        byte[] bt = desDecrypt(key.getBytes(), buf);
         return new String(bt);
     }
 
     /**
      * Description 根据键值进行加密
+     *
      * @param data
      * @param key  加密键byte数组
      * @return
      * @throws Exception
      */
-    private static byte[] desEncrypt(byte[] key,byte[] data) throws Exception {
+    private static byte[] desEncrypt(byte[] key, byte[] data) throws Exception {
         // 生成一个可信任的随机数源
         SecureRandom sr = new SecureRandom();
 
@@ -208,12 +211,13 @@ public abstract class DigestUtils {
 
     /**
      * Description 根据键值进行解密
+     *
      * @param data
      * @param key  加密键byte数组
      * @return
      * @throws Exception
      */
-    private static byte[] desDecrypt(byte[] key,byte[] data) throws Exception {
+    private static byte[] desDecrypt(byte[] key, byte[] data) throws Exception {
         // 生成一个可信任的随机数源
         SecureRandom sr = new SecureRandom();
 
@@ -234,8 +238,7 @@ public abstract class DigestUtils {
     }
 
 
-
-    public static String aesDecrypt(String key,String sSrc) throws Exception {
+    public static String aesDecrypt(String key, String sSrc) throws Exception {
         try {
             if (key == null) {
                 throw new ExceptionInInitializerError("key can't be null");
@@ -264,12 +267,11 @@ public abstract class DigestUtils {
     }
 
     /**
-     *
      * @param sSrc
      * @return 加密程序
      * @throws Exception
      */
-    public static String aesEncrypt(String key,String sSrc) throws Exception {
+    public static String aesEncrypt(String key, String sSrc) throws Exception {
         if (key == null) {
             throw new ExceptionInInitializerError("key not bo null");
         }
@@ -330,13 +332,13 @@ public abstract class DigestUtils {
     }
 
     //	压缩字符串
-    public static String compressData(String data,String charset) {
+    public static String compressData(String data, String charset) {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             DeflaterOutputStream zos = new DeflaterOutputStream(bos);
             zos.write(data.getBytes());
             zos.close();
-            return new String(getenBASE64inCodec(bos.toByteArray(),charset));
+            return new String(getenBASE64inCodec(bos.toByteArray(), charset));
         } catch (Exception ex) {
             ex.printStackTrace();
             return "ZIP_ERR";
@@ -344,18 +346,18 @@ public abstract class DigestUtils {
     }
 
     //	使用apche codec对数组进行encode
-    public static String getenBASE64inCodec(byte [] b) {
+    public static String getenBASE64inCodec(byte[] b) {
         if (b == null)
             return null;
         return new String((new Base64()).encode(b));
     }
 
     //	使用apche codec对数组进行encode
-    public static String getenBASE64inCodec(byte [] b,String charset) {
+    public static String getenBASE64inCodec(byte[] b, String charset) {
         if (b == null)
             return null;
         try {
-            return new String((new Base64()).encode(b),charset);
+            return new String((new Base64()).encode(b), charset);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -385,17 +387,52 @@ public abstract class DigestUtils {
     }
 
     //	解码字符串
-    public static String decompressData(String encdata,String charset) {
+    public static String decompressData(String encdata, String charset) {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             InflaterOutputStream zos = new InflaterOutputStream(bos);
             zos.write(getdeBASE64inCodec(encdata));
             zos.close();
-            return new String(bos.toByteArray(),charset);
+            return new String(bos.toByteArray(), charset);
         } catch (Exception ex) {
             ex.printStackTrace();
             return "UNZIP_ERR";
         }
     }
 
+    public static String getEncoding(String text) {
+        String encode = "GB2312";
+        try {
+            if (text.equals(new String(text.getBytes(encode), encode))) {
+                String s = encode;
+                return s;
+            }
+        } catch (Exception exception) {}
+
+        encode = "ISO-8859-1";
+        try {
+            if (text.equals(new String(text.getBytes(encode), encode))) {
+                String s1 = encode;
+                return s1;
+            }
+        } catch (Exception exception1) {
+        }
+        encode = "UTF-8";
+        try {
+            if (text.equals(new String(text.getBytes(encode), encode))) {
+                String s2 = encode;
+                return s2;
+            }
+        } catch (Exception exception2) {
+        }
+        encode = "GBK";
+        try {
+            if (text.equals(new String(text.getBytes(encode), encode))) {
+                String s3 = encode;
+                return s3;
+            }
+        } catch (Exception exception3) {
+        }
+        return "";
+    }
 }
