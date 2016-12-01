@@ -66,7 +66,7 @@
             termName: "xterm",
             cols: getSize().cols,
             rows: getSize().rows,
-            fontSize:12,
+            fontSize:13,
             lineHeight:15,
             useStyle: true,
             screenKeys: true,
