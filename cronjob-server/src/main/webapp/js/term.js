@@ -444,7 +444,9 @@
         scrollback: 1000,
         screenKeys: false,
         debug: false,
-        useStyle: false
+        useStyle: false,
+        fontSize:12,
+        lineHeight:15
         // programFeatures: false,
         // focusKeys: false,
     };
@@ -705,7 +707,8 @@
             + '  float: left;\n'
             + '  border: ' + bg + ' solid 5px;\n'
             + '  font-family: Courier, monospace;\n'
-            + '  font-size: 11px;\n'
+            + '  font-size: '+this.fontSize+'px;\n'
+            + '  line-height: '+this.lineHeight+'px;\n'
             + '  color: ' + fg + ';\n'
             + '  background: ' + bg + ';\n'
             + '}\n'
