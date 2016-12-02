@@ -8,11 +8,20 @@
         http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
     <bean id="terminalHandler" class="com.jcronjob.server.websocket.TerminalHandler"/>
+    <bean id="webSocketHandShaker" class="com.jcronjob.server.websocket.WebSocketHandShaker"/>
 
     <websocket:handlers>
         <websocket:mapping path="/terminal.ws" handler="terminalHandler" />
         <websocket:handshake-interceptors>
-            <bean class="com.jcronjob.server.websocket.WebSocketHandShaker" />
+            <ref bean="webSocketHandShaker"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+
+    <websocket:handlers>
+        <websocket:sockjs/>
+        <websocket:mapping path="/terminal.js" handler="terminalHandler" />
+        <websocket:handshake-interceptors>
+            <ref bean="webSocketHandShaker"/>
         </websocket:handshake-interceptors>
     </websocket:handlers>
 

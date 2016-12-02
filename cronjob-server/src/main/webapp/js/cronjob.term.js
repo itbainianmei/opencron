@@ -8,7 +8,7 @@
 
 ;CronjobTerm.prototype.resize = function () {
     var self = this;
-   $(document).resize(function () {
+   $(window).resize(function () {
        self.term.resize(self.size().cols,self.size().rows);
    });
 }
@@ -58,7 +58,7 @@
         self.socket= SockJS(url);
     }
 
-    self.socket.onerror = function(event) {
+    self.socket.onerror = function() {
         self.term.write("Sorry! cronjob terminal connect error!playse try again...\n");
         window.clearInterval(self.term._blink);
     };
@@ -71,8 +71,8 @@
         self.term.write(event.data);
     };
 
-    self.socket.onclose = function(event) {
-        self.term.write(" Thank you for using cronjob terminal!Good-bye...");
+    self.socket.onclose = function() {
+        self.term.write("Thank you for using cronjob terminal!Good-bye...");
         //清除光标闪烁
         window.clearInterval(self.term._blink);
     };
