@@ -24,8 +24,6 @@ package com.jcronjob.server.websocket;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.job.Globals;
@@ -37,8 +35,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 
 public class TerminalHandler extends TextWebSocketHandler {
-
-	private Map<String,TerminalClient> terminalClientMap = new ConcurrentHashMap<String, TerminalClient>(0);
 
 	private TerminalClient terminalClient;
 
@@ -112,17 +108,17 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
-		this.terminalClient = this.terminalClientMap.get(session.getId());
+		this.terminalClient =  TerminalClientSession.get(session.getId());
 		if (this.terminalClient==null && terminal!=null) {
 			this.terminalClient = new TerminalClient(terminal);
-			this.terminalClientMap.put(session.getId(),this.terminalClient);
+			TerminalClientSession.put(session.getId(),this.terminalClient);
 		}
 		return this.terminalClient;
 	}
 
 
 	private void closeTerminal(WebSocketSession session) throws IOException {
-		terminalClient = this.terminalClientMap.remove(session.getId());
+		terminalClient = TerminalClientSession.remove(session.getId());
 		if (terminalClient != null) {
 			terminalClient.disconnect();
 		}
