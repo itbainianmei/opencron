@@ -98,6 +98,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
 		super.handleTransportError(session, exception);
 		this.closeTerminal(session);
+		session.close();
 	}
 
 	@Override
@@ -122,7 +123,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 		if (terminalClient != null) {
 			terminalClient.disconnect();
 		}
-		session.close();
 	}
 
 }

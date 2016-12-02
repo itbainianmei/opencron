@@ -86,6 +86,20 @@ public class HomeController {
     @RequestMapping("/home")
     public String index(HttpSession session, Model model) {
 
+        //提示用户更改默认密码
+        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+        byte[] salt = Encodes.decodeHex(user.getSalt());
+        byte[] hashPassword = Digests.sha1("cronjob".getBytes(), salt, 1024);
+        String hashPass = Encodes.encodeHex(hashPassword);
+
+        if (user.getUserName().equals("cronjob") && user.getPassword().equals(hashPass)) {
+            model.addAttribute("u", user);
+            model.addAttribute("role", userService.getRoleGroup());
+            model.addAttribute("agents", agentService.getAll());
+            return "/user/edit";
+        }
+
+
         /**
          * agent...
          */

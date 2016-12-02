@@ -23,6 +23,9 @@ package com.jcronjob.server.service;
 
 import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.Config;
+import com.jcronjob.server.domain.Role;
+import com.jcronjob.server.domain.User;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,9 @@ public class ConfigService {
     @Autowired
     private QueryDao queryDao;
 
+    @Autowired
+    private UserService userService;
+
     public Config getSysConfig() {
         return queryDao.sqlUniqueQuery(Config.class, "SELECT * FROM T_CONFIG WHERE configId = 1");
     }
@@ -43,4 +49,48 @@ public class ConfigService {
         queryDao.save(config);
     }
 
+    public void initDataBase() {
+        long count = queryDao.getCountBySql("SELECT COUNT(1) FROM T_CONFIG");
+        if (count==0) {
+
+            Session session = queryDao.getSessionFactory().openSession();
+            session.getTransaction().begin();
+
+            Config config = new Config();
+            config.setConfigId(1);
+            config.setSenderEmail("you_mail_name");
+            config.setSmtpHost("smtp.exmail.qq.com");
+            config.setSmtpPort(465);
+            config.setPassword("your_mail_pwd");
+            config.setSendUrl("http://your_url");
+            config.setSpaceTime(30);
+            session.save(config);
+
+            Role role = new Role();
+            role.setRoleId(1L);
+            role.setRoleName("管理员");
+            role.setDescription("仅具有查看权限");
+            session.save(role);
+
+            Role superRole = new Role();
+            superRole.setRoleId(999L);
+            superRole.setRoleName("超级管理员");
+            superRole.setDescription("具有所有操作权限");
+            session.save(superRole);
+
+            session.getTransaction().commit();
+
+            User user = new User();
+            user.setUserName("cronjob");
+            user.setPassword("cronjob");
+            user.setRoleId(999L);
+            user.setRealName("benjobs");
+            user.setEmail("benjobs@qq.com");
+            user.setQq("benjobs@qq.com");
+            user.setContact("13800138000");
+            userService.addUser(user);
+
+        }
+
+    }
 }

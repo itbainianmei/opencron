@@ -21,10 +21,9 @@
 
 package com.jcronjob.server.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
@@ -35,6 +34,8 @@ import java.io.Serializable;
 public class Config implements Serializable {
 
     @Id
+    @GenericGenerator(name="gen_id",strategy="assigned")
+    @GeneratedValue(generator="gen_id")
     private Integer configId;
     private String senderEmail;
     private String password;

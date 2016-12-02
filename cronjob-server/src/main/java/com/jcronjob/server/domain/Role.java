@@ -22,6 +22,8 @@
 
 package com.jcronjob.server.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,7 +38,8 @@ import java.io.Serializable;
 public class Role implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GenericGenerator(name="gen_id",strategy="assigned")
+    @GeneratedValue(generator="gen_id")
     private Long roleId;
 
     private String roleName;

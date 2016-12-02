@@ -163,7 +163,9 @@ CREATE TABLE `T_SCRIPT` (
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
 LOCK TABLES `T_USER` WRITE;
+
 INSERT INTO `T_USER`(roleId,userName,password,salt,realName,contact,email,qq,createTime,modifyTime)
 VALUES (999,'cronjob','f50bd9d20b9e772a137590bfef5bc8d0c9b602be','ece2bae9d384582b','jcronjob','13800138000','benjobs@qq.com','123322242','2016-02-17 12:17:19','2016-03-07 03:05:28');
+
 UNLOCK TABLES;
 

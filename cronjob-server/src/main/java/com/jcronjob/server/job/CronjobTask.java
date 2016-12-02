@@ -73,6 +73,7 @@ public class CronjobTask implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        configService.initDataBase();
         clearCache();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();

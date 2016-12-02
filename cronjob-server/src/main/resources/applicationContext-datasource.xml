@@ -60,6 +60,8 @@
 				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
 				<prop key="jdbc.use_scrollable_resultset">${jdbc.use_scrollable_resultset}</prop>
 				<prop key="hibernate.c3p0.preferredTestQuery">select 1;</prop>
+				<prop key="hibernate.connectio.useUnicode">true</prop>
+				<prop key="hibernate.connection.characterEncoding">utf-8</prop>
 				<prop key="hibernate.autoReconnect">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
