@@ -86,20 +86,6 @@ public class HomeController {
     @RequestMapping("/home")
     public String index(HttpSession session, Model model) {
 
-        //提示用户更改默认密码
-        User user = (User) session.getAttribute(Globals.LOGIN_USER);
-        byte[] salt = Encodes.decodeHex(user.getSalt());
-        byte[] hashPassword = Digests.sha1("cronjob".getBytes(), salt, 1024);
-        String hashPass = Encodes.encodeHex(hashPassword);
-
-        if (user.getUserName().equals("cronjob") && user.getPassword().equals(hashPass)) {
-            model.addAttribute("u", user);
-            model.addAttribute("role", userService.getRoleGroup());
-            model.addAttribute("agents", agentService.getAll());
-            return "/user/edit";
-        }
-
-
         /**
          * agent...
          */
@@ -194,13 +180,26 @@ public class HomeController {
         }
         if (status == 200) {
             User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
+
+            //提示用户更改默认密码
+            byte[] salt = Encodes.decodeHex(user.getSalt());
+            byte[] hashPassword = Digests.sha1(DigestUtils.md5Hex("cronjob").toUpperCase().getBytes(), salt, 1024);
+            String hashPass = Encodes.encodeHex(hashPassword);
+
+            String format = "{\"status\":\"%s\",\"%s\":\"%s\"}";
+
+            if (user.getUserName().equals("cronjob") && user.getPassword().equals(hashPass)) {
+                WebUtils.writeJson(response,String.format(format,"edit","userId",user.getUserId()) );
+                return;
+            }
+
             if (user.getHeaderpic()!=null) {
                 String name = user.getUserId() + "_140"+user.getPicExtName();
                 String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
                 user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
             }
-            WebUtils.writeJson(response, "{\"successUrl\":\"/home\"}");
+            WebUtils.writeJson(response,   String.format(format,"success","url","/home"));
             return;
         }
     }

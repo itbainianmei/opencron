@@ -58,14 +58,11 @@ public class HomeService {
         User user = queryDao.hqlUniqueQuery("FROM User WHERE userName = ?", username);
         if (user == null) return 500;
 
+        //拿到数据库的数据盐
         byte[] salt = Encodes.decodeHex(user.getSalt());
-        byte[] hashPassword = Digests.sha1(password.getBytes(), salt, 1024);
-        password = Encodes.encodeHex(hashPassword);
+        String saltPassword = Encodes.encodeHex(Digests.sha1(password.getBytes(), salt, 1024));
 
-        String sql = "SELECT COUNT(1) FROM T_USER WHERE userName=? AND password=?";
-        Long count = queryDao.getCountBySql(sql, username, password);
-
-        if (count == 1L) {
+        if (saltPassword.equals(user.getPassword())) {
             httpSession.setAttribute(Globals.LOGIN_USER, user);
             if (user.getRoleId() == 999L) {
                 httpSession.setAttribute(Globals.PERMISSION, true);

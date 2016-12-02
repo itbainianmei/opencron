@@ -67,8 +67,8 @@ public class UserService {
         String saltstr = CommonUtils.uuid(16);
         user.setSalt(saltstr);
         byte[] salt = Encodes.decodeHex(saltstr);
-        byte[] hashPassword = Digests.sha1(user.getPassword().getBytes(), salt, 1024);
-        user.setPassword(Encodes.encodeHex(hashPassword));
+        String saltPassword = Encodes.encodeHex(Digests.sha1(user.getPassword().getBytes(), salt, 1024));
+        user.setPassword(saltPassword);
         user.setCreateTime(new Date());
         queryDao.save(user);
     }

@@ -19,6 +19,10 @@
  * under the License.
  */
 
+import com.jcronjob.common.utils.DigestUtils;
+import com.jcronjob.common.utils.Digests;
+
+import javax.xml.soap.SAAJResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,22 +33,9 @@ public class RegDemo {
 
     public static void main(String[] args) {
 
-
-        String cpuDetail[] = "2.2%us,1.0%sy,0.0%ni,96.4id,0.5wa,0.0hi,0.0si,0.0st".split(",");
-        for (String detail : cpuDetail) {
-            String key=null,val=null;
-            Matcher valMatcher = Pattern.compile("^\\d+(\\.\\d+)?").matcher(detail);
-            if (valMatcher.find()) {
-                val = valMatcher.group();
-            }
-
-            Matcher keyMatcher = Pattern.compile("[a-zA-Z]+$").matcher(detail);
-            if (keyMatcher.find()) {
-                key = keyMatcher.group();
-            }
-            System.out.println(key+"--->"+val);
-        }
-
+        String str = "3D81ADD95B39EBFD9E83BB6FD1391904";
+        String text = "cronjob";
+        System.out.println(DigestUtils.md5Hex(text));
 
 
     }

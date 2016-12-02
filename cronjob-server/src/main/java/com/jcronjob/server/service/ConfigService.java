@@ -21,6 +21,7 @@
 
 package com.jcronjob.server.service;
 
+import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.Config;
 import com.jcronjob.server.domain.Role;
@@ -68,21 +69,21 @@ public class ConfigService {
 
             Role role = new Role();
             role.setRoleId(1L);
-            role.setRoleName("管理员");
-            role.setDescription("仅具有查看权限");
+            role.setRoleName("admin");
+            role.setDescription("view privileges");
             session.save(role);
 
             Role superRole = new Role();
             superRole.setRoleId(999L);
-            superRole.setRoleName("超级管理员");
-            superRole.setDescription("具有所有操作权限");
+            superRole.setRoleName("superAdmin");
+            superRole.setDescription("all privileges");
             session.save(superRole);
 
             session.getTransaction().commit();
 
             User user = new User();
             user.setUserName("cronjob");
-            user.setPassword("cronjob");
+            user.setPassword(DigestUtils.md5Hex("cronjob").toUpperCase());
             user.setRoleId(999L);
             user.setRealName("benjobs");
             user.setEmail("benjobs@qq.com");

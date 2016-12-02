@@ -367,13 +367,20 @@
                     if(data.msg){
                         $("#error_msg").html('<font color="red">'+data.msg+'</font>');
                         $("#btnLogin").prop("disabled",false);
-                    } else if(data.successUrl){
-                        if(isremember()){
-                            loginCookie.set(username,sendpwd);
+                    } else {
+                        if (data.status == "success"){
+                            if(isremember()){
+                                loginCookie.set(username,sendpwd);
+                            }else {
+                                loginCookie.clean(username);
+                            }
+                            window.location.href = "${contextPath}"+data.url;
                         }else {
-                            loginCookie.clean(username);
+                            $("#error_msg").html('<font color="red">请修改初始密码</font>');
+                            $("#pwdform")[0].reset();
+                            $("#id").val(data.userId);
+                            $('#pwdModal').modal('show');
                         }
-                        window.location.href = "${contextPath}"+data.successUrl;
                     }
                     return false;
                 },
@@ -384,6 +391,73 @@
 
             });
             return false;
+        }
+
+        function savePwd(){
+            var id = $("#id").val();
+            if (!id){
+                alert("页面异常，请刷新重试!");
+                return false;
+            }
+            var pwd0 = $("#pwd0").val();
+            if (!pwd0){
+                alert("请填原密码!");
+                return false;
+            }
+            var pwd1 = $("#pwd1").val();
+            if (!pwd1){
+                alert("请填新密码!");
+                return false;
+            }
+            if (pwd1.length < 6 || pwd1.length > 15){
+                alert("密码长度请在6-15位之间!");
+                return false;
+            }
+            var pwd2 = $("#pwd2").val();
+            if (!pwd2){
+                alert("请填写确认密码!");
+                return false;
+            }
+            if (pwd2.length < 6 || pwd2.length > 15){
+                alert("密码长度请在6-15位之间!");
+                return false;
+            }
+            if (pwd1 != pwd2){
+                alert("两密码不一致!");
+                return false;
+            }
+            $.ajax({
+                type:"POST",
+                url:"${contextPath}/user/editpwd",
+                data:{
+                    "id":id,
+                    "pwd0":calcMD5(pwd0),
+                    "pwd1":calcMD5(pwd1),
+                    "pwd2":calcMD5(pwd2)
+                },
+                success:function(data){
+                    if (data == "success"){
+                        $('#pwdModal').modal('hide');
+                        alertMsg("修改成功,请重新登录");
+                        $("#btnLogin").prop("disabled",false);
+                        $("#password").val("").focus();
+                        $("#error_msg").html('<font color="green">请重新登录</font>');
+                        return false;
+                    }
+                    if(data == "one"){
+                        $("#oldpwd").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;密码不正确' + "</font>");
+                        return false;
+                    }
+                    if(data == "two"){
+                        $("#checkpwd").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;密码不一致' + "</font>");
+                        return false;
+                    }
+                },
+                error : function() {
+                    alert("网络繁忙请刷新页面重试!");
+                    return false;
+                }
+            });
         }
 
     </script>
@@ -414,6 +488,47 @@
             请输入您的用户名和密码进行登陆
         </span>
     </div>
+
+    <div class="modal fade" id="pwdModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4>修改默认密码</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form" id="pwdform">
+                        <input type="hidden" id="id">
+                        <div class="form-group" style="margin-bottom: 4px;">
+                            <label for="pwd0" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;原&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control " id="pwd0" placeholder="请输入原密码">&nbsp;&nbsp;<label id="oldpwd"></label>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="pwd1" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;新&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control " id="pwd1" placeholder="请输入新密码">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd2" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;确认密码：</label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control " id="pwd2" placeholder="请输入确认密码"/>&nbsp;&nbsp;<label id="checkpwd"></label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <center>
+                        <button type="button" class="btn btn-sm"  onclick="savePwd()">保存</button>&nbsp;&nbsp;
+                        <button type="button" class="btn btn-sm"  data-dismiss="modal">关闭</button>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 
 
