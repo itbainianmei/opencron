@@ -67,12 +67,11 @@ public class TerminalController {
         //登陆认证成功
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
             agent = agentService.getByHost(agent.getIp());
-            String uuid = CommonUtils.uuid();
-            terminal.setInstanceId(uuid);
+            String token = CommonUtils.uuid();
             terminal.setAgent(agent);
-            TerminalSession.put(uuid,terminal);
-            session.setAttribute(Globals.SSH_SESSION_ID,uuid);
-            WebUtils.writeJson(response, String.format(json,"success","/term?token="+uuid));
+            TerminalSession.put(token,terminal);
+            session.setAttribute(Globals.SSH_SESSION_ID,token);
+            WebUtils.writeJson(response, String.format(json,"success","/term?token="+token));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
@@ -85,7 +84,6 @@ public class TerminalController {
         Terminal terminal = TerminalSession.get(token);
         if (terminal!=null) {
             request.setAttribute("name",terminal.getAgent().getName()+"("+terminal.getAgent().getIp()+")");
-            request.setAttribute("token",token);
             return "/term/console";
         }
         return "/term/error";

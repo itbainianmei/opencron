@@ -29,9 +29,6 @@ public class Terminal implements Serializable{
     public static final String INITIAL ="INITIAL";
 
     @Transient
-    private String instanceId;
-
-    @Transient
     private Agent agent;
 
     @Transient
@@ -44,14 +41,6 @@ public class Terminal implements Serializable{
     public static final String SUCCESS ="SUCCESS";
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
-
-    public String getInstanceId() {
-        return instanceId;
-    }
-
-    public void setInstanceId(String instanceId) {
-        this.instanceId = instanceId;
-    }
 
     public Long getId() {
         return id;

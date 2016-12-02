@@ -50,13 +50,13 @@ public class TerminalHandler extends TextWebSocketHandler {
 			Terminal terminal = TerminalSession.remove(sessionId);
 			if (terminal!=null) {
 				try {
-					session.sendMessage(new TextMessage("Try to connect...\r"));
+					session.sendMessage(new TextMessage("Welcome to cronjob terminal!Connect Starting...\r"));
 					getClient(session,terminal);
 					if (terminalClient.connect()) {
 						terminalClient.sendMessage(session);
 					} else {
 						terminalClient.disconnect();
-						session.sendMessage(new TextMessage("Connect failed, please confirm the username or password try agin."));
+						session.sendMessage(new TextMessage("Connect failed, please try agin..."));
 						session.close();
 					}
 				} catch (IOException e) {
@@ -64,7 +64,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 				}
 			}else {
 				this.terminalClient.disconnect();
-				session.sendMessage(new TextMessage("Connect failed, please confirm the username or password try agin."));
+				session.sendMessage(new TextMessage("Connect failed, please try agin..."));
 				session.close();
 			}
 		}
@@ -89,22 +89,25 @@ public class TerminalHandler extends TextWebSocketHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.sendMessage(new TextMessage("An error occured, websocket is closed."));
+			session.sendMessage(new TextMessage("An error occured, websocket is closed..."));
 			session.close();
 		}
 	}
 
 	@Override
-	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		super.afterConnectionClosed(session, status);
-		terminalClient = this.terminalClientMap.remove(session.getId());
-		if (terminalClient != null) {
-			terminalClient.disconnect();
-		}
+	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+		super.handleTransportError(session, exception);
+		this.closeTerminal(session);
 	}
 
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		super.afterConnectionClosed(session, status);
+		this.closeTerminal(session);
 
-	private TerminalClient getClient(WebSocketSession session,Terminal terminal){
+	}
+
+	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
 		this.terminalClient = this.terminalClientMap.get(session.getId());
 		if (this.terminalClient==null && terminal!=null) {
 			this.terminalClient = new TerminalClient(terminal);
@@ -112,5 +115,15 @@ public class TerminalHandler extends TextWebSocketHandler {
 		}
 		return this.terminalClient;
 	}
+
+
+	private void closeTerminal(WebSocketSession session) throws IOException {
+		terminalClient = this.terminalClientMap.remove(session.getId());
+		if (terminalClient != null) {
+			terminalClient.disconnect();
+		}
+		session.close();
+	}
+
 }
 
