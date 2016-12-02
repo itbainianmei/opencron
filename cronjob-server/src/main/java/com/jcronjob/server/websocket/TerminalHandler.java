@@ -86,6 +86,9 @@ public class TerminalHandler extends TextWebSocketHandler {
 					return ;
 				}
 				terminalClient.write(new String(message.asBytes(), "UTF-8"));
+			}else {
+				session.sendMessage(new TextMessage("An error occured, terminal is closed..."));
+				session.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

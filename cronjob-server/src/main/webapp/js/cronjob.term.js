@@ -2,6 +2,7 @@
     'use strict';
     this.socket = null;
     this.term = null;
+    this.termNode = null;
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.open();
 }
@@ -16,7 +17,7 @@
 ;CronjobTerm.prototype.size = function () {
     var text="qwertyuiopasdfghjklzxcvbnm";
     var span = $("<span>", { text: text });
-    $('body').append(span);
+    $(this.termNode).append(span);
     var charWidth = span.width() / 26;
     span.remove();
     return {
@@ -29,7 +30,7 @@
     'use strict';
     var self = this;
 
-    var termNode = $("<div style=\"height:100%;width:100%;background-color:#000000;\"></div>").prependTo('body');
+    self.termNode = $("<div style=\"height:100%;width:100%;background-color:#000000;\"></div>").prependTo('body');
     self.term = new Terminal({
         termName: "xterm",
         cols: self.size().cols,
@@ -41,7 +42,7 @@
         cursorBlink: true,
         convertEol: true
     });
-    self.term.open(termNode.empty()[0]);
+    self.term.open(self.termNode.empty()[0]);
     self.term.on('data', function(data) {
         self.socket.send(data);
     });

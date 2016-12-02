@@ -127,7 +127,7 @@ public class TerminalService {
 
     public Session createJschSession(Terminal term) throws JSchException {
         JSch jsch = new JSch();
-        Session jschSession = jsch.getSession(term.getUser(), term.getHost(), term.getPort());
+        Session jschSession = jsch.getSession(term.getUserName(), term.getHost(), term.getPort());
         jschSession.setPassword(term.getPassword());
 
         Properties config = new Properties();
@@ -158,7 +158,7 @@ public class TerminalService {
             try {
                 connection = new Connection(terminal.getHost(), terminal.getPort());
                 connection.connect();
-                if (!connection.authenticateWithPassword(terminal.getUser(),terminal.getPassword() )) {
+                if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
                     return false;
                 }
                 session = connection.openSession();
@@ -235,11 +235,18 @@ public class TerminalService {
 
         }
 
+        public Terminal getTerminal() {
+            return terminal;
+        }
+
+        public void setTerminal(Terminal terminal) {
+            this.terminal = terminal;
+        }
     }
 
     public static class TerminalSession implements Serializable {
 
-        private static Map<String, Terminal> session = new ConcurrentHashMap<String, Terminal>(0);
+        public static Map<String, Terminal> session = new ConcurrentHashMap<String, Terminal>(0);
 
         public static Terminal get(String key) {
             return session.get(key);
@@ -254,6 +261,23 @@ public class TerminalService {
         }
     }
 
+
+    public static class TerminalClientSession implements Serializable {
+
+        public static Map<String, TerminalClient> session = new ConcurrentHashMap<String, TerminalClient>(0);
+
+        public static TerminalClient get(String key) {
+            return session.get(key);
+        }
+
+        public static void put(String key, TerminalClient terminalClient) {
+            session.put(key, terminalClient);
+        }
+
+        public static TerminalClient remove(String key) {
+            return session.remove(key);
+        }
+    }
 
 
 }

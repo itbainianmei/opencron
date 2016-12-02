@@ -69,6 +69,8 @@ public class TerminalController {
             agent = agentService.getByHost(agent.getIp());
             String token = CommonUtils.uuid();
             terminal.setAgent(agent);
+            terminal.setUser(user);
+
             TerminalSession.put(token,terminal);
             session.setAttribute(Globals.SSH_SESSION_ID,token);
             WebUtils.writeJson(response, String.format(json,"success","/term?token="+token));

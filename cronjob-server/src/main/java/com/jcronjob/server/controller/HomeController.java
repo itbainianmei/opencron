@@ -31,6 +31,7 @@ import com.jcronjob.common.job.Response;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.vo.ChartVo;
+import static  com.jcronjob.server.service.TerminalService.*;
 import com.jcronjob.server.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.jcronjob.common.utils.CommonUtils.isEmpty;
 import static com.jcronjob.common.utils.CommonUtils.notEmpty;
@@ -207,6 +209,18 @@ public class HomeController {
 
     @RequestMapping("/logout")
     public String logout(HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
+
+        //用户退出后当前用户的所有终端全部退出.
+        if (notEmpty(TerminalClientSession.session)){
+            for(Map.Entry<String, TerminalClient> entry:TerminalClientSession.session.entrySet()){
+                TerminalClient terminalClient = entry.getValue();
+                if (terminalClient.getTerminal()!=null && terminalClient.getTerminal().getUser().getUserId().equals(user.getUserId())) {
+                    terminalClient.disconnect();
+                }
+            }
+        }
+
         httpSession.removeAttribute(Globals.LOGIN_USER);
         return "redirect:/";
     }

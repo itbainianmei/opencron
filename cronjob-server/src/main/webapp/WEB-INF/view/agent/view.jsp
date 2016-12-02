@@ -551,7 +551,7 @@
             type:"POST",
             url:"${contextPath}/addterm",
             data:{
-                "user":user,
+                "userName":user,
                 "password":pwd,
                 "port":port,
                 "host":ip

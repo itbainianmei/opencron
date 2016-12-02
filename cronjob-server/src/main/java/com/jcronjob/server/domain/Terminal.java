@@ -20,7 +20,7 @@ public class Terminal implements Serializable{
     private Long userId;
     private String host;
     private int port;
-    private String user;
+    private String userName;
     private String password;
     private String status = SUCCESS;
     private Date logintime;
@@ -30,6 +30,9 @@ public class Terminal implements Serializable{
 
     @Transient
     private Agent agent;
+
+    @Transient
+    private User user;
 
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
@@ -74,12 +77,20 @@ public class Terminal implements Serializable{
         this.port = port;
     }
 
-    public String getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {
@@ -96,7 +107,7 @@ public class Terminal implements Serializable{
 
     public void desDecrypt(){
         try {
-            this.user = DigestUtils.desDecrypt(this.token,user);
+            this.userName = DigestUtils.desDecrypt(this.token,userName);
             this.password = DigestUtils.desDecrypt(this.token,password);
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +117,7 @@ public class Terminal implements Serializable{
     public void desEncrypt(String key){
         try {
             this.token = key;
-            this.user = DigestUtils.desEncrypt(key,user);
+            this.userName = DigestUtils.desEncrypt(key,userName);
             this.password = DigestUtils.desEncrypt(key,password);
         } catch (Exception e) {
             e.printStackTrace();
