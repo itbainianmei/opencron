@@ -69,8 +69,6 @@ public class CronjobTask implements InitializingBean {
     @Autowired
     private MemcacheCache memcacheCache;
 
-    private String sqlPath;
-
     @Override
     public void afterPropertiesSet() throws Exception {
         configService.initDataBase();
@@ -158,15 +156,6 @@ public class CronjobTask implements InitializingBean {
         memcacheCache.evict(Globals.CACHED_AGENT_ID);
         memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
     }
-
-    public String getSqlPath() {
-        return sqlPath;
-    }
-
-    public void setSqlPath(String sqlPath) {
-        this.sqlPath = sqlPath;
-    }
-
 
     //@Scheduled(cron = "0 0/1 * * * ?")
   /*
