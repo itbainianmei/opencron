@@ -18,11 +18,11 @@
     </websocket:handlers>
 
     <websocket:handlers>
-        <websocket:sockjs/>
         <websocket:mapping path="/terminal.js" handler="terminalHandler" />
         <websocket:handshake-interceptors>
             <ref bean="webSocketHandShaker"/>
         </websocket:handshake-interceptors>
+        <websocket:sockjs/>
     </websocket:handlers>
 
 </beans>

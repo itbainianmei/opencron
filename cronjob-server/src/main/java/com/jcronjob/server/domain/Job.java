@@ -65,6 +65,8 @@ public class Job implements Serializable {
 
     private String emailAddress;
 
+    private Boolean status;//是否有效
+
     //运行超时的截止时间
     private Integer timeout;
 
@@ -235,5 +237,13 @@ public class Job implements Serializable {
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 }
