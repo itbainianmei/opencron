@@ -22,6 +22,7 @@
 
 package com.jcronjob.server.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.jcronjob.common.utils.CommonUtils;
@@ -74,8 +75,8 @@ public class AgentService {
 
         if (CommonUtils.isEmpty(agents)) {
             flushAgent();
+            return Collections.emptyList();
         }
-
        return memcacheCache.get(Globals.CACHED_AGENT_ID,List.class);
     }
 
