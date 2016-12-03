@@ -152,4 +152,21 @@ public class Terminal implements Serializable{
         this.agent = agent;
     }
 
+
+    @Override
+    public String toString() {
+        return "Terminal{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", status='" + status + '\'' +
+                ", logintime=" + logintime +
+                ", token='" + token + '\'' +
+                ", agent=" + agent +
+                ", user=" + user +
+                '}';
+    }
 }

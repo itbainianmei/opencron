@@ -119,4 +119,19 @@ public class Config implements Serializable {
     public void setAeskey(String aeskey) {
         this.aeskey = aeskey;
     }
+
+    @Override
+    public String toString() {
+        return "Config{" +
+                "configId=" + configId +
+                ", senderEmail='" + senderEmail + '\'' +
+                ", password='" + password + '\'' +
+                ", sendUrl='" + sendUrl + '\'' +
+                ", spaceTime=" + spaceTime +
+                ", aeskey='" + aeskey + '\'' +
+                ", template='" + template + '\'' +
+                ", smtpHost='" + smtpHost + '\'' +
+                ", smtpPort=" + smtpPort +
+                '}';
+    }
 }

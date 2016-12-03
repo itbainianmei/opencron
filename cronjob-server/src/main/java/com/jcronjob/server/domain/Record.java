@@ -249,4 +249,30 @@ public class Record implements Serializable {
         this.flowNum = flowNum;
     }
 
+
+    @Override
+    public String toString() {
+        return "Record{" +
+                "recordId=" + recordId +
+                ", jobId=" + jobId +
+                ", agentId=" + agentId +
+                ", operateId=" + operateId +
+                ", command='" + command + '\'' +
+                ", returnCode=" + returnCode +
+                ", success=" + success +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", execType=" + execType +
+                ", message='" + message + '\'' +
+                ", redoCount=" + redoCount +
+                ", status=" + status +
+                ", pid='" + pid + '\'' +
+                ", redo=" + redo +
+                ", runCount=" + runCount +
+                ", parentId=" + parentId +
+                ", groupId=" + groupId +
+                ", flowNum=" + flowNum +
+                ", jobType=" + jobType +
+                '}';
+    }
 }

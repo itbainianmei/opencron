@@ -117,4 +117,18 @@ public class Log implements Serializable {
     public void setIsread(Integer isread) {
         this.isread = isread;
     }
+
+    @Override
+    public String toString() {
+        return "Log{" +
+                "logId=" + logId +
+                ", agentId=" + agentId +
+                ", type=" + type +
+                ", receiver='" + receiver + '\'' +
+                ", message='" + message + '\'' +
+                ", result='" + result + '\'' +
+                ", sendTime=" + sendTime +
+                ", isread=" + isread +
+                '}';
+    }
 }

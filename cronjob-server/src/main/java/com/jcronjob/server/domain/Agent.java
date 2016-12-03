@@ -192,4 +192,24 @@ public class Agent implements Serializable {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    @Override
+    public String toString() {
+        return "Agent{" +
+                "agentId=" + agentId +
+                ", proxyAgent=" + proxyAgent +
+                ", ip='" + ip + '\'' +
+                ", port=" + port +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", warning=" + warning +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", mobiles='" + mobiles + '\'' +
+                ", status=" + status +
+                ", failTime=" + failTime +
+                ", comment='" + comment + '\'' +
+                ", updateTime=" + updateTime +
+                ", proxy=" + proxy +
+                ", taskCount=" + taskCount +
+                '}';
+    }
 }

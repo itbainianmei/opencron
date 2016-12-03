@@ -200,6 +200,19 @@ public class User implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User user = (User) obj;
+        return userId != null ? userId.equals(user.userId) : user.userId == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return userId != null ? userId.hashCode() : 0;
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "userId=" + userId +
@@ -220,4 +233,5 @@ public class User implements Serializable {
                 ", picExtName='" + picExtName + '\'' +
                 '}';
     }
+
 }

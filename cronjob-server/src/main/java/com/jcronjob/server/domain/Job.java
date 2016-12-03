@@ -246,4 +246,32 @@ public class Job implements Serializable {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "jobId=" + jobId +
+                ", agentId=" + agentId +
+                ", jobName='" + jobName + '\'' +
+                ", cronType=" + cronType +
+                ", cronExp='" + cronExp + '\'' +
+                ", command='" + command + '\'' +
+                ", execType=" + execType +
+                ", comment='" + comment + '\'' +
+                ", operateId=" + operateId +
+                ", updateTime=" + updateTime +
+                ", redo=" + redo +
+                ", runCount=" + runCount +
+                ", jobType=" + jobType +
+                ", flowId=" + flowId +
+                ", flowNum=" + flowNum +
+                ", runModel=" + runModel +
+                ", lastFlag=" + lastFlag +
+                ", warning=" + warning +
+                ", mobiles='" + mobiles + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", status=" + status +
+                ", timeout=" + timeout +
+                '}';
+    }
 }

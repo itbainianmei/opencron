@@ -182,21 +182,20 @@ public class TerminalService {
         }
 
         public void sendMessage(final WebSocketSession session) {
-            new Runnable() {
+            /*new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[1024*8];
+                    byte[] buffer = new byte[8192];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (session != null && session.isOpen()) {
                             builder.setLength(0);
-                            int bufferSize = inputStream.read(buffer);
-                            if (bufferSize == -1) {
+                            int len = out.read(buffer);
+                            if (len == -1)
                                 return;
-                            }
-                            for (int i = 0; i < bufferSize; i++) {
-                                char chr = (char) (buffer[i] & 0xff);
-                                builder.append(chr);
+                            for (int i = 0; i < len; i++) {
+                                char c = (char) (buffer[i] & 0xff);
+                                builder.append(c);
                             }
                             if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
                                 session.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
@@ -208,6 +207,47 @@ public class TerminalService {
                     }
                 }
             }.run();
+
+
+*/
+
+
+            class MessageSender extends Thread {
+                private final WebSocketSession session;
+                private final InputStream out;
+
+                public MessageSender(WebSocketSession session, InputStream out) {
+                    super();
+                    this.session = session;
+                    this.out = out;
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    byte[] buffer = new byte[8192];
+                    StringBuilder builder = new StringBuilder();
+                    try {
+                        while (session != null && session.isOpen()) {
+                            builder.setLength(0);
+                            int len = out.read(buffer);
+                            if (len == -1)
+                                return;
+                            for (int i = 0; i < len; i++) {
+                                char c = (char) (buffer[i] & 0xff);
+                                builder.append(c);
+                            }
+                            if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
+                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
+                            } else {
+                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            new MessageSender(session, inputStream).start();
         }
 
         public void disconnect() {
