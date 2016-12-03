@@ -23,6 +23,7 @@
 package com.jcronjob.server.session;
 
 
+import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import org.slf4j.Logger;
@@ -56,11 +57,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-
-        String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
-        String path = request.getContextPath().replaceAll("/$","");
-        String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
-        request.setAttribute("contextPath",contextPath);
+        request.setAttribute("contextPath", WebUtils.getWebUrlPath(request));
 
         //登陆|上传
         if (requestURI.contains("/login")||requestURI.contains("/upload")) {
