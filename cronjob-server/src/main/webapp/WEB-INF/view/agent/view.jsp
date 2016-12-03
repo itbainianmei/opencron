@@ -501,16 +501,35 @@
 
     }
 
-    function ssh(elem,agentId,ip,type) {
-        if (elem) {
-            var linkTime = $(elem).attr('linkTime');
-            var currTime = new Date().getTime();
-            if (!linkTime) {
-                $(elem).attr('linkTime', currTime);
-            } else if (currTime - parseInt(linkTime) <= 1000 * 10) {//控制两次点击的间隔
-                return;
+    function ssh(agentId,ip,type) {
+        var currTime = new Date().getTime();
+        var currLink = {
+            linkId:agentId,
+            linkTime:currTime
+        };
+
+        if ("undefined" == typeof linktimes) {
+            linktimes = [ currLink ];
+        } else {//控制两次点击的间隔
+            var exists = false;
+            for(var i=0;i<linktimes.length;i++){
+                var link = linktimes[i];
+                if(link.linkId === agentId){
+                    exists = true;
+                    if( currTime-parseInt(link.linkTime)<=1000*10 ) {
+                        alert("请10秒钟后再登录");
+                        return;
+                    }else {
+                        link.linkTime = currTime;
+                        break;
+                    }
+                }
+            }
+            if (!exists){
+                linktimes.push(currLink);
             }
         }
+
         $.ajax({
             type:"POST",
             url:"${contextPath}/ssh",
@@ -569,7 +588,7 @@
                 $("#sshModal").modal("hide");
                 $("#sshform")[0].reset();
                 if( status == "success" ){
-                    ssh(null,agent,ip,2);
+                    ssh(agent,ip,2);
                 }else {
                     alert("登录失败,请确认登录口令的正确性");
                 }
@@ -660,7 +679,7 @@
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <a href="javascript:ssh(this,'${w.agentId}','${w.ip}',1)" title="登录">
+                                <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="登录">
                                     <i aria-hidden="true" class="fa fa-desktop"></i>
                                 </a>&nbsp;&nbsp;
 
