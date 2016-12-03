@@ -41,6 +41,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -212,10 +213,10 @@ public class HomeController {
         User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
 
         //用户退出后当前用户的所有终端全部退出.
-        if (notEmpty(TerminalClientSession.session)){
-            for(Map.Entry<String, TerminalClient> entry:TerminalClientSession.session.entrySet()){
+        if (notEmpty(TerminalSession.terminalSession)){
+            for(Map.Entry<WebSocketSession, TerminalClient> entry: TerminalSession.terminalSession.entrySet()){
                 TerminalClient terminalClient = entry.getValue();
-                if (terminalClient.getTerminal()!=null && terminalClient.getTerminal().getUser().getUserId().equals(user.getUserId())) {
+                if (terminalClient.getTerminal().getUser().equals(user)) {
                     terminalClient.disconnect();
                 }
             }

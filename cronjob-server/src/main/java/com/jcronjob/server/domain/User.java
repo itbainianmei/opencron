@@ -198,4 +198,26 @@ public class User implements Serializable {
     public void setPicExtName(String picExtName) {
         this.picExtName = picExtName;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", roleId=" + roleId +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
+                ", agentIds='" + agentIds + '\'' +
+                ", realName='" + realName + '\'' +
+                ", contact='" + contact + '\'' +
+                ", email='" + email + '\'' +
+                ", qq='" + qq + '\'' +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                ", roleName='" + roleName + '\'' +
+                ", headerpic=" + headerpic +
+                ", hreaderPath='" + hreaderPath + '\'' +
+                ", picExtName='" + picExtName + '\'' +
+                '}';
+    }
 }

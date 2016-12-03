@@ -43,7 +43,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 		super.afterConnectionEstablished(session);
 		String sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
 		if (sessionId != null) {
-			Terminal terminal = TerminalSession.remove(sessionId);
+			Terminal terminal = TerminalContext.remove(sessionId);
 			if (terminal!=null) {
 				try {
 					session.sendMessage(new TextMessage("Welcome to cronjob terminal!Connect Starting...\r"));
@@ -108,17 +108,17 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
-		this.terminalClient =  TerminalClientSession.get(session.getId());
+		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
 			this.terminalClient = new TerminalClient(terminal);
-			TerminalClientSession.put(session.getId(),this.terminalClient);
+			TerminalSession.put(session,this.terminalClient);
 		}
 		return this.terminalClient;
 	}
 
 
 	private void closeTerminal(WebSocketSession session) throws IOException {
-		terminalClient = TerminalClientSession.remove(session.getId());
+		terminalClient = TerminalSession.remove(session);
 		if (terminalClient != null) {
 			terminalClient.disconnect();
 		}

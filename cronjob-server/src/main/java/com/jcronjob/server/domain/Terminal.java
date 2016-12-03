@@ -151,4 +151,5 @@ public class Terminal implements Serializable{
     public void setAgent(Agent agent) {
         this.agent = agent;
     }
+
 }

@@ -71,7 +71,7 @@ public class TerminalController {
             terminal.setAgent(agent);
             terminal.setUser(user);
 
-            TerminalSession.put(token,terminal);
+            TerminalContext.put(token,terminal);
             session.setAttribute(Globals.SSH_SESSION_ID,token);
             WebUtils.writeJson(response, String.format(json,"success","/term?token="+token));
         }else {
@@ -83,7 +83,7 @@ public class TerminalController {
 
     @RequestMapping("/term")
     public String open(HttpServletRequest request,String token ) throws Exception {
-        Terminal terminal = TerminalSession.get(token);
+        Terminal terminal = TerminalContext.get(token);
         if (terminal!=null) {
             request.setAttribute("name",terminal.getAgent().getName()+"("+terminal.getAgent().getIp()+")");
             return "/term/console";

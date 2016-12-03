@@ -181,8 +181,33 @@ public class TerminalService {
             }
         }
 
-        public void sendMessage(WebSocketSession session) {
-            new MessageSender(session, inputStream).start();
+        public void sendMessage(final WebSocketSession session) {
+            new Runnable() {
+                @Override
+                public void run() {
+                    byte[] buffer = new byte[1024*8];
+                    StringBuilder builder = new StringBuilder();
+                    try {
+                        while (session != null && session.isOpen()) {
+                            builder.setLength(0);
+                            int bufferSize = inputStream.read(buffer);
+                            if (bufferSize == -1) {
+                                return;
+                            }
+                            for (int i = 0; i < bufferSize; i++) {
+                                char chr = (char) (buffer[i] & 0xff);
+                                builder.append(chr);
+                            }
+                            if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
+                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
+                            } else {
+                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }.run();
         }
 
         public void disconnect() {
@@ -196,45 +221,6 @@ public class TerminalService {
             }
         }
 
-
-        class MessageSender extends Thread {
-
-            private final WebSocketSession session;
-            private final InputStream out;
-
-            public MessageSender(WebSocketSession session, InputStream out) {
-                super();
-                this.session = session;
-                this.out = out;
-            }
-
-            @Override
-            public void run() {
-                super.run();
-                byte[] buffer = new byte[8192];
-                StringBuilder builder = new StringBuilder();
-                try {
-                    while (session != null && session.isOpen()) {
-                        builder.setLength(0);
-                        int len = out.read(buffer);
-                        if (len == -1)
-                            return;
-                        for (int i = 0; i < len; i++) {
-                            char c = (char) (buffer[i] & 0xff);
-                            builder.append(c);
-                        }
-                        if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1"))
-                            session.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
-                        else
-                            session.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
-                    }
-                } catch (Exception e) {
-                }
-            }
-
-
-        }
-
         public Terminal getTerminal() {
             return terminal;
         }
@@ -244,38 +230,38 @@ public class TerminalService {
         }
     }
 
-    public static class TerminalSession implements Serializable {
+    public static class TerminalContext implements Serializable {
 
-        public static Map<String, Terminal> session = new ConcurrentHashMap<String, Terminal>(0);
+        public static Map<String, Terminal> terminalContext = new ConcurrentHashMap<String, Terminal>(0);
 
         public static Terminal get(String key) {
-            return session.get(key);
+            return terminalContext.get(key);
         }
 
         public static void put(String key, Terminal terminal) {
-            session.put(key, terminal);
+            terminalContext.put(key, terminal);
         }
 
         public static Terminal remove(String key) {
-            return session.remove(key);
+            return terminalContext.remove(key);
         }
     }
 
 
-    public static class TerminalClientSession implements Serializable {
+    public static class TerminalSession implements Serializable {
 
-        public static Map<String, TerminalClient> session = new ConcurrentHashMap<String, TerminalClient>(0);
+        public static Map<WebSocketSession, TerminalClient> terminalSession = new ConcurrentHashMap<WebSocketSession, TerminalClient>(0);
 
-        public static TerminalClient get(String key) {
-            return session.get(key);
+        public static TerminalClient get(WebSocketSession key) {
+            return terminalSession.get(key);
         }
 
-        public static void put(String key, TerminalClient terminalClient) {
-            session.put(key, terminalClient);
+        public static void put(WebSocketSession key, TerminalClient terminalClient) {
+            terminalSession.put(key, terminalClient);
         }
 
-        public static TerminalClient remove(String key) {
-            return session.remove(key);
+        public static TerminalClient remove(WebSocketSession key) {
+            return terminalSession.remove(key);
         }
     }
 
