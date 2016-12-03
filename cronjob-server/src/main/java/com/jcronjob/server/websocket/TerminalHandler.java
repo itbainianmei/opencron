@@ -49,7 +49,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 					session.sendMessage(new TextMessage("Welcome to cronjob terminal!Connect Starting...\r"));
 					getClient(session,terminal);
 					if (terminalClient.connect()) {
-						terminalClient.sendMessage(session);
+						terminalClient.sendMessage();
 					} else {
 						terminalClient.disconnect();
 						session.sendMessage(new TextMessage("Connect failed, please try agin..."));
@@ -73,18 +73,15 @@ public class TerminalHandler extends TextWebSocketHandler {
 		try {
 			getClient(session,null);
 			if (this.terminalClient != null) {
-				if (!this.terminalClient.isClosed()) {
-					//receive a close cmd ?
-					if (Arrays.equals("exit".getBytes(), message.asBytes())) {
+				//receive a close cmd ?
+				if (Arrays.equals("exit".getBytes(), message.asBytes())) {
+					if (this.terminalClient != null) {
 						this.terminalClient.disconnect();
-						session.close();
-						return ;
 					}
-					this.terminalClient.write(new String(message.asBytes(), "UTF-8"));
-				}else {
-					session.sendMessage(new TextMessage("Terminal is closed! "));
 					session.close();
+					return ;
 				}
+				terminalClient.write(new String(message.asBytes(), "UTF-8"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,7 +107,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
 		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
-			this.terminalClient = new TerminalClient(terminal);
+			this.terminalClient = new TerminalClient(session,terminal);
 			TerminalSession.put(session,this.terminalClient);
 		}
 		return this.terminalClient;

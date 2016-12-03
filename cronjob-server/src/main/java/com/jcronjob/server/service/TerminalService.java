@@ -143,15 +143,16 @@ public class TerminalService {
 
     public static class TerminalClient {
 
+        private WebSocketSession webSocketSession;
         private Connection connection;
         private ch.ethz.ssh2.Session session;
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
-        private boolean isClosed = false;
 
-        public TerminalClient(Terminal terminal){
+        public TerminalClient(WebSocketSession webSocketSession,Terminal terminal){
+            this.webSocketSession = webSocketSession;
             this.terminal = terminal;
         }
 
@@ -182,7 +183,8 @@ public class TerminalService {
             }
         }
 
-        public void sendMessage(final WebSocketSession session) {
+        public void sendMessage() {
+
             class MessageSender extends Thread {
                 private final WebSocketSession session;
                 private final InputStream inputStream;
@@ -220,10 +222,11 @@ public class TerminalService {
                     }
                 }
             }
-            new MessageSender(session, inputStream).start();
+            new MessageSender(this.webSocketSession, inputStream).start();
         }
 
-        public void disconnect() {
+        public void disconnect() throws IOException {
+            this.webSocketSession.sendMessage(new TextMessage("Cronjob Terminal is closed! "));
             if (connection != null) {
                 connection.close();
                 connection = null;
@@ -232,7 +235,6 @@ public class TerminalService {
                 session.close();
                 session = null;
             }
-            isClosed = true;
         }
 
         public Terminal getTerminal() {
@@ -241,10 +243,6 @@ public class TerminalService {
 
         public void setTerminal(Terminal terminal) {
             this.terminal = terminal;
-        }
-
-        public boolean isClosed() {
-            return isClosed;
         }
     }
 

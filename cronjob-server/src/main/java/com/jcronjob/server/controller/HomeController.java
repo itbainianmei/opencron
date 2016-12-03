@@ -41,6 +41,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpServletRequest;
@@ -209,7 +210,7 @@ public class HomeController {
 
 
     @RequestMapping("/logout")
-    public String logout(HttpSession httpSession) {
+    public String logout(HttpSession httpSession) throws IOException {
         User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
 
         //用户退出后当前用户的所有终端全部退出.
