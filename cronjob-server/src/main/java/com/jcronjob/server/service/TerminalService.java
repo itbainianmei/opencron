@@ -150,6 +150,7 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+        private boolean closed = false;
 
         public TerminalClient(WebSocketSession webSocketSession,Terminal terminal){
             this.webSocketSession = webSocketSession;
@@ -171,6 +172,7 @@ public class TerminalService {
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             } catch (Exception e) {
                 e.printStackTrace();
+                closed = true;
                 return false;
             }
             return true;
@@ -186,12 +188,10 @@ public class TerminalService {
         public void sendMessage() {
 
             class MessageSender extends Thread {
-                private final WebSocketSession session;
                 private final InputStream inputStream;
 
-                public MessageSender(WebSocketSession session, InputStream inputStream) {
+                public MessageSender(InputStream inputStream) {
                     super();
-                    this.session = session;
                     this.inputStream = inputStream;
                 }
 
@@ -201,7 +201,7 @@ public class TerminalService {
                     byte[] buffer = new byte[ 1024*8 ];
                     StringBuilder builder = new StringBuilder();
                     try {
-                        while (session != null && session.isOpen()) {
+                        while (webSocketSession != null && webSocketSession.isOpen()) {
                             builder.setLength(0);
                             int bufferSize = inputStream.read(buffer);
                             if (bufferSize == -1) {
@@ -213,20 +213,19 @@ public class TerminalService {
                             }
 
                             if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
-                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
+                                webSocketSession.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
                             } else {
-                                session.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
+                                webSocketSession.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
                             }
                         }
                     } catch (Exception e) {
                     }
                 }
             }
-            new MessageSender(this.webSocketSession, inputStream).start();
+            new MessageSender(inputStream).start();
         }
 
         public void disconnect() throws IOException {
-            this.webSocketSession.sendMessage(new TextMessage("Cronjob Terminal is closed! "));
             if (connection != null) {
                 connection.close();
                 connection = null;
@@ -235,6 +234,7 @@ public class TerminalService {
                 session.close();
                 session = null;
             }
+            closed = true;
         }
 
         public Terminal getTerminal() {
@@ -243,6 +243,14 @@ public class TerminalService {
 
         public void setTerminal(Terminal terminal) {
             this.terminal = terminal;
+        }
+
+        public boolean isClosed() {
+            return closed;
+        }
+
+        public WebSocketSession getWebSocketSession() {
+            return webSocketSession;
         }
     }
 

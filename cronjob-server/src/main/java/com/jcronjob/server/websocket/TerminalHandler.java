@@ -72,16 +72,20 @@ public class TerminalHandler extends TextWebSocketHandler {
 		super.handleTextMessage(session, message);
 		try {
 			getClient(session,null);
-			if (this.terminalClient != null) {
-				//receive a close cmd ?
-				if (Arrays.equals("exit".getBytes(), message.asBytes())) {
-					if (this.terminalClient != null) {
-						this.terminalClient.disconnect();
+			if (this.terminalClient != null ) {
+				if ( !terminalClient.isClosed()) {
+					//receive a close cmd ?
+					if (Arrays.equals("exit".getBytes(), message.asBytes())) {
+						if (this.terminalClient != null) {
+							this.terminalClient.disconnect();
+						}
+						session.close();
+						return;
 					}
+					terminalClient.write(new String(message.asBytes(), "UTF-8"));
+				}else {
 					session.close();
-					return ;
 				}
-				terminalClient.write(new String(message.asBytes(), "UTF-8"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

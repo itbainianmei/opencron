@@ -219,6 +219,7 @@ public class HomeController {
                 TerminalClient terminalClient = entry.getValue();
                 if (terminalClient.getTerminal().getUser().equals(user)) {
                     terminalClient.disconnect();
+                    terminalClient.getWebSocketSession().sendMessage(new TextMessage("Cronjob Terminal is closed! "));
                 }
             }
         }
