@@ -145,7 +145,7 @@ public class TerminalService {
 
         private WebSocketSession webSocketSession;
         private Connection connection;
-        private ch.ethz.ssh2.Session session;
+        private ch.ethz.ssh2.Session sshSession;
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
@@ -164,11 +164,11 @@ public class TerminalService {
                 if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
                     return false;
                 }
-                session = connection.openSession();
-                session.requestPTY("xterm", 90, 30, 0, 0, null);
-                session.startShell();
-                inputStream = session.getStdout();
-                outputStream = session.getStdin();
+                sshSession = connection.openSession();
+                sshSession.requestPTY("xterm", 90, 30, 0, 0, null);
+                sshSession.startShell();
+                inputStream = sshSession.getStdout();
+                outputStream = sshSession.getStdin();
                 writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -230,9 +230,9 @@ public class TerminalService {
                 connection.close();
                 connection = null;
             }
-            if (session != null) {
-                session.close();
-                session = null;
+            if (sshSession != null) {
+                sshSession.close();
+                sshSession = null;
             }
             closed = true;
         }

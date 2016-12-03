@@ -501,7 +501,16 @@
 
     }
 
-    function ssh(agentId,ip,type) {
+    function ssh(elem,agentId,ip,type) {
+        if (elem) {
+            var linkTime = $(elem).attr('linkTime');
+            var currTime = new Date().getTime();
+            if (!linkTime) {
+                $(elem).attr('linkTime', currTime);
+            } else if (currTime - parseInt(linkTime) <= 1000 * 10) {//控制两次点击的间隔
+                return;
+            }
+        }
         $.ajax({
             type:"POST",
             url:"${contextPath}/ssh",
@@ -538,7 +547,6 @@
                 }
             }
         });
-
     }
         
     function saveSsh() {
@@ -561,7 +569,7 @@
                 $("#sshModal").modal("hide");
                 $("#sshform")[0].reset();
                 if( status == "success" ){
-                    ssh(agent,ip,2);
+                    ssh(null,agent,ip,2);
                 }else {
                     alert("登录失败,请确认登录口令的正确性");
                 }
@@ -652,7 +660,7 @@
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="登录">
+                                <a href="javascript:ssh(this,'${w.agentId}','${w.ip}',1)" title="登录">
                                     <i aria-hidden="true" class="fa fa-desktop"></i>
                                 </a>&nbsp;&nbsp;
 

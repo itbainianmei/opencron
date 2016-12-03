@@ -105,7 +105,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		super.afterConnectionClosed(session, status);
 		this.closeTerminal(session);
-
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
