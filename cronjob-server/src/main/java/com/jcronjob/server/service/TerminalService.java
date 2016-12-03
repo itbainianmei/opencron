@@ -149,6 +149,7 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+        private boolean isClosed = false;
 
         public TerminalClient(Terminal terminal){
             this.terminal = terminal;
@@ -231,6 +232,7 @@ public class TerminalService {
                 session.close();
                 session = null;
             }
+            isClosed = true;
         }
 
         public Terminal getTerminal() {
@@ -239,6 +241,10 @@ public class TerminalService {
 
         public void setTerminal(Terminal terminal) {
             this.terminal = terminal;
+        }
+
+        public boolean isClosed() {
+            return isClosed;
         }
     }
 

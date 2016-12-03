@@ -26,7 +26,6 @@ public class Terminal implements Serializable{
     private Date logintime;
     private String token;
 
-    public static final String INITIAL ="INITIAL";
 
     @Transient
     private Agent agent;
@@ -34,6 +33,8 @@ public class Terminal implements Serializable{
     @Transient
     private User user;
 
+    @Transient
+    public static final String INITIAL ="INITIAL";
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
     @Transient
