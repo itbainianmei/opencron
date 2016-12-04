@@ -167,7 +167,7 @@ public class TerminalService {
                 return false;
             }
             sshSession = connection.openSession();
-            sshSession.requestPTY("xterm", 90, 30, 0, 0, null);
+            sshSession.requestPTY("xterm");
             sshSession.startShell();
             inputStream = sshSession.getStdout();
             outputStream = sshSession.getStdin();
@@ -183,18 +183,9 @@ public class TerminalService {
         }
 
         public void sendMessage() {
-
-            class MessageSender extends Thread {
-                private final InputStream inputStream;
-
-                public MessageSender(InputStream inputStream) {
-                    super();
-                    this.inputStream = inputStream;
-                }
-
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    super.run();
                     byte[] buffer = new byte[ 1024*8 ];
                     StringBuilder builder = new StringBuilder();
                     try {
@@ -218,8 +209,7 @@ public class TerminalService {
                     } catch (Exception e) {
                     }
                 }
-            }
-            new MessageSender(inputStream).start();
+            }).start();
         }
 
         public void disconnect() throws IOException {
