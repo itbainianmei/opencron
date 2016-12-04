@@ -506,7 +506,7 @@
             linkId: agentId,
             linkTime: currTime
         }
-        if ("undefined" == typeof linkTimes) {
+        if ("undefined" === typeof linkTimes) {
             linkTimes = [json];
         } else {
             var exists = false;
@@ -527,7 +527,6 @@
                 linkTimes.push(json);
             }
         }
-
 
         $.ajax({
             type:"POST",

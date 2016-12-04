@@ -354,63 +354,39 @@
                     "agentId":$("#agentId1").val()
                 },
 
-                success:function(data){
+                success:function(data) {
                     if (data == "no"){
                         alert("作业名称已存在!");
                         return false;
                     }else {
                         //添加
-                        if ( $("#subTitle").attr("action")=="add" ) {
-                            var timestamp = Date.parse(new Date());
-                            var addHtml = "<li id='"+timestamp+"' ><span onclick='showSubJob(\""+timestamp+"\")'><a data-toggle='modal' href='#jobModal' title='编辑'><i class='glyphicon glyphicon-pencil'></i>&nbsp;&nbsp;<span id='name_"+timestamp+"'>"+jobName+"</span></a></span><span class='delSubJob' onclick='removeSubJob(this)'><a href='javascript:void(0)' title='删除'><i class='glyphicon glyphicon-trash'></i></a></span>" +
-                                    "<input type='hidden' name='child.jobId' value=''>"+
-                                    "<input type='hidden' name='child.jobName' value='"+jobName+"'>"+
-                                    "<input type='hidden' name='child.agentId' value='"+$("#agentId1").val()+"'>"+
-                                    "<input type='hidden' name='child.command' value='"+$("#command1").val()+"'>"+
-                                    "<input type='hidden' name='child.redo' value='"+$('input[type="radio"][name="redo1"]:checked').val()+"'>"+
-                                    "<input type='hidden' name='child.runCount' value='"+$("#runCount1").val()+"'>"+
-                                    "<input type='hidden' name='child.timeout' value='"+$("#timeout1").val()+"'>"+
-                                    "<input type='hidden' name='child.comment' value='"+$("#comment1").val()+"'>"
-                            "</li>";
-                            $("#subJobDiv").append($(addHtml));
-                        }else if ( $("#subTitle").attr("action") == "edit" ) {//编辑
+                        if ( $("#subTitle").attr("action") === "add" ) {
+                            var id = new Date().getTime();
+                            var li = '<li id="' + id + '">' +
+                                '<span  onclick="showSubJob(' + id + ')">' +
+                                '   <a data-toggle="modal" href="#jobModal" title="编辑"><i class="glyphicon glyphicon-pencil"></i>&nbsp;&nbsp;<span id="name_' + id + '">' + $("#jobName1").val() + '</span></a>' +
+                                '</span>' +
+                                '<span class="delSubJob" onclick="removeSubJob(this)">' +
+                                '   <a href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-trash"></i></a>' +
+                                '</span>' +
+                                '<input type="hidden" name="child.jobId" value="' + $("#jobId1").val() + '">' +
+                                '<input type="hidden" name="child.jobName" value="' + $("#jobName1").val() + '">' +
+                                '<input type="hidden" name="child.agentId" value="' + $("#agentId1").val() + '">' +
+                                '<input type="hidden" name="child.redo" value="'+$("input[type='radio'][name='redo1']:checked").val()+'">'+
+                                '<input type="hidden" name="child.runCount" value="' + $("#runCount1").val() + '">' +
+                                '<input type="hidden" name="child.command" value="' + $("#command1").val() + '">' +
+                                '<input type="hidden" name="child.timeout" value="' + $("#timeout1").val() + '">' +
+                                '<input type="hidden" name="child.comment" value="' + $("#comment1").val() + '">'
+                            '</li>';
+                            $("#subJobDiv").append(li);
+                        }else if ( $("#subTitle").attr("action") === "edit" ) {//编辑
                             var id = $("#subTitle").attr("tid");
-                            $("#"+id).find("input").each(function(index,element) {
-
-                                if ($(element).attr("name") == "child.jobId"){
-                                    $(element).attr("value",$("#jobId1").val());
-                                }
-
-                                if ($(element).attr("name") == "child.jobName"){
-                                    $(element).attr("value",jobName);
-                                }
-
-                                if ($(element).attr("name") == "child.redo"){
-                                    $(element).attr("value",redo);
-                                }
-
-                                if ($(element).attr("name") == "child.runCount"){
-                                    $(element).attr("value",$("#runCount1").val());
-                                }
-
-                                if ($(element).attr("name") == "child.agentId"){
-                                    $(element).attr("value",$("#agentId1").val());
-                                }
-
-                                if ($(element).attr("name") == "child.timeout"){
-                                    $(element).attr("value",$("#timeout1").val());
-                                }
-
-                                if ($(element).attr("name") == "child.command"){
-                                    $(element).attr("value",$("#command1").val());
-                                }
-                                if ($(element).attr("name") == "child.comment"){
-                                    $(element).attr("value",$("#comment1").val());
-                                }
-                            });
-
+                            $("#"+id).find("input").each(function(i,elem){
+                                elem = $(elem);
+                                var inputName = elem.attr("name").replace("child.","");
+                                elem.val($("#"+inputName+"1").val());
+                            })
                             $("#name_"+id).html(jobName);
-
                         }
                         closeSubJob();
                     }
@@ -424,26 +400,13 @@
         }
 
         function showSubJob(id){
-
             $("#subTitle").html("编辑子作业").attr("action","edit").attr("tid",id);
-
-            $("#"+id).find("input").each(function(index,element) {
-
-                if ($(element).attr("name") == "child.jobId"){
-                    $("#jobId1").val($(element).val());
-                }
-
-                if ($(element).attr("name") == "child.jobName"){
-                    $("#jobName1").val($(element).val());
-                }
-                if ($(element).attr("name") == "child.agentId"){
-                    $("#agentId1").val($(element).val());
-                }
-                if ($(element).attr("name") == "child.command"){
-                    $("#command1").val($(element).val());
-                }
-                if ($(element).attr("name") == "child.redo"){
-                    if($(element).val() == "1"){
+            $("#"+id).find("input").each(function(index,elem) {
+                elem = $(elem);
+                var inputName = elem.attr("name").replace("child.","");
+                $("#"+inputName+"1").val(elem.val());
+                if ($(elem).attr("name") == "child.redo"){
+                    if($(elem).val() == "1"){
                         $(".countDiv1").show();
                         $("#redo1").prop("checked",true);
                         $("#redo1").parent().removeClass("checked").addClass("checked");
@@ -459,22 +422,6 @@
                         $("#redo1").parent().removeClass("checked");
                         $("#redo1").parent().attr("aria-checked",false);
                     }
-                }
-
-                if ($(element).attr("name") == "child.runCount"){
-                    $("#runCount1").val($(element).val());
-                }
-
-                if ($(element).attr("name") == "child.command"){
-                    $("#command1").val($(element).val());
-                }
-
-                if ($(element).attr("name") == "child.timeout"){
-                    $("#timeout1").val($(element).val());
-                }
-
-                if ($(element).attr("name") == "child.comment"){
-                    $("#comment1").val($(element).val());
                 }
             });
         }
