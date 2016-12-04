@@ -60,7 +60,7 @@
     }
 
     self.socket.onerror = function() {
-        self.term.write("Sorry! cronjob terminal connect error!playse try again.\n");
+        self.term.write("Sorry! cronjob terminal connect error!please try again.\n");
         window.clearInterval(self.term._blink);
     };
 
@@ -74,8 +74,8 @@
 
     self.socket.onclose = function() {
         //清除光标闪烁
+        self.term.write("Thank you for using cronjob terminal! bye...");
         window.clearInterval(self.term._blink);
-        $(".terminal-cursor").parent().remove();
     };
 }
 

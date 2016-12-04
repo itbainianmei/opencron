@@ -28,6 +28,7 @@ import com.jcraft.jsch.Session;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
+import com.jcronjob.server.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -36,6 +37,8 @@ import org.springframework.web.socket.WebSocketSession;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.jcronjob.common.utils.CommonUtils.notEmpty;
 
 /**
  *
@@ -299,6 +302,20 @@ public class TerminalService {
                 }
             }
             return null;
+        }
+
+        public static void exit(User user) throws IOException {
+            if (notEmpty(terminalSession)){
+                for(Map.Entry<WebSocketSession, TerminalClient> entry: terminalSession.entrySet()){
+                    TerminalClient terminalClient = entry.getValue();
+                    if (terminalClient.getTerminal().getUser().equals(user)) {
+                        terminalClient.disconnect();
+                        terminalClient.getWebSocketSession().sendMessage(new TextMessage("Sorry! logout, so Cronjob Terminal changed to closed. "));
+                        terminalClient.getWebSocketSession().close();
+                    }
+                }
+            }
+
         }
     }
 

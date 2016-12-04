@@ -505,7 +505,7 @@
         var json = {
             linkId: agentId,
             linkTime: currTime
-        }
+        };
         if ("undefined" === typeof linkTimes) {
             linkTimes = [json];
         } else {
@@ -515,7 +515,7 @@
                 if (linkTime.linkId === agentId) {
                     exists = true;
                     if (currTime - linkTime.linkTime <= 1000 * 10) {
-                        alert("10秒后再点击")
+                        alert("10秒后再点击");
                         return;
                     } else {
                         linkTime.linkTime = currTime;

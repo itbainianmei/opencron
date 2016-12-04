@@ -41,8 +41,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +50,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static com.jcronjob.common.utils.CommonUtils.isEmpty;
 import static com.jcronjob.common.utils.CommonUtils.notEmpty;
@@ -214,15 +211,7 @@ public class HomeController {
         User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
 
         //用户退出后当前用户的所有终端全部退出.
-        if (notEmpty(TerminalSession.terminalSession)){
-            for(Map.Entry<WebSocketSession, TerminalClient> entry: TerminalSession.terminalSession.entrySet()){
-                TerminalClient terminalClient = entry.getValue();
-                if (terminalClient.getTerminal().getUser().equals(user)) {
-                    terminalClient.disconnect();
-                    terminalClient.getWebSocketSession().sendMessage(new TextMessage("Sorry! logout, so Cronjob Terminal changed to closed.\n "));
-                }
-            }
-        }
+        TerminalSession.exit(user);
 
         httpSession.removeAttribute(Globals.LOGIN_USER);
         return "redirect:/";
