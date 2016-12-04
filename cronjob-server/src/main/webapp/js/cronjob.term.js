@@ -73,9 +73,10 @@
     };
 
     self.socket.onclose = function() {
-        self.term.write("Thank you for using cronjob terminal!Good-bye...");
+        //self.term.write("Thank you for using cronjob terminal!Good-bye...");
         //清除光标闪烁
         window.clearInterval(self.term._blink);
+        $(".terminal-cursor").parent().remove();
     };
 }
 

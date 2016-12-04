@@ -28,6 +28,8 @@ import java.util.Arrays;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.job.Globals;
 import static com.jcronjob.server.service.TerminalService.*;
+
+import com.jcronjob.server.service.TerminalService;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -43,24 +45,40 @@ public class TerminalHandler extends TextWebSocketHandler {
 		super.afterConnectionEstablished(session);
 		String sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
 		if (sessionId != null) {
-			Terminal terminal = TerminalContext.remove(sessionId);
+			final Terminal terminal = TerminalContext.remove(sessionId);
+
+			//当前的执行器是否已经被同一个用户打开过,如果已经打开过则关闭,通知下线..
+			if(TerminalSession.isOpened(terminal)){
+				WebSocketSession preSession = TerminalSession.findSession(terminal);
+				preSession.sendMessage(new TextMessage("Sorry! Another Cronjob Terminal is opened!so this terminal changed to closed.\n"));
+				TerminalSession.get(preSession).disconnect();
+				TerminalSession.remove(preSession);
+				preSession.close();
+			}
+
 			if (terminal!=null) {
 				try {
-					session.sendMessage(new TextMessage("Welcome to cronjob terminal!Connect Starting...\r"));
+					session.sendMessage(new TextMessage("Welcome to Cronjob Terminal!Connect Starting...\n"));
 					getClient(session,terminal);
 					if (terminalClient.connect()) {
 						terminalClient.sendMessage();
 					} else {
 						terminalClient.disconnect();
-						session.sendMessage(new TextMessage("Connect failed, please try agin..."));
+						session.sendMessage(new TextMessage("Sorry! Connect failed, please try again.\n"));
 						session.close();
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					if (e.getLocalizedMessage().replaceAll("\\s+","").equalsIgnoreCase("Operationtimedout")) {
+						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again.\n"));
+					}else {
+						session.sendMessage(new TextMessage("Sorry! Operation error, please try again.\n"));
+					}
+					terminalClient.disconnect();
+					session.close();
 				}
 			}else {
 				this.terminalClient.disconnect();
-				session.sendMessage(new TextMessage("Connect failed, please try agin..."));
+				session.sendMessage(new TextMessage("Sorry! Connect failed, please try again.\n"));
 				session.close();
 			}
 		}
@@ -74,7 +92,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 			getClient(session,null);
 			if (this.terminalClient != null ) {
 				if ( !terminalClient.isClosed()) {
-					//receive a close cmd ?
 					if (Arrays.equals("exit".getBytes(), message.asBytes())) {
 						if (this.terminalClient != null) {
 							this.terminalClient.disconnect();
@@ -89,7 +106,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.sendMessage(new TextMessage("Websocket is closed! "));
+			session.sendMessage(new TextMessage("Sorry! Websocket is closed,please try again.\n"));
 			session.close();
 		}
 	}
@@ -103,6 +120,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+		session.sendMessage(new TextMessage("Thank you for using cronjob terminal!Good-bye.\n"));
 		super.afterConnectionClosed(session, status);
 		this.closeTerminal(session);
 	}

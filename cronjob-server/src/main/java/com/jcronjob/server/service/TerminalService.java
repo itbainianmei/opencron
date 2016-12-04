@@ -157,24 +157,18 @@ public class TerminalService {
             this.terminal = terminal;
         }
 
-        public boolean connect() {
-            try {
-                connection = new Connection(terminal.getHost(), terminal.getPort());
-                connection.connect();
-                if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
-                    return false;
-                }
-                sshSession = connection.openSession();
-                sshSession.requestPTY("xterm", 90, 30, 0, 0, null);
-                sshSession.startShell();
-                inputStream = sshSession.getStdout();
-                outputStream = sshSession.getStdin();
-                writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            } catch (Exception e) {
-                e.printStackTrace();
-                closed = true;
+        public boolean connect() throws IOException {
+            connection = new Connection(terminal.getHost(), terminal.getPort());
+            connection.connect();
+            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
                 return false;
             }
+            sshSession = connection.openSession();
+            sshSession.requestPTY("xterm", 90, 30, 0, 0, null);
+            sshSession.startShell();
+            inputStream = sshSession.getStdout();
+            outputStream = sshSession.getStdin();
+            writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             return true;
         }
 
@@ -286,6 +280,25 @@ public class TerminalService {
 
         public static TerminalClient remove(WebSocketSession key) {
             return terminalSession.remove(key);
+        }
+
+        public static boolean isOpened(Terminal terminal) {
+            for(Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()){
+                if (entry.getValue().getTerminal().equals(terminal)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static WebSocketSession findSession(Terminal terminal) {
+            for(Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()){
+                TerminalClient client = entry.getValue();
+                if(client.getTerminal().equals(terminal)){
+                    return entry.getKey();
+                }
+            }
+            return null;
         }
     }
 

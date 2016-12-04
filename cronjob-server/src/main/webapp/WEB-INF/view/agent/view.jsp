@@ -11,7 +11,6 @@
     <script type="text/javascript" src="${contextPath}/js/socket/socket.io.js"></script>
 
     <script type="text/javascript">
-
     function showContact(){$(".contact").show()}
     function hideContact(){$(".contact").hide()}
     function showProxy(){
@@ -503,32 +502,32 @@
 
     function ssh(agentId,ip,type) {
         var currTime = new Date().getTime();
-        var currLink = {
-            linkId:agentId,
-            linkTime:currTime
-        };
-
-        if ("undefined" == typeof linktimes) {
-            linktimes = [ currLink ];
-        } else {//控制两次点击的间隔
+        var json = {
+            linkId: agentId,
+            linkTime: currTime
+        }
+        if ("undefined" == typeof linkTimes) {
+            linkTimes = [json];
+        } else {
             var exists = false;
-            for(var i=0;i<linktimes.length;i++){
-                var link = linktimes[i];
-                if(link.linkId === agentId){
+            for (var i = 0; i < linkTimes.length; i++) {
+                var linkTime = linkTimes[i];
+                if (linkTime.linkId === agentId) {
                     exists = true;
-                    if( currTime-parseInt(link.linkTime)<=1000*10 ) {
-                        alert("请10秒钟后再登录");
+                    if (currTime - linkTime.linkTime <= 1000 * 10) {
+                        alert("10秒后再点击")
                         return;
-                    }else {
-                        link.linkTime = currTime;
+                    } else {
+                        linkTime.linkTime = currTime;
                         break;
                     }
                 }
             }
-            if (!exists){
-                linktimes.push(currLink);
+            if (!exists) {
+                linkTimes.push(json);
             }
         }
+
 
         $.ajax({
             type:"POST",

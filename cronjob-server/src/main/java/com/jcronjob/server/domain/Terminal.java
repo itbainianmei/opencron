@@ -167,7 +167,27 @@ public class Terminal implements Serializable{
                 ", logintime=" + logintime +
                 ", token='" + token + '\'' +
                 ", agent=" + agent +
-                ", user=" + user +
+                ", user=" + user.toString() +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Terminal terminal = (Terminal) o;
+
+        if (userName != null ? !userName.equals(terminal.userName) : terminal.userName != null) return false;
+        if (agent != null ? !agent.equals(terminal.agent) : terminal.agent != null) return false;
+        return user != null ? user.equals(terminal.user) : terminal.user == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userName != null ? userName.hashCode() : 0;
+        result = 31 * result + (agent != null ? agent.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        return result;
     }
 }
