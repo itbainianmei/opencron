@@ -69,9 +69,8 @@ IE10+
 
 
 ## Cronjob-agent 安装步骤:
-
-
-1)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
+```
+1·)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
 
 2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
  ---bin/
@@ -104,11 +103,13 @@ IE10+
 4)停止cronjob-agent 进入cronjob-agent/bin 执行：
   > cd cronjob-agent/bin
   > sh shutdown.sh
-
-     
+  
+  ```
+  
+  
 ## Cronjob-server 部署步骤:
 
-
+```
      1):导入初始化sql,在mysql里导入setup.sql文件
      >mysql -uroot -proot   --进入mysql
      >source /usr/local/setup.sql;
@@ -136,7 +137,7 @@ IE10+
      可能有一下即可原因:
      1):agent端启动失败,检查logs,查看详情
      2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
-  
+```  
 ## 注意:
       cronjob-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
       >vi startup.sh
