@@ -501,30 +501,32 @@
     }
 
     function ssh(agentId,ip,type) {
-        var currTime = new Date().getTime();
-        var json = {
-            linkId: agentId,
-            linkTime: currTime
-        };
-        if ("undefined" === typeof linkTimes) {
-            linkTimes = [json];
-        } else {
-            var exists = false;
-            for (var i = 0; i < linkTimes.length; i++) {
-                var linkTime = linkTimes[i];
-                if (linkTime.linkId === agentId) {
-                    exists = true;
-                    if (currTime - linkTime.linkTime <= 1000 * 10) {
-                        alert("10秒后再点击");
-                        return;
-                    } else {
-                        linkTime.linkTime = currTime;
-                        break;
+        if( type==1 ) {
+            var currTime = new Date().getTime();
+            var json = {
+                linkId: agentId,
+                linkTime: currTime
+            };
+            if ("undefined" === typeof linkTimes) {
+                linkTimes = [json];
+            } else {
+                var exists = false;
+                for (var i = 0; i < linkTimes.length; i++) {
+                    var linkTime = linkTimes[i];
+                    if (linkTime.linkId === agentId) {
+                        exists = true;
+                        if (currTime - linkTime.linkTime <= 1000 * 10) {
+                            alert("请10秒后再登陆");
+                            return;
+                        } else {
+                            linkTime.linkTime = currTime;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!exists) {
-                linkTimes.push(json);
+                if (!exists) {
+                    linkTimes.push(json);
+                }
             }
         }
 
