@@ -1,37 +1,78 @@
-#cronjob
-        一个强大的linux定时任务调度系统.多台机器协作调度定义任务,多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,以图形化的方式展示出来,集成了webssh,在eb浏览器一键ssh登录到服务器...
-        你是否有定时执行任务计划的需求,需要在linux的crontab里一一定义任务?如何有你一定有以下难题:
-        1):需要在每台linux服务器的crontab里一一定义任务
-        2):任务的执行监控太不方便了
-        3):得登录到每台机器查看定时任务的运行结果,机器一多简直是一种灾难
-        4):对于多台机器协同处理一个任务很麻烦,如何保证多台机器上的任务按顺序依次执行?
-        5):当任务运行失败,要重新执行,还得重新定义下执行时间,让其重跑,重跑完成了还得改回正常时间
-        6):正在运行的任务要kill掉很麻烦,查看进程然后才能kill
-        ......
-        
-        Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真正通用的调度系统.功能如下:
-        1):自动化管理任务,提供可操作的web图形化管理
-        2):要当场执行只需点击执行即可,非常方便
-        3):时间规则支持quartz和crontab,时间规则更强大更灵活
-        4):非常方便的修改任务的执行时间
-        5):任务的运行状态实时查看
-        6):支持一键kill掉当前运行的任务(已经当前任务调起的其他子任务,彻底kill)
-        7):支持重新执行正在运行的任务
-        8):出错后实时通知给任务人(超过重跑次数自动发送邮件,短信)
-        9):支持任务超时设置,一旦超过预定运行时长自动kill,任务结束,防止僵尸任务
-        10):支持流程任务(多台机器上的任务协同完成一个大的任务,按任务定义的顺序依次执行)
-        11):记录任务的运行日志,非常方便查看
-        12):多用户多角色
-        13):现场执行(选择N台机器同时执行一个命令或任务)
-        14):webssh,执行在浏览器一键登录到linux服务器
-        15):提供服务器的性能实时监控
-        ......
-      
-        cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即为一个web可视化的中央管理调度平台,cronjob-agent为要管理的任务的机器,
-    每个要纳入中央统一管理的机器都必须安装cronjob-agent,
-        cronjob-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器，
+Cronjob
+-------
+    
+    一个强大的linux定时任务调度系统.一个正在可用的linux定时任务调度定系统,多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,以图形化的方式展示出来,同时集成了webssh.
 
-#cronjob-agent 安装步骤:
+    你是否有定时执行任务计划的需求,需要在linux的crontab里一一定义任务?如何有你一定有以下难题:
+    1):需要在每台linux服务器的crontab里一一定义任务
+    2):任务的执行监控太不方便了
+    3):得登录到每台机器查看定时任务的运行结果,机器一多简直是一种灾难
+    4):对于多台机器协同处理一个任务很麻烦,如何保证多台机器上的任务按顺序依次执行?
+    5):当任务运行失败,要重新执行,还得重新定义下执行时间,让其重跑,重跑完成了还得改回正常时间
+    6):正在运行的任务要kill掉很麻烦,查看进程然后才能kill
+    ......
+    
+    Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真正通用的调度系统.功能如下:
+    1):自动化管理任务,提供可操作的web图形化管理
+    2):要当场执行只需点击执行即可,非常方便
+    3):时间规则支持quartz和crontab,时间规则更强大更灵活
+    4):非常方便的修改任务的执行时间
+    5):任务的运行状态实时查看
+    6):支持一键kill掉当前运行的任务(已经当前任务调起的其他子任务,彻底kill)
+    7):支持重新执行正在运行的任务
+    8):出错后实时通知给任务人(超过重跑次数自动发送邮件,短信)
+    9):支持任务超时设置,一旦超过预定运行时长自动kill,任务结束,防止僵尸任务
+    10):支持流程任务(多台机器上的任务协同完成一个大的任务,按任务定义的顺序依次执行)
+    11):记录任务的运行日志,非常方便查看
+    12):多用户多角色
+    13):现场执行(选择N台机器同时执行一个命令或任务)
+    14):webssh,执行在浏览器一键登录到linux服务器
+    15):提供服务器的性能实时监控
+    ......
+    
+   
+
+运行环境
+-------
+
+    Java JDK 1.7 or greater
+    http://www.oracle.com/technetwork/java/javase/overview/index.html
+
+    Tomcat server 7.0 or greater
+    https://tomcat.apache.org
+
+    Nginx 1.3 or greater
+    http://nginx.org
+    
+    Browser 
+    IE10+
+   
+   
+项目截图   
+-------
+
+![Main](https://github.com/wolfboys/cronjob/blob/master/img/main.png)
+
+![Agent](https://github.com/wolfboys/cronjob/blob/master/img/agent.png)
+
+![Job](https://github.com/wolfboys/cronjob/blob/master/img/job.png)
+
+![Record](https://github.com/wolfboys/cronjob/blob/master/img/record.png)
+
+![Terminal](https://github.com/wolfboys/cronjob/blob/master/img/terminal.png)
+
+
+  
+安装步骤
+--------
+
+    cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即为一个web可视化的中央管理调度平台,cronjob-agent为要管理的任务的机器,
+    每个要纳入中央统一管理的机器都必须安装cronjob-agent, cronjob-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器.
+
+
+Cronjob-agent 安装步骤:
+---------------------
+
     1)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
     
     2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
@@ -67,7 +108,9 @@
       > sh shutdown.sh
      
      
-#cronjob-server 部署步骤:
+Cronjob-server 部署步骤:
+-----------------------
+
      1):导入初始化sql,在mysql里导入setup.sql文件
      >mysql -uroot -proot   --进入mysql
      >source /usr/local/setup.sql;
@@ -103,10 +146,10 @@
       :set ff 回车 （命令模式下,会显示:fileformat=unix或者其他,出问题都是非unix的字符集，然后将字符集改成unix即可)
       :set ff=unix 回车 (保存退出即可)
     
-  以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
-  
-  cronjob交流群156429713,欢迎大家加入
-    
+      以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
+      
+      cronjob交流群156429713,欢迎大家加入
+        
     
     
     
