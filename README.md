@@ -134,6 +134,8 @@ memcached.server=${memcached_host}:${memcached_port}
 2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
 ```  
 ## 注意:
+
+
 cronjob-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
 >vi startup.sh
 然后查看当前脚本的字符集
