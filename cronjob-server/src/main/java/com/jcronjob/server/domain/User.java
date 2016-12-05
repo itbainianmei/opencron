@@ -228,7 +228,6 @@ public class User implements Serializable {
                 ", createTime=" + createTime +
                 ", modifyTime=" + modifyTime +
                 ", roleName='" + roleName + '\'' +
-                ", headerpic=" + headerpic +
                 ", hreaderPath='" + hreaderPath + '\'' +
                 ", picExtName='" + picExtName + '\'' +
                 '}';

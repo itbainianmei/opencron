@@ -35,7 +35,7 @@
         termName: "xterm",
         cols: self.size().cols,
         rows: self.size().rows,
-        fontSize:13,
+        fontSize:12,
         lineHeight:15,
         useStyle: true,
         screenKeys: true,
