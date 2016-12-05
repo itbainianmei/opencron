@@ -556,18 +556,15 @@
                         alert("连接失败请重试");
                     }else if(json.status == "success"){
                         var url = '${contextPath}'+json.url;
-                        var el = document.createElement("a");
-                        document.body.appendChild(el);
-                        el.href = url;
-                        el.target = '_blank';
-                        el.click();
-                        document.body.removeChild(el);
+                        var openLink = $("<a href='"+url+"' target='_blank'></a>").appendTo('body');
+                        openLink[0].click();
+                        openLink.remove();
                     }
                 }
             }
         });
     }
-        
+
     function saveSsh() {
         var user = $("#sshuser").val();
         var pwd = $("#sshpwd").val();
