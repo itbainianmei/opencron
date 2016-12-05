@@ -295,7 +295,7 @@ public class TerminalService {
         }
 
         public static void exit(User user) throws IOException {
-            if (notEmpty(terminalSession)){
+            if (notEmpty(terminalSession)) {
                 for(Map.Entry<WebSocketSession, TerminalClient> entry: terminalSession.entrySet()){
                     TerminalClient terminalClient = entry.getValue();
                     if (terminalClient.getTerminal().getUser().equals(user)) {
