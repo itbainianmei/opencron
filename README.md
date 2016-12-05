@@ -12,7 +12,7 @@
  -  正在运行的任务要kill掉很麻烦,查看进程然后才能kill
 ......
 
-Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真正通用的调度系统.功能如下:
+Cronjob的出现将彻底的解决上面所有问题.功能如下:
  -  自动化管理任务,提供可操作的web图形化管理
  -  要当场执行只需点击执行即可,非常方便
  -  时间规则支持quartz和crontab,时间规则更强大更灵活
@@ -30,7 +30,6 @@ Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真
  -  提供服务器的性能实时监控
 ......
     
-   
 
 ## 运行环境
 
@@ -71,19 +70,19 @@ IE10+
 
 2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
 ---bin/
- |  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
- |  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
- |  cronjob.sh         #agent控制启动|停止的脚本
- |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
- |  kill.sh            #kill任务时需要的脚本,由系统调度
+|  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
+|  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
+|  cronjob.sh         #agent控制启动|停止的脚本
+|  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
+|  kill.sh            #kill任务时需要的脚本,由系统调度
 ---conf/
- | log4j.properties    #log4j配置文件
+| log4j.properties    #log4j配置文件
 ---lib/
- | *.jar               #agent运行需要的jar文件
+| *.jar               #agent运行需要的jar文件
 ---temp/
- | *.sh                #用于存放项目生成的零时文件的目录
+| *.sh                #用于存放项目生成的零时文件的目录
 ---logs
- | cronjob.out         #项目启动会产生的Log文件
+| cronjob.out         #项目启动会产生的Log文件
 
 > tar -xzvf cronjob-agent-${version}.tar.gz
 3)启动cronjob-agent 进入cronjob-agent/bin
