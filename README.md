@@ -34,18 +34,17 @@ Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真
 
 ## 运行环境
 
+Java JDK 1.7 or greater
+http://www.oracle.com/technetwork/java/javase/overview/index.html
 
-    Java JDK 1.7 or greater
-    http://www.oracle.com/technetwork/java/javase/overview/index.html
+Tomcat server 7.0 or greater
+https://tomcat.apache.org
 
-    Tomcat server 7.0 or greater
-    https://tomcat.apache.org
+Nginx 1.3 or greater
+http://nginx.org
 
-    Nginx 1.3 or greater
-    http://nginx.org
-    
-    Browser 
-    IE10+
+Browser 
+IE10+
    
    
 ## 项目截图   
@@ -72,40 +71,40 @@ Cronjob的出现将彻底的解决上面所有问题,是一个功能完备的真
 ## Cronjob-agent 安装步骤:
 
 
-    1)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
-    
-    2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
-     ---bin/
-         |  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
-         |  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
-         |  cronjob.sh         #agent控制启动|停止的脚本
-         |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
-         |  kill.sh            #kill任务时需要的脚本,由系统调度
-     ---conf/
-         | log4j.properties    #log4j配置文件
-     ---lib/
-         | *.jar               #agent运行需要的jar文件
-     ---temp/
-         | *.sh                #用于存放项目生成的零时文件的目录
-     ---logs
-         | cronjob.out         #项目启动会产生的Log文件
-     
-     > tar -xzvf cronjob-agent-${version}.tar.gz
-    3)启动cronjob-agent 进入cronjob-agent/bin
-     > cd cronjob-agent/bin
-     > sh startup.sh
-     这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:cronjob
-     如要指定参数启动命令如下:
-     > sh startup.sh -P10001 -p123456
-     参数说明:
-      -P (大写的p)为agent启动的端口，选填，如果不输入默认启动端口是1577
-      -p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是cronjob
-    启动完后会看到有一个cronjob.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/cronjob.out
-       
-    4)停止cronjob-agent 进入cronjob-agent/bin 执行：
-      > cd cronjob-agent/bin
-      > sh shutdown.sh
-     
+1)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
+
+2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
+ ---bin/
+     |  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
+     |  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
+     |  cronjob.sh         #agent控制启动|停止的脚本
+     |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
+     |  kill.sh            #kill任务时需要的脚本,由系统调度
+ ---conf/
+     | log4j.properties    #log4j配置文件
+ ---lib/
+     | *.jar               #agent运行需要的jar文件
+ ---temp/
+     | *.sh                #用于存放项目生成的零时文件的目录
+ ---logs
+     | cronjob.out         #项目启动会产生的Log文件
+
+ > tar -xzvf cronjob-agent-${version}.tar.gz
+3)启动cronjob-agent 进入cronjob-agent/bin
+ > cd cronjob-agent/bin
+ > sh startup.sh
+ 这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:cronjob
+ 如要指定参数启动命令如下:
+ > sh startup.sh -P10001 -p123456
+ 参数说明:
+  -P (大写的p)为agent启动的端口，选填，如果不输入默认启动端口是1577
+  -p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是cronjob
+启动完后会看到有一个cronjob.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/cronjob.out
+
+4)停止cronjob-agent 进入cronjob-agent/bin 执行：
+  > cd cronjob-agent/bin
+  > sh shutdown.sh
+
      
 ## Cronjob-server 部署步骤:
 
