@@ -23,8 +23,6 @@
 package com.jcronjob.server.service;
 
 import ch.ethz.ssh2.*;
-import com.jcraft.jsch.*;
-import com.jcraft.jsch.Session;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
@@ -74,10 +72,6 @@ import static com.jcronjob.common.utils.CommonUtils.notEmpty;
 @Service
 public class TerminalService {
 
-    public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
-
-    public static final int SESSION_TIMEOUT = 60000;
-
     @Autowired
     private QueryDao queryDao;
 
@@ -107,48 +101,32 @@ public class TerminalService {
         }
     }
 
-    public String auth(Terminal term) {
-        Session jschSession = null;
+    public String auth(Terminal terminal) {
+        Connection connection = null;
         try {
-            jschSession = createJschSession(term);
-            jschSession.connect(SESSION_TIMEOUT);
-            return "success";
-        } catch (JSchException e) {
-            if (e.getLocalizedMessage().equals("Auth fail")) {
+            connection = new Connection(terminal.getHost(), terminal.getPort());
+            connection.connect();
+            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
                 return "authfail";
-            }else if(e.getLocalizedMessage().contentEquals("timeout")){
+            }
+            return "success";
+        } catch (IOException e) {
+            if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
                 return "timeout";
             }
            return "error";
         }finally {
-            if (jschSession!=null) {
-                jschSession.disconnect();
+            if (connection!=null) {
+                connection.close();
             }
         }
     }
-
-
-    public Session createJschSession(Terminal term) throws JSchException {
-        JSch jsch = new JSch();
-        Session jschSession = jsch.getSession(term.getUserName(), term.getHost(), term.getPort());
-        jschSession.setPassword(term.getPassword());
-
-        Properties config = new Properties();
-        //不记录本次登录的信息到$HOME/.ssh/known_hosts
-        config.put("StrictHostKeyChecking", "no");
-        //强制登陆认证
-        config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
-        jschSession.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
-        jschSession.setConfig(config);
-        return jschSession;
-    }
-
 
     public static class TerminalClient {
 
         private WebSocketSession webSocketSession;
         private Connection connection;
-        private ch.ethz.ssh2.Session sshSession;
+        private Session session;
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
@@ -166,11 +144,11 @@ public class TerminalService {
             if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
                 return false;
             }
-            sshSession = connection.openSession();
-            sshSession.requestPTY("xterm");
-            sshSession.startShell();
-            inputStream = sshSession.getStdout();
-            outputStream = sshSession.getStdin();
+            session = connection.openSession();
+            session.requestPTY("xterm");
+            session.startShell();
+            inputStream = session.getStdout();
+            outputStream = session.getStdin();
             writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
             return true;
         }
@@ -217,9 +195,9 @@ public class TerminalService {
                 connection.close();
                 connection = null;
             }
-            if (sshSession != null) {
-                sshSession.close();
-                sshSession = null;
+            if (session != null) {
+                session.close();
+                session = null;
             }
             closed = true;
         }

@@ -68,7 +68,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 						session.close();
 					}
 				} catch (IOException e) {
-					if (e.getLocalizedMessage().replaceAll("\\s+","").equalsIgnoreCase("Operationtimedout")) {
+					if (e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")) {
 						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again. "));
 					}else {
 						session.sendMessage(new TextMessage("Sorry! Operation error, please try again. "));

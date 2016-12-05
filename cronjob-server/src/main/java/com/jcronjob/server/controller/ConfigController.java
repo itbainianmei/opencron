@@ -23,7 +23,6 @@ package com.jcronjob.server.controller;
 
 import com.jcronjob.server.domain.Config;
 import com.jcronjob.server.service.ConfigService;
-import com.jcronjob.server.service.NoticeService;
 import com.jcronjob.server.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,9 +38,6 @@ public class ConfigController {
 
     @Autowired
     private ConfigService configService;
-
-    @Autowired
-    private NoticeService noticeService;
 
     @Autowired
     private RecordService recordService;
