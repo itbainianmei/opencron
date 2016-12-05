@@ -60,7 +60,6 @@ IE10+
 ![Terminal](https://github.com/wolfboys/cronjob/blob/master/img/terminal.png)
 
 
-  
 ## 安装步骤
 
  cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即为一个web可视化的中央管理调度平台,cronjob-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装cronjob-agent, cronjob-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器.
@@ -104,7 +103,6 @@ IE10+
 
 ```
   
-  
 ## Cronjob-server 部署步骤:
 
 ```
@@ -137,15 +135,15 @@ memcached.server=${memcached_host}:${memcached_port}
 2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
 ```  
 ## 注意:
-      cronjob-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
-      >vi startup.sh
-      然后查看当前脚本的字符集
-      :set ff 回车 （命令模式下,会显示:fileformat=unix或者其他,出问题都是非unix的字符集，然后将字符集改成unix即可)
-      :set ff=unix 回车 (保存退出即可)
-    
-      以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
-      
-      cronjob交流群156429713,欢迎大家加入
+cronjob-agent端编译后如果bin/下的脚本不能成功执行。如 startup.sh脚本不能执行,则:
+>vi startup.sh
+然后查看当前脚本的字符集
+:set ff 回车 （命令模式下,会显示:fileformat=unix或者其他,出问题都是非unix的字符集，然后将字符集改成unix即可)
+:set ff=unix 回车 (保存退出即可)
+
+以上是简单的安装部署,更多任务的管理使用后续会出详细的文档.
+
+cronjob交流群156429713,欢迎大家加入
         
     
     
