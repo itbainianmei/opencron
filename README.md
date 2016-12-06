@@ -66,7 +66,7 @@ IE10+
 
 ## Cronjob-agent 安装步骤:
 ```
-1·)下载编译源码，在cronjob-agent的target下会生成一个在cronjob-agent-${version}.tar.gz的包
+1·)下载编译好的cronjob-agent-${version}.tar.gz包
 
 2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
 ---bin/
