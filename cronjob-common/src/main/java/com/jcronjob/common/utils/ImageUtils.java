@@ -111,7 +111,7 @@ public class ImageUtils {
 				FileOutputStream fos1=new FileOutputStream(targetFile);
 				//对文件进行读操作
 				FileInputStream fis=new FileInputStream(srcImageFile);
-				byte[] buffer=new byte[1024];
+				byte[] buffer=new byte[ 1024*8 ];
 				int len=0;
 				//读入流，保存至byte数组
 				while((len=fis.read(buffer))>0){
@@ -301,7 +301,7 @@ public class ImageUtils {
 	        bufferedImage = cOp.filter(bufferedImage, null);  
 	  
 	        // Write the jpeg to a file.  
-//	        FileOutputStream out = new FileOutputStream(result);  
+//	        FileOutputStream out = new FileOutputStream(result);
 	  
 	        // Encodes image as a JPEG data stream  
 //	        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);  
@@ -312,7 +312,7 @@ public class ImageUtils {
 //	        param.setQuality(quality, true);  
 	  
 //	        encoder.setJPEGEncodeParam(param);  
-//	        encoder.encode(bufferedImage);  
+//	        encoder.encode(bufferedImage);
 	    } 
 	
 	 /**
