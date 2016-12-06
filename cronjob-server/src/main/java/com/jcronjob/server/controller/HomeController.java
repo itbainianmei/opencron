@@ -217,8 +217,8 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @RequestMapping("/upload/upimg")
-    public void uploadimg(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpSession httpSession, HttpServletResponse response) throws Exception {
+    @RequestMapping("/headpic/upload")
+    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpSession httpSession, HttpServletResponse response) throws Exception {
         User user = userService.getUserById(userId);
         String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
@@ -253,7 +253,7 @@ public class HomeController {
         WebUtils.writeJson( response, String.format(format,"/upload/"+fileName+"?"+System.currentTimeMillis(),scale>-1f,scale));
     }
 
-    @RequestMapping("/upload/cutimg")
+    @RequestMapping("/headpic/cut")
     public void imageCut(HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,
                          Long userId,Integer x,Integer y,Integer w,Integer h,Float f,String p) throws IllegalStateException, IOException {
 

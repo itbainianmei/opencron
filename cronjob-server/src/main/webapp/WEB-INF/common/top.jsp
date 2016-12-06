@@ -156,7 +156,7 @@
 			}
 
 			$.ajax({
-				url:"/upload/cutimg",
+				url:"/headpic/cut",
 				type:"POST",
 				data:{
 					userId:${cronjob_user.userId},
@@ -190,11 +190,11 @@
 			width : 80,
 			buttonImage : '',
 			swf : '${contextPath}/js/upload/uploadify.swf',
-			uploader : '/upload/upimg',
+			uploader : '/headpic/upload',
 			fileTypeExts : '*.gif; *.jpg; *.png; *.jpeg',
 			buttonText : "上传图片",
 			overrideEvents : [ 'onSelectError','onUploadError', 'onDialogClose' ],
-			onSelectError : function(file, errorCode, errorMsg) {
+			onSelectError : function(file, errorCode,e) {
 				switch (errorCode) {
 					case -100:
 						alert("上传的文件数量已经超出系统限制的"+ $('#btnUploadPic').uploadify('settings','queueSizeLimit') + "个文件！");
@@ -212,7 +212,7 @@
 				return false;
 			},
 			onUploadSuccess : function(file, data, response) {
-				var result = jQuery.parseJSON(data);
+			    var result = eval("("+data+")");
 				if (result && result.fileUrl) {
 					var imgUrl = "${contextPath}"+result.fileUrl;
 					$("#btnUploadPic").uploadify('settings','buttonText', '重传图片');
