@@ -1,7 +1,7 @@
 ## Cronjob
 
     
-一个强大的linux定时任务调度系统.一个功能完善真正通用的linux定时任务调度定系统,满足多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,webssh,提供一个方便管理定时任务的平台
+一个强大的linux定时任务调度系统.一个功能完善真正通用的linux定时任务调度定系统,满足多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,webssh,提供一个方便管理定时任务的平台.
 
 你是否有定时执行任务计划的需求,需要在linux的crontab里一一定义任务?
  -  需要在每台linux服务器的crontab里一一定义任务
@@ -105,13 +105,9 @@ IE10+
 ## Cronjob-server 部署步骤:
 
 ```
-1):导入初始化sql,在mysql里导入setup.sql文件
->mysql -uroot -proot   --进入mysql
->source /usr/local/setup.sql;
-没啥意外就导入成功了,导入完毕会看到多了一个cronjob的库
-2):更改项目的mysql连接信息和memcached连接，配置文件有两套，一个是pord一个是test,
-默认读取的是test下的配置文件,prod下的资源文件maven编译是以"-Ponline"激活，
-mysql和memcached配置在config.properties里，更改即可:
+1):下载已经编译好的cronjob-server-${version}.war包
+
+2):更改项目的mysql连接信息和memcached连接,mysql和memcached配置在config.properties里，更改即可:
 如:
 --mysql
 jdbc.driver=com.mysql.jdbc.Driver
@@ -121,14 +117,9 @@ jdbc.password=${password}
 
 --memcached
 memcached.server=${memcached_host}:${memcached_port}
-3)maven编译完项目在cronjob-server模块下有个cronjob-server-${version}.war
-将这个war包发布到tomcat或者其他的web服务器启动即可.
+3)发布到tomcat或者其他的web服务器启动即可.第一次会创建表,默认初始用户名cronjob,密码cronjob
 
-默认初始用户名cronjob,密码cronjob
-进入到cronjob的管理端第一件要做的事情就是添加要管理的执行器.
-在菜单的第二栏点击"执行器管理"->添加执行器
-执行器ip，就是上面你部署的cronjob-agent的机器ip，端口号是要连接的cronjob-agent的启动端口，密码也是cronjob-agent端的连接密码
-输入ip,端口和密码后点击"检查通信",如果成功则server和agnet端已经成功通信，server可以管理agent了,添加保持即可.如果连接失败，
+4):进入到cronjob的管理端第一件要做的事情就是添加要管理的执行器.在菜单的第二栏点击"执行器管理"->添加执行器,执行器ip，就是上面你部署的cronjob-agent的机器ip，端口号是要连接的cronjob-agent的启动端口，密码也是cronjob-agent端的连接密码,输入ip,端口和密码后点击"检查通信",如果成功则server和agnet端已经成功通信，server可以管理agent了,添加保持即可.如果连接失败，
 可能有一下即可原因:
 1):agent端启动失败,检查logs,查看详情
 2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
