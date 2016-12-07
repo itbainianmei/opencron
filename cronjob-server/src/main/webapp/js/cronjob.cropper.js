@@ -126,6 +126,7 @@
         click: function () {
             this.$avatarModal.modal('show');
             this.initPreview();
+            this.clear();
         },
 
         change: function () {
@@ -307,14 +308,22 @@
         },
 
         alert: function (msg) {
+            this.clear();
+            if(msg=="parsererror") {
+                msg = "上传失败,请重新上传";
+            }
             var $alert = [
-                '<div class="alert alert-danger avatar-alert alert-dismissable">',
+                '<div class="alert alert-danger avatar-alert upload-alert">',
                 '<button type="button" class="close" data-dismiss="alert">&times;</button>',
                 msg,
                 '</div>'
             ].join('');
 
             this.$avatarUpload.after($alert);
+        },
+
+        clear: function () {
+           $(".upload-alert").remove();
         }
     };
 
