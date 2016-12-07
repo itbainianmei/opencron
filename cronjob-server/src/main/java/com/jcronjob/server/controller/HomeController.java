@@ -42,10 +42,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -218,12 +220,28 @@ public class HomeController {
     }
 
     @RequestMapping("/headpic/upload")
-    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpSession httpSession, HttpServletResponse response) throws Exception {
-        User user = userService.getUserById(userId);
+    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
         String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+
+        String successFormat = "{\"result\":\"%s\",\"state\":200}";
+        String errorFormat = "{\"message\":\"%s\",\"state\":500}";
+
+        //检查后缀
+        if(!"BMP,JPG,JPEG,PNG,GIF".contains(extensionName.toUpperCase())) {
+            WebUtils.writeJson( response, String.format(errorFormat,"格式错误,请上传(bmp,jpg,jpeg,png,gif)格式的图片"));
+            return;
+        }
+
+        User user = userService.getUserById(userId);
+
+        if (user==null) {
+            WebUtils.writeJson( response, String.format(errorFormat,"用户信息获取失败"));
+            return;
+        }
+
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
 
-        String fileName = user.getUserId()+"_preview." + extensionName.toLowerCase();
+        String fileName = user.getUserId()+"_pic." + extensionName.toLowerCase();
         File targetFile = new File(path, fileName);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
@@ -231,62 +249,37 @@ public class HomeController {
 
         try {
             file.transferTo(targetFile);
+            //检查文件是不是图片
+            Image image= ImageIO.read(targetFile);
+            if (image == null) {
+                WebUtils.writeJson( response, String.format(errorFormat,"格式错误,正确的图片"));
+                targetFile.delete();
+                return;
+            }
+
+            //检查文件大小
+            if (targetFile.length()/1024/1024 > 5) {
+                WebUtils.writeJson( response, String.format(errorFormat,"文件错误,上传图片大小不能超过5M"));
+                targetFile.delete();
+                return;
+            }
+
+            //保存入库.....
+            userService.uploadimg(targetFile,userId);
+
+            String contextPath = WebUtils.getWebUrlPath(request);
+            String imgPath = contextPath+"/upload/"+fileName+"?"+System.currentTimeMillis();
+            user.setHreaderPath(imgPath);
+            user.setHeaderpic(null);
+            httpSession.setAttribute(Globals.LOGIN_USER,user);
+
+            WebUtils.writeJson( response, String.format(successFormat,imgPath));
             logger.info(" upload file successful @ "+fileName);
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("upload exception:"+e.getMessage());
         }
-        /**
-         * 上传文件有可能很大,则生成一个300*300的图片返回.....
-         */
-        ImageUtils.zoom(targetFile);
-
-        fileName =  user.getUserId()+"_300." + extensionName.toLowerCase();
-        String filepath = path + fileName;
-        if (IOUtils.fileExists(filepath)) {
-            new File(filepath).delete();
-        }
-
-        float scale = ImageUtils.scale(targetFile.getPath(),filepath,1,false);
-        logger.info("图片缩放倍数:"+scale);
-        String format = "{\"fileUrl\":\"%s\",\"flag\":\"%s\",\"scale\":%f}";
-        WebUtils.writeJson( response, String.format(format,"/upload/"+fileName+"?"+System.currentTimeMillis(),scale>-1f,scale));
     }
-
-    @RequestMapping("/headpic/cut")
-    public void imageCut(HttpServletRequest request,HttpServletResponse response,HttpSession httpSession,
-                         Long userId,Integer x,Integer y,Integer w,Integer h,Float f,String p) throws IllegalStateException, IOException {
-
-        p = p.replaceAll("\\?\\d+$","");
-        String extensionName = p.substring(p.lastIndexOf("."));
-        String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
-        //获取上传的原始图片
-        String imagePath = path+userId+"_300" + extensionName.toLowerCase();
-
-        String imgName = userId+"_140"+extensionName.toLowerCase();
-        String createImgPath = path + imgName;
-
-        if(f==-1f){
-            ImageUtils.zoom(imagePath,createImgPath,140,140);
-        }else{
-            //进行剪切图片操作
-            ImageUtils.abscut(imagePath, createImgPath, x,y,w, h);
-            ImageUtils.zoom(createImgPath,createImgPath,140,140);
-        }
-
-        //保存入库.....
-        userService.uploadimg(new File(createImgPath),userId);
-        String contextPath = WebUtils.getWebUrlPath(request);
-
-        String imgPath = contextPath+"/upload/"+imgName+"?"+System.currentTimeMillis();
-        User user =  (User) httpSession.getAttribute(Globals.LOGIN_USER);
-        user.setHreaderPath(imgPath);
-        httpSession.setAttribute(Globals.LOGIN_USER,user);
-
-        String format = "{\"fileUrl\":\"%s\"}";
-        WebUtils.writeJson( response, String.format(format,imgPath));
-    }
-
 
     @RequestMapping("/notice/view")
     public String log(HttpSession session, Model model, Page page, Long agentId, String sendTime) {

@@ -12,7 +12,7 @@
 
 
 <script type="text/javascript">
-	i_flash = false;
+
 	$(document).ready(function() {
 		<c:if test="${fn:contains(uri,'/notice/')}">
 		$("#msg-icon").remove();
@@ -21,23 +21,15 @@
 		if($.isMobile()){
 			$("#time").remove();
 			$("#contactDialog").remove();
-			$(".change-text").remove();
+			$("#change-img").remove();
 		}else {
-			// 检测是否安装flash
-			if (navigator.plugins) {
-				for (var i=0; i < navigator.plugins.length; i++) {
-					if (navigator.plugins[i].name.toLowerCase().indexOf("shockwave flash") >= 0) {
-						i_flash = true;
-					}
-				}
-			}
-			$(".profile-pic").mouseover(function () {
-				$(".change-text").show();
+			$("#profile-pic").mouseover(function () {
+				$("#change-img").show();
 			}).mouseout(function () {
-				$(".change-text").hide();
+				$("#change-img").hide();
 			});
 
-			$(".change-text").mouseover(function () {
+			$("#change-img").mouseover(function () {
 				$(this).show();
 			}).mouseout(function () {
 				$(this).hide();
@@ -91,156 +83,6 @@
 
 	});
 
-	/**关闭弹窗**/
-	function closeDialog(){
-		$("#mask").hide();
-		$("#contactDialog").css("display", "none");
-	}
-	/**显示弹窗**/
-	function showDialog(){
-		if(!i_flash){
-			alert("您的浏览器未安装Flash,请先安装或者更换其他浏览器重试");
-			return;
-		}
-		$("#mask").show();
-		$("#contactDialog").css("display", "block");
-	}
-
-	$(function($){
-		var jcrop_api, boundx, boundy;
-		$('#target').Jcrop({
-			onChange: updatePreview,
-			onSelect: updatePreview,
-			minSize:[140,140],
-			allowSelect:false,
-			aspectRatio: 1
-		},function(){
-			jcrop_api = this;
-		});
-
-		function updatePreview(c) {
-			if(parseInt(c.w)>0){
-				var bounds = jcrop_api.getBounds();
-				boundx = bounds[0];
-				boundy = bounds[1];
-				var rx=140/c.w;
-				var ry=140/c.h;
-				$("#preview").css({
-					width:Math.round(rx*boundx)+"px",
-					height:Math.round(ry*boundy)+"px",
-					marginLeft:"-"+Math.round(rx*c.x)+"px",
-					marginTop:"-"+Math.round(ry*c.y)+"px"
-				});
-			}else{
-				var rect = [0,0,140,140];
-				jcrop_api.setSelect(rect);
-			}
-			$('#x').val(c.x);
-			$('#y').val(c.y);
-			$('#w').val(c.w);
-			$('#h').val(c.h);
-		};
-
-		$('#cropButton').click(function(){
-
-			var x = $("#x").val();
-			var y = $("#y").val();
-			var w = $("#w").val();
-			var h = $("#h").val();
-			var path = $("#path").val();
-			var scale = $("#scale").val();
-
-			if(w == 0 || h == 0 ){
-				alert("您还没有选择图片的剪切区域,不能进行剪切图片!");
-				return;
-			}
-
-			$.ajax({
-				url:"/headpic/cut",
-				type:"POST",
-				data:{
-					userId:${cronjob_user.userId},
-					x:x,
-					y:y,
-					w:w,
-					h:h,
-					p:path,
-					f:scale
-				},
-				dataType:"JSON",
-				success  : function(data) {
-					$(".profile-pic").attr("src",data.fileUrl);//首页头像
-					alert("头像设置成功！");
-					closeDialog();//保存头像成功，关闭对话框
-				},
-				error : function(){
-					alert("头像设置失败，请重新上传！");
-				}
-			});
-		});
-
-		$("#btnUploadPic").uploadify({
-			fileSizeLimit : '5120KB',
-			fileObjName : 'file',
-			method:'post',
-			formData: {
-				userId:${cronjob_user.userId}
-			},
-			height : 25,
-			width : 80,
-			buttonImage : '',
-			swf : '${contextPath}/js/upload/uploadify.swf',
-			uploader : '/headpic/upload',
-			fileTypeExts : '*.gif; *.jpg; *.png; *.jpeg',
-			buttonText : "上传图片",
-			overrideEvents : [ 'onSelectError','onUploadError', 'onDialogClose' ],
-			onSelectError : function(file, errorCode,e) {
-				switch (errorCode) {
-					case -100:
-						alert("上传的文件数量已经超出系统限制的"+ $('#btnUploadPic').uploadify('settings','queueSizeLimit') + "个文件！");
-						break;
-					case -110:
-						alert("文件 ["+ file.name+ "] 大小超出系统限制的"+ $('#btnUploadPic').uploadify('settings','fileSizeLimit')+ "大小！");
-						break;
-					case -120:
-						alert("文件 [" + file.name + "] 大小异常！");
-						break;
-					case -130:
-						alert("文件 [" + file.name + "] 类型不正确！");
-						break;
-				}
-				return false;
-			},
-			onUploadSuccess : function(file, data, response) {
-			    var result = eval("("+data+")");
-				if (result && result.fileUrl) {
-					var imgUrl = "${contextPath}"+result.fileUrl;
-					$("#btnUploadPic").uploadify('settings','buttonText', '重传图片');
-					//截图
-					jcrop_api.setImage(imgUrl);
-					$("#preview").attr("src",imgUrl);
-					var rect = [0,0,140,140];
-					jcrop_api.setSelect(rect);
-					if(!result.flag){
-						jcrop_api.allowResize=false;
-						jcrop_api.allowMove=false;
-					}else{
-						jcrop_api.allowSelect=true;
-					}
-					$("#oldImgPath").val(imgUrl);
-					$("#scale").val(result.scale);
-
-					$("#divBut").show();
-				} else {
-					alert("上传失败，请重试!" + result);
-				}
-			},
-			onUploadProgress : function(file, bytesUploaded, bytesTotal, totalBytesUploaded, totalBytesTotal) {
-				$("#btnUploadPic").uploadify('settings', 'buttonText', '上传中...');
-			}
-		});
-	});
-
 </script>
 
 <body id="skin-cloth">
@@ -270,70 +112,70 @@
 
 <div class="clearfix"></div>
 
-<!-- 头像设置弹窗 -->
-<div class="black-wrap" style="display: none" id="contactDialog">
-	<div class="dialog-wrap" id="contentBody" style="height:550px; width:640px;z-index: 100000; margin-top:-300px;margin-left: -320px;">
-		<h1 style="width:640px;margin-top:0px" class="dialog-title"><span onclick="closeDialog();"></span>头像设置</h1>
-		<div class="dialog-center" style="width:620px;height: 398px;position: relative">
-			<div class="form-group spacing-col20">
-					<div id="outer">
-						<div class="jcExample" style="width:600px;margin:0 0 0 0;border:0;">
-							<div>
-								<input type="hidden" id="path" name="path" value="${contextPath}/upload/${cronjob_user.userId}_300${cronjob_user.picExtName}"/>
-								<input type="hidden" id="scale" name="scale" value=""/>
-								<input type="hidden" id="x" name="x"/>
-								<input type="hidden" id="y" name="y"/>
-								<input type="hidden" id="w" name="w"/>
-								<input type="hidden" id="h" name="h"/>
+<div class="container" id="crop-avatar">
 
-								<table border="1px" bordercolor="#FFF" style="height:300px;margin-left:35px;width: 495px" frame=void class="head-set" >
-									<tr>
-										<td width="140px;" colspan="2">
-											<div>
-												<div id="btnUploadPic"  class="btnUpload" style="text-align: center;"></div>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td width="300px;" style="height:300px;overflow:hidden;" valign="bottom">
-											<div id="target-pane">
-												<img onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}_300${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>" id="target" alt="[Jcrop Example]">
-											</div>
-										</td>
-										<td valign="bottom" style="margin-right: 10px;width:175px;">
-											<div id="preview-pane">
-												<div id="preview-container" style="width:140px;height:140px;margin-bottom:17px;position: relative; overflow: hidden;">
-													<img id="preview" alt="Preview" class="jcrop-preview" src="${contextPath}/upload/${cronjob_user.userId}_140${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>" onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'">
-												</div>
-											</div>
-											<div id="preview-unborder"></div>
-											<div id="preview-border"></div>
-										</td>
-									</tr>
-									<tr>
-										<td colspan="3" height="70px" style="color:#969696;"> 选择一张JPG/PNG/GIF格式的本地图片上传。图片大小不能超过5M。</td>
-									</tr>
-								</table>
 
+
+	<!-- Cropping modal -->
+	<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-md">
+			<div class="modal-content">
+				<form class="avatar-form" name="picform" action="${contextPath}/headpic/upload" enctype="multipart/form-data" method="post">
+					<input name="userId" type="hidden" value="${cronjob_user.userId}">
+					<div class="modal-header">
+						<button class="close" data-dismiss="modal" type="button">&times;</button>
+						<h4 class="modal-title" id="avatar-modal-label">更改图像</h4>
+					</div>
+					<div class="modal-body">
+						<div class="avatar-body">
+
+							<!-- Upload image and data -->
+							<div class="avatar-upload">
+								<input class="avatar-src" name="avatar_src" type="hidden">
+								<input class="avatar-data" name="avatar_data" type="hidden">
+								<input type="button" value="请选择本地照片" class="btn btn-default" onclick="document.picform.file.click()">
+								<input class="avatar-input" id="avatarInput" name="file" type="file" style="display:none;">
+							</div>
+
+							<!-- Crop and preview -->
+							<div class="row">
+								<div class="col-md-8">
+									<div class="avatar-wrapper"></div>
+								</div>
+								<div class="col-md-4">
+									<div class="avatar-preview preview-lg"></div>
+								</div>
+							</div>
+
+							<div class="row avatar-btns">
+								<div class="col-md-8">
+									<div class="btn-group"  style="margin-left:0px;">
+										<button class="btn btn-sm" data-method="rotate" data-option="-90" type="button" title="Rotate -90 degrees">左旋转</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="-15" type="button">-15°</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="-30" type="button">-30°</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="-45" type="button">-45°</button>
+									</div>
+									<div class="btn-group">
+										<button class="btn btn-sm" data-method="rotate" data-option="90" type="button" title="Rotate 90 degrees">右旋转</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="15" type="button">15°</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="30" type="button">30°</button>
+										<button class="btn btn-sm" data-method="rotate" data-option="45" type="button">45°</button>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<button class="btn btn-primary btn-block avatar-save" type="submit">上传</button>
+								</div>
 							</div>
 						</div>
 					</div>
-
+				</form>
 			</div>
 		</div>
+	</div><!-- /.modal -->
 
-		<div class="dialog-describe"></div>
-		<!--下一步-->
-		<div class="dialog-next-wrap">
-			<div class="dialog-next">
-				<input id="cropButton" class="btn-submit btn-login" type="button" style="height: 26px;" value="保存头像">
-				<input class="btn-submit btn-login dialog-next-cancel" type="button" style="height: 26px;" value="取消" onclick="closeDialog();">
-			</div>
-		</div>
-	</div>
+	<!-- Loading state -->
+	<div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
 </div>
-<!-- 底部-->
-
 
 
 <section id="main" class="p-relative" role="main">
@@ -346,8 +188,8 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}_140${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>">
-					<div class="change-text"  onclick="showDialog();" href="javascript:void(0);">更换头像</div>
+					<img class="profile-pic" id="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}_pic${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>">
+					<div class="change-text" id="change-img" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${cronjob_user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">

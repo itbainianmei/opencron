@@ -49,7 +49,6 @@
 
 <!-- Other -->
 <script src="${contextPath}/js/calendar.min.js"></script> <!-- Calendar -->
-<script src="${contextPath}/js/feeds.min.js"></script> <!-- News Feeds -->
 <script src="${contextPath}/js/raphael.2.1.2-min.js"></script>
 <script src="${contextPath}/js/prettify.min.js"></script>
 <script src="${contextPath}/js/morris.min.js"></script>
@@ -60,7 +59,6 @@
 <script src="${contextPath}/js/flot/jquery.flot.min.js"></script>
 <script src="${contextPath}/js/flot/jquery.flot.resize.min.js"></script>
 <script src="${contextPath}/js/flot/jquery.flot.spline.min.js"></script>
-
 <script src="${contextPath}/js/testdevice.js"></script>
 
 <!-- MD5 -->
@@ -73,11 +71,10 @@
 <script src="${contextPath}/js/cronjob.js"></script>
 
 <!--upfile-->
-<link rel="stylesheet" href="${contextPath}/js/upload/css/jquery.Jcrop.min.css" type="text/css" />
-<link rel="stylesheet" href="${contextPath}/css/Dialog.css" type="text/css" />
+<link rel="stylesheet" href="${contextPath}/js/cropper/cropper.main.css" type="text/css" />
+<link rel="stylesheet" href="${contextPath}/js/cropper/cropper.min.css" type="text/css" />
+<script type="text/javascript" src="${contextPath}/js/cropper/cropper.min.js" ></script>
+<script type="text/javascript" src="${contextPath}/js/cronjob.cropper.js" ></script>
 
-<script type="text/javascript" src="${contextPath}/js/upload/jquery.Jcrop.min.js" ></script>
-<script type="text/javascript" src="${contextPath}/js/upload/jquery.uploadify.min.js"></script>
-<script type="text/javascript" src="${contextPath}/js/Dialog.js"></script>
 
 
