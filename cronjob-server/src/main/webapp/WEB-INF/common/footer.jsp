@@ -1,5 +1,6 @@
 ﻿<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%
     String port = request.getServerPort() == 80 ? "" : (":"+request.getServerPort());
@@ -7,6 +8,7 @@
     String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
+
 
 <!-- Older IE Message -->
 <!--[if lt IE 9]>
@@ -50,5 +52,79 @@
 <![endif]-->
 
 </section>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        <c:if test="${fn:contains(uri,'/notice/')}">
+        $("#msg-icon").remove();
+        </c:if>
+
+        if($.isMobile()){
+            $("#time").remove();
+            $("#contactDialog").remove();
+            $("#change-img").remove();
+        }else {
+            $("#profile-pic").mouseover(function () {
+                $("#change-img").show();
+            }).mouseout(function () {
+                $("#change-img").hide();
+            });
+
+            $("#change-img").mouseover(function () {
+                $(this).show();
+            }).mouseout(function () {
+                $(this).hide();
+            });
+        }
+
+        var skin = $.cookie("cronjob_skin");
+        if(skin) {
+            $('body').attr('id', skin);
+        }
+
+        $('body').on('click', '.template-skins > a', function(e){
+            e.preventDefault();
+            var skin = $(this).data('skin');
+            $('body').attr('id', skin);
+            $('#changeSkin').modal('hide');
+            $.cookie("cronjob_skin", skin, {
+                expires : 30,
+                domain:document.domain,
+                path:"/"
+            });
+        });
+
+
+        $.ajax({
+            type:"POST",
+            url: "${contextPath}/notice/uncount",
+            dataType: "html",
+            success: function (data) {
+                if (data != "0"){
+                    $(".n-count").text(data);
+                    $("#msg-icon").show();
+                    $.ajax({
+                        type:"POST",
+                        url: "${contextPath}/notice/unread",
+                        dataType: "html",
+                        success: function (data) {
+                            $("#msgList").html(data);
+                        }
+                    });
+                }else {
+                    $("#messages").remove();
+                    $(".n-count").remove();
+                    $("#msg-icon").click(function () {
+                        window.location.href="${contextPath}/notice/view";
+                    })
+                    $("#msg-icon").show();
+                }
+            }
+        });
+    });
+</script>
+
 </body>
+
 </html>
+

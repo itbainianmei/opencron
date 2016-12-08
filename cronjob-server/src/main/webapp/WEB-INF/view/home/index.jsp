@@ -111,8 +111,6 @@
     </style>
 
     <script type="text/javascript">
-
-
         $(document).ready(function () {
 
             var cronjobChart = new CronjobChart('${contextPath}');
@@ -205,7 +203,6 @@
 </head>
 
 <jsp:include page="/WEB-INF/common/top.jsp"/>
-
 <!-- Content -->
 <section id="content" class="container">
 
@@ -664,7 +661,6 @@
 
             </div>
         </div>
-
     </div>
 
 </section>

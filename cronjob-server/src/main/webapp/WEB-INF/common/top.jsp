@@ -10,85 +10,8 @@
 	request.setAttribute("uri",request.getRequestURI());
 %>
 
-
-<script type="text/javascript">
-
-	$(document).ready(function() {
-		<c:if test="${fn:contains(uri,'/notice/')}">
-		$("#msg-icon").remove();
-		</c:if>
-
-		if($.isMobile()){
-			$("#time").remove();
-			$("#contactDialog").remove();
-			$("#change-img").remove();
-		}else {
-			$("#profile-pic").mouseover(function () {
-				$("#change-img").show();
-			}).mouseout(function () {
-				$("#change-img").hide();
-			});
-
-			$("#change-img").mouseover(function () {
-				$(this).show();
-			}).mouseout(function () {
-				$(this).hide();
-			});
-		}
-
-		var skin = $.cookie("cronjob_skin");
-		if(skin) {
-			$('body').attr('id', skin);
-		}
-
-		$('body').on('click', '.template-skins > a', function(e){
-			e.preventDefault();
-			var skin = $(this).data('skin');
-			$('body').attr('id', skin);
-			$('#changeSkin').modal('hide');
-			$.cookie("cronjob_skin", skin, {
-				expires : 30,
-				domain:document.domain,
-				path:"/"
-			});
-		});
-
-
-		$.ajax({
-			type:"POST",
-			url: "${contextPath}/notice/uncount",
-			dataType: "html",
-			success: function (data) {
-				if (data != "0"){
-					$(".n-count").text(data);
-					$("#msg-icon").show();
-					$.ajax({
-						type:"POST",
-						url: "${contextPath}/notice/unread",
-						dataType: "html",
-						success: function (data) {
-							$("#msgList").html(data);
-						}
-					});
-				}else {
-					$("#messages").remove();
-					$(".n-count").remove();
-					$("#msg-icon").click(function () {
-						window.location.href="${contextPath}/notice/view";
-					})
-					$("#msg-icon").show();
-				}
-			}
-		});
-
-	});
-
-</script>
-
 <body id="skin-cloth">
-
 <div id="mask" class="mask"></div>
-
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
 	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float:left;width: 145px;margin-left:24px;margin-top:4px;">
@@ -113,8 +36,6 @@
 <div class="clearfix"></div>
 
 <div class="container" id="crop-avatar">
-
-
 
 	<!-- Cropping modal -->
 	<div class="modal fade" id="avatar-modal" aria-hidden="true" aria-labelledby="avatar-modal-label" role="dialog" tabindex="-1">
@@ -171,12 +92,10 @@
 				</form>
 			</div>
 		</div>
-	</div><!-- /.modal -->
-
+	</div>
 	<!-- Loading state -->
 	<div class="loading" aria-label="Loading" role="img" tabindex="-1"></div>
 </div>
-
 
 <section id="main" class="p-relative" role="main">
 
