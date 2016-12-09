@@ -23,7 +23,6 @@
 package com.jcronjob.server.job;
 
 import com.jcronjob.server.service.*;
-import com.jcronjob.server.session.MemcacheCache;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.domain.Record;
@@ -66,8 +65,6 @@ public class CronjobTask implements InitializingBean {
     @Autowired
     private SchedulerService schedulerService;
 
-    @Autowired
-    private MemcacheCache memcacheCache;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -151,10 +148,9 @@ public class CronjobTask implements InitializingBean {
 
     }
 
-
     private void clearCache() {
-        memcacheCache.evict(Globals.CACHED_AGENT_ID);
-        memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
+        CronjobContext.remove(Globals.CACHED_AGENT_ID);
+        CronjobContext.remove(Globals.CACHED_CRONTAB_JOB);
     }
 
     //@Scheduled(cron = "0 0/1 * * * ?")

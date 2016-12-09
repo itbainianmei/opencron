@@ -31,8 +31,8 @@ import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
+import com.jcronjob.server.job.CronjobContext;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.server.session.MemcacheCache;
 import com.jcronjob.server.tag.Page;
 
 import static com.jcronjob.common.job.Cronjob.*;
@@ -61,9 +61,6 @@ public class JobService {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private MemcacheCache memcacheCache;
 
     private Logger logger = LoggerFactory.getLogger(JobService.class);
 
@@ -117,8 +114,7 @@ public class JobService {
     }
 
     private void flushCronjob(){
-        memcacheCache.evict(Globals.CACHED_CRONTAB_JOB);
-        memcacheCache.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Cronjob.ExecType.AUTO, Cronjob.CronType.CRONTAB));
+        CronjobContext.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Cronjob.ExecType.AUTO, Cronjob.CronType.CRONTAB));
     }
 
     public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {

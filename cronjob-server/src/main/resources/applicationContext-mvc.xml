@@ -46,7 +46,7 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**" />
-            <bean class="com.jcronjob.server.session.SecurityHandlerInterceptor" />
+            <bean class="com.jcronjob.server.service.SecurityHandlerInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
 

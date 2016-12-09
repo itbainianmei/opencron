@@ -31,12 +31,6 @@
 
 	<context:component-scan base-package="com.jcronjob.server.service,com.jcronjob.server.dao,com.jcronjob.server.job,com.jcronjob.server.websocket" scoped-proxy="targetClass" use-default-filters="true"/>
 
-	<bean id="sessionStore" class="com.jcronjob.server.session.SessionStore">
-		<property name="hosts">
-			<value>${memcached.server}</value>
-		</property>
-	</bean>
-
 	<bean class="com.jcronjob.server.job.CronjobTask" lazy-init="false"/>
 
 </beans>

@@ -20,7 +20,7 @@
  */
 
 
-package com.jcronjob.server.session;
+package com.jcronjob.server.service;
 
 
 import com.jcronjob.common.utils.WebUtils;
@@ -28,7 +28,7 @@ import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpSession;
 /**
  * 登陆权限拦截器
  */
-@Repository
+@Component
 public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityHandlerInterceptor.class);

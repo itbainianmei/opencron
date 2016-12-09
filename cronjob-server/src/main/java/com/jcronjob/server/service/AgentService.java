@@ -27,10 +27,9 @@ import java.util.List;
 
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.dao.QueryDao;
-import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.domain.User;
+import com.jcronjob.server.job.CronjobContext;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.server.session.MemcacheCache;
 import com.jcronjob.server.tag.Page;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jcronjob.common.job.Cronjob;
@@ -62,27 +61,23 @@ public class AgentService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private MemcacheCache memcacheCache;
-
     public List<Agent> getAgentByConnType(Cronjob.ConnType connType) {
         return queryDao.sqlQuery(Agent.class,"SELECT * FROM T_AGENT WHERE status = 1 AND proxy = "+connType.getType());
     }
 
     public List<Agent> getAll() {
 
-        List<Agent> agents = memcacheCache.get(Globals.CACHED_AGENT_ID,List.class);
+        List<Agent> agents = CronjobContext.get(Globals.CACHED_AGENT_ID,List.class);
 
         if (CommonUtils.isEmpty(agents)) {
             flushAgent();
             return Collections.emptyList();
         }
-       return memcacheCache.get(Globals.CACHED_AGENT_ID,List.class);
+       return CronjobContext.get(Globals.CACHED_AGENT_ID,List.class);
     }
 
     private void flushAgent(){
-        memcacheCache.evict(Globals.CACHED_AGENT_ID);
-        memcacheCache.put(Globals.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
+        CronjobContext.put(Globals.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){
