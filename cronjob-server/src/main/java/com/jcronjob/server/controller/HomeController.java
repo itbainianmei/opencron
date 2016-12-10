@@ -22,6 +22,7 @@
 package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
@@ -52,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.jcronjob.common.utils.CommonUtils.isEmpty;
 import static com.jcronjob.common.utils.CommonUtils.notEmpty;
@@ -220,14 +222,27 @@ public class HomeController {
     }
 
     @RequestMapping("/headpic/upload")
-    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam Long userId,HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
-        String extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+    public void upload(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam Long userId, @RequestParam Map data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
+
+        String extensionName = null;
+        if (file!=null) {
+            extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            extensionName = extensionName.replaceAll("\\?\\d+$","");
+        }
 
         String successFormat = "{\"result\":\"%s\",\"state\":200}";
         String errorFormat = "{\"message\":\"%s\",\"state\":500}";
 
+
+        JSONObject corp = JSON.parseObject((String)data.get("data"));
+        Double x = corp.getDouble("x");
+        Double y = corp.getDouble("y");
+        Double width = corp.getDouble("width");
+        Double height = corp.getDouble("height");
+        int rotate = corp.getIntValue("rotate");
+
         //检查后缀
-        if(!"BMP,JPG,JPEG,PNG,GIF".contains(extensionName.toUpperCase())) {
+        if(!".BMP,.JPG,.JPEG,.PNG,.GIF".contains(extensionName.toUpperCase())) {
             WebUtils.writeJson( response, String.format(errorFormat,"格式错误,请上传(bmp,jpg,jpeg,png,gif)格式的图片"));
             return;
         }
@@ -241,45 +256,53 @@ public class HomeController {
 
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
 
-        String fileName = user.getUserId()+"_pic." + extensionName.toLowerCase();
-        File targetFile = new File(path, fileName);
-        if (!targetFile.exists()) {
-            targetFile.mkdirs();
+        String viewName= user.getUserId()+"_view" + extensionName.toLowerCase();
+
+        File viewFile = new File(path, viewName);
+        if (!viewFile.exists()) {
+            viewFile.mkdirs();
         }
 
         try {
-            file.transferTo(targetFile);
+            file.transferTo(viewFile);
             //检查文件是不是图片
-            Image image= ImageIO.read(targetFile);
+            Image image= ImageIO.read(viewFile);
             if (image == null) {
                 WebUtils.writeJson( response, String.format(errorFormat,"格式错误,正确的图片"));
-                targetFile.delete();
+                viewFile.delete();
                 return;
             }
 
             //检查文件大小
-            if (targetFile.length()/1024/1024 > 5) {
+            if (viewFile.length()/1024/1024 > 5) {
                 WebUtils.writeJson( response, String.format(errorFormat,"文件错误,上传图片大小不能超过5M"));
-                targetFile.delete();
+                viewFile.delete();
                 return;
             }
 
+            String picName = user.getUserId()+"_pic" + extensionName.toLowerCase();
+            File newFile = new File( path ,picName);
+
+            //进行剪切图片操作
+            ImageUtils.abscut(viewFile, newFile, x.intValue(),y.intValue(),width.intValue(), height.intValue());
+
             //保存入库.....
-            userService.uploadimg(targetFile,userId);
+            userService.uploadimg(newFile,userId);
 
             String contextPath = WebUtils.getWebUrlPath(request);
-            String imgPath = contextPath+"/upload/"+fileName+"?"+System.currentTimeMillis();
+            String imgPath = contextPath+"/upload/"+picName+"?"+System.currentTimeMillis();
             user.setHreaderPath(imgPath);
             user.setHeaderpic(null);
             httpSession.setAttribute(Globals.LOGIN_USER,user);
 
             WebUtils.writeJson( response, String.format(successFormat,imgPath));
-            logger.info(" upload file successful @ "+fileName);
+            logger.info(" upload file successful @ "+picName);
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("upload exception:"+e.getMessage());
         }
     }
+
 
     @RequestMapping("/notice/view")
     public String log(HttpSession session, Model model, Page page, Long agentId, String sendTime) {
@@ -321,4 +344,3 @@ public class HomeController {
         return "notice/detail";
     }
 }
-

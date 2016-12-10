@@ -36,23 +36,21 @@ public class ImageUtils {
      * @param destWidth              目标切片宽度
      * @param destHeight             目标切片高度
      */
-    public static void abscut(String srcImageFile,String dirImageFile, int x, int y, int destWidth,int destHeight) {
+    public static void abscut(File srcImageFile,File dirImageFile, int x, int y, int destWidth,int destHeight) {
         try {
             Image img;
             ImageFilter cropFilter;
             // 读取源图像
-            BufferedImage bi = ImageIO.read(new File(srcImageFile));
+            BufferedImage bi = ImageIO.read(srcImageFile);
             int srcWidth = bi.getWidth(); // 源图宽度
             int srcHeight = bi.getHeight(); // 源图高度          
             if (srcWidth >= destWidth && srcHeight >= destHeight) {
-                Image image = bi.getScaledInstance(srcWidth, srcHeight,
-                        Image.SCALE_SMOOTH);
+                Image image = bi.getScaledInstance(srcWidth, srcHeight,Image.SCALE_SMOOTH);
                 // 改进的想法:是否可用多线程加快切割速度
                 // 四个参数分别为图像起点坐标和宽高
                 // 即: CropImageFilter(int x,int y,int width,int height)
                 cropFilter = new CropImageFilter(x, y, destWidth, destHeight);
-                img = Toolkit.getDefaultToolkit().createImage(
-                        new FilteredImageSource(image.getSource(), cropFilter));
+                img = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(image.getSource(), cropFilter));
                 
 //                destWidth = destWidth<100?destWidth:100;
 //                destHeight = destHeight<100?destHeight:100;
@@ -62,7 +60,7 @@ public class ImageUtils {
                 g.drawImage(img, 0, 0, null); // 绘制缩小后的图
                 g.dispose();
                 // 输出为文件
-                ImageIO.write(tag, "JPEG", new File(dirImageFile));
+                ImageIO.write(tag, "JPEG", dirImageFile);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,15 +72,14 @@ public class ImageUtils {
 	 * 缩放图像
 	 * 
 	 * @param srcImageFile       源图像文件地址
-	 * @param result             缩放后的图像地址
+	 * @param dirImageFile       缩放后的图像地址
 	 * @param scale              缩放比例
 	 * @param flag               缩放选择:true 放大; false 缩小;
 	 */
-	public static float scale(String srcImageFile, String result, int scale,boolean flag) {
+	public static float scale(File srcImageFile, File dirImageFile, int scale,boolean flag) {
 
 		try {
-			File file = new File(srcImageFile);
-			BufferedImage src = ImageIO.read(file); // 读入文件
+			BufferedImage src = ImageIO.read(srcImageFile); // 读入文件
 			int width = src.getWidth(); // 得到源图宽
 			int height = src.getHeight(); // 得到源图长
 			
@@ -105,10 +102,9 @@ public class ImageUtils {
 				Graphics g = tag.getGraphics();
 				g.drawImage(image, 0, 0, null); // 绘制缩小后的图
 				g.dispose();
-				ImageIO.write(tag, "JPEG", new File(result));// 输出到文件流
+				ImageIO.write(tag, "JPEG", dirImageFile);// 输出到文件流
 			} else if (width>=140&&height>=140) {//宽高小与300,140.直接返回原图
-				File targetFile = new File(result);
-				FileOutputStream fos1=new FileOutputStream(targetFile);
+				FileOutputStream fos1=new FileOutputStream(dirImageFile);
 				//对文件进行读操作
 				FileInputStream fis=new FileInputStream(srcImageFile);
 				byte[] buffer=new byte[ 1024*8 ];
@@ -121,7 +117,7 @@ public class ImageUtils {
 				fis.close();
 				f = 1f;
 			}else {//宽或高有小于140的,需要裁剪....
-				zoom(srcImageFile,result,140,140);
+				zoom(srcImageFile,dirImageFile,140,140);
 				f=-1f;//缩小。。
 			}
 			return f;
@@ -320,12 +316,12 @@ public class ImageUtils {
 		 * 
 		 * @param srcImageFile
 		 *            源图片
-		 * @param result
+		 * @param dirImageFile
 		 *            缩放后的图片文件
 		 */
-		public static void zoom(String srcImageFile, String result, int destHeight, int destWidth) {
+		public static void zoom(File srcImageFile, File dirImageFile, int destHeight, int destWidth) {
 			try {
-				BufferedImage srcBufferedImage = ImageIO.read(new File(srcImageFile));
+				BufferedImage srcBufferedImage = ImageIO.read(srcImageFile);
 				int imgWidth = destWidth;
 				int imgHeight = destHeight;
 				int srcWidth = srcBufferedImage.getWidth();
@@ -341,7 +337,7 @@ public class ImageUtils {
 				graphics2D.clearRect(0, 0, destWidth, destHeight);
 				graphics2D.drawImage(srcBufferedImage.getScaledInstance(imgWidth, imgHeight, Image.SCALE_SMOOTH), (destWidth / 2) - (imgWidth / 2), (destHeight / 2) - (imgHeight / 2), null);
 				graphics2D.dispose();
-				ImageIO.write(destBufferedImage, "JPEG", new File(result));
+				ImageIO.write(destBufferedImage, "JPEG", dirImageFile);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

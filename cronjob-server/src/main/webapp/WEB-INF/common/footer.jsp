@@ -55,6 +55,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+
         <c:if test="${fn:contains(uri,'/notice/')}">
         $("#msg-icon").remove();
         </c:if>

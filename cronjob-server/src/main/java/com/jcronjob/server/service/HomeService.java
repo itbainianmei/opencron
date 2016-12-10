@@ -50,10 +50,10 @@ public class HomeService {
 
     public int checkLogin(HttpSession httpSession, String username, String password) {
         //将session置为无效
-        if (!httpSession.isNew()) {
+       /* if (!httpSession.isNew()) {
             httpSession.invalidate();
             httpSession.removeAttribute(Globals.LOGIN_USER);
-        }
+        }*/
 
         User user = queryDao.hqlUniqueQuery("FROM User WHERE userName = ?", username);
         if (user == null) return 500;

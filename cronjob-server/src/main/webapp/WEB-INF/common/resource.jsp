@@ -72,8 +72,8 @@
 
     <!--upfile-->
     <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.main.css" type="text/css" />
-    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.min.css" type="text/css" />
-    <script type="text/javascript" src="${contextPath}/js/cropper/cropper.min.js" ></script>
+    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.css" type="text/css" />
+    <script type="text/javascript" src="${contextPath}/js/cropper/cropper.js" ></script>
     <script type="text/javascript" src="${contextPath}/js/cronjob.cropper.js" ></script>
 
 

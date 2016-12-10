@@ -52,8 +52,8 @@
 
 							<!-- Upload image and data -->
 							<div class="avatar-upload">
-								<input class="avatar-src" name="avatar_src" type="hidden">
-								<input class="avatar-data" name="avatar_data" type="hidden">
+								<input class="avatar-src" name="src" type="hidden">
+								<input class="avatar-data" name="data" type="hidden">
 								<input type="button" value="请选择本地照片" class="btn btn-default" onclick="document.picform.file.click()">
 								<input class="avatar-input" id="avatarInput" name="file" type="file" style="display:none;">
 							</div>
@@ -64,7 +64,7 @@
 									<div class="avatar-wrapper"></div>
 								</div>
 								<div class="col-md-4">
-									<div class="avatar-preview preview-lg"></div>
+									<div class="avatar-preview preview-lg" ></div>
 								</div>
 							</div>
 

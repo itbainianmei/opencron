@@ -57,6 +57,12 @@
   overflow: hidden;
 }
 
+.avatar-wrapper:hover {
+  border-color:rgba(235, 235, 235, 0.35);
+  box-shadow: 0 0 5px rgba(0,0,0,.15);
+}
+
+
 .avatar-wrapper img {
   display: block;
   height: auto;
@@ -65,13 +71,13 @@
 
 .avatar-preview {
   border-radius: 100px !important;
-  border: 5px solid rgba(200, 200, 200, 0.25);
+  border: 2px solid rgba(200, 220, 220, 0.35);
   float: left;
   overflow: hidden;
 }
 
 .avatar-preview:hover {
-  border-color:rgba(200, 200, 200, 0.35);
+  border-color: rgba(235, 235, 235, 0.55);
   box-shadow: 0 0 5px rgba(0,0,0,.15);
 }
 
@@ -82,7 +88,7 @@
 .preview-lg {
   height: 180px;
   width: 180px;
-  margin: 85px 5px 0px;
+  margin: 85px 2px 0px;
 }
 
 @media (min-width: 992px) {

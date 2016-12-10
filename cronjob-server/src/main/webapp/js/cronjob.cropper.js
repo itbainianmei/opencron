@@ -11,6 +11,7 @@
 
     'use strict';
 
+
     var console = window.console || { log: function () {} };
 
     function CropAvatar($element) {
@@ -155,6 +156,7 @@
                     this.syncUpload();
                 }
             }
+
         },
 
         submit: function () {
@@ -198,7 +200,9 @@
                 this.$avatarWrapper.empty().html(this.$img);
                 this.$img.cropper({
                     aspectRatio: 1,
-                    preview: this.$avatarPreview.selector,
+                    preview: this.$avatarPreview,
+                    touchDragZoom:false,
+                    mouseWheelZoom:false,
                     crop: function (e) {
                         var json = [
                             '{"x":' + e.x,
@@ -207,7 +211,6 @@
                             '"width":' + e.width,
                             '"rotate":' + e.rotate + '}'
                         ].join();
-
                         _this.$avatarData.val(json);
                     }
                 });

@@ -83,12 +83,6 @@
             -moz-opacity:0.2;
             opacity:0.2;
         }
-        .card-link{
-            float: right;
-            margin: 6px 9px;
-            position: relative;
-            z-index: 999;
-        }
         .record-div-nodata{
             display: none;
             height: 235px;
