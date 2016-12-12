@@ -34,31 +34,29 @@ public class WebUtils {
 
     public static void writeXml(HttpServletResponse response, String xml) {
         response.setCharacterEncoding("UTF-8");
+        setContentLength(response,xml);
         response.setContentType("text/xml");
-        try {
-            byte[] data = String.valueOf(xml).getBytes("UTF-8");
-            response.setHeader("Content-Length", "" + data.length);
-            write(response, xml);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        write(response, xml);
     }
 
     public static void writeTxt(HttpServletResponse response, String txt) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
+        setContentLength(response,txt);
         write(response, txt);
     }
 
-    public static void writeHtml(HttpServletResponse response, String ajax) {
+    public static void writeHtml(HttpServletResponse response, String html) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html");
-        write(response, ajax);
+        setContentLength(response,html);
+        write(response, html);
     }
 
     public static void writeJson(HttpServletResponse response, String json) {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
+        setContentLength(response,json);
         write(response, json);
     }
 
@@ -74,6 +72,15 @@ public class WebUtils {
                 writer.flush();
                 writer.close();
             }
+        }
+    }
+
+    private static void setContentLength(HttpServletResponse response,String text){
+        try {
+            byte[] data = String.valueOf(text).getBytes("UTF-8");
+            response.setHeader("Content-Length", "" + data.length);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
     }
 

@@ -78,8 +78,9 @@
 
         initPreview: function () {
             var url = this.$avatar.attr('src');
-            var img = '<img src="' + url + '">';
-            this.$avatarPreview.html(img);
+            this.$avatarPreview.empty();
+            this.url = url.replace("_pic.","_view.");
+            this.preCropper();
         },
 
         initIframe: function () {
@@ -109,7 +110,6 @@
                         } catch (e) {
                             console.log(e.message);
                         }
-
                         _this.submitDone(data);
                     } else {
                         _this.submitFail('Image upload failed!');
@@ -125,9 +125,9 @@
         },
 
         click: function () {
-            this.$avatarModal.modal('show');
             this.initPreview();
             this.clear();
+            this.$avatarModal.modal('show');
         },
 
         change: function () {
@@ -190,17 +190,54 @@
             }
         },
 
-        startCropper: function () {
+        preCropper: function () {
+            this.stopCropper();
             var _this = this;
-
             if (this.active) {
                 this.$img.cropper('replace', this.url);
             } else {
                 this.$img = $('<img src="' + this.url + '">');
                 this.$avatarWrapper.empty().html(this.$img);
                 this.$img.cropper({
+                    autoCrop:false,
                     aspectRatio: 1,
-                    preview: this.$avatarPreview,
+                    preview: this.$avatarPreview.selector,
+                    touchDragZoom:false,
+                    mouseWheelZoom:false,
+                    minContainerWidth:300,
+                    minContainerHeight:300,
+                    crop: function (e) {
+                        var json = [
+                            '{"x":' + e.x,
+                            '"y":' + e.y,
+                            '"height":' + e.height,
+                            '"width":' + e.width,
+                            '"rotate":' + e.rotate + '}'
+                        ].join();
+                        _this.$avatarData.val(json);
+                    }
+                });
+
+                this.active = true;
+            }
+
+            this.$avatarModal.one('hidden.bs.modal', function () {
+                _this.$avatarPreview.empty();
+                _this.stopCropper();
+            });
+        },
+
+        startCropper: function () {
+            var _this = this;
+            if (this.active) {
+                this.$img.cropper('replace', this.url);
+            } else {
+                this.$img = $('<img src="' + this.url + '">');
+                this.$avatarWrapper.empty().html(this.$img);
+                this.$img.cropper({
+                    autoCrop:true,
+                    aspectRatio: 1,
+                    preview: this.$avatarPreview.selector,
                     touchDragZoom:false,
                     mouseWheelZoom:false,
                     crop: function (e) {

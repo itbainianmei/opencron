@@ -190,8 +190,6 @@
                 $(this).next("div").find("div:first").css({"background-color":"rgba(0,0,0,0.55)"});
             });
 
-
-
         });
     </script>
 </head>
