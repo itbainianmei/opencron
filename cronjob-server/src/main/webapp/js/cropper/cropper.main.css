@@ -1,3 +1,6 @@
+.cropper-body {
+  margin: 2px 14px 20px 0px;
+}
 .alert{
   border-radius:4px;
   margin:10px 0 0;
@@ -28,8 +31,13 @@
   padding-left: 8px;
 }
 
+.avatar-save{
+  margin-left: 13px;
+}
+
 .avatar-upload {
   overflow: hidden;
+  margin-left: 8px;
 }
 
 .avatar-upload label {
@@ -76,6 +84,10 @@
   overflow: hidden;
 }
 
+.cropper-view-box,.cropper-face {
+  border-radius: 50%;
+}
+
 .avatar-preview:hover {
   border-color: rgba(235, 235, 235, 0.55);
   box-shadow: 0 0 5px rgba(0,0,0,.15);
@@ -88,7 +100,7 @@
 .preview-lg {
   height: 180px;
   width: 180px;
-  margin: 85px 2px 0px;
+  margin: 55px 8px 35px;
 }
 
 @media (min-width: 992px) {

@@ -73,6 +73,19 @@ public class UserService {
         queryDao.save(user);
     }
 
+    public User getUserById(Long id) {
+        return queryDao.get(User.class, id);
+    }
+
+    public void updateUser(User user) {
+        queryDao.save(user);
+    }
+
+    @Transactional(readOnly = false)
+    public User uploadimg(File file, Long userId) throws IOException {
+        return uploadDao.uploadimg(file,userId);
+    }
+
     public User queryUserById(Long id) {
         String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId WHERE userId = ?";
         return queryDao.sqlUniqueQuery(User.class, sql, id);
@@ -102,21 +115,9 @@ public class UserService {
         return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
     }
 
-    public User getUserById(Long id) {
-        return queryDao.get(User.class, id);
-    }
-
     public User getUserBySession(HttpSession session){
         return this.getUserById(Globals.getUserIdBySession(session));
     }
 
-    public void updateUser(User user) {
-        queryDao.save(user);
-    }
-
-    @Transactional(readOnly = false)
-    public User uploadimg(File file, Long userId) throws IOException {
-        return uploadDao.uploadimg(file,userId);
-    }
 
 }

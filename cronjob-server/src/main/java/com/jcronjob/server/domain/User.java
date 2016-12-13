@@ -68,7 +68,9 @@ public class User implements Serializable {
     private Blob headerpic;
 
     @Transient
-    private String hreaderPath;
+    private String headerPath;
+
+    private String cropper;//裁剪相关的数据
 
     //头像文件的后缀名字
     private  String picExtName;
@@ -185,12 +187,20 @@ public class User implements Serializable {
         this.headerpic = headerpic;
     }
 
-    public String getHreaderPath() {
-        return hreaderPath;
+    public String getHeaderPath() {
+        return headerPath;
     }
 
-    public void setHreaderPath(String hreaderPath) {
-        this.hreaderPath = hreaderPath;
+    public void setHeaderPath(String headerPath) {
+        this.headerPath = headerPath;
+    }
+
+    public String getCropper() {
+        return cropper;
+    }
+
+    public void setCropper(String cropper) {
+        this.cropper = cropper;
     }
 
     public String getPicExtName() {
@@ -230,9 +240,10 @@ public class User implements Serializable {
                 ", createTime=" + createTime +
                 ", modifyTime=" + modifyTime +
                 ", roleName='" + roleName + '\'' +
-                ", hreaderPath='" + hreaderPath + '\'' +
+                ", headerpic=" + headerpic +
+                ", headerPath='" + headerPath + '\'' +
+                ", cropper='" + cropper + '\'' +
                 ", picExtName='" + picExtName + '\'' +
                 '}';
     }
-
 }

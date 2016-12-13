@@ -34,6 +34,7 @@ import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.vo.ChartVo;
 import static  com.jcronjob.server.service.TerminalService.*;
 import com.jcronjob.server.service.*;
+import com.jcronjob.server.vo.Cropper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +203,7 @@ public class HomeController {
                 String name = user.getUserId() + "_140"+user.getPicExtName();
                 String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
-                user.setHreaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
+                user.setHeaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
             }
             WebUtils.writeJson(response,   String.format(format,"success","url","/home"));
             return;
@@ -233,13 +234,7 @@ public class HomeController {
         String successFormat = "{\"result\":\"%s\",\"state\":200}";
         String errorFormat = "{\"message\":\"%s\",\"state\":500}";
 
-
-        JSONObject corp = JSON.parseObject((String)data.get("data"));
-        Double x = corp.getDouble("x");
-        Double y = corp.getDouble("y");
-        Double width = corp.getDouble("width");
-        Double height = corp.getDouble("height");
-        int rotate = corp.getIntValue("rotate");
+        Cropper cropper = JSON.parseObject((String) data.get("data"), Cropper.class);
 
         //检查后缀
         if(!".BMP,.JPG,.JPEG,.PNG,.GIF".contains(extensionName.toUpperCase())) {
@@ -284,14 +279,17 @@ public class HomeController {
             File newFile = new File( path ,picName);
 
             //进行剪切图片操作
-            ImageUtils.abscut(viewFile, newFile, x.intValue(),y.intValue(),width.intValue(), height.intValue());
+            ImageUtils.abscut(viewFile, newFile, cropper.getX(),cropper.getY(),cropper.getWidth(), cropper.getHeight());
 
             //保存入库.....
             userService.uploadimg(newFile,userId);
+            //保持头像裁剪相关的信息到数据库
+            user.setCropper(JSON.toJSONString(cropper));
+            userService.updateUser(user);
 
             String contextPath = WebUtils.getWebUrlPath(request);
             String imgPath = contextPath+"/upload/"+picName+"?"+System.currentTimeMillis();
-            user.setHreaderPath(imgPath);
+            user.setHeaderPath(imgPath);
             user.setHeaderpic(null);
             httpSession.setAttribute(Globals.LOGIN_USER,user);
 

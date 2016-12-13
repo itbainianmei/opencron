@@ -54,39 +54,22 @@
 							<div class="avatar-upload">
 								<input class="avatar-src" name="src" type="hidden">
 								<input class="avatar-data" name="data" type="hidden">
+
 								<input type="button" value="请选择本地照片" class="btn btn-default" onclick="document.picform.file.click()">
 								<input class="avatar-input" id="avatarInput" name="file" type="file" style="display:none;">
 							</div>
 
 							<!-- Crop and preview -->
-							<div class="row">
+							<div class="row cropper-body">
 								<div class="col-md-8">
 									<div class="avatar-wrapper"></div>
 								</div>
 								<div class="col-md-4">
-									<div class="avatar-preview preview-lg" ></div>
-								</div>
-							</div>
-
-							<div class="row avatar-btns">
-								<div class="col-md-8">
-									<div class="btn-group"  style="margin-left:0px;">
-										<button class="btn btn-sm" data-method="rotate" data-option="-90" type="button" title="Rotate -90 degrees">左旋转</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="-15" type="button">-15°</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="-30" type="button">-30°</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="-45" type="button">-45°</button>
-									</div>
-									<div class="btn-group">
-										<button class="btn btn-sm" data-method="rotate" data-option="90" type="button" title="Rotate 90 degrees">右旋转</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="15" type="button">15°</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="30" type="button">30°</button>
-										<button class="btn btn-sm" data-method="rotate" data-option="45" type="button">45°</button>
-									</div>
-								</div>
-								<div class="col-md-4">
+									<div class="avatar-preview preview-lg"></div>
 									<button class="btn btn-primary btn-block avatar-save" type="submit">上传</button>
 								</div>
 							</div>
+
 						</div>
 					</div>
 				</form>
