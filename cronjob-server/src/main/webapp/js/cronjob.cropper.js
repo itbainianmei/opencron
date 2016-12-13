@@ -132,7 +132,7 @@
                         $img.attr("src",$this.$avatar.attr('src'));
                         window.clearInterval(interId);
                     }
-                },10);
+                },50);
             }
         },
 
