@@ -97,7 +97,7 @@ public class WebUtils {
      * @param <T>
      * @return
      */
-    public static <T>T getObjectFormWebScope(String key,Object obj, Class<T> clazz) {
+    public static <T>T getObject(String key, Object obj, Class<T> clazz) {
         AssertUtils.notNull(key,obj,clazz);
         if (obj instanceof HttpServletRequest) {
             HttpServletRequest request = (HttpServletRequest) obj;
