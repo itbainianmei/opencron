@@ -29,6 +29,8 @@
         this.$avatarData = this.$avatarForm.find('.avatar-data');
         this.$avatarInput = this.$avatarForm.find('.avatar-input');
         this.$avatarSave = this.$avatarForm.find('.avatar-save');
+        this.$avatarBtns = this.$avatarForm.find('.avatar-btns');
+
 
         this.$avatarWrapper = this.$avatarModal.find('.avatar-wrapper');
         this.$avatarPreview = this.$avatarModal.find('.avatar-preview');
@@ -61,6 +63,7 @@
             this.$avatarView.on('click', $.proxy(this.click, this));
             this.$avatarInput.on('change', $.proxy(this.change, this));
             this.$avatarForm.on('submit', $.proxy(this.submit, this));
+            this.$avatarBtns.on('click', $.proxy(this.rotate, this));
         },
 
         initTooltip: function () {
@@ -72,6 +75,14 @@
         initModal: function () {
             this.$avatarModal.modal({
                 show: false
+            });
+        },
+
+        initPreview: function () {
+            var url = this.$avatar.attr('src');
+            this.$avatarPreview.html('<img src="' + url + '">');
+            $(".upload-txt").click(function () {
+                document.picform.file.click();
             });
         },
 
@@ -118,22 +129,9 @@
         },
 
         click: function () {
-            var $this = this;
-            this.clear();
             this.$avatarModal.modal('show');
-
-           if(!this.active) {
-                var url = this.$avatar.attr('src');
-                this.url = url.replace("_pic","_view");
-                this.startCropper();
-                var interId = window.setInterval(function () {
-                    var $img = $this.$avatarPreview.find("img");
-                    if( $img.length>0 ) {
-                        $img.attr("src",$this.$avatar.attr('src'));
-                        window.clearInterval(interId);
-                    }
-                },50);
-            }
+            this.clear();
+            this.initPreview();
         },
 
         change: function () {
@@ -166,6 +164,7 @@
 
         submit: function () {
             if (!this.$avatarSrc.val() && !this.$avatarInput.val()) {
+                this.alert("请选择要上传的本地图片")
                 return false;
             }
 
@@ -175,6 +174,17 @@
             }
         },
 
+        rotate: function (e) {
+            var data;
+
+            if (this.active) {
+                data = $(e.target).data();
+
+                if (data.method) {
+                    this.$img.cropper(data.method, data.option);
+                }
+            }
+        },
 
 
         isImageFile: function (file) {
@@ -187,34 +197,35 @@
 
         startCropper: function () {
             var _this = this;
-            this.$img = $('<img src="' + this.url + '">');
-            this.$avatarWrapper.empty().html(this.$img);
-            this.$img.cropper({
-                autoCrop:this.active?true:false,
-                preview:this.$avatarPreview.selector,
-                aspectRatio: 1,
-                crop: function (e) {
-                    if( !this.opened && (e.width > 1 && e.height > 1) ) {
-                        _this.$avatarPreview.find('img').attr("src", _this.url);
-                        this.opened = true;
+
+            if (this.active) {
+                this.$img.cropper('replace', this.url);
+            } else {
+                this.$img = $('<img src="' + this.url + '">');
+                this.$avatarWrapper.empty().html(this.$img);
+                this.$img.cropper({
+                    aspectRatio: 1,
+                    preview: this.$avatarPreview.selector,
+                    crop: function (e) {
+                        var json = [
+                            '{"x":' + e.x,
+                            '"y":' + e.y,
+                            '"height":' + e.height,
+                            '"width":' + e.width,
+                            '"rotate":' + e.rotate + '}'
+                        ].join();
+
+                        _this.$avatarData.val(json);
                     }
-                    var json = [
-                        '{"x":' + e.x,
-                        '"y":' + e.y,
-                        '"height":' + e.height,
-                        '"width":' + e.width + '}'
-                    ].join();
+                });
 
-                    _this.$avatarData.val(json);
-                }
-            });
+                this.active = true;
+            }
 
-            this.active = true;
-
-           /* this.$avatarModal.one('hidden.bs.modal', function () {
+            this.$avatarModal.one('hidden.bs.modal', function () {
                 _this.$avatarPreview.empty();
                 _this.stopCropper();
-            });*/
+            });
         },
 
         stopCropper: function () {
@@ -222,6 +233,7 @@
                 this.$img.cropper('destroy');
                 this.$img.remove();
                 this.active = false;
+                this.$avatarWrapper.empty().html("<span class=\"upload-txt\"><span class=\"upload-add\"></span>点击上传图片并选择需要裁剪的区域</span>");
             }
         },
 
@@ -299,7 +311,7 @@
         cropDone: function () {
             this.$avatarForm.get(0).reset();
             this.$avatar.attr('src', this.url);
-            //this.stopCropper();
+            this.stopCropper();
             this.$avatarModal.modal('hide');
         },
 

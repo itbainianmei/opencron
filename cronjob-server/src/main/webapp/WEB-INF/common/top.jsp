@@ -60,15 +60,39 @@
 							</div>
 
 							<!-- Crop and preview -->
-							<div class="row cropper-body">
+							<div class="row">
 								<div class="col-md-8">
-									<div class="avatar-wrapper"></div>
+									<div class="avatar-wrapper">
+										<span class="upload-txt"><span class="upload-add"></span>点击上传图片并选择需要裁剪的区域</span>
+									</div>
 								</div>
+
 								<div class="col-md-4">
 									<div class="avatar-preview preview-lg"></div>
+								</div>
+
+							</div>
+
+							<div class="row avatar-btns">
+								<div class="col-md-8">
+									<div class="btn-group">
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-90" title="逆时针旋转90度">向左转</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-15">-15°</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30°</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45°</button>
+									</div>
+									<div class="btn-group">
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="顺时针旋转90度">向右转</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15°</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30°</button>
+										<button type="button" class="btn btn-primary" data-method="rotate" data-option="45">45°</button>
+									</div>
+								</div>
+								<div class="col-md-4">
 									<button class="btn btn-primary btn-block avatar-save" type="submit">上传</button>
 								</div>
 							</div>
+
 
 						</div>
 					</div>

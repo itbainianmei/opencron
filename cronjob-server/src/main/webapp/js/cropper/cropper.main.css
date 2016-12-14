@@ -7,6 +7,28 @@
   padding:8px;
 }
 
+.upload-txt {
+  cursor: pointer;
+  height: 25px;
+  left: 55px;
+  outline: medium none;
+  position: absolute;
+  top: 149px;
+  width: 260px;
+  color:#bfbfbf;
+  font-size: 13px;
+}
+
+.upload-add {
+  background-image: url("../../img/add.png");
+  background-size: 100% 100%;
+  float: left;
+  height: 25px;
+  margin-right: 4px;
+  width: 27px;
+  margin-top: -4px;
+}
+
 .close{
   right:0px;
   top:2px;
@@ -32,12 +54,11 @@
 }
 
 .avatar-save{
-  margin-left: 13px;
+  margin-left: 6px;
 }
 
 .avatar-upload {
   overflow: hidden;
-  margin-left: 8px;
 }
 
 .avatar-upload label {
@@ -100,7 +121,7 @@
 .preview-lg {
   height: 180px;
   width: 180px;
-  margin: 55px 8px 35px;
+  margin: 70px 3px 35px;
 }
 
 @media (min-width: 992px) {

@@ -22,7 +22,6 @@
 package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
@@ -251,27 +250,27 @@ public class HomeController {
 
         String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
 
-        String viewName= user.getUserId()+"_view" + extensionName.toLowerCase();
+        String viewName= user.getUserId() + extensionName.toLowerCase();
 
-        File viewFile = new File(path, viewName);
-        if (!viewFile.exists()) {
-            viewFile.mkdirs();
+        File srcFile = new File(path, viewName);
+        if (!srcFile.exists()) {
+            srcFile.mkdirs();
         }
 
         try {
-            file.transferTo(viewFile);
+            file.transferTo(srcFile);
             //检查文件是不是图片
-            Image image= ImageIO.read(viewFile);
+            Image image= ImageIO.read(srcFile);
             if (image == null) {
                 WebUtils.writeJson( response, String.format(errorFormat,"格式错误,正确的图片"));
-                viewFile.delete();
+                srcFile.delete();
                 return;
             }
 
             //检查文件大小
-            if (viewFile.length()/1024/1024 > 5) {
+            if (srcFile.length()/1024/1024 > 5) {
                 WebUtils.writeJson( response, String.format(errorFormat,"文件错误,上传图片大小不能超过5M"));
-                viewFile.delete();
+                srcFile.delete();
                 return;
             }
 
@@ -279,12 +278,13 @@ public class HomeController {
             File newFile = new File( path ,picName);
 
             //进行剪切图片操作
-            ImageUtils.abscut(viewFile, newFile, cropper.getX(),cropper.getY(),cropper.getWidth(), cropper.getHeight());
+            ImageUtils.abscut(srcFile, newFile, cropper.getX(),cropper.getY(),cropper.getWidth(), cropper.getHeight());
+
+            //删除原图
+            srcFile.deleteOnExit();
 
             //保存入库.....
             userService.uploadimg(newFile,userId);
-            //保持头像裁剪相关的信息到数据库
-            user.setCropper(JSON.toJSONString(cropper));
             userService.updateUser(user);
 
             String contextPath = WebUtils.getWebUrlPath(request);

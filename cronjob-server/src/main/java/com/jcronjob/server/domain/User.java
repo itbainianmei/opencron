@@ -70,8 +70,6 @@ public class User implements Serializable {
     @Transient
     private String headerPath;
 
-    private String cropper;//裁剪相关的数据
-
     //头像文件的后缀名字
     private  String picExtName;
 
@@ -195,14 +193,6 @@ public class User implements Serializable {
         this.headerPath = headerPath;
     }
 
-    public String getCropper() {
-        return cropper;
-    }
-
-    public void setCropper(String cropper) {
-        this.cropper = cropper;
-    }
-
     public String getPicExtName() {
         return picExtName;
     }
@@ -242,7 +232,6 @@ public class User implements Serializable {
                 ", roleName='" + roleName + '\'' +
                 ", headerpic=" + headerpic +
                 ", headerPath='" + headerPath + '\'' +
-                ", cropper='" + cropper + '\'' +
                 ", picExtName='" + picExtName + '\'' +
                 '}';
     }
