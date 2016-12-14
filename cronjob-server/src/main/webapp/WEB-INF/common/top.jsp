@@ -114,7 +114,7 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" id="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}_pic${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>">
+					<img class="profile-pic" id="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>">
 					<div class="change-text" id="change-img" href="javascript:void(0);">更换头像</div>
 				</a>
 				<h4 class="m-0">${cronjob_user.userName}</h4>
