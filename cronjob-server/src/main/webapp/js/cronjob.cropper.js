@@ -231,8 +231,10 @@
         stopCropper: function () {
             if (this.active) {
                 this.$img.cropper('destroy');
+                this.$avatarModal.modal('hide');
                 this.$img.remove();
                 this.active = false;
+                this.$avatarPreview.empty();
                 this.$avatarWrapper.empty().html("<span class=\"upload-txt\"><span class=\"upload-add\"></span>点击上传图片并选择需要裁剪的区域</span>");
             }
         },
@@ -312,7 +314,6 @@
             this.$avatarForm.get(0).reset();
             this.$avatar.attr('src', this.url);
             this.stopCropper();
-            this.$avatarModal.modal('hide');
         },
 
         alert: function (msg) {

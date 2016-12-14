@@ -1,369 +1,246 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.jcronjob.common.utils;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.color.ColorSpace;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.Kernel;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
 /**
- * 图片剪切工具类
- *
+ * Created by evilgod528 on 15/2/11.
  */
 public class ImageUtils {
-	
-	/** 
-     * 图像切割（改）     * 
-     * @param srcImageFile            源图像地址
-     * @param dirImageFile            新图像地址
-     * @param x                       目标切片起点x坐标
-     * @param y                      目标切片起点y坐标
-     * @param destWidth              目标切片宽度
-     * @param destHeight             目标切片高度
-     */
-    public static void abscut(File srcImageFile,File dirImageFile, int x, int y, int destWidth,int destHeight) {
-        try {
-            Image img;
-            ImageFilter cropFilter;
-            // 读取源图像
-            BufferedImage bi = ImageIO.read(srcImageFile);
-            int srcWidth = bi.getWidth(); // 源图宽度
-            int srcHeight = bi.getHeight(); // 源图高度          
-            if (srcWidth >= destWidth && srcHeight >= destHeight) {
-                Image image = bi.getScaledInstance(srcWidth, srcHeight,Image.SCALE_SMOOTH);
-                // 改进的想法:是否可用多线程加快切割速度
-                // 四个参数分别为图像起点坐标和宽高
-                // 即: CropImageFilter(int x,int y,int width,int height)
-                cropFilter = new CropImageFilter(x, y, destWidth, destHeight);
-                img = Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(image.getSource(), cropFilter));
-                
-//                destWidth = destWidth<100?destWidth:100;
-//                destHeight = destHeight<100?destHeight:100;
-                
-                BufferedImage tag = new BufferedImage(destWidth, destHeight,  BufferedImage.TYPE_INT_RGB);
-                Graphics g = tag.getGraphics();
-                g.drawImage(img, 0, 0, null); // 绘制缩小后的图
-                g.dispose();
-                // 输出为文件
-                ImageIO.write(tag, "JPEG", dirImageFile);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    private File originImage;
+    //正在处理的内存中的图片
+    private static BufferedImage bufferedImage;
+    private static BufferedImage dealedImage;
+
+    private static ImageUtils imageUtils;
+
+    //获取实例
+    public static ImageUtils instance(File image) throws IOException {
+        if(image.exists()) {
+            imageUtils = new ImageUtils();
+            imageUtils.originImage = image;
+            imageUtils.bufferedImage = ImageIO.read(image);
+            imageUtils.dealedImage = imageUtils.bufferedImage;
+            return imageUtils;
+        }else{
+            throw new FileNotFoundException("图片文件文件不存在");
         }
     }
 
-    
-	/**
-	 * 缩放图像
-	 * 
-	 * @param srcImageFile       源图像文件地址
-	 * @param dirImageFile       缩放后的图像地址
-	 * @param scale              缩放比例
-	 * @param flag               缩放选择:true 放大; false 缩小;
-	 */
-	public static float scale(File srcImageFile, File dirImageFile, int scale,boolean flag) {
+    private String getFileType(String imageName){
+        String imageType = "jpg";
+        int index = imageName.lastIndexOf(".");
+        if(index!=-1 && index!=imageName.length()){
+            imageType = imageName.substring(index+1);
+        }
+        return imageType;
+    }
 
-		try {
-			BufferedImage src = ImageIO.read(srcImageFile); // 读入文件
-			int width = src.getWidth(); // 得到源图宽
-			int height = src.getHeight(); // 得到源图长
-			
-			float n = width>height?width:height;
-			float f = n>300f?n/300f:scale;
+    public boolean build(){
+        String imageType = getFileType(originImage.getName());
+        try {
+            ImageIO.write(dealedImage,imageType,originImage);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-			if (flag) {
-				// 放大
-				width = width * scale;
-				height = height * scale;
-			} else {
-				// 缩小
-				width = (int) (width / f);
-				height = (int) (height / f);
-			}
-			
-			if(n > 300f){//如果大于300则缩小图片
-				Image image = src.getScaledInstance(width, height,Image.SCALE_SMOOTH);
-				BufferedImage tag = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
-				Graphics g = tag.getGraphics();
-				g.drawImage(image, 0, 0, null); // 绘制缩小后的图
-				g.dispose();
-				ImageIO.write(tag, "JPEG", dirImageFile);// 输出到文件流
-			} else if (width>=140&&height>=140) {//宽高小与300,140.直接返回原图
-				FileOutputStream fos1=new FileOutputStream(dirImageFile);
-				//对文件进行读操作
-				FileInputStream fis=new FileInputStream(srcImageFile);
-				byte[] buffer=new byte[ 1024*8 ];
-				int len=0;
-				//读入流，保存至byte数组
-				while((len=fis.read(buffer))>0){
-					fos1.write(buffer,0,len);
-				}
-				fos1.close();
-				fis.close();
-				f = 1f;
-			}else {//宽或高有小于140的,需要裁剪....
-				zoom(srcImageFile,dirImageFile,140,140);
-				f=-1f;//缩小。。
-			}
-			return f;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    //生成处理后的图片，若参数为null，则修改原始图片
+    public boolean build(File disposedImage){
+        boolean flag = false;
+        if(disposedImage==null){
+            disposedImage = originImage;
+        }
+        String imageType = getFileType(disposedImage.getName());
+        try {
+            flag = ImageIO.write(dealedImage,imageType,disposedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+    //图片缩放处理
+    public ImageUtils scale(int width, int height){
+        BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = newImg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(this.dealedImage, 0, 0, width, height, null);
+        this.dealedImage = newImg;
+        g.dispose();
 
-		return 1f;
-	}
-	
-	/**
-	 * 重新生成按指定宽度和高度的图像
-	 * @param srcImageFile       源图像文件地址
-	 * @param result             新的图像地址
-	 * @param _width             设置新的图像宽度
-	 * @param _height            设置新的图像高度
-	 */
-	public static void scale(String srcImageFile, String result, int _width,int _height) {		
-		scale(srcImageFile,result,_width,_height,0,0);
-	}
-	
-	public static void scale(String srcImageFile, String result, int _width,int _height,int x,int y) {
-		try {
-			
-			BufferedImage src = ImageIO.read(new File(srcImageFile)); // 读入文件
-			
-			int width = src.getWidth(); // 得到源图宽
-			int height = src.getHeight(); // 得到源图长
-			
-			if (width > _width) {
-				 width = _width;
-			}
-			if (height > _height) {
-				height = _height;
-			}			
-			Image image = src.getScaledInstance(width, height,Image.SCALE_SMOOTH);
-			BufferedImage tag = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
-			Graphics g = tag.getGraphics();
-			g.drawImage(image, x, y, null); // 绘制缩小后的图
-			g.dispose();	
-			
-//			FileOutputStream out = new FileOutputStream(result);        
-//	        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);        
-//	        JPEGEncodeParam jep = JPEGCodec.getDefaultJPEGEncodeParam(tag);  
-            /* 压缩质量 */  
-//            jep.setQuality(0.5f, true);  
-//            encoder.encode(tag, jep);  
-           /*近JPEG编码*/  
-//	        out.close(); 
-	        
-			ImageIO.write(tag, "JPEG", new File(result));// 输出到文件流
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 重新生成按指定宽度和高度的图像
-	 * @param imageFile       源图像文件
-	 * @param result             新的图像地址
-	 * @param _width             设置新的图像宽度
-	 * @param _height            设置新的图像高度
-	 */
-	public static void scale(File imageFile, String result, int _width,int _height,int x,int y) {
-		try {
-			
-			BufferedImage src = ImageIO.read(imageFile); // 读入文件
-			
-			int width = src.getWidth(); // 得到源图宽
-			int height = src.getHeight(); // 得到源图长
-			
-			if (width > _width) {
-				 width = _width;
-			}
-			if (height > _height) {
-				height = _height;
-			}			
-			Image image = src.getScaledInstance(width, height,Image.SCALE_SMOOTH);
-			BufferedImage tag = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
-			Graphics g = tag.getGraphics();
-			g.drawImage(image, x, y, null); // 绘制缩小后的图
-			g.dispose();			
-			ImageIO.write(tag, "JPEG", new File(result));// 输出到文件流
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * 图像类型转换 GIF->JPG GIF->PNG PNG->JPG PNG->GIF(X)
-	 */
-	public static void convert(String source, String result) {
-		try {
-			File f = new File(source);
-			f.canRead();
-			f.canWrite();
-			BufferedImage src = ImageIO.read(f);
-			ImageIO.write(src, "JPG", new File(result));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        return this;
+    }
+    //剪切处理
+    public ImageUtils clip(int srcX, int srcY, int width, int height){
+        BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = newImg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, width, height);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawImage(this.dealedImage, 0, 0, width, height, srcX, srcY, srcX + width, srcY + height, null);
+        this.dealedImage = newImg;
+        g.dispose();
 
-	/**
-	 * 彩色转为黑白
-	 * 
-	 * @param source
-	 * @param result
-	 */
-	public static void gray(String source, String result) {
-		try {
-			BufferedImage src = ImageIO.read(new File(source));
-			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-			ColorConvertOp op = new ColorConvertOp(cs, null);
-			src = op.filter(src, null);
-			ImageIO.write(src, "JPEG", new File(result));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}	
-	
-	/**
-	 * 老外写的图片缩放 支持jdk1.6 不支持jdk1.6以上版本
-	 * @param srcImageFile
-	 * @param result
-	 * @param newWidth
-	 * @param quality
-	 * @throws IOException
-	 */
-	 public static void resize(String srcImageFile, String result,  
-	            int newWidth, float quality) throws IOException {  
-	  
-		 File originalFile = new File(srcImageFile);
-		 
-	        if (quality > 1) {  
-	            throw new IllegalArgumentException(  
-	                    "Quality has to be between 0 and 1");  
-	        }  
-	  
-	        ImageIcon ii = new ImageIcon(originalFile.getCanonicalPath());  
-	        Image i = ii.getImage();  
-	        Image resizedImage = null;  
-	  
-	        int iWidth = i.getWidth(null);  
-	        int iHeight = i.getHeight(null);  
-	  
-	        if (iWidth > iHeight) {  
-	            resizedImage = i.getScaledInstance(newWidth, (newWidth * iHeight)  
-	                    / iWidth, Image.SCALE_SMOOTH);  
-	        } else {  
-	            resizedImage = i.getScaledInstance((newWidth * iWidth) / iHeight,  
-	                    newWidth, Image.SCALE_SMOOTH);  
-	        }  
-	  
-	        // This code ensures that all the pixels in the image are loaded.  
-	        Image temp = new ImageIcon(resizedImage).getImage();  
-	  
-	        // Create the buffered image.  
-	        BufferedImage bufferedImage = new BufferedImage(temp.getWidth(null),  
-	                temp.getHeight(null), BufferedImage.TYPE_INT_RGB);  
-	  
-	        // Copy image to buffered image.  
-	        Graphics g = bufferedImage.createGraphics();  
-	  
-	        // Clear background and paint the image.  
-	        g.setColor(Color.white);  
-	        g.fillRect(0, 0, temp.getWidth(null), temp.getHeight(null));  
-	        g.drawImage(temp, 0, 0, null);  
-	        g.dispose();  
-	  
-	        // Soften.  
-	        float softenFactor = 0.05f;  
-	        float[] softenArray = { 0, softenFactor, 0, softenFactor,  
-	                1 - (softenFactor * 4), softenFactor, 0, softenFactor, 0 };  
-	        Kernel kernel = new Kernel(3, 3, softenArray);  
-	        ConvolveOp cOp = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);  
-	        bufferedImage = cOp.filter(bufferedImage, null);  
-	  
-	        // Write the jpeg to a file.  
-//	        FileOutputStream out = new FileOutputStream(result);
-	  
-	        // Encodes image as a JPEG data stream  
-//	        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);  
-//	  
-//	        JPEGEncodeParam param = encoder  
-//	                .getDefaultJPEGEncodeParam(bufferedImage);  
-//	  
-//	        param.setQuality(quality, true);  
-	  
-//	        encoder.setJPEGEncodeParam(param);  
-//	        encoder.encode(bufferedImage);
-	    } 
-	
-	 /**
-		 * 图片缩放(图片等比例缩放为指定大小，空白部分以白色填充)
-		 * 
-		 * @param srcImageFile
-		 *            源图片
-		 * @param dirImageFile
-		 *            缩放后的图片文件
-		 */
-		public static void zoom(File srcImageFile, File dirImageFile, int destHeight, int destWidth) {
-			try {
-				BufferedImage srcBufferedImage = ImageIO.read(srcImageFile);
-				int imgWidth = destWidth;
-				int imgHeight = destHeight;
-				int srcWidth = srcBufferedImage.getWidth();
-				int srcHeight = srcBufferedImage.getHeight();
-				if (srcHeight >= srcWidth) {
-					imgWidth = (int) Math.round(((destHeight * 1.0 / srcHeight) * srcWidth));
-				} else {
-					imgHeight = (int) Math.round(((destWidth * 1.0 / srcWidth) * srcHeight));
-				}
-				BufferedImage destBufferedImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
-				Graphics2D graphics2D = destBufferedImage.createGraphics();
-				graphics2D.setBackground(Color.WHITE);
-				graphics2D.clearRect(0, 0, destWidth, destHeight);
-				graphics2D.drawImage(srcBufferedImage.getScaledInstance(imgWidth, imgHeight, Image.SCALE_SMOOTH), (destWidth / 2) - (imgWidth / 2), (destHeight / 2) - (imgHeight / 2), null);
-				graphics2D.dispose();
-				ImageIO.write(destBufferedImage, "JPEG", dirImageFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		/**
-		 * 处理透明图片
-		 * 
-		 * @param srcImageFile
-		 *            源图片
-		 */
-		public static void zoom(File srcImageFile) {
-			try {
-				BufferedImage srcBufferedImage = ImageIO.read(srcImageFile);
-				int srcWidth = srcBufferedImage.getWidth();
-				int srcHeight = srcBufferedImage.getHeight();
-				BufferedImage destBufferedImage = new BufferedImage(srcWidth, srcHeight, BufferedImage.TYPE_INT_RGB);
-				Graphics2D graphics2D = destBufferedImage.createGraphics();
-				graphics2D.setBackground(Color.WHITE);
-				graphics2D.clearRect(0, 0, srcWidth, srcHeight);
-				graphics2D.drawImage(srcBufferedImage.getScaledInstance(srcWidth, srcHeight, Image.SCALE_SMOOTH), (srcWidth / 2) - (srcWidth / 2), (srcHeight / 2) - (srcHeight / 2), null);
-				graphics2D.dispose();
-				ImageIO.write(destBufferedImage, "JPEG", new File(srcImageFile.getPath()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+        return this;
+    }
+    //angle：角度，图片旋转角度
+    public ImageUtils rotate(int angle){
+        if (angle == 0) {
+            return this;
+        }
+        int width = this.dealedImage.getWidth();
+        int height = this.dealedImage.getHeight();
+        int new_w = 0, new_h = 0;
+        int new_radian = angle;
+        if (angle <= 90) {
+            new_w = (int) (width * Math.cos(Math.toRadians(new_radian)) + height * Math.sin(Math.toRadians(new_radian)));
+            new_h = (int) (height * Math.cos(Math.toRadians(new_radian)) + width * Math.sin(Math.toRadians(new_radian)));
+        } else if (angle <= 180) {
+            new_radian = angle - 90;
+            new_w = (int) (height * Math.cos(Math.toRadians(new_radian)) + width * Math.sin(Math.toRadians(new_radian)));
+            new_h = (int) (width * Math.cos(Math.toRadians(new_radian)) + height * Math.sin(Math.toRadians(new_radian)));
+        } else if (angle <= 270) {
+            new_radian = angle - 180;
+            new_w = (int) (width * Math.cos(Math.toRadians(new_radian)) + height * Math.sin(Math.toRadians(new_radian)));
+            new_h = (int) (height * Math.cos(Math.toRadians(new_radian)) + width * Math.sin(Math.toRadians(new_radian)));
+        } else {
+            new_radian = angle - 270;
+            new_w = (int) (height * Math.cos(Math.toRadians(new_radian)) + width * Math.sin(Math.toRadians(new_radian)));
+            new_h = (int) (width * Math.cos(Math.toRadians(new_radian)) + height * Math.sin(Math.toRadians(new_radian)));
+        }
+        BufferedImage toStore = new BufferedImage(new_w, new_h, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = toStore.createGraphics();
+        AffineTransform affineTransform = new AffineTransform();
+        affineTransform.rotate(Math.toRadians(angle), width / 2, height / 2);
+        if (angle != 180) {
+            AffineTransform translationTransform = this.findTranslation(affineTransform, this.dealedImage, angle);
+            affineTransform.preConcatenate(translationTransform);
+        }
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, new_w, new_h);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawRenderedImage(this.dealedImage, affineTransform);
+        g.dispose();
+        this.dealedImage = toStore;
+
+        return this;
+    }
+    //isVertical:true,垂直翻转 ; false,水平翻转
+    public ImageUtils reverse(boolean isVertical){
+        int width = this.dealedImage.getWidth();
+        int height = this.dealedImage.getHeight();
+        double[] matrix;
+        if(isVertical){
+            matrix = new double[]{1, 0, 0, -1, 0,height};
+        }else {
+            matrix = new double[]{-1, 0, 0, 1,width,0};
+        }
+        AffineTransform affineTransform = new AffineTransform(matrix);
+        BufferedImage newImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = newImg.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.drawRenderedImage(this.dealedImage, affineTransform);
+        g.dispose();
+        this.dealedImage = newImg;
+
+        return this;
+    }
+    private AffineTransform findTranslation(AffineTransform at, BufferedImage bi, int angle) {//45
+        Point2D p2din, p2dout;
+        double ytrans = 0.0, xtrans = 0.0;
+        if (angle <= 90) {
+            p2din = new Point2D.Double(0.0, 0.0);
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+            p2din = new Point2D.Double(0, bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+        }
+        /*else if(angle<=135){
+            p2din = new Point2D.Double(0.0, bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+            p2din = new Point2D.Double(bi.getWidth(),bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+
+        }*/
+        else if (angle <= 180) {
+            p2din = new Point2D.Double(0.0, bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+            p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+
+        }
+        /*else if(angle<=225){
+            p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+            p2din = new Point2D.Double(bi.getWidth(),0.0);
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+
+        }*/
+        else if (angle <= 270) {
+            p2din = new Point2D.Double(bi.getWidth(), bi.getHeight());
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+            p2din = new Point2D.Double(bi.getWidth(), 0.0);
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+
+        } else {
+            p2din = new Point2D.Double(bi.getWidth(), 0.0);
+            p2dout = at.transform(p2din, null);
+            ytrans = p2dout.getY();
+
+
+            p2din = new Point2D.Double(0.0, 0.0);
+            p2dout = at.transform(p2din, null);
+            xtrans = p2dout.getX();
+
+        }
+        AffineTransform tat = new AffineTransform();
+        tat.translate(-xtrans, -ytrans);
+        return tat;
+    }
 
 }

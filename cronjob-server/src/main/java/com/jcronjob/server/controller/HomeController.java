@@ -22,17 +22,16 @@
 package com.jcronjob.server.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.jcronjob.common.job.Cronjob;
+import com.jcronjob.common.job.Response;
 import com.jcronjob.common.utils.*;
+import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.common.job.Cronjob;
-import com.jcronjob.common.job.Response;
-import com.jcronjob.server.domain.Agent;
+import com.jcronjob.server.service.*;
 import com.jcronjob.server.tag.Page;
 import com.jcronjob.server.vo.ChartVo;
-import static  com.jcronjob.server.service.TerminalService.*;
-import com.jcronjob.server.service.*;
 import com.jcronjob.server.vo.Cropper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,6 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -57,6 +55,7 @@ import java.util.Map;
 
 import static com.jcronjob.common.utils.CommonUtils.isEmpty;
 import static com.jcronjob.common.utils.CommonUtils.notEmpty;
+import static com.jcronjob.server.service.TerminalService.TerminalSession;
 
 /**
  * Created by ChenHui on 2016/2/17.
@@ -94,13 +93,13 @@ public class HomeController {
         /**
          * agent...
          */
-        List<Agent> success = agentService.getAgentByStatus(1,session);
-        List<Agent> failed = agentService.getAgentByStatus(0,session);
-        model.addAttribute("success",success.size());
-        model.addAttribute("failed",failed.size());
+        List<Agent> success = agentService.getAgentByStatus(1, session);
+        List<Agent> failed = agentService.getAgentByStatus(0, session);
+        model.addAttribute("success", success.size());
+        model.addAttribute("failed", failed.size());
 
         success.addAll(failed);
-        model.addAttribute("agents",success);
+        model.addAttribute("agents", success);
 
         /**
          * job
@@ -108,9 +107,9 @@ public class HomeController {
         List<Job> singleton = jobService.getJobsByJobType(Cronjob.JobType.SINGLETON, session);
         List<Job> flow = jobService.getJobsByJobType(Cronjob.JobType.FLOW, session);
 
-        model.addAttribute("singleton",singleton.size());
-        model.addAttribute("flow",flow.size());
-        model.addAttribute("job",singleton.size()+flow.size());
+        model.addAttribute("singleton", singleton.size());
+        model.addAttribute("flow", flow.size());
+        model.addAttribute("job", singleton.size() + flow.size());
 
         /**
          * 成功作业,自动执行
@@ -118,18 +117,18 @@ public class HomeController {
         Long successAutoRecord = recordService.getRecords(1, Cronjob.ExecType.AUTO, session);
         Long successOperRecord = recordService.getRecords(1, Cronjob.ExecType.OPERATOR, session);
 
-        model.addAttribute("successAutoRecord",successAutoRecord);
-        model.addAttribute("successOperRecord",successOperRecord);
-        model.addAttribute("successRecord",successAutoRecord+successOperRecord);
+        model.addAttribute("successAutoRecord", successAutoRecord);
+        model.addAttribute("successOperRecord", successOperRecord);
+        model.addAttribute("successRecord", successAutoRecord + successOperRecord);
 
         /**
          * 失败作业
          */
         Long failedAutoRecord = recordService.getRecords(0, Cronjob.ExecType.AUTO, session);
         Long failedOperRecord = recordService.getRecords(0, Cronjob.ExecType.OPERATOR, session);
-        model.addAttribute("failedAutoRecord",failedAutoRecord);
-        model.addAttribute("failedOperRecord",failedOperRecord);
-        model.addAttribute("failedRecord",failedAutoRecord+failedOperRecord);
+        model.addAttribute("failedAutoRecord", failedAutoRecord);
+        model.addAttribute("failedOperRecord", failedOperRecord);
+        model.addAttribute("failedRecord", failedAutoRecord + failedOperRecord);
 
 
         model.addAttribute("startTime", DateUtils.getCurrDayPrevDay(7));
@@ -139,7 +138,7 @@ public class HomeController {
     }
 
     @RequestMapping("/record")
-    public void record(HttpServletResponse response,HttpSession session, String startTime, String endTime) {
+    public void record(HttpServletResponse response, HttpSession session, String startTime, String endTime) {
         if (isEmpty(startTime)) {
             startTime = DateUtils.getCurrDayPrevDay(7);
         }
@@ -150,7 +149,7 @@ public class HomeController {
         List<ChartVo> voList = recordService.getRecord(startTime, endTime, session);
         if (isEmpty(voList)) {
             WebUtils.writeJson(response, "null");
-        }else {
+        } else {
             WebUtils.writeJson(response, JSON.toJSONString(voList));
         }
     }
@@ -168,14 +167,14 @@ public class HomeController {
         if (agent.getProxy().equals(Cronjob.ConnType.CONN.getType())) {
             String port = req.getResult().get("port");
             String url = String.format("http://%s:%s", agent.getIp(), port);
-            WebUtils.writeHtml(response, String.format(format,agent.getProxy(), url));
+            WebUtils.writeHtml(response, String.format(format, agent.getProxy(), url));
         } else {//代理
-            WebUtils.writeHtml(response, String.format(format,agent.getProxy(),JSON.toJSONString(req.getResult())) );
+            WebUtils.writeHtml(response, String.format(format, agent.getProxy(), JSON.toJSONString(req.getResult())));
         }
     }
 
     @RequestMapping("/login")
-    public void login(HttpServletRequest request,HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
+    public void login(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
         //用户信息验证
         int status = homeService.checkLogin(httpSession, username, password);
 
@@ -194,17 +193,17 @@ public class HomeController {
             String format = "{\"status\":\"%s\",\"%s\":\"%s\"}";
 
             if (user.getUserName().equals("cronjob") && user.getPassword().equals(hashPass)) {
-                WebUtils.writeJson(response,String.format(format,"edit","userId",user.getUserId()) );
+                WebUtils.writeJson(response, String.format(format, "edit", "userId", user.getUserId()));
                 return;
             }
 
-            if (user.getHeaderpic()!=null) {
-                String name = user.getUserId() + "_140"+user.getPicExtName();
+            if (user.getHeaderpic() != null) {
+                String name = user.getUserId() + "_140" + user.getPicExtName();
                 String path = httpSession.getServletContext().getRealPath(File.separator) + "upload" + File.separator + name;
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
-                user.setHeaderPath(WebUtils.getWebUrlPath(request)+"/upload/"+name);
+                user.setHeaderPath(WebUtils.getWebUrlPath(request) + "/upload/" + name);
             }
-            WebUtils.writeJson(response,   String.format(format,"success","url","/home"));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home"));
             return;
         }
     }
@@ -225,9 +224,9 @@ public class HomeController {
     public void upload(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam Long userId, @RequestParam Map data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
 
         String extensionName = null;
-        if (file!=null) {
+        if (file != null) {
             extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-            extensionName = extensionName.replaceAll("\\?\\d+$","");
+            extensionName = extensionName.replaceAll("\\?\\d+$", "");
         }
 
         String successFormat = "{\"result\":\"%s\",\"state\":200}";
@@ -236,68 +235,62 @@ public class HomeController {
         Cropper cropper = JSON.parseObject((String) data.get("data"), Cropper.class);
 
         //检查后缀
-        if(!".BMP,.JPG,.JPEG,.PNG,.GIF".contains(extensionName.toUpperCase())) {
-            WebUtils.writeJson( response, String.format(errorFormat,"格式错误,请上传(bmp,jpg,jpeg,png,gif)格式的图片"));
+        if (!".BMP,.JPG,.JPEG,.PNG,.GIF".contains(extensionName.toUpperCase())) {
+            WebUtils.writeJson(response, String.format(errorFormat, "格式错误,请上传(bmp,jpg,jpeg,png,gif)格式的图片"));
             return;
         }
 
         User user = userService.getUserById(userId);
 
-        if (user==null) {
-            WebUtils.writeJson( response, String.format(errorFormat,"用户信息获取失败"));
+        if (user == null) {
+            WebUtils.writeJson(response, String.format(errorFormat, "用户信息获取失败"));
             return;
         }
 
-        String path = httpSession.getServletContext().getRealPath("/")+"upload"+File.separator;
+        String path = httpSession.getServletContext().getRealPath("/") + "upload" + File.separator;
 
-        String viewName= user.getUserId() + extensionName.toLowerCase();
+        String picName = user.getUserId() + extensionName.toLowerCase();
 
-        File srcFile = new File(path, viewName);
-        if (!srcFile.exists()) {
-            srcFile.mkdirs();
+        File picFile = new File(path, picName);
+        if (!picFile.exists()) {
+            picFile.mkdirs();
         }
 
         try {
-            file.transferTo(srcFile);
+            file.transferTo(picFile);
             //检查文件是不是图片
-            Image image= ImageIO.read(srcFile);
+            Image image = ImageIO.read(picFile);
             if (image == null) {
-                WebUtils.writeJson( response, String.format(errorFormat,"格式错误,正确的图片"));
-                srcFile.delete();
+                WebUtils.writeJson(response, String.format(errorFormat, "格式错误,正确的图片"));
+                picFile.delete();
                 return;
             }
 
             //检查文件大小
-            if (srcFile.length()/1024/1024 > 5) {
-                WebUtils.writeJson( response, String.format(errorFormat,"文件错误,上传图片大小不能超过5M"));
-                srcFile.delete();
+            if (picFile.length() / 1024 / 1024 > 5) {
+                WebUtils.writeJson(response, String.format(errorFormat, "文件错误,上传图片大小不能超过5M"));
+                picFile.delete();
                 return;
             }
 
-            String picName = user.getUserId()+"_pic" + extensionName.toLowerCase();
-            File newFile = new File( path ,picName);
-
-            //进行剪切图片操作
-            ImageUtils.abscut(srcFile, newFile, cropper.getX(),cropper.getY(),cropper.getWidth(), cropper.getHeight());
-
-            //删除原图
-            srcFile.deleteOnExit();
+            //旋转并且裁剪
+            ImageUtils.instance(picFile).rotate(cropper.getRotate()).clip(cropper.getX(),cropper.getY(),cropper.getWidth(),cropper.getHeight()).build();
 
             //保存入库.....
-            userService.uploadimg(newFile,userId);
+            userService.uploadimg(picFile, userId);
             userService.updateUser(user);
 
             String contextPath = WebUtils.getWebUrlPath(request);
-            String imgPath = contextPath+"/upload/"+picName+"?"+System.currentTimeMillis();
+            String imgPath = contextPath + "/upload/" + picName + "?" + System.currentTimeMillis();
             user.setHeaderPath(imgPath);
             user.setHeaderpic(null);
-            httpSession.setAttribute(Globals.LOGIN_USER,user);
+            httpSession.setAttribute(Globals.LOGIN_USER, user);
 
-            WebUtils.writeJson( response, String.format(successFormat,imgPath));
-            logger.info(" upload file successful @ "+picName);
+            WebUtils.writeJson(response, String.format(successFormat, imgPath));
+            logger.info(" upload file successful @ " + picName);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("upload exception:"+e.getMessage());
+            logger.info("upload exception:" + e.getMessage());
         }
     }
 
@@ -311,26 +304,27 @@ public class HomeController {
         if (notEmpty(sendTime)) {
             model.addAttribute("sendTime", sendTime);
         }
-        homeService.getLog(session,page, agentId, sendTime);
+        homeService.getLog(session, page, agentId, sendTime);
         return "notice/view";
     }
 
 
     @RequestMapping("/notice/uncount")
     public void uncount(HttpSession session, HttpServletResponse response) {
-         Long count = homeService.getUnReadCount(session);
-         WebUtils.writeHtml(response,count.toString());
+        Long count = homeService.getUnReadCount(session);
+        WebUtils.writeHtml(response, count.toString());
     }
 
     /**
      * 未读取的站类信
+     *
      * @param session
      * @param model
      * @return
      */
     @RequestMapping("/notice/unread")
     public String nuread(HttpSession session, Model model) {
-        model.addAttribute("message",homeService.getUnReadMessage(session));
+        model.addAttribute("message", homeService.getUnReadMessage(session));
         return "notice/info";
     }
 
