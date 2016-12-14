@@ -119,6 +119,19 @@ public class ImageUtils {
         if (angle == 0) {
             return this;
         }
+
+        if (angle>360) {
+            angle = Math.abs(angle)%360;
+        }
+
+        if (angle<0){
+            if (Math.abs(angle)<360) {
+                angle = 360+angle;
+            }else {
+                angle =(Math.abs(angle)/360+1)*360+angle;
+            }
+        }
+
         int width = this.dealedImage.getWidth();
         int height = this.dealedImage.getHeight();
         int new_w = 0, new_h = 0;
