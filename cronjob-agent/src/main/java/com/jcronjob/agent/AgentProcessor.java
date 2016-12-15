@@ -37,6 +37,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,8 +52,6 @@ public class AgentProcessor implements Cronjob.Iface {
 
     private String password;
 
-    private Integer agentPort;
-
     private Integer socketPort;
 
     private final String EXITCODE_KEY = "exitCode";
@@ -65,9 +64,8 @@ public class AgentProcessor implements Cronjob.Iface {
 
     private Map<String,AgentHeartBeat> agentHeartBeatMap = new ConcurrentHashMap<String, AgentHeartBeat>(0);
 
-    public AgentProcessor(String password, Integer agentPort) {
+    public AgentProcessor(String password) {
         this.password = password;
-        this.agentPort = agentPort;
     }
 
     @Override
@@ -406,5 +404,71 @@ public class AgentProcessor implements Cronjob.Iface {
         return resultMap;
     }
 
+    class AgentHeartBeat {
+
+        private String serverIp;
+        private int port;
+        private String clientIp;
+        private Socket socket;
+        private boolean running = false;
+        private long lastSendTime;
+
+        private Logger logger = LoggerFactory.getLogger(AgentHeartBeat.class);
+
+
+        public AgentHeartBeat(String serverIp, int port, String clientIp) {
+            this.serverIp = serverIp;
+            this.port = port;
+            this.clientIp = clientIp;
+        }
+
+        public void start() throws IOException {
+            if (running) return;
+            socket = new Socket(serverIp, port);
+            lastSendTime = System.currentTimeMillis();
+            running = true;
+            new Thread(new KeepAliveWatchDog()).start();
+        }
+
+        public void stop() {
+            if (running) {
+                running = false;
+            }
+        }
+
+        public void sendObject(Object obj) throws IOException {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(obj);
+            logger.info("[cronjob]:heartBeat:" + this.lastSendTime);
+            oos.flush();
+        }
+
+        class KeepAliveWatchDog implements Runnable {
+            long checkDelay = 10;
+            long keepAliveDelay = 5000;
+
+            public void run() {
+                while (running) {
+                    if (System.currentTimeMillis() - lastSendTime > keepAliveDelay) {
+                        lastSendTime = System.currentTimeMillis();
+                        try {
+                            AgentHeartBeat.this.sendObject(AgentHeartBeat.this.clientIp);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            AgentHeartBeat.this.stop();
+                        }
+                    } else {
+                        try {
+                            Thread.sleep(checkDelay);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            AgentHeartBeat.this.stop();
+                        }
+                    }
+                }
+            }
+        }
+
+    }
 
 }

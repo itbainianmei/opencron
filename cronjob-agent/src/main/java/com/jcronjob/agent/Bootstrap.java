@@ -163,7 +163,7 @@ public class Bootstrap implements Serializable {
     public void start() throws Exception {
         try {
             TServerSocket serverTransport = new TServerSocket(port);
-            AgentProcessor agentProcessor = new AgentProcessor(password, port);
+            AgentProcessor agentProcessor = new AgentProcessor(password);
             Cronjob.Processor processor = new Cronjob.Processor(agentProcessor);
             TBinaryProtocol.Factory protFactory = new TBinaryProtocol.Factory(true, true);
             TThreadPoolServer.Args arg = new TThreadPoolServer.Args(serverTransport);
