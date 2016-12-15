@@ -72,12 +72,14 @@ public class AgentProcessor implements Cronjob.Iface {
 
     @Override
     public Response ping(Request request) throws TException {
+        if (!this.password.equalsIgnoreCase(request.getPassword())) {
+            return errorPasswordResponse(request);
+        }
         if (!agentHeartBeatMap.containsKey(request.getHostName())) {
             try {
                 int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
                 String serverHost = request.getParams().get("serverHost");
                 logger.info("[cronjob]:ping ip:{},port:{}",serverHost,serverPort);
-
                 AgentHeartBeat agentHeartBeat = new AgentHeartBeat(serverHost,serverPort, request.getHostName());
                 agentHeartBeat.start();
                 agentHeartBeatMap.put(request.getHostName(),agentHeartBeat);
@@ -85,13 +87,7 @@ public class AgentProcessor implements Cronjob.Iface {
                 e.printStackTrace();
             }
         }
-
-        /*if (!this.password.equalsIgnoreCase(request.getPassword())) {
-            return errorPasswordResponse(request);
-        }
         return Response.response(request).setSuccess(true).setExitCode(Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
-        */
-        return null;
     }
 
     @Override

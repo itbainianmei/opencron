@@ -514,7 +514,7 @@ public class ExecuteService implements Job {
     }
 
     public boolean heartBeat(Agent agent) {
-        boolean ping = true;
+        boolean ping = false;
         try {
             ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverHost",this.serverHost).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
         } catch (Exception e) {
