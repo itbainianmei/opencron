@@ -75,9 +75,9 @@ public class CronjobHeartBeat {
 
         while (true) {
             for (Map.Entry<Agent, Long> entry : connStatus.entrySet()) {
-                long lastTime = entry.getValue();
+                long lastAliveTime = entry.getValue();
                 Agent agent = entry.getKey();
-                if (System.currentTimeMillis() - lastTime > this.keepAliveDelay) {
+                if (System.currentTimeMillis() - lastAliveTime > this.keepAliveDelay) {
                     if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
                         noticeService.notice(agent);
                         //记录本次任务失败的时间
