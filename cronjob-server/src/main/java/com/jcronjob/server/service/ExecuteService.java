@@ -31,6 +31,7 @@ import com.jcronjob.server.domain.Record;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.CronjobCaller;
+import com.jcronjob.server.job.CronjobHeartBeat;
 import com.jcronjob.server.vo.JobVo;
 import com.mysql.jdbc.PacketTooBigException;
 import org.quartz.Job;
@@ -39,6 +40,7 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -69,6 +71,9 @@ public class ExecuteService implements Job {
     private UserService userService;
 
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
+
+    @Value("#{config['cronjob.host']}")
+    private String serverHost;
 
     private static final String PACKETTOOBIG_ERROR  = "在向MySQL数据库插入数据量过多,需要设定max_allowed_packet";
 
@@ -493,7 +498,7 @@ public class ExecuteService implements Job {
      * 任务执行前 检测通信
      */
     private void checkPing(JobVo job, Record record) throws PingException {
-        if (!ping(job.getAgent())) {
+        if (!heartBeat(job.getAgent())) {
             record.setStatus(RunStatus.DONE.getStatus());//已完成
             record.setReturnCode(StatusCode.ERROR_PING.getValue());
 
@@ -508,10 +513,10 @@ public class ExecuteService implements Job {
         }
     }
 
-    public boolean ping(Agent agent) {
-        boolean ping = false;
+    public boolean heartBeat(Agent agent) {
+        boolean ping = true;
         try {
-            ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()),agent).isSuccess();
+            ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverHost",this.serverHost).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
         } catch (Exception e) {
             logger.error("[cronjob]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {

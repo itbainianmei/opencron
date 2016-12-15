@@ -93,10 +93,10 @@ public class IOUtils implements Serializable {
         return null;
     }
 
-    public static boolean writeText(File file, String text, String charset) {
+    public static boolean writeText(File file, Serializable text, String charset) {
         try {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), charset));
-            out.write(text);
+            out.write(text.toString());
             out.flush();
             out.close();
             return true;

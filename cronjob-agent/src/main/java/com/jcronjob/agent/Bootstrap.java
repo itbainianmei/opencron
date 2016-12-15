@@ -160,12 +160,6 @@ public class Bootstrap implements Serializable {
         }
     }
 
-    public void start(int port, String password) throws Exception {
-        this.port = port;
-        this.password = DigestUtils.md5Hex(password).toLowerCase();
-        start();
-    }
-
     public void start() throws Exception {
         try {
             TServerSocket serverTransport = new TServerSocket(port);
@@ -179,7 +173,7 @@ public class Bootstrap implements Serializable {
             /**
              * write pid to pidfile...
              */
-            IOUtils.writeText(Globals.CRONJOB_PID_FILE, getPid() + "", CHARSET);
+            IOUtils.writeText(Globals.CRONJOB_PID_FILE, getPid(), CHARSET);
 
             //new thread to start for thrift server
             new Thread(new Runnable() {
@@ -357,7 +351,7 @@ public class Bootstrap implements Serializable {
         }
     }
 
-    private static int getPid() {
+    private static Integer getPid() {
         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
         String name = runtime.getName();
         try {

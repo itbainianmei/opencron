@@ -35,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -57,64 +56,31 @@ public class CronjobTask implements InitializingBean {
     private JobService jobService;
 
     @Autowired
-    private NoticeService noticeService;
-
-    @Autowired
     private ConfigService configService;
 
     @Autowired
     private SchedulerService schedulerService;
 
+    @Autowired
+    private CronjobHeartBeat cronjobHeartBeat;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         configService.initDataBase();
         clearCache();
+        //检测所有的agent...
+        heartBeat();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();
     }
 
 
-    /**
-     * 执行器通信监控,每10秒通信一次
-     */
-    @Scheduled(cron = "0/5 * * * * ?")
-    public void ping() {
+    public void heartBeat() {
         logger.info("[cronjob]:checking Agent connection...");
+        cronjobHeartBeat.start();
         List<Agent> agents = agentService.getAll();
         for (final Agent agent : agents) {
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    Boolean result;
-                    int countLimit = 0;
-                    do {
-                        result = executeService.ping(agent);
-                        ++countLimit;
-                    } while (!result && countLimit < 3);
-                    if (!result) {
-                        if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
-                            noticeService.notice(agent);
-                            //记录本次任务失败的时间
-                            agent.setFailTime(new Date());
-                            agent.setStatus(false);
-                            agentService.addOrUpdate(agent);
-                        }
-
-                        if (agent.getStatus()) {
-                            agent.setStatus(false);
-                            agentService.addOrUpdate(agent);
-                        }
-
-                    } else {
-                        if (!agent.getStatus()) {
-                            agent.setStatus(true);
-                            agentService.addOrUpdate(agent);
-                        }
-                    }
-                }
-            };
-            runnable.run();
+            executeService.heartBeat(agent);
         }
     }
 
@@ -122,18 +88,13 @@ public class CronjobTask implements InitializingBean {
     public void reExecuteJob() {
         logger.info("[cronjob] reExecuteIob running...");
         final List<Record> records = recordService.getReExecuteRecord();
-
         if (CommonUtils.notEmpty(records)) {
-
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (final Record record : records) {
-
                         final JobVo jobVo = jobService.getJobVoById(record.getJobId());
-
                         logger.info("[cronjob] reexecutejob:jobName:{},jobId:{},recordId:{}", jobVo.getJobName(), jobVo.getJobId(), record.getRecordId());
-
                         final Thread thread = new Thread(new Runnable() {
                             public void run() {
                                 jobVo.setAgent(agentService.getAgent(jobVo.getAgentId()));
@@ -145,7 +106,6 @@ public class CronjobTask implements InitializingBean {
                 }
             }).start();
         }
-
     }
 
     private void clearCache() {

@@ -66,12 +66,9 @@ public class AgentService {
     }
 
     public List<Agent> getAll() {
-
         List<Agent> agents = CronjobContext.get(Globals.CACHED_AGENT_ID,List.class);
-
         if (CommonUtils.isEmpty(agents)) {
             flushAgent();
-            return Collections.emptyList();
         }
        return CronjobContext.get(Globals.CACHED_AGENT_ID,List.class);
     }

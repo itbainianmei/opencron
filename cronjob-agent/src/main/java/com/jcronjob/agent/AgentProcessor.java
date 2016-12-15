@@ -38,6 +38,7 @@ import java.beans.PropertyDescriptor;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.jcronjob.common.utils.CommonUtils.*;
 
@@ -62,6 +63,8 @@ public class AgentProcessor implements Cronjob.Iface {
 
     private AgentMonitor agentMonitor;
 
+    private Map<String,AgentHeartBeat> agentHeartBeatMap = new ConcurrentHashMap<String, AgentHeartBeat>(0);
+
     public AgentProcessor(String password, Integer agentPort) {
         this.password = password;
         this.agentPort = agentPort;
@@ -69,10 +72,26 @@ public class AgentProcessor implements Cronjob.Iface {
 
     @Override
     public Response ping(Request request) throws TException {
-        if (!this.password.equalsIgnoreCase(request.getPassword())) {
+        if (!agentHeartBeatMap.containsKey(request.getHostName())) {
+            try {
+                int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
+                String serverHost = request.getParams().get("serverHost");
+                logger.info("[cronjob]:ping ip:{},port:{}",serverHost,serverPort);
+
+                AgentHeartBeat agentHeartBeat = new AgentHeartBeat(serverHost,serverPort, request.getHostName());
+                agentHeartBeat.start();
+                agentHeartBeatMap.put(request.getHostName(),agentHeartBeat);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
         return Response.response(request).setSuccess(true).setExitCode(Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
+        */
+        return null;
     }
 
     @Override
