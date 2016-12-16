@@ -73,8 +73,6 @@ public class CronjobHeartBeat {
         this.port = HttpUtils.freePort();
         if (running) return;
         running = true;
-        connWatchDog = new Thread(new ConnWatchDog());
-        connWatchDog.start();
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -109,6 +107,9 @@ public class CronjobHeartBeat {
                 }
             }
         }, 5*1000);
+
+        connWatchDog = new Thread(new ConnWatchDog());
+        connWatchDog.start();
 
     }
 
