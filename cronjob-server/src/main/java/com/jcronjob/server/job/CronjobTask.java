@@ -67,8 +67,9 @@ public class CronjobTask implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         configService.initDataBase();
-        clearCache();
         //检测所有的agent...
+        clearCache();
+        //通知所有的agent,启动心跳检测...
         heartBeat();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();

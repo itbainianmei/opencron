@@ -413,9 +413,6 @@ public class AgentProcessor implements Cronjob.Iface {
         private boolean running = false;
         private long lastSendTime;
 
-        private Logger logger = LoggerFactory.getLogger(AgentHeartBeat.class);
-
-
         public AgentHeartBeat(String serverIp, int port, String clientIp) {
             this.serverIp = serverIp;
             this.port = port;
