@@ -80,7 +80,7 @@ public class CronjobTask implements InitializingBean {
         cronjobHeartBeat.start();
         List<Agent> agents = agentService.getAll();
         for (final Agent agent : agents) {
-            executeService.heartBeat(agent);
+            executeService.ping(agent);
         }
     }
 

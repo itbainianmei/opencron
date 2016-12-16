@@ -498,7 +498,7 @@ public class ExecuteService implements Job {
      * 任务执行前 检测通信
      */
     private void checkPing(JobVo job, Record record) throws PingException {
-        if (!heartBeat(job.getAgent())) {
+        if (!ping(job.getAgent())) {
             record.setStatus(RunStatus.DONE.getStatus());//已完成
             record.setReturnCode(StatusCode.ERROR_PING.getValue());
 
@@ -513,7 +513,7 @@ public class ExecuteService implements Job {
         }
     }
 
-    public boolean heartBeat(Agent agent) {
+    public boolean ping(Agent agent) {
         boolean ping = false;
         try {
             ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverHost",this.serverHost).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
