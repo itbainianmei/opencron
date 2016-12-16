@@ -419,11 +419,11 @@ public class AgentProcessor implements Cronjob.Iface {
             this.clientIp = clientIp;
             socket = new Socket(serverIp, port);
             socket.setKeepAlive(true);
-            lastSendTime = System.currentTimeMillis();
-            running = true;
         }
 
         public void start() throws IOException {
+            running = true;
+            lastSendTime = System.currentTimeMillis();
             new Thread(new KeepAliveWatchDog()).start();
         }
 
