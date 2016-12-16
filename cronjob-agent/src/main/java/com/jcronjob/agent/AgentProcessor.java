@@ -450,11 +450,11 @@ public class AgentProcessor implements Cronjob.Iface {
                         try {
                             AgentHeartBeat.this.sendMessage(AgentHeartBeat.this.clientIp);
                         } catch (IOException e) {
-                            logger.debug("[cronjob]:heartbeat error:{1}",e.getMessage());
+                            logger.debug("[cronjob]:heartbeat error:{}",e.getMessage());
                             try {
                                 AgentHeartBeat.this.stop();
                             } catch (IOException e1) {
-                                logger.debug("[cronjob]:heartbeat error:{1}",e1.getMessage());
+                                logger.debug("[cronjob]:heartbeat error:{}",e1.getMessage());
                             }
                         }
                     } else {
