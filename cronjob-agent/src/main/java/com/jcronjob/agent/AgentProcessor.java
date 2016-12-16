@@ -425,6 +425,7 @@ public class AgentProcessor implements Cronjob.Iface {
         public void start() throws IOException {
             if (running) return;
             socket = new Socket(serverIp, port);
+            socket.setKeepAlive(true);
             lastSendTime = System.currentTimeMillis();
             running = true;
             new Thread(new KeepAliveWatchDog()).start();
@@ -436,23 +437,22 @@ public class AgentProcessor implements Cronjob.Iface {
             }
         }
 
-        public void sendObject(Object obj) throws IOException {
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(obj);
+        public void sendMessage(Object obj) throws IOException {
+            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+            outputStream.writeObject(obj);
+            outputStream.flush();
             logger.info("[cronjob]:heartBeat:" + this.lastSendTime);
-            oos.flush();
         }
 
         class KeepAliveWatchDog implements Runnable {
             long checkDelay = 10;
             long keepAliveDelay = 5000;
-
             public void run() {
                 while (running) {
                     if (System.currentTimeMillis() - lastSendTime > keepAliveDelay) {
                         lastSendTime = System.currentTimeMillis();
                         try {
-                            AgentHeartBeat.this.sendObject(AgentHeartBeat.this.clientIp);
+                            AgentHeartBeat.this.sendMessage(AgentHeartBeat.this.clientIp);
                         } catch (IOException e) {
                             e.printStackTrace();
                             AgentHeartBeat.this.stop();

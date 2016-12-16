@@ -109,10 +109,10 @@ public class CronjobHeartBeat {
     class ConnWatchDog implements Runnable {
         public void run() {
             try {
-                ServerSocket ss = new ServerSocket(port, 5);
+                ServerSocket serverSocket = new ServerSocket(port, 5);
                 while (running) {
-                    Socket s = ss.accept();
-                    new Thread(new SocketAction(s)).start();
+                    Socket socket = serverSocket.accept();
+                    new Thread(new SocketAction(socket)).start();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -137,11 +137,11 @@ public class CronjobHeartBeat {
                 try {
                     InputStream in = socket.getInputStream();
                     if (in.available() > 0) {
-                        ObjectInputStream ois = new ObjectInputStream(in);
-                        Object obj = ois.readObject();
-                        ObjectAction oa = actionMapping.get(obj.getClass());
-                        oa = oa == null ? new DefaultObjectAction() : oa;
-                        oa.doAction(obj);
+                        ObjectInputStream inputStream = new ObjectInputStream(in);
+                        Object obj = inputStream.readObject();
+                        ObjectAction action = actionMapping.get(obj.getClass());
+                        action = action == null ? new DefaultObjectAction() : action;
+                        action.doAction(obj);
                     } else {
                         Thread.sleep(10);
                     }
