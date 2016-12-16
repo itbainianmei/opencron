@@ -73,18 +73,22 @@ public class AgentProcessor implements Cronjob.Iface {
         if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
-        if (!agentHeartBeatMap.containsKey(request.getHostName())) {
+        AgentHeartBeat agentHeartBeat  = agentHeartBeatMap.get(request.getHostName());
+        if (agentHeartBeat==null) {
             try {
                 int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
                 String serverHost = request.getParams().get("serverHost");
                 logger.info("[cronjob]:ping ip:{},port:{}",serverHost,serverPort);
-                AgentHeartBeat agentHeartBeat = new AgentHeartBeat(serverHost,serverPort, request.getHostName());
+                agentHeartBeat = new AgentHeartBeat(serverHost,serverPort, request.getHostName());
                 agentHeartBeat.start();
                 agentHeartBeatMap.put(request.getHostName(),agentHeartBeat);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else if(!agentHeartBeat.running) {
+            agentHeartBeat.running = true;
         }
+
         return Response.response(request).setSuccess(true).setExitCode(Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
     }
 
@@ -406,29 +410,24 @@ public class AgentProcessor implements Cronjob.Iface {
 
     class AgentHeartBeat {
 
-        private String serverIp;
-        private int port;
         private String clientIp;
         private Socket socket;
         private boolean running = false;
         private long lastSendTime;
 
-        public AgentHeartBeat(String serverIp, int port, String clientIp) {
-            this.serverIp = serverIp;
-            this.port = port;
+        public AgentHeartBeat(String serverIp, int port, String clientIp) throws IOException {
             this.clientIp = clientIp;
-        }
-
-        public void start() throws IOException {
-            if (running) return;
             socket = new Socket(serverIp, port);
             socket.setKeepAlive(true);
             lastSendTime = System.currentTimeMillis();
             running = true;
+        }
+
+        public void start() throws IOException {
             new Thread(new KeepAliveWatchDog()).start();
         }
 
-        public void stop() {
+        public void stop() throws IOException {
             if (running) {
                 running = false;
             }
@@ -451,15 +450,18 @@ public class AgentProcessor implements Cronjob.Iface {
                         try {
                             AgentHeartBeat.this.sendMessage(AgentHeartBeat.this.clientIp);
                         } catch (IOException e) {
-                            e.printStackTrace();
-                            AgentHeartBeat.this.stop();
+                            logger.debug("[cronjob]:heartbeat error:{1}",e.getMessage());
+                            try {
+                                AgentHeartBeat.this.stop();
+                            } catch (IOException e1) {
+                                logger.debug("[cronjob]:heartbeat error:{1}",e1.getMessage());
+                            }
                         }
                     } else {
                         try {
                             Thread.sleep(checkDelay);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                            AgentHeartBeat.this.stop();
                         }
                     }
                 }

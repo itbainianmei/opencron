@@ -5,6 +5,7 @@ import com.jcronjob.common.utils.HttpUtils;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.service.ConfigService;
+import com.jcronjob.server.service.ExecuteService;
 import com.jcronjob.server.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,9 @@ public class CronjobHeartBeat {
     @Autowired
     private NoticeService noticeService;
 
+    @Autowired
+    private ExecuteService executeService;
+
     /**
      * 要处理客户端发来的对象，并返回一个对象，可实现该接口。
      */
@@ -75,31 +79,31 @@ public class CronjobHeartBeat {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if(connStatus.isEmpty()){
-                   return;
-                }
                 Iterator<Map.Entry<Agent, Long>> iterator = connStatus.entrySet().iterator();
                 while(iterator.hasNext()){
                     long lastAliveTime = iterator.next().getValue();
                     Agent agent = iterator.next().getKey();
-                    if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
-                        if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
-                            noticeService.notice(agent);
-                            //记录本次任务失败的时间
-                            agent.setFailTime(new Date());
-                            agent.setStatus(false);
-                            agentService.addOrUpdate(agent);
-                        }
-                        if (agent.getStatus()) {
-                            agent.setStatus(false);
-                            agentService.addOrUpdate(agent);
-                        }
-                        //失败将其移除
-                        connStatus.remove(agent);
-                    } else {
-                        if (!agent.getStatus()) {
-                            agent.setStatus(true);
-                            agentService.addOrUpdate(agent);
+                    //已经失联的状态,再次通知连接
+                    if (!agent.getStatus()) {
+                        executeService.ping(agent);
+                    }else {
+                        if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
+                            if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
+                                noticeService.notice(agent);
+                                //记录本次任务失败的时间
+                                agent.setFailTime(new Date());
+                                agent.setStatus(false);
+                                agentService.addOrUpdate(agent);
+                            }
+                            if (agent.getStatus()) {
+                                agent.setStatus(false);
+                                agentService.addOrUpdate(agent);
+                            }
+                        } else {
+                            if (!agent.getStatus()) {
+                                agent.setStatus(true);
+                                agentService.addOrUpdate(agent);
+                            }
                         }
                     }
                 }
