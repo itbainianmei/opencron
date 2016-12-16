@@ -24,9 +24,9 @@ package com.jcronjob.agent;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.*;
+import com.jcronjob.common.utils.*;
 import org.apache.commons.exec.*;
 import org.apache.thrift.TException;
-import com.jcronjob.common.utils.*;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -35,7 +35,10 @@ import org.slf4j.Logger;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.*;
@@ -62,7 +65,7 @@ public class AgentProcessor implements Cronjob.Iface {
 
     private AgentMonitor agentMonitor;
 
-    private Map<String,AgentHeartBeat> agentHeartBeatMap = new ConcurrentHashMap<String, AgentHeartBeat>(0);
+    private Map<String, AgentHeartBeat> agentHeartBeatMap = new ConcurrentHashMap<String, AgentHeartBeat>(0);
 
     public AgentProcessor(String password) {
         this.password = password;
@@ -73,19 +76,19 @@ public class AgentProcessor implements Cronjob.Iface {
         if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
-        AgentHeartBeat agentHeartBeat  = agentHeartBeatMap.get(request.getHostName());
-        if (agentHeartBeat==null) {
+        AgentHeartBeat agentHeartBeat = agentHeartBeatMap.get(request.getHostName());
+        if (agentHeartBeat == null) {
             try {
                 int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
                 String serverHost = request.getParams().get("serverHost");
-                logger.info("[cronjob]:ping ip:{},port:{}",serverHost,serverPort);
-                agentHeartBeat = new AgentHeartBeat(serverHost,serverPort, request.getHostName());
+                logger.info("[cronjob]:ping ip:{},port:{}", serverHost, serverPort);
+                agentHeartBeat = new AgentHeartBeat(serverHost, serverPort, request.getHostName());
                 agentHeartBeat.start();
-                agentHeartBeatMap.put(request.getHostName(),agentHeartBeat);
+                agentHeartBeatMap.put(request.getHostName(), agentHeartBeat);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }else if(!agentHeartBeat.running) {
+        } else if (!agentHeartBeat.running) {
             agentHeartBeat.running = true;
         }
 
@@ -96,15 +99,15 @@ public class AgentProcessor implements Cronjob.Iface {
     public Response monitor(Request request) throws TException {
         Cronjob.ConnType connType = Cronjob.ConnType.getByName(request.getParams().get("connType"));
         Response response = Response.response(request);
-        Map<String,String> map = new HashMap<String, String>(0);
+        Map<String, String> map = new HashMap<String, String>(0);
 
-        if (agentMonitor==null) {
+        if (agentMonitor == null) {
             agentMonitor = new AgentMonitor();
         }
 
         switch (connType) {
             case CONN:
-                if (  CommonUtils.isEmpty(agentMonitor,socketPort) || agentMonitor.stoped() ) {
+                if (CommonUtils.isEmpty(agentMonitor, socketPort) || agentMonitor.stoped()) {
                     //选举一个空闲可用的port
                     this.socketPort = HttpUtils.freePort();
                     try {
@@ -114,7 +117,7 @@ public class AgentProcessor implements Cronjob.Iface {
                     }
                 }
                 logger.debug("[cronjob]:getMonitorPort @:{}", socketPort);
-                map.put("port",this.socketPort.toString());
+                map.put("port", this.socketPort.toString());
                 response.setResult(map);
                 return response;
             case PROXY:
@@ -136,30 +139,30 @@ public class AgentProcessor implements Cronjob.Iface {
 
         //其他参数....
         String proxyParams = request.getParams().get("proxyParams");
-        Map<String,String> params = new HashMap<String, String>(0);
+        Map<String, String> params = new HashMap<String, String>(0);
         if (CommonUtils.notEmpty(proxyParams)) {
             params = (Map<String, String>) JSON.parse(proxyParams);
         }
 
-        Request proxyReq = Request.request(proxyHost,toInt(proxyPort), Action.findByName(proxyAction),proxyPassword).setParams(params);
+        Request proxyReq = Request.request(proxyHost, toInt(proxyPort), Action.findByName(proxyAction), proxyPassword).setParams(params);
 
-        logger.info("[cronjob]proxy params:{}",proxyReq.toString());
+        logger.info("[cronjob]proxy params:{}", proxyReq.toString());
 
         TTransport transport = null;
         /**
          * ping的超时设置为5毫秒,其他默认
          */
         if (proxyReq.getAction().equals(Action.PING)) {
-            transport = new TSocket(proxyReq.getHostName(),proxyReq.getPort(),1000*5);
-        }else {
-            transport = new TSocket(proxyReq.getHostName(),proxyReq.getPort());
+            transport = new TSocket(proxyReq.getHostName(), proxyReq.getPort(), 1000 * 5);
+        } else {
+            transport = new TSocket(proxyReq.getHostName(), proxyReq.getPort());
         }
         TProtocol protocol = new TBinaryProtocol(transport);
         Cronjob.Client client = new Cronjob.Client(protocol);
         transport.open();
 
         Response response = null;
-        for(Method method:client.getClass().getMethods()){
+        for (Method method : client.getClass().getMethods()) {
             if (method.getName().equalsIgnoreCase(proxyReq.getAction().name())) {
                 try {
                     response = (Response) method.invoke(client, proxyReq);
@@ -184,9 +187,9 @@ public class AgentProcessor implements Cronjob.Iface {
 
         String pid = request.getParams().get("pid");
         //以分钟为单位
-        Long timeout = CommonUtils.toLong(request.getParams().get("timeout"),0L);
+        Long timeout = CommonUtils.toLong(request.getParams().get("timeout"), 0L);
 
-        boolean timeoutFlag = timeout>0;
+        boolean timeoutFlag = timeout > 0;
 
         logger.info("[cronjob]:execute:{},pid:{}", command, pid);
 
@@ -240,10 +243,10 @@ public class AgentProcessor implements Cronjob.Iface {
 
                         }
                     }
-                },timeout*60*1000);
+                }, timeout * 60 * 1000);
 
                 //正常执行完毕则清除计时器
-                resultHandler = new DefaultExecuteResultHandler(){
+                resultHandler = new DefaultExecuteResultHandler() {
                     @Override
                     public void onProcessComplete(int exitValue) {
                         super.onProcessComplete(exitValue);
@@ -269,7 +272,7 @@ public class AgentProcessor implements Cronjob.Iface {
                 exitValue = Cronjob.StatusCode.ERROR_EXEC.getValue();
             }
             if (Cronjob.StatusCode.KILL.getValue().equals(exitValue)) {
-                if(timeoutFlag) {
+                if (timeoutFlag) {
                     timer.cancel();
                     watchdog.stop();
                 }
@@ -281,13 +284,13 @@ public class AgentProcessor implements Cronjob.Iface {
 
             exitValue = resultHandler.getExitValue();
 
-            if ( CommonUtils.notEmpty(outputStream.toByteArray()) ) {
+            if (CommonUtils.notEmpty(outputStream.toByteArray())) {
                 try {
                     outputStream.flush();
                     String text = outputStream.toString();
                     if (notEmpty(text)) {
                         try {
-                            text = text.replaceAll(String.format(REPLACE_REX,shellFile.getAbsolutePath()),"");
+                            text = text.replaceAll(String.format(REPLACE_REX, shellFile.getAbsolutePath()), "");
                             response.setMessage(text.substring(0, text.lastIndexOf(EXITCODE_KEY)));
                             exitValue = Integer.parseInt(text.substring(text.lastIndexOf(EXITCODE_KEY) + EXITCODE_KEY.length() + 1).trim());
                         } catch (IndexOutOfBoundsException e) {
@@ -300,9 +303,9 @@ public class AgentProcessor implements Cronjob.Iface {
                 }
             }
 
-            if ( Cronjob.StatusCode.TIME_OUT.getValue() == response.getExitCode() ) {
+            if (Cronjob.StatusCode.TIME_OUT.getValue() == response.getExitCode()) {
                 response.setSuccess(false).end();
-            }else {
+            } else {
                 response.setExitCode(exitValue).setSuccess(response.getExitCode() == Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
             }
 
@@ -397,7 +400,7 @@ public class AgentProcessor implements Cronjob.Iface {
 
                         resultMap.put(pds[index].getName(), value.toString());
 
-                    }else {
+                    } else {
                         resultMap.put(pds[index].getName(), JSON.toJSONString(value));
                     }
                 }
@@ -443,6 +446,7 @@ public class AgentProcessor implements Cronjob.Iface {
         class KeepAliveWatchDog implements Runnable {
             long checkDelay = 10;
             long keepAliveDelay = 5000;
+
             public void run() {
                 while (running) {
                     if (System.currentTimeMillis() - lastSendTime > keepAliveDelay) {
@@ -450,11 +454,11 @@ public class AgentProcessor implements Cronjob.Iface {
                         try {
                             AgentHeartBeat.this.sendMessage(AgentHeartBeat.this.clientIp);
                         } catch (IOException e) {
-                            logger.debug("[cronjob]:heartbeat error:{}",e.getMessage());
+                            logger.debug("[cronjob]:heartbeat error:{}", e.getMessage());
                             try {
                                 AgentHeartBeat.this.stop();
                             } catch (IOException e1) {
-                                logger.debug("[cronjob]:heartbeat error:{}",e1.getMessage());
+                                logger.debug("[cronjob]:heartbeat error:{}", e1.getMessage());
                             }
                         }
                     } else {
