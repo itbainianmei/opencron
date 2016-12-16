@@ -443,7 +443,6 @@ public class AgentProcessor implements Cronjob.Iface {
             ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
             outputStream.writeObject(obj);
             outputStream.flush();
-            logger.info("[cronjob]:heartBeat:" + this.lastSendTime);
         }
 
         class KeepAliveWatchDog implements Runnable {
