@@ -16,6 +16,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -73,30 +75,36 @@ public class CronjobHeartBeat {
         connWatchDog = new Thread(new ConnWatchDog());
         connWatchDog.start();
 
-        while (true) {
-            for (Map.Entry<Agent, Long> entry : connStatus.entrySet()) {
-                long lastAliveTime = entry.getValue();
-                Agent agent = entry.getKey();
-                if (System.currentTimeMillis() - lastAliveTime > this.keepAliveDelay) {
-                    if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
-                        noticeService.notice(agent);
-                        //记录本次任务失败的时间
-                        agent.setFailTime(new Date());
-                        agent.setStatus(false);
-                        agentService.addOrUpdate(agent);
-                    }
-                    if (agent.getStatus()) {
-                        agent.setStatus(false);
-                        agentService.addOrUpdate(agent);
-                    }
-                } else {
-                    if (!agent.getStatus()) {
-                        agent.setStatus(true);
-                        agentService.addOrUpdate(agent);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(connStatus.isEmpty()){
+                   return;
+                }
+                for (Map.Entry<Agent, Long> entry : connStatus.entrySet()) {
+                    long lastAliveTime = entry.getValue();
+                    Agent agent = entry.getKey();
+                    if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
+                        if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
+                            noticeService.notice(agent);
+                            //记录本次任务失败的时间
+                            agent.setFailTime(new Date());
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
+                        }
+                        if (agent.getStatus()) {
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
+                        }
+                    } else {
+                        if (!agent.getStatus()) {
+                            agent.setStatus(true);
+                            agentService.addOrUpdate(agent);
+                        }
                     }
                 }
             }
-        }
+        }, 5*1000);
 
     }
 
