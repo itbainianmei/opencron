@@ -33,7 +33,7 @@ public class CronjobHeartBeat {
 
     private Map<Agent, Long> connStatus = new ConcurrentHashMap<Agent, Long>(0);
 
-    private Map<String,Agent> agentMap = new ConcurrentHashMap<String, Agent>(0);
+    private Map<String, Agent> agentMap = new ConcurrentHashMap<String, Agent>(0);
 
     private Thread connWatchDog;
 
@@ -61,9 +61,9 @@ public class CronjobHeartBeat {
     public final class DefaultObjectAction implements ObjectAction {
         public void doAction(Object rev) {
             String ip = rev.toString();
-            if (agentMap.get(ip)==null) {
+            if (agentMap.get(ip) == null) {
                 Agent agent = agentService.getByHost(rev.toString());
-                agentMap.put(ip,agent);
+                agentMap.put(ip, agent);
             }
             connStatus.put(agentMap.get(ip), System.currentTimeMillis());
         }
@@ -73,18 +73,20 @@ public class CronjobHeartBeat {
         this.port = HttpUtils.freePort();
         if (running) return;
         running = true;
+        connWatchDog = new Thread(new ConnWatchDog());
+        connWatchDog.start();
 
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 Iterator<Map.Entry<Agent, Long>> iterator = connStatus.entrySet().iterator();
-                while(iterator.hasNext()){
+                while (iterator.hasNext()) {
                     long lastAliveTime = iterator.next().getValue();
                     Agent agent = iterator.next().getKey();
                     //已经失联的状态,再次通知连接
                     if (!agent.getStatus()) {
                         executeService.ping(agent);
-                    }else {
+                    } else {
                         if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
                             if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
                                 noticeService.notice(agent);
@@ -106,10 +108,8 @@ public class CronjobHeartBeat {
                     }
                 }
             }
-        }, 5*1000);
+        }, keepAliveDelay, 0);
 
-        connWatchDog = new Thread(new ConnWatchDog());
-        connWatchDog.start();
 
     }
 
