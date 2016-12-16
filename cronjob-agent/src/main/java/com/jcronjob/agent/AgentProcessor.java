@@ -447,7 +447,7 @@ public class AgentProcessor implements Cronjob.Iface {
 
         class KeepAliveWatchDog implements Runnable {
             long checkDelay = 10;
-            long keepAliveDelay = 5000;
+            long keepAliveDelay = 1000*5;
 
             public void run() {
                 while (running) {

@@ -37,7 +37,7 @@ public class CronjobHeartBeat {
 
     private Thread connWatchDog;
 
-    private long keepAliveDelay = 5000;
+    private long keepAliveDelay = 1000 * 5;//5秒一次心跳
 
     @Autowired
     private AgentService agentService;
