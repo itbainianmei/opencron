@@ -419,7 +419,7 @@
                 <div class="tile " style="background: none">
                     <h2 class="tile-title" style="width: 100%;background:rgba(0,0,0,0.40);border-top-left-radius:2px;border-top-right-radius:2px;"><i aria-hidden="true" class="fa fa-area-chart"></i>&nbsp;系统概况</h2>
                     <div class="tile-config dropdown" style="float: right;">
-                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;"ps  id="agentId">
+                        <select class="form-control input-sm m-b-10" style="width: 120px;border-radius: 2px;" id="agentId">
                             <c:forEach var="w" items="${agents}">
                                 <option value="${w.agentId}" ${w.agentId eq agentId ? 'selected' : ''}>${w.name}</option>
                             </c:forEach>
