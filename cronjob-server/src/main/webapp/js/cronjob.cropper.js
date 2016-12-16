@@ -81,9 +81,7 @@
         initPreview: function () {
             var url = this.$avatar.attr('src');
             this.$avatarPreview.html('<img src="' + url + '">');
-            $(".upload-txt").click(function () {
-                document.picform.file.click();
-            });
+            this.$avatarWrapper.css({"cursor":"pointer"}).bind("click",this.popUpload);
         },
 
         initIframe: function () {
@@ -222,6 +220,8 @@
                 this.active = true;
             }
 
+            this.$avatarWrapper.css({"cursor":"auto"}).unbind("click",this.popUpload);
+
             this.$avatarModal.one('hidden.bs.modal', function () {
                 _this.$avatarPreview.empty();
                 _this.stopCropper();
@@ -234,7 +234,6 @@
                 this.$avatarModal.modal('hide');
                 this.$img.remove();
                 this.active = false;
-                this.$avatarPreview.empty();
                 this.$avatarWrapper.empty().html("<span class=\"upload-txt\"><span class=\"upload-add\"></span>点击上传图片并选择需要裁剪的区域</span>");
             }
         },
@@ -333,7 +332,12 @@
 
         clear: function () {
             $(".upload-alert").remove();
+        },
+        
+        popUpload:function () {
+            document.picform.file.click();
         }
+        
     };
 
     $(function () {
