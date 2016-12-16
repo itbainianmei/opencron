@@ -182,14 +182,20 @@ public class Agent implements Serializable {
         this.proxy = proxy;
     }
 
+
     @Override
-    public boolean equals(Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Agent agent = (Agent) o;
+
+        return agentId.equals(agent.agentId);
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return agentId.hashCode();
     }
 
     @Override

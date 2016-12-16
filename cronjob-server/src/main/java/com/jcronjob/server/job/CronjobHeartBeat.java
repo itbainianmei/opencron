@@ -79,37 +79,48 @@ public class CronjobHeartBeat {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                Iterator<Map.Entry<Agent, Long>> iterator = connStatus.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    long lastAliveTime = iterator.next().getValue();
-                    Agent agent = iterator.next().getKey();
+                List<Agent> agents = agentService.getAll();
+                if (agents.size()!=connStatus.size()) {
+                    for(Agent agent:agents){
+                        if (connStatus.get(agent)==null) {
+                            executeService.ping(agent);
+                        }
+                    }
+                }
+                for(Map.Entry<Agent,Long> entry:connStatus.entrySet()) {
+                    long lastAliveTime = entry.getValue();
+                    Agent agent = entry.getKey();
                     //已经失联的状态,再次通知连接
-                    if (!agent.getStatus()) {
-                        executeService.ping(agent);
+                    if ( !agent.getStatus() ) {
+                        boolean ping = executeService.ping(agent);
+                        if (ping) {
+                            agent.setStatus(true);
+                            agentService.addOrUpdate(agent);
+                            continue;
+                        }
+                    }
+
+                    if ( System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
+                        if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
+                            noticeService.notice(agent);
+                            //记录本次任务失败的时间
+                            agent.setFailTime(new Date());
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
+                        }
+                        if (agent.getStatus()) {
+                            agent.setStatus(false);
+                            agentService.addOrUpdate(agent);
+                        }
                     } else {
-                        if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
-                            if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
-                                noticeService.notice(agent);
-                                //记录本次任务失败的时间
-                                agent.setFailTime(new Date());
-                                agent.setStatus(false);
-                                agentService.addOrUpdate(agent);
-                            }
-                            if (agent.getStatus()) {
-                                agent.setStatus(false);
-                                agentService.addOrUpdate(agent);
-                            }
-                        } else {
-                            if (!agent.getStatus()) {
-                                agent.setStatus(true);
-                                agentService.addOrUpdate(agent);
-                            }
+                        if (!agent.getStatus()) {
+                            agent.setStatus(true);
+                            agentService.addOrUpdate(agent);
                         }
                     }
                 }
             }
-        }, keepAliveDelay, 0);
-
+        }, 0, keepAliveDelay);
 
     }
 
