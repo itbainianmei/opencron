@@ -80,18 +80,18 @@ public class CronjobHeartBeat {
             @Override
             public void run() {
                 List<Agent> agents = agentService.getAll();
-                if (agents.size()!=connStatus.size()) {
-                    for(Agent agent:agents){
-                        if (connStatus.get(agent)==null) {
+                if (agents.size() != connStatus.size()) {
+                    for (Agent agent : agents) {
+                        if (connStatus.get(agent) == null) {
                             executeService.ping(agent);
                         }
                     }
                 }
-                for(Map.Entry<Agent,Long> entry:connStatus.entrySet()) {
+                for (Map.Entry<Agent, Long> entry : connStatus.entrySet()) {
                     long lastAliveTime = entry.getValue();
                     Agent agent = entry.getKey();
                     //已经失联的状态,再次通知连接
-                    if ( !agent.getStatus() ) {
+                    if (!agent.getStatus()) {
                         boolean ping = executeService.ping(agent);
                         if (ping) {
                             agent.setStatus(true);
@@ -99,8 +99,7 @@ public class CronjobHeartBeat {
                             continue;
                         }
                     }
-
-                    if ( System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
+                    if (System.currentTimeMillis() - lastAliveTime > CronjobHeartBeat.this.keepAliveDelay) {
                         if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
                             noticeService.notice(agent);
                             //记录本次任务失败的时间
@@ -142,7 +141,6 @@ public class CronjobHeartBeat {
                 e.printStackTrace();
                 CronjobHeartBeat.this.stop();
             }
-
         }
     }
 
