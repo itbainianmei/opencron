@@ -38,8 +38,8 @@
                         "agentId":"${agentId}",
                         "jobId":"${jobId}",
                         "execType":"${execType}",
-                        "pageNo":${page.pageNo},
-                        "pageSize":${page.pageSize}
+                        "pageNo":${pageBean.pageNo},
+                        "pageSize":${pageBean.pageSize}
                     },
                     dataType:"html",
                     success:function(data){
@@ -145,9 +145,9 @@
                 <label>
                     每页 <select size="1" class="select-self" id="size" style="width: 50px;">
                     <option value="15">15</option>
-                    <option value="30" ${page.pageSize eq 30 ? 'selected' : ''}>30</option>
-                    <option value="50" ${page.pageSize eq 50 ? 'selected' : ''}>50</option>
-                    <option value="100" ${page.pageSize eq 100 ? 'selected' : ''}>100</option>
+                    <option value="30" ${pageBean.pageSize eq 30 ? 'selected' : ''}>30</option>
+                    <option value="50" ${pageBean.pageSize eq 50 ? 'selected' : ''}>50</option>
+                    <option value="100" ${pageBean.pageSize eq 100 ? 'selected' : ''}>100</option>
                 </select> 条记录
                 </label>
             </div>
@@ -200,7 +200,7 @@
 
             <tbody id="tableContent">
 
-            <c:forEach var="r" items="${page.result}" varStatus="index">
+            <c:forEach var="r" items="${pageBean.result}" varStatus="index">
                 <tr>
                     <td>
                         <c:if test="${empty r.jobName}">batchJob</c:if>
@@ -254,7 +254,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/record/running?queryTime=${queryTime}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/record/running?queryTime=${queryTime}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 

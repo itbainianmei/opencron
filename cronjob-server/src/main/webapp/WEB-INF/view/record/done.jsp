@@ -203,9 +203,9 @@
                 <label>
                     每页 <select size="1" class="select-self" id="size" style="width: 50px;">
                     <option value="15">15</option>
-                    <option value="30" ${page.pageSize eq 30 ? 'selected' : ''}>30</option>
-                    <option value="50" ${page.pageSize eq 50 ? 'selected' : ''}>50</option>
-                    <option value="100" ${page.pageSize eq 100 ? 'selected' : ''}>100</option>
+                    <option value="30" ${pageBean.pageSize eq 30 ? 'selected' : ''}>30</option>
+                    <option value="50" ${pageBean.pageSize eq 50 ? 'selected' : ''}>50</option>
+                    <option value="100" ${pageBean.pageSize eq 100 ? 'selected' : ''}>100</option>
                 </select> 条记录
                 </label>
             </div>
@@ -266,7 +266,7 @@
             </thead>
 
             <%--父记录--%>
-            <c:forEach var="r" items="${page.result}" varStatus="index">
+            <c:forEach var="r" items="${pageBean.result}" varStatus="index">
                 <tbody class="tbody_${empty r.groupId ? r.recordId : r.groupId} tbody_${index.index}" style="border-top: none">
 
                     <tr class="tr-flow_${empty r.groupId ? "" : r.groupId}">
@@ -481,7 +481,7 @@
                 </tbody>
             </c:forEach>
         </table>
-        <ben:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${page.pageNo}" size="${page.pageSize}" total="${page.totalCount}"/>
+        <ben:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
     </div>
 
 </section>

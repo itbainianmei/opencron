@@ -3,7 +3,7 @@
 <%@ taglib prefix="ben"  uri="ben-taglib"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<c:forEach var="r" items="${page.result}" varStatus="index">
+<c:forEach var="r" items="${pageBean.result}" varStatus="index">
     <tr>
         <td>
             <c:if test="${empty r.jobName}">batchJob</c:if>

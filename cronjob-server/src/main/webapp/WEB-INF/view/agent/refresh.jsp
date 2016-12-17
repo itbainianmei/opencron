@@ -3,7 +3,7 @@
 <%@ taglib prefix="ben"  uri="ben-taglib"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
-<c:forEach var="w" items="${page.result}" varStatus="index">
+<c:forEach var="w" items="${pageBean.result}" varStatus="index">
     <tr>
         <td id="name_${w.agentId}">${w.name}</td>
         <td>${w.ip}</td>
