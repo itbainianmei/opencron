@@ -81,7 +81,7 @@
 										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-30">-30°</button>
 										<button type="button" class="btn btn-primary" data-method="rotate" data-option="-45">-45°</button>
 									</div>
-									<div class="btn-group">
+									<div class="btn-group" style="float:right">
 										<button type="button" class="btn btn-primary" data-method="rotate" data-option="90" title="顺时针旋转90度">向右转</button>
 										<button type="button" class="btn btn-primary" data-method="rotate" data-option="15">15°</button>
 										<button type="button" class="btn btn-primary" data-method="rotate" data-option="30">30°</button>

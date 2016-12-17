@@ -919,12 +919,12 @@ hr {
 }
 
 /* Charts */
+
 .pie-chart-tiny {
     display: inline-block;
     position: relative;
-    margin: 8px 25px 0;    
+    margin: 0px 23px 20px 26px;
     top: -10px;
-    padding-bottom: 13px;
 }
 
 .percent {
@@ -948,18 +948,16 @@ hr {
 }
 
 .gaugeChart{
+    position:relative;
     width: 300px;
     height: 150px;
-    margin-left:10px;
-    margin-right:10px;
     opacity: 0.8;
+    top:-10px;
 }
 
 .gaugeChart_m{
     width: 300px;
     height: 150px;
-    margin-left:50px;
-    margin-right:50px;
     opacity: 0.8;
 }
 
@@ -980,11 +978,11 @@ hr {
     float: left;
     font-weight: lighter;
     left: 0;
-    position: static;
+    position: absolute;
     text-align: center;
     width: 100%;
     margin-top:4px;
-    margin-bottom:8px;
+    margin-bottom:28px;
 }
 
 .gaugeChartTitle i {
@@ -999,15 +997,17 @@ hr {
     cursor: pointer;
 }
 
+
 .pie-title {
-    display: inline-block;
     position: absolute;
-    bottom: -18px;
     width: 100%;
     text-align: center;
+    color: rgba(235, 235, 235, 0.85);
     font-size: 12px;
-    color: rgba(255,255,255,0.85);
+    font-weight: bold;
+    bottom: -28px;
 }
+
 
 .pie-title i {
     font-size: 15px;
@@ -2505,5 +2505,6 @@ a.list-group-item.active > .badge,
 .progress-white {
     background-color: rgba(255,255,255,0.2);
 }
+
 
 
