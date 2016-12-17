@@ -22,6 +22,7 @@
 
 package com.jcronjob.server.tag;
 
+import com.jcronjob.common.utils.CommonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -133,8 +134,7 @@ public class PageBean<T> implements Serializable {
      * 是否已设置排序字段,无默认值.
      */
     public boolean isOrderBySetted() {
-        return (StringUtils.isNotBlank(orderBy) && StringUtils
-                .isNotBlank(order));
+        return CommonUtils.notEmpty(orderBy,order);
     }
 
     /**
@@ -223,7 +223,7 @@ public class PageBean<T> implements Serializable {
     /**
      * 是否还有下一页.
      */
-    public boolean isHasNext() {
+    public boolean hasNext() {
         return (pageNo + 1 <= getTotalPages());
     }
 
@@ -231,7 +231,7 @@ public class PageBean<T> implements Serializable {
      * 取得下页的页号, 序号从1开始. 当前页为尾页时仍返回尾页序号.
      */
     public int getNextPage() {
-        if (isHasNext())
+        if (hasNext())
             return pageNo + 1;
         else
             return pageNo;
@@ -240,7 +240,7 @@ public class PageBean<T> implements Serializable {
     /**
      * 是否还有上一页.
      */
-    public boolean isHasPre() {
+    public boolean hasPre() {
         return (pageNo - 1 >= 1);
     }
 
@@ -248,7 +248,7 @@ public class PageBean<T> implements Serializable {
      * 取得上页的页号, 序号从1开始. 当前页为首页时返回首页序号.
      */
     public int getPrePage() {
-        if (isHasPre())
+        if (hasPre())
             return pageNo - 1;
         else
             return pageNo;
