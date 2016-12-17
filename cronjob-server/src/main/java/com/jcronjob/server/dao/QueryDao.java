@@ -22,7 +22,7 @@
 
 package com.jcronjob.server.dao;
 
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -40,9 +40,9 @@ public class QueryDao extends BaseDao {
      * @param beanClass 支持任意Bean，按结果集映射
      * @return
      */
-    public <E> Page<E> getPageBySql(Page<E> page, Class<E> beanClass, String sql, Object... parameters) {
+    public <E> PageBean<E> getPageBySql(PageBean<E> pageBean, Class<E> beanClass, String sql, Object... parameters) {
         Query query = createSQLQuery(sql, parameters).setResultTransformer(BeanResultTransFormer.get(beanClass));
-        pageQuery(query, page);
+        pageQuery(query, pageBean);
 
         //总记录数
         sql = preparedCount(sql);
@@ -50,8 +50,8 @@ public class QueryDao extends BaseDao {
         if (count == null) {
             count = 0L;
         }
-        page.setTotalCount(count);
-        return page;
+        pageBean.setTotalCount(count);
+        return pageBean;
     }
 
     /**
@@ -60,9 +60,9 @@ public class QueryDao extends BaseDao {
      * @param query
      * @return
      */
-    public static Page pageQuery(Query query, Page page) {
-        page.setResult(pageQuery(query, page.getPageNo(), page.getPageSize()));
-        return page;
+    public static PageBean pageQuery(Query query, PageBean pageBean) {
+        pageBean.setResult(pageQuery(query, pageBean.getPageNo(), pageBean.getPageSize()));
+        return pageBean;
     }
 
     private static String preparedCount(String sql) {

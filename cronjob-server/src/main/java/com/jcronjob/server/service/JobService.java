@@ -33,7 +33,7 @@ import com.jcronjob.server.domain.User;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.job.CronjobContext;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 
 import static com.jcronjob.common.job.Cronjob.*;
 
@@ -117,7 +117,7 @@ public class JobService {
         CronjobContext.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Cronjob.ExecType.AUTO, Cronjob.CronType.CRONTAB));
     }
 
-    public Page<JobVo> getJobVos(HttpSession session, Page page, JobVo job) {
+    public PageBean<JobVo> getJobVos(HttpSession session, PageBean pageBean, JobVo job) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.userName AS operateUname " +
                 " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.operateId = U.userId WHERE IFNULL(flowNum,0)=0 AND T.status=1 ";
         if (job != null) {
@@ -141,14 +141,14 @@ public class JobService {
                 sql += " AND T.operateId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
             }
         }
-        page = queryDao.getPageBySql(page, JobVo.class, sql);
-        List<JobVo> parentJobs = page.getResult();
+        pageBean = queryDao.getPageBySql(pageBean, JobVo.class, sql);
+        List<JobVo> parentJobs = pageBean.getResult();
 
         for (JobVo parentJob : parentJobs) {
             queryChildren(parentJob);
         }
-        page.setResult(parentJobs);
-        return page;
+        pageBean.setResult(parentJobs);
+        return pageBean;
     }
 
     private List<JobVo> queryChildren(JobVo job) {

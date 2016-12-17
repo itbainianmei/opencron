@@ -28,7 +28,7 @@ import com.jcronjob.server.dao.UploadDao;
 import com.jcronjob.server.domain.Role;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.common.utils.Digests;
 import com.jcronjob.common.utils.Encodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +53,10 @@ public class UserService {
     @Autowired
     private UploadDao uploadDao;
 
-    public Page queryUser(Page page) {
+    public PageBean queryUser(PageBean pageBean) {
         String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId";
-        queryDao.getPageBySql(page, User.class, sql);
-        return page;
+        queryDao.getPageBySql(pageBean, User.class, sql);
+        return pageBean;
     }
 
     public List<Role> getRoleGroup() {

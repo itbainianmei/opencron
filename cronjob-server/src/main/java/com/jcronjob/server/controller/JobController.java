@@ -29,7 +29,7 @@ import com.jcronjob.common.job.Cronjob.ExecType;
 import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.service.*;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Agent;
@@ -66,7 +66,7 @@ public class JobController {
     private SchedulerService schedulerService;
 
     @RequestMapping("/view")
-    public String view(HttpServletRequest request, HttpSession session, Page page, JobVo job, Model model) {
+    public String view(HttpServletRequest request, HttpSession session, PageBean pageBean, JobVo job, Model model) {
 
         model.addAttribute("agents", agentService.getAgentsBySession(session));
 
@@ -86,7 +86,7 @@ public class JobController {
         if (notEmpty(job.getRedo())) {
             model.addAttribute("redo", job.getRedo());
         }
-        jobService.getJobVos(session, page, job);
+        jobService.getJobVos(session, pageBean, job);
         if (request.getParameter("refresh") != null) {
             return "/job/refresh";
         }

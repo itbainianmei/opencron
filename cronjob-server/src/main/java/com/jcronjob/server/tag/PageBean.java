@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class Page<T> implements Serializable {
+public class PageBean<T> implements Serializable {
 
     private static final long serialVersionUID = 8199494836903931588L;
 
@@ -48,15 +48,15 @@ public class Page<T> implements Serializable {
     protected long totalCount = -1;
 
     // -- 构造函数 --//
-    public Page() {
+    public PageBean() {
     }
 
-    public Page(final int pageSize) {
+    public PageBean(final int pageSize) {
         setPageSize(pageSize);
     }
 
 
-    public Page(final Integer pageNo, final Integer pageSize) {
+    public PageBean(final Integer pageNo, final Integer pageSize) {
         if (pageNo != null) {
             setPageNo(pageNo);
         }
@@ -65,7 +65,7 @@ public class Page<T> implements Serializable {
         }
     }
 
-    public Page(final int pageSize, final boolean autoCount) {
+    public PageBean(final int pageSize, final boolean autoCount) {
         setPageSize(pageSize);
         setAutoCount(autoCount);
     }

@@ -27,7 +27,7 @@ import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.common.utils.Digests;
 import com.jcronjob.common.utils.Encodes;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.server.vo.LogVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,7 +75,7 @@ public class HomeService {
         }
     }
 
-    public Page<LogVo> getLog(HttpSession session, Page page, Long agentId, String sendTime) {
+    public PageBean<LogVo> getLog(HttpSession session, PageBean pageBean, Long agentId, String sendTime) {
         String sql = "SELECT L.*,W.name AS agentName FROM T_LOG L LEFT JOIN T_AGENT W ON L.agentId = W.agentId WHERE 1=1 ";
         if (notEmpty(agentId)) {
             sql += " AND L.agentId = " + agentId;
@@ -87,8 +87,8 @@ public class HomeService {
             sql += " AND L.receiverId = " + Globals.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC";
-        queryDao.getPageBySql(page, LogVo.class, sql);
-        return page;
+        queryDao.getPageBySql(pageBean, LogVo.class, sql);
+        return pageBean;
     }
 
     public List<LogVo> getUnReadMessage(HttpSession session) {

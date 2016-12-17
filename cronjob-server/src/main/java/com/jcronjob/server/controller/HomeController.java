@@ -30,7 +30,7 @@ import com.jcronjob.server.domain.Job;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.service.*;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.server.vo.ChartVo;
 import com.jcronjob.server.vo.Cropper;
 import org.slf4j.Logger;
@@ -296,7 +296,7 @@ public class HomeController {
 
 
     @RequestMapping("/notice/view")
-    public String log(HttpSession session, Model model, Page page, Long agentId, String sendTime) {
+    public String log(HttpSession session, Model model, PageBean pageBean, Long agentId, String sendTime) {
         model.addAttribute("agents", agentService.getAgentsBySession(session));
         if (notEmpty(agentId)) {
             model.addAttribute("agentId", agentId);
@@ -304,7 +304,7 @@ public class HomeController {
         if (notEmpty(sendTime)) {
             model.addAttribute("sendTime", sendTime);
         }
-        homeService.getLog(session, page, agentId, sendTime);
+        homeService.getLog(session, pageBean, agentId, sendTime);
         return "notice/view";
     }
 

@@ -27,7 +27,7 @@ import com.jcronjob.server.domain.Record;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.server.domain.User;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.server.vo.ChartVo;
 import com.jcronjob.server.vo.RecordVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class RecordService {
     @Autowired
     private UserService userService;
 
-    public Page query(HttpSession session, Page<RecordVo> page, RecordVo recordVo, String queryTime, boolean status) {
+    public PageBean query(HttpSession session, PageBean<RecordVo> pageBean, RecordVo recordVo, String queryTime, boolean status) {
         String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3,5,6) THEN r.endTime WHEN r.status IN (0,2,4) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r LEFT JOIN T_JOB t ON r.jobId = t.jobId "
                 + " LEFT JOIN T_AGENT d ON r.agentId = d.agentId LEFT JOIN T_USER AS u ON r.operateId = u.userId AND CASE r.jobType WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3,4,5,6)" : "(0,2,4)");
         if (recordVo != null) {
@@ -76,17 +76,17 @@ public class RecordService {
             }
         }
         sql += " ORDER BY r.startTime DESC";
-        queryDao.getPageBySql(page, RecordVo.class, sql);
+        queryDao.getPageBySql(pageBean, RecordVo.class, sql);
 
         if (status) {
             //已完成任务的子任务及重跑记录查询
-            queryChildrenAndRedo(page, sql);
+            queryChildrenAndRedo(pageBean, sql);
         }
-        return page;
+        return pageBean;
     }
 
-    private void queryChildrenAndRedo(Page<RecordVo> page, String sql) {
-        List<RecordVo> parentRecords = page.getResult();
+    private void queryChildrenAndRedo(PageBean<RecordVo> pageBean, String sql) {
+        List<RecordVo> parentRecords = pageBean.getResult();
         for (RecordVo parentRecord : parentRecords) {
             sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.operateId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
             //单一任务有重跑记录的，查出后并把最后一条重跑记录的执行结果记作整个任务的成功、失败状态
@@ -129,7 +129,7 @@ public class RecordService {
                 }
             }
         }
-        page.setResult(parentRecords);
+        pageBean.setResult(parentRecords);
     }
 
     public RecordVo getDetailById(Long id) {

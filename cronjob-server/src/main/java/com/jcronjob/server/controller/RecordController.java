@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Record;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.server.service.ExecuteService;
 import com.jcronjob.server.service.RecordService;
 import com.jcronjob.server.service.JobService;
@@ -59,13 +59,13 @@ public class RecordController {
 
     /**
      * 查询已完成任务列表
-     * @param page
+     * @param pageBean
      * @param recordVo
      * @param model
      * @return
      */
     @RequestMapping("/done")
-    public String queryDone(HttpSession session, Page page, RecordVo recordVo, String queryTime, Model model) {
+    public String queryDone(HttpSession session, PageBean pageBean, RecordVo recordVo, String queryTime, Model model) {
 
         model.addAttribute("agents", agentService.getAgentsBySession(session));
 
@@ -92,13 +92,13 @@ public class RecordController {
         if (notEmpty(recordVo.getExecType())) {
             model.addAttribute("execType", recordVo.getExecType());
         }
-        recordService.query(session, page, recordVo, queryTime, true);
+        recordService.query(session, pageBean, recordVo, queryTime, true);
 
         return "/record/done";
     }
 
     @RequestMapping("/running")
-    public String queryRunning(HttpSession session, HttpServletRequest request, Page page, RecordVo recordVo, String queryTime, Model model) {
+    public String queryRunning(HttpSession session, HttpServletRequest request, PageBean pageBean, RecordVo recordVo, String queryTime, Model model) {
 
         model.addAttribute("agents", agentService.getAgentsBySession(session));
 
@@ -118,7 +118,7 @@ public class RecordController {
         if (notEmpty(recordVo.getExecType())) {
             model.addAttribute("execType", recordVo.getExecType());
         }
-        recordService.query(session, page, recordVo, queryTime, false);
+        recordService.query(session, pageBean, recordVo, queryTime, false);
 
         if (request.getParameter("refresh") != null) {
             return "/record/refresh";

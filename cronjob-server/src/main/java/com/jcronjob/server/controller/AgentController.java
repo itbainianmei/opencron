@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.Cronjob;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Agent;
@@ -48,8 +48,8 @@ public class AgentController {
     private AgentService agentService;
 
     @RequestMapping("/view")
-    public String queryAllAgent(HttpServletRequest request, HttpSession session, Model model, Page page) {
-        agentService.getAgent(session,page);
+    public String queryAllAgent(HttpServletRequest request, HttpSession session, Model model, PageBean pageBean) {
+        agentService.getAgent(session, pageBean);
         if (request.getParameter("refresh") != null) {
             return "/agent/refresh";
         }

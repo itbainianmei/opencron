@@ -24,7 +24,7 @@ package com.jcronjob.server.controller;
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.service.AgentService;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Role;
 import com.jcronjob.server.domain.User;
@@ -56,8 +56,8 @@ public class UserController {
     private AgentService agentService;
 
     @RequestMapping("/view")
-    public String queryUser(Page page) {
-        userService.queryUser(page);
+    public String queryUser(PageBean pageBean) {
+        userService.queryUser(pageBean);
         return "/user/view";
     }
 

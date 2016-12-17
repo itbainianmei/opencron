@@ -22,7 +22,6 @@
 
 package com.jcronjob.server.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.jcronjob.common.utils.CommonUtils;
@@ -30,7 +29,7 @@ import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.CronjobContext;
 import com.jcronjob.server.job.Globals;
-import com.jcronjob.server.tag.Page;
+import com.jcronjob.server.tag.PageBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import com.jcronjob.common.job.Cronjob;
 import com.jcronjob.server.domain.Agent;
@@ -86,14 +85,14 @@ public class AgentService {
         return queryDao.sqlQuery(Agent.class,sql,status);
     }
 
-    public Page getAgent(HttpSession session, Page page) {
+    public PageBean getAgent(HttpSession session, PageBean pageBean) {
         String sql = "SELECT * FROM T_AGENT";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
-        queryDao.getPageBySql(page, Agent.class, sql);
-        return page;
+        queryDao.getPageBySql(pageBean, Agent.class, sql);
+        return pageBean;
     }
 
     public Agent getAgent(Long id) {
