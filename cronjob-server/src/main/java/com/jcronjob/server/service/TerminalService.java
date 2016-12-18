@@ -128,6 +128,8 @@ public class TerminalService {
         private Connection connection;
         private Session session;
         private Terminal terminal;
+        private int rows;
+        private int cols;
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
@@ -145,7 +147,7 @@ public class TerminalService {
                 return false;
             }
             session = connection.openSession();
-            session.requestPTY("xterm");
+            session.requestPTY("xterm",this.cols,this.rows,0,0,null);
             session.startShell();
             inputStream = session.getStdout();
             outputStream = session.getStdin();
@@ -216,6 +218,22 @@ public class TerminalService {
 
         public WebSocketSession getWebSocketSession() {
             return webSocketSession;
+        }
+
+        public int getRows() {
+            return rows;
+        }
+
+        public void setRows(int rows) {
+            this.rows = rows;
+        }
+
+        public int getCols() {
+            return cols;
+        }
+
+        public void setCols(int cols) {
+            this.cols = cols;
         }
     }
 

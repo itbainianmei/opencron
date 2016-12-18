@@ -41,7 +41,7 @@
 
         setInterval(function(){
 
-            $("#highlight").fadeOut(3000,function(){
+            $("#highlight").fadeOut(8000,function(){
                 $(this).show();
             });
 
@@ -63,7 +63,7 @@
                     }
                 }
             });
-        },5000);
+        },1000*10);
 
         $("#name").focus(function(){
             $("#checkName").html("");
@@ -556,13 +556,41 @@
                         alert("连接失败请重试");
                     }else if(json.status == "success"){
                         var url = '${contextPath}'+json.url;
-                        var openLink = $("<a href='"+url+"' target='_blank'></a>").appendTo('body');
-                        openLink[0].click();
+                        var id = new Date().getTime();
+                        var openLink = $("<a id='out_"+id+"' href='"+url+"' target='_blank'><span id='inner_"+id+"' ></span></a>").appendTo('body');
+                        $("#inner_"+id)[0].click();
                         openLink.remove();
                     }
                 }
             }
         });
+    }
+    
+    function  clickOpenWin(f) {
+        var dataKey = "clickOpenWin.dataKey"
+        var me = $(this);
+        var A = me.data(dataKey);
+
+        var returnData = null;
+        if(!A){
+            A = $("");
+            me.data(dataKey, A);
+            A.click(function(e){
+                if(returnData){
+                    A.attr("href", returnData);
+                }else {
+                    A.before(me);
+                    e.stop();
+                }
+            });
+        }
+        me.mouseover(function(){$(this).before(A).appendTo(A);});
+        me.mouseout(function(){A.before($(this));});
+        me.click(function(){
+            A.attr("href", "#|");
+            returnData = f.apply(this, arguments);
+        });
+        
     }
 
     function saveSsh() {

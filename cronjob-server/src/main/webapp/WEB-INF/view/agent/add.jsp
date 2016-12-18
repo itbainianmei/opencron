@@ -404,7 +404,8 @@
                         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10"><i class="icon">&#61740;</i>&nbsp;取消</button>
                     </div>
                 </div>
-        </form>
+            </form>
+        </div>
     </div>
 
 </section>

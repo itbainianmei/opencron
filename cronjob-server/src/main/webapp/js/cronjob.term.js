@@ -39,7 +39,7 @@
         lineHeight:15,
         useStyle: true,
         screenKeys: true,
-        cursorBlink: true,
+        cursorBlink: false,
         convertEol: true
     });
     self.term.open(self.termNode.empty()[0]);
@@ -49,14 +49,18 @@
 
     self.resize();
 
+    var size = this.size();
+
     var url = this.contextPath+'/terminal.ws';
+    var params = "?cols="+size.cols+"&rows="+size.rows;
+
     if ('WebSocket' in window) {
-        self.socket = new WebSocket(url);
+        self.socket = new WebSocket(url+params);
     } else if ('MozWebSocket' in window) {
-        self.socket = new MozWebSocket(url);
+        self.socket = new MozWebSocket(url+params);
     } else {
         url = "http://"+window.location.host+"/terminal.js";
-        self.socket= SockJS(url);
+        self.socket= SockJS(url+params);
     }
 
     self.socket.onerror = function() {

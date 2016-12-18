@@ -39,11 +39,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class TerminalHandler extends TextWebSocketHandler {
 
 	private TerminalClient terminalClient;
+	private String sessionId;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
-		String sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
+		sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
 		if (sessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sessionId);
 
@@ -60,6 +61,10 @@ public class TerminalHandler extends TextWebSocketHandler {
 				try {
 					session.sendMessage(new TextMessage("Welcome to Cronjob Terminal! Connect Starting. "));
 					getClient(session,terminal);
+					Integer cols = session.getAttributes().get("cols")==null?null:Integer.parseInt(session.getAttributes().get("cols").toString());
+					Integer rows = session.getAttributes().get("rows")==null?null:Integer.parseInt(session.getAttributes().get("rows").toString());
+					terminalClient.setCols(cols);
+					terminalClient.setRows(rows);
 					if (terminalClient.connect()) {
 						terminalClient.sendMessage();
 					} else {

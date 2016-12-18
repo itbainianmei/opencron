@@ -39,6 +39,8 @@ public class WebSocketHandShaker extends HttpSessionHandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
             HttpSession session = servletRequest.getServletRequest().getSession(false);
+            attributes.put("cols",servletRequest.getServletRequest().getParameter("cols"));
+            attributes.put("rows",servletRequest.getServletRequest().getParameter("rows"));
             attributes.put(Globals.SSH_SESSION_ID,session.getAttribute(Globals.SSH_SESSION_ID));
         }
         return super.beforeHandshake(request,response,wsHandler,attributes);
