@@ -501,35 +501,6 @@
     }
 
     function ssh(agentId,ip,type) {
-        if( type==1 ) {
-            var currTime = new Date().getTime();
-            var json = {
-                linkId: agentId,
-                linkTime: currTime
-            };
-            if ("undefined" === typeof linkTimes) {
-                linkTimes = [json];
-            } else {
-                var exists = false;
-                for (var i = 0; i < linkTimes.length; i++) {
-                    var linkTime = linkTimes[i];
-                    if (linkTime.linkId === agentId) {
-                        exists = true;
-                        if (currTime - linkTime.linkTime <= 1000 * 10) {
-                            alert("请10秒后再登陆");
-                            return;
-                        } else {
-                            linkTime.linkTime = currTime;
-                            break;
-                        }
-                    }
-                }
-                if (!exists) {
-                    linkTimes.push(json);
-                }
-            }
-        }
-
         $.ajax({
             type:"POST",
             url:"${contextPath}/ssh",
@@ -556,10 +527,28 @@
                         alert("连接失败请重试");
                     }else if(json.status == "success"){
                         var url = '${contextPath}'+json.url;
-                        var id = new Date().getTime();
-                        var openLink = $("<a id='out_"+id+"' href='"+url+"' target='_blank'><span id='inner_"+id+"' ></span></a>").appendTo('body');
-                        $("#inner_"+id)[0].click();
-                        openLink.remove();
+                        swal({
+                            title: "",
+                            text: "您确定要打开Terminal吗？",
+                            type: "warning",
+                            showCancelButton: true,
+                            closeOnConfirm: false,
+                            confirmButtonText: "打开"
+                        },function () {
+                            $("div[class^='sweet-']").remove();
+                        });
+
+                        if( $("#openLink").length == 0 ) {
+                            $(".sweet-alert").find(".confirm").wrap("<a id='openLink' href='"+url+"'  target='_blank'/></a>");
+                        }else {
+                            $("#openLink").attr("href",url);
+                        }
+
+                        $(".sweet-alert").find(".cancel").click(function () {
+                            window.setTimeout(function () {
+                                $("div[class^='sweet-']").remove();
+                            },200)
+                        });
                     }
                 }
             }
@@ -900,7 +889,6 @@
             </div>
         </div>
     </div>
-
 
 </section>
 <br/><br/>

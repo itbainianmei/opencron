@@ -44,7 +44,7 @@ public class MapResultTransFormer extends BasicTransformerAdapter implements Ser
     /**
      * 查询列处理类
      */
-    public static interface ColumnHandler {
+    public interface ColumnHandler {
         /**
          * 处理字段,当改方法返回值不为null时,则返回结果被自动存储到result对象中,其中key为 name<br/>
          * 实现类也可以在方法中自定义存储处理结果,并返回null,禁止{@link MapResultTransFormer}对象自动存储
