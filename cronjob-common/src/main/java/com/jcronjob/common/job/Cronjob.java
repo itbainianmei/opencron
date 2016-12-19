@@ -22,37 +22,28 @@
 
 package com.jcronjob.common.job;
 
+import org.apache.thrift.TException;
+import org.apache.thrift.async.AsyncMethodCallback;
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
-
 import org.apache.thrift.scheme.TupleScheme;
-import org.apache.thrift.protocol.TTupleProtocol;
-import org.apache.thrift.TException;
-import org.apache.thrift.async.AsyncMethodCallback;
-import org.apache.thrift.server.AbstractNonblockingServer.*;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
-import javax.annotation.Generated;
-
+import org.apache.thrift.server.AbstractNonblockingServer.AsyncFrameBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Generated;
+import java.io.Serializable;
+import java.util.*;
+
 /**
  * @author <a href="mailto:benjobs@qq.com">benjobs@qq.com</a>
+ * @version 1.0.0
  * @name Cronjob
- * @version  1.0.0
- * @company  com.jcronjob
- * @description  基于thrift,封装了agnet与server通信的接口
- * @date  2016-05-09 pa 18:03<br/><br/>
+ * @company com.jcronjob
+ * @description 基于thrift, 封装了agnet与server通信的接口
+ * @date 2016-05-09 pa 18:03<br/><br/>
  * <p>
  * <hr style="color:RED"/>
  * 我能抽象出整个世界<br/>
@@ -71,7 +62,6 @@ import org.slf4j.LoggerFactory;
  * 在这无尽的黑夜中<br/>
  * 我的内存里已经再也装不下别人<br/>
  * <hr style="color:RED"/>
- *
  */
 
 @SuppressWarnings({"cast", "rawtypes", "serial", "unchecked"})
@@ -86,7 +76,7 @@ public class Cronjob implements Serializable {
         NOTFOUND(0x7f, "未找到命令或文件"),
         ERROR_EXEC(-0x64, "连接成功，执行任务失败!"),
         ERROR_PASSWORD(-0x1f4, "密码不正确!"),
-        TIME_OUT(0x1f8,"任务超时");
+        TIME_OUT(0x1f8, "任务超时");
 
         private Integer value;
         private String description;
@@ -250,8 +240,8 @@ public class Cronjob implements Serializable {
         STOPPING(0x2, "stopping", "正在停止"),
         STOPED(0x3, "stoped", "已停止"),
         RERUNNING(0x4, "rerunning", "正在重跑"),
-        RERUNUNDONE(0x5,"rerunundone","重跑未完成"),
-        RERUNDONE(0x6,"rerundone","重跑完成");
+        RERUNUNDONE(0x5, "rerunundone", "重跑未完成"),
+        RERUNDONE(0x6, "rerundone", "重跑完成");
 
         private Integer status;
         private String name;
@@ -317,7 +307,7 @@ public class Cronjob implements Serializable {
         }
 
         public static JobType getJobType(Integer type) {
-            if (type==null) return null;
+            if (type == null) return null;
             for (JobType jobType : JobType.values()) {
                 if (jobType.getCode().equals(type)) {
                     return jobType;
@@ -394,15 +384,15 @@ public class Cronjob implements Serializable {
         }
     }
 
-    public enum ConnType{
-        CONN(0x0,"conn","直连"),
-        PROXY(0x1,"proxy","代理");
+    public enum ConnType {
+        CONN(0x0, "conn", "直连"),
+        PROXY(0x1, "proxy", "代理");
 
         private Integer type;
         private String name;
         private String desc;
 
-        ConnType(Integer type,String name,String desc){
+        ConnType(Integer type, String name, String desc) {
             this.type = type;
             this.name = name;
             this.desc = desc;
@@ -464,7 +454,7 @@ public class Cronjob implements Serializable {
 
         public Response monitor(Request request) throws org.apache.thrift.TException;
 
-        public Response proxy(Request request) throws  org.apache.thrift.TException;
+        public Response proxy(Request request) throws org.apache.thrift.TException;
 
     }
 
@@ -486,17 +476,19 @@ public class Cronjob implements Serializable {
 
     public static class Client extends org.apache.thrift.TServiceClient implements Iface {
         public static class Factory implements org.apache.thrift.TServiceClientFactory<Client> {
-            public Factory() {}
+            public Factory() {
+            }
+
             public Client getClient(org.apache.thrift.protocol.TProtocol prot) {
                 return new Client(prot);
             }
+
             public Client getClient(org.apache.thrift.protocol.TProtocol iprot, org.apache.thrift.protocol.TProtocol oprot) {
                 return new Client(iprot, oprot);
             }
         }
 
-        public Client(org.apache.thrift.protocol.TProtocol prot)
-        {
+        public Client(org.apache.thrift.protocol.TProtocol prot) {
             super(prot, prot);
         }
 
@@ -504,21 +496,18 @@ public class Cronjob implements Serializable {
             super(iprot, oprot);
         }
 
-        public Response ping(Request request) throws org.apache.thrift.TException
-        {
+        public Response ping(Request request) throws org.apache.thrift.TException {
             send_ping(request);
             return recv_ping();
         }
 
-        public void send_ping(Request request) throws org.apache.thrift.TException
-        {
+        public void send_ping(Request request) throws org.apache.thrift.TException {
             ping_args args = new ping_args();
             args.setRequest(request);
             sendBase("ping", args);
         }
 
-        public Response recv_ping() throws org.apache.thrift.TException
-        {
+        public Response recv_ping() throws org.apache.thrift.TException {
             ping_result result = new ping_result();
             receiveBase(result, "ping");
             if (result.isSetSuccess()) {
@@ -527,21 +516,18 @@ public class Cronjob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "ping failed: unknown result");
         }
 
-        public Response execute(Request request) throws org.apache.thrift.TException
-        {
+        public Response execute(Request request) throws org.apache.thrift.TException {
             send_execute(request);
             return recv_execute();
         }
 
-        public void send_execute(Request request) throws org.apache.thrift.TException
-        {
+        public void send_execute(Request request) throws org.apache.thrift.TException {
             execute_args args = new execute_args();
             args.setRequest(request);
             sendBase("execute", args);
         }
 
-        public Response recv_execute() throws org.apache.thrift.TException
-        {
+        public Response recv_execute() throws org.apache.thrift.TException {
             execute_result result = new execute_result();
             receiveBase(result, "execute");
             if (result.isSetSuccess()) {
@@ -550,21 +536,18 @@ public class Cronjob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "execute failed: unknown result");
         }
 
-        public Response password(Request request) throws org.apache.thrift.TException
-        {
+        public Response password(Request request) throws org.apache.thrift.TException {
             send_password(request);
             return recv_password();
         }
 
-        public void send_password(Request request) throws org.apache.thrift.TException
-        {
+        public void send_password(Request request) throws org.apache.thrift.TException {
             password_args args = new password_args();
             args.setRequest(request);
             sendBase("password", args);
         }
 
-        public Response recv_password() throws org.apache.thrift.TException
-        {
+        public Response recv_password() throws org.apache.thrift.TException {
             password_result result = new password_result();
             receiveBase(result, "password");
             if (result.isSetSuccess()) {
@@ -573,21 +556,18 @@ public class Cronjob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "password failed: unknown result");
         }
 
-        public Response kill(Request request) throws org.apache.thrift.TException
-        {
+        public Response kill(Request request) throws org.apache.thrift.TException {
             send_kill(request);
             return recv_kill();
         }
 
-        public void send_kill(Request request) throws org.apache.thrift.TException
-        {
+        public void send_kill(Request request) throws org.apache.thrift.TException {
             kill_args args = new kill_args();
             args.setRequest(request);
             sendBase("kill", args);
         }
 
-        public Response recv_kill() throws org.apache.thrift.TException
-        {
+        public Response recv_kill() throws org.apache.thrift.TException {
             kill_result result = new kill_result();
             receiveBase(result, "kill");
             if (result.isSetSuccess()) {
@@ -596,21 +576,18 @@ public class Cronjob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "kill failed: unknown result");
         }
 
-        public Response monitor(Request request) throws org.apache.thrift.TException
-        {
+        public Response monitor(Request request) throws org.apache.thrift.TException {
             send_monitor(request);
             return recv_monitor();
         }
 
-        public void send_monitor(Request request) throws org.apache.thrift.TException
-        {
+        public void send_monitor(Request request) throws org.apache.thrift.TException {
             monitor_args args = new monitor_args();
             args.setRequest(request);
             sendBase("monitor", args);
         }
 
-        public Response recv_monitor() throws org.apache.thrift.TException
-        {
+        public Response recv_monitor() throws org.apache.thrift.TException {
             monitor_result result = new monitor_result();
             receiveBase(result, "monitor");
             if (result.isSetSuccess()) {
@@ -619,21 +596,18 @@ public class Cronjob implements Serializable {
             throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "monitor failed: unknown result");
         }
 
-        public Response proxy(Request request) throws org.apache.thrift.TException
-        {
+        public Response proxy(Request request) throws org.apache.thrift.TException {
             send_proxy(request);
             return recv_proxy();
         }
 
-        public void send_proxy(Request request) throws org.apache.thrift.TException
-        {
+        public void send_proxy(Request request) throws org.apache.thrift.TException {
             proxy_args args = new proxy_args();
             args.setRequest(request);
             sendBase("proxy", args);
         }
 
-        public Response recv_proxy() throws org.apache.thrift.TException
-        {
+        public Response recv_proxy() throws org.apache.thrift.TException {
             proxy_result result = new proxy_result();
             receiveBase(result, "proxy");
             if (result.isSetSuccess()) {
@@ -643,14 +617,17 @@ public class Cronjob implements Serializable {
         }
 
     }
+
     public static class AsyncClient extends org.apache.thrift.async.TAsyncClient implements AsyncIface {
         public static class Factory implements org.apache.thrift.async.TAsyncClientFactory<AsyncClient> {
             private org.apache.thrift.async.TAsyncClientManager clientManager;
             private org.apache.thrift.protocol.TProtocolFactory protocolFactory;
+
             public Factory(org.apache.thrift.async.TAsyncClientManager clientManager, org.apache.thrift.protocol.TProtocolFactory protocolFactory) {
                 this.clientManager = clientManager;
                 this.protocolFactory = protocolFactory;
             }
+
             public AsyncClient getAsyncClient(org.apache.thrift.transport.TNonblockingTransport transport) {
                 return new AsyncClient(protocolFactory, clientManager, transport);
             }
@@ -669,6 +646,7 @@ public class Cronjob implements Serializable {
 
         public static class ping_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public ping_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -701,6 +679,7 @@ public class Cronjob implements Serializable {
 
         public static class execute_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public execute_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -733,6 +712,7 @@ public class Cronjob implements Serializable {
 
         public static class password_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public password_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -765,6 +745,7 @@ public class Cronjob implements Serializable {
 
         public static class kill_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public kill_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -797,6 +778,7 @@ public class Cronjob implements Serializable {
 
         public static class monitor_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public monitor_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -829,6 +811,7 @@ public class Cronjob implements Serializable {
 
         public static class proxy_call extends org.apache.thrift.async.TAsyncMethodCall {
             private Request request;
+
             public proxy_call(Request request, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, false);
                 this.request = request;
@@ -856,15 +839,16 @@ public class Cronjob implements Serializable {
 
     public static class Processor<I extends Iface> extends org.apache.thrift.TBaseProcessor<I> implements org.apache.thrift.TProcessor {
         private static final Logger LOGGER = LoggerFactory.getLogger(Processor.class.getName());
+
         public Processor(I iface) {
             super(iface, getProcessMap(new HashMap<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>>()));
         }
 
-        protected Processor(I iface, Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
+        protected Processor(I iface, Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
             super(iface, getProcessMap(processMap));
         }
 
-        private static <I extends Iface> Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> getProcessMap(Map<String,  org.apache.thrift.ProcessFunction<I, ? extends  org.apache.thrift.TBase>> processMap) {
+        private static <I extends Iface> Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> getProcessMap(Map<String, org.apache.thrift.ProcessFunction<I, ? extends org.apache.thrift.TBase>> processMap) {
             processMap.put("ping", new ping());
             processMap.put("execute", new execute());
             processMap.put("password", new password());
@@ -998,15 +982,16 @@ public class Cronjob implements Serializable {
 
     public static class AsyncProcessor<I extends AsyncIface> extends org.apache.thrift.TBaseAsyncProcessor<I> {
         private static final Logger LOGGER = LoggerFactory.getLogger(AsyncProcessor.class.getName());
+
         public AsyncProcessor(I iface) {
             super(iface, getProcessMap(new HashMap<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>>()));
         }
 
-        protected AsyncProcessor(I iface, Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
+        protected AsyncProcessor(I iface, Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> processMap) {
             super(iface, getProcessMap(processMap));
         }
 
-        private static <I extends AsyncIface> Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase,?>> getProcessMap(Map<String,  org.apache.thrift.AsyncProcessFunction<I, ? extends  org.apache.thrift.TBase, ?>> processMap) {
+        private static <I extends AsyncIface> Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> getProcessMap(Map<String, org.apache.thrift.AsyncProcessFunction<I, ? extends org.apache.thrift.TBase, ?>> processMap) {
             processMap.put("ping", new ping());
             processMap.put("execute", new execute());
             processMap.put("password", new password());
@@ -1032,23 +1017,24 @@ public class Cronjob implements Serializable {
                         ping_result result = new ping_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         ping_result result = new ping_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1063,7 +1049,7 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, ping_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.ping(args.request,resultHandler);
+                iface.ping(args.request, resultHandler);
             }
         }
 
@@ -1083,23 +1069,24 @@ public class Cronjob implements Serializable {
                         execute_result result = new execute_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         execute_result result = new execute_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1114,7 +1101,7 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, execute_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.execute(args.request,resultHandler);
+                iface.execute(args.request, resultHandler);
             }
         }
 
@@ -1134,23 +1121,24 @@ public class Cronjob implements Serializable {
                         password_result result = new password_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         password_result result = new password_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1165,7 +1153,7 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, password_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.password(args.request,resultHandler);
+                iface.password(args.request, resultHandler);
             }
         }
 
@@ -1185,23 +1173,24 @@ public class Cronjob implements Serializable {
                         kill_result result = new kill_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         kill_result result = new kill_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1216,7 +1205,7 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, kill_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.kill(args.request,resultHandler);
+                iface.kill(args.request, resultHandler);
             }
         }
 
@@ -1236,23 +1225,24 @@ public class Cronjob implements Serializable {
                         monitor_result result = new monitor_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         monitor_result result = new monitor_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1267,7 +1257,7 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, monitor_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.monitor(args.request,resultHandler);
+                iface.monitor(args.request, resultHandler);
             }
         }
 
@@ -1287,23 +1277,24 @@ public class Cronjob implements Serializable {
                         proxy_result result = new proxy_result();
                         result.success = o;
                         try {
-                            fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+                            fcall.sendResponse(fb, result, org.apache.thrift.protocol.TMessageType.REPLY, seqid);
                             return;
                         } catch (Exception e) {
                             LOGGER.error("Exception writing to internal frame buffer", e);
                         }
                         fb.close();
                     }
+
                     public void onError(Exception e) {
                         byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
                         org.apache.thrift.TBase msg;
                         proxy_result result = new proxy_result();
                         {
                             msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
-                            msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+                            msg = (org.apache.thrift.TBase) new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
                         }
                         try {
-                            fcall.sendResponse(fb,msg,msgType,seqid);
+                            fcall.sendResponse(fb, msg, msgType, seqid);
                             return;
                         } catch (Exception ex) {
                             LOGGER.error("Exception writing to internal frame buffer", ex);
@@ -1318,18 +1309,19 @@ public class Cronjob implements Serializable {
             }
 
             public void start(I iface, proxy_args args, org.apache.thrift.async.AsyncMethodCallback<Response> resultHandler) throws TException {
-                iface.proxy(args.request,resultHandler);
+                iface.proxy(args.request, resultHandler);
             }
         }
 
     }
 
-    public static class ping_args implements org.apache.thrift.TBase<ping_args, ping_args._Fields>, java.io.Serializable, Cloneable, Comparable<ping_args>   {
+    public static class ping_args implements org.apache.thrift.TBase<ping_args, ping_args._Fields>, java.io.Serializable, Cloneable, Comparable<ping_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ping_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new ping_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new ping_argsTupleSchemeFactory());
@@ -1337,9 +1329,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1353,7 +1347,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -1397,6 +1391,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -1409,8 +1404,7 @@ public class Cronjob implements Serializable {
         }
 
         public ping_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -1446,7 +1440,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -1463,7 +1459,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -1479,7 +1475,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -1497,7 +1495,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof ping_args)
-                return this.equals((ping_args)that);
+                return this.equals((ping_args) that);
             return false;
         }
 
@@ -1613,8 +1611,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, ping_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -1690,12 +1687,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class ping_result implements org.apache.thrift.TBase<ping_result, ping_result._Fields>, java.io.Serializable, Cloneable, Comparable<ping_result>   {
+    public static class ping_result implements org.apache.thrift.TBase<ping_result, ping_result._Fields>, java.io.Serializable, Cloneable, Comparable<ping_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("ping_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new ping_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new ping_resultTupleSchemeFactory());
@@ -1703,9 +1701,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1719,7 +1719,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -1763,6 +1763,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -1775,8 +1776,7 @@ public class Cronjob implements Serializable {
         }
 
         public ping_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -1812,7 +1812,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -1829,7 +1831,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -1845,7 +1847,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -1863,7 +1867,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof ping_result)
-                return this.equals((ping_result)that);
+                return this.equals((ping_result) that);
             return false;
         }
 
@@ -1979,8 +1983,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, ping_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2056,12 +2059,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class execute_args implements org.apache.thrift.TBase<execute_args, execute_args._Fields>, java.io.Serializable, Cloneable, Comparable<execute_args>   {
+    public static class execute_args implements org.apache.thrift.TBase<execute_args, execute_args._Fields>, java.io.Serializable, Cloneable, Comparable<execute_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("execute_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new execute_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new execute_argsTupleSchemeFactory());
@@ -2069,9 +2073,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2085,7 +2091,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -2129,6 +2135,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2141,8 +2148,7 @@ public class Cronjob implements Serializable {
         }
 
         public execute_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -2178,7 +2184,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -2195,7 +2203,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -2211,7 +2219,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -2229,7 +2239,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof execute_args)
-                return this.equals((execute_args)that);
+                return this.equals((execute_args) that);
             return false;
         }
 
@@ -2345,8 +2355,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, execute_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2422,12 +2431,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class execute_result implements org.apache.thrift.TBase<execute_result, execute_result._Fields>, java.io.Serializable, Cloneable, Comparable<execute_result>   {
+    public static class execute_result implements org.apache.thrift.TBase<execute_result, execute_result._Fields>, java.io.Serializable, Cloneable, Comparable<execute_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("execute_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new execute_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new execute_resultTupleSchemeFactory());
@@ -2435,9 +2445,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2451,7 +2463,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -2495,6 +2507,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2507,8 +2520,7 @@ public class Cronjob implements Serializable {
         }
 
         public execute_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -2544,7 +2556,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -2561,7 +2575,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -2577,7 +2591,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -2595,7 +2611,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof execute_result)
-                return this.equals((execute_result)that);
+                return this.equals((execute_result) that);
             return false;
         }
 
@@ -2711,8 +2727,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, execute_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -2788,12 +2803,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class password_args implements org.apache.thrift.TBase<password_args, password_args._Fields>, java.io.Serializable, Cloneable, Comparable<password_args>   {
+    public static class password_args implements org.apache.thrift.TBase<password_args, password_args._Fields>, java.io.Serializable, Cloneable, Comparable<password_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new password_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new password_argsTupleSchemeFactory());
@@ -2801,9 +2817,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2817,7 +2835,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -2861,6 +2879,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -2873,8 +2892,7 @@ public class Cronjob implements Serializable {
         }
 
         public password_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -2910,7 +2928,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -2927,7 +2947,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -2943,7 +2963,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -2961,7 +2983,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof password_args)
-                return this.equals((password_args)that);
+                return this.equals((password_args) that);
             return false;
         }
 
@@ -3077,8 +3099,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, password_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3154,12 +3175,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class password_result implements org.apache.thrift.TBase<password_result, password_result._Fields>, java.io.Serializable, Cloneable, Comparable<password_result>   {
+    public static class password_result implements org.apache.thrift.TBase<password_result, password_result._Fields>, java.io.Serializable, Cloneable, Comparable<password_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("password_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new password_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new password_resultTupleSchemeFactory());
@@ -3167,9 +3189,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3183,7 +3207,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -3227,6 +3251,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -3239,8 +3264,7 @@ public class Cronjob implements Serializable {
         }
 
         public password_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -3276,7 +3300,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -3293,7 +3319,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -3309,7 +3335,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -3327,7 +3355,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof password_result)
-                return this.equals((password_result)that);
+                return this.equals((password_result) that);
             return false;
         }
 
@@ -3443,8 +3471,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, password_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3520,12 +3547,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class kill_args implements org.apache.thrift.TBase<kill_args, kill_args._Fields>, java.io.Serializable, Cloneable, Comparable<kill_args>   {
+    public static class kill_args implements org.apache.thrift.TBase<kill_args, kill_args._Fields>, java.io.Serializable, Cloneable, Comparable<kill_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("kill_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new kill_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new kill_argsTupleSchemeFactory());
@@ -3533,9 +3561,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3549,7 +3579,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -3593,6 +3623,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -3605,8 +3636,7 @@ public class Cronjob implements Serializable {
         }
 
         public kill_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -3642,7 +3672,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -3659,7 +3691,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -3675,7 +3707,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -3693,7 +3727,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof kill_args)
-                return this.equals((kill_args)that);
+                return this.equals((kill_args) that);
             return false;
         }
 
@@ -3809,8 +3843,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, kill_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -3886,12 +3919,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class kill_result implements org.apache.thrift.TBase<kill_result, kill_result._Fields>, java.io.Serializable, Cloneable, Comparable<kill_result>   {
+    public static class kill_result implements org.apache.thrift.TBase<kill_result, kill_result._Fields>, java.io.Serializable, Cloneable, Comparable<kill_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("kill_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new kill_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new kill_resultTupleSchemeFactory());
@@ -3899,9 +3933,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -3915,7 +3951,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -3959,6 +3995,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -3971,8 +4008,7 @@ public class Cronjob implements Serializable {
         }
 
         public kill_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -4008,7 +4044,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -4025,7 +4063,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -4041,7 +4079,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -4059,7 +4099,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof kill_result)
-                return this.equals((kill_result)that);
+                return this.equals((kill_result) that);
             return false;
         }
 
@@ -4175,8 +4215,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, kill_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -4252,12 +4291,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class monitor_args implements org.apache.thrift.TBase<monitor_args, monitor_args._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_args>   {
+    public static class monitor_args implements org.apache.thrift.TBase<monitor_args, monitor_args._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("monitor_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new monitor_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new monitor_argsTupleSchemeFactory());
@@ -4265,9 +4305,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -4281,7 +4323,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -4325,6 +4367,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -4337,8 +4380,7 @@ public class Cronjob implements Serializable {
         }
 
         public monitor_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -4374,7 +4416,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -4391,7 +4435,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -4407,7 +4451,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -4425,7 +4471,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof monitor_args)
-                return this.equals((monitor_args)that);
+                return this.equals((monitor_args) that);
             return false;
         }
 
@@ -4541,8 +4587,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, monitor_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -4618,12 +4663,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class monitor_result implements org.apache.thrift.TBase<monitor_result, monitor_result._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_result>   {
+    public static class monitor_result implements org.apache.thrift.TBase<monitor_result, monitor_result._Fields>, java.io.Serializable, Cloneable, Comparable<monitor_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("monitor_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new monitor_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new monitor_resultTupleSchemeFactory());
@@ -4631,9 +4677,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -4647,7 +4695,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -4691,6 +4739,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -4703,8 +4752,7 @@ public class Cronjob implements Serializable {
         }
 
         public monitor_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -4740,7 +4788,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -4757,7 +4807,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -4773,7 +4823,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -4791,7 +4843,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof monitor_result)
-                return this.equals((monitor_result)that);
+                return this.equals((monitor_result) that);
             return false;
         }
 
@@ -4907,8 +4959,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, monitor_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -4984,12 +5035,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class proxy_args implements org.apache.thrift.TBase<proxy_args, proxy_args._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_args>   {
+    public static class proxy_args implements org.apache.thrift.TBase<proxy_args, proxy_args._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_args> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("proxy_args");
 
-        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short)1);
+        private static final org.apache.thrift.protocol.TField REQUEST_FIELD_DESC = new org.apache.thrift.protocol.TField("request", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new proxy_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new proxy_argsTupleSchemeFactory());
@@ -4997,9 +5049,11 @@ public class Cronjob implements Serializable {
 
         public Request request; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            REQUEST((short)1, "request");
+            REQUEST((short) 1, "request");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -5013,7 +5067,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 1: // REQUEST
                         return REQUEST;
                     default:
@@ -5057,6 +5111,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.REQUEST, new org.apache.thrift.meta_data.FieldMetaData("request", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -5069,8 +5124,7 @@ public class Cronjob implements Serializable {
         }
 
         public proxy_args(
-                Request request)
-        {
+                Request request) {
             this();
             this.request = request;
         }
@@ -5106,7 +5160,9 @@ public class Cronjob implements Serializable {
             this.request = null;
         }
 
-        /** Returns true if field request is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field request is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetRequest() {
             return this.request != null;
         }
@@ -5123,7 +5179,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetRequest();
                     } else {
-                        setRequest((Request)value);
+                        setRequest((Request) value);
                     }
                     break;
 
@@ -5139,7 +5195,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -5157,7 +5215,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof proxy_args)
-                return this.equals((proxy_args)that);
+                return this.equals((proxy_args) that);
             return false;
         }
 
@@ -5273,8 +5331,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, proxy_args struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
@@ -5350,12 +5407,13 @@ public class Cronjob implements Serializable {
 
     }
 
-    public static class proxy_result implements org.apache.thrift.TBase<proxy_result, proxy_result._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_result>   {
+    public static class proxy_result implements org.apache.thrift.TBase<proxy_result, proxy_result._Fields>, java.io.Serializable, Cloneable, Comparable<proxy_result> {
         private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("proxy_result");
 
-        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short)0);
+        private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.STRUCT, (short) 0);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new proxy_resultStandardSchemeFactory());
             schemes.put(TupleScheme.class, new proxy_resultTupleSchemeFactory());
@@ -5363,9 +5421,11 @@ public class Cronjob implements Serializable {
 
         public Response success; // required
 
-        /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+        /**
+         * The set of fields this struct contains, along with convenience methods for finding and manipulating them.
+         */
         public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-            SUCCESS((short)0, "success");
+            SUCCESS((short) 0, "success");
 
             private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -5379,7 +5439,7 @@ public class Cronjob implements Serializable {
              * Find the _Fields constant that matches fieldId, or null if its not found.
              */
             public static _Fields findByThriftId(int fieldId) {
-                switch(fieldId) {
+                switch (fieldId) {
                     case 0: // SUCCESS
                         return SUCCESS;
                     default:
@@ -5423,6 +5483,7 @@ public class Cronjob implements Serializable {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
             tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT,
@@ -5435,8 +5496,7 @@ public class Cronjob implements Serializable {
         }
 
         public proxy_result(
-                Response success)
-        {
+                Response success) {
             this();
             this.success = success;
         }
@@ -5472,7 +5532,9 @@ public class Cronjob implements Serializable {
             this.success = null;
         }
 
-        /** Returns true if field success is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field success is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetSuccess() {
             return this.success != null;
         }
@@ -5489,7 +5551,7 @@ public class Cronjob implements Serializable {
                     if (value == null) {
                         unsetSuccess();
                     } else {
-                        setSuccess((Response)value);
+                        setSuccess((Response) value);
                     }
                     break;
 
@@ -5505,7 +5567,9 @@ public class Cronjob implements Serializable {
             throw new IllegalStateException();
         }
 
-        /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise
+         */
         public boolean isSet(_Fields field) {
             if (field == null) {
                 throw new IllegalArgumentException();
@@ -5523,7 +5587,7 @@ public class Cronjob implements Serializable {
             if (that == null)
                 return false;
             if (that instanceof proxy_result)
-                return this.equals((proxy_result)that);
+                return this.equals((proxy_result) that);
             return false;
         }
 
@@ -5639,8 +5703,7 @@ public class Cronjob implements Serializable {
             public void read(org.apache.thrift.protocol.TProtocol iprot, proxy_result struct) throws org.apache.thrift.TException {
                 org.apache.thrift.protocol.TField schemeField;
                 iprot.readStructBegin();
-                while (true)
-                {
+                while (true) {
                     schemeField = iprot.readFieldBegin();
                     if (schemeField.type == org.apache.thrift.protocol.TType.STOP) {
                         break;
