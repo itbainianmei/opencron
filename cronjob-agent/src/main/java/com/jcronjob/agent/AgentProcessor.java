@@ -76,20 +76,25 @@ public class AgentProcessor implements Cronjob.Iface {
         if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
-        String hostName = Globals.CRONJOB_SOCKET_ADDRESS.split(":")[0];
-        int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
 
-        AgentHeartBeat agentHeartBeat = agentHeartBeatMap.get(hostName);
-        if (agentHeartBeat == null) {
-            try {
-                agentHeartBeat = new AgentHeartBeat(hostName, serverPort, request.getHostName());
-                agentHeartBeat.start();
-                agentHeartBeatMap.put(hostName, agentHeartBeat);
-                logger.info("[cronjob]:ping ip:{},port:{}", hostName, serverPort);
-            } catch (IOException e) {
-                e.printStackTrace();
+        //非直连
+        if ( CommonUtils.isEmpty(request.getParams().get("proxy")) ) {
+            String hostName = Globals.CRONJOB_SOCKET_ADDRESS.split(":")[0];
+            int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
+
+            AgentHeartBeat agentHeartBeat = agentHeartBeatMap.get(hostName);
+            if (agentHeartBeat == null) {
+                try {
+                    agentHeartBeat = new AgentHeartBeat(hostName, serverPort, request.getHostName());
+                    agentHeartBeat.start();
+                    agentHeartBeatMap.put(hostName, agentHeartBeat);
+                    logger.info("[cronjob]:ping ip:{},port:{}", hostName, serverPort);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
         return Response.response(request).setSuccess(true).setExitCode(Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
     }
 
@@ -144,6 +149,7 @@ public class AgentProcessor implements Cronjob.Iface {
 
         Request proxyReq = Request.request(proxyHost, toInt(proxyPort), Action.findByName(proxyAction), proxyPassword).setParams(params);
 
+
         logger.info("[cronjob]proxy params:{}", proxyReq.toString());
 
         TTransport transport = null;
@@ -151,6 +157,7 @@ public class AgentProcessor implements Cronjob.Iface {
          * ping的超时设置为5毫秒,其他默认
          */
         if (proxyReq.getAction().equals(Action.PING)) {
+            proxyReq.getParams().put("proxy","true");
             transport = new TSocket(proxyReq.getHostName(), proxyReq.getPort(), 1000 * 5);
         } else {
             transport = new TSocket(proxyReq.getHostName(), proxyReq.getPort());
