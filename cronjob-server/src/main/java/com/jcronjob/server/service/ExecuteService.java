@@ -40,7 +40,6 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -71,9 +70,6 @@ public class ExecuteService implements Job {
     private UserService userService;
 
     private Map<Long,Integer> reExecuteThreadMap = new HashMap<Long, Integer>(0);
-
-    @Value("#{config['cronjob.host']}")
-    private String serverHost;
 
     private static final String PACKETTOOBIG_ERROR  = "在向MySQL数据库插入数据量过多,需要设定max_allowed_packet";
 
@@ -516,7 +512,7 @@ public class ExecuteService implements Job {
     public boolean ping(Agent agent) {
         boolean ping = false;
         try {
-            ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverHost",this.serverHost).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
+            ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
         } catch (Exception e) {
             logger.error("[cronjob]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {

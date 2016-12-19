@@ -28,9 +28,14 @@ import com.jcronjob.common.utils.IOUtils;
 import com.jcronjob.common.utils.LoggerFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.server.ServerContext;
 import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TServerEventHandler;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -170,6 +175,18 @@ public class Bootstrap implements Serializable {
             arg.protocolFactory(protFactory);
             arg.processor(processor);
             this.server = new TThreadPoolServer(arg);
+
+            this.server.setServerEventHandler(new TServerEventHandler(){
+                public void preServe() {}
+                public void deleteContext(ServerContext serverContext, TProtocol tProtocol, TProtocol tProtocol1) {}
+                public ServerContext createContext(TProtocol tProtocol, TProtocol tProtocol1) {return null;}
+                public void processContext(ServerContext serverContext, TTransport inputTransport, TTransport outputTransport) {
+                    TSocket socket = (TSocket) inputTransport;
+                    //获取cronjob-server的ip
+                    Globals.CRONJOB_SOCKET_ADDRESS = socket.getSocket().getRemoteSocketAddress().toString().substring(1);
+                }
+            });
+
             /**
              * write pid to pidfile...
              */

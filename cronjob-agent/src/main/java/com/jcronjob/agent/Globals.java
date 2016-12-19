@@ -49,4 +49,7 @@ public final class Globals {
      */
     public static File CRONJOB_KILL_SHELL = new File(System.getProperty(CRONJOB_HOME) + "/bin/kill.sh");
 
+
+    public static String CRONJOB_SOCKET_ADDRESS = "";
+
 }

@@ -76,20 +76,20 @@ public class AgentProcessor implements Cronjob.Iface {
         if (!this.password.equalsIgnoreCase(request.getPassword())) {
             return errorPasswordResponse(request);
         }
+        String hostName = Globals.CRONJOB_SOCKET_ADDRESS.split(":")[0];
         int serverPort = Integer.parseInt(request.getParams().get("serverPort"));
-        String serverHost = request.getParams().get("serverHost");
-        AgentHeartBeat agentHeartBeat = agentHeartBeatMap.get(serverHost);
+
+        AgentHeartBeat agentHeartBeat = agentHeartBeatMap.get(hostName);
         if (agentHeartBeat == null) {
             try {
-                agentHeartBeat = new AgentHeartBeat(serverHost, serverPort, request.getHostName());
+                agentHeartBeat = new AgentHeartBeat(hostName, serverPort, request.getHostName());
                 agentHeartBeat.start();
-                agentHeartBeatMap.put(serverHost, agentHeartBeat);
-                logger.info("[cronjob]:ping ip:{},port:{}", serverHost, serverPort);
+                agentHeartBeatMap.put(hostName, agentHeartBeat);
+                logger.info("[cronjob]:ping ip:{},port:{}", hostName, serverPort);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return Response.response(request).setSuccess(true).setExitCode(Cronjob.StatusCode.SUCCESS_EXIT.getValue()).end();
     }
 

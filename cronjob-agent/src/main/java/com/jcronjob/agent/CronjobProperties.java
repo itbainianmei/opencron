@@ -37,7 +37,6 @@ public class CronjobProperties {
 
     private static Properties properties = null;
 
-
     static {
         loadProperties();
     }
