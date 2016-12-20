@@ -18,7 +18,7 @@
     var text="qwertyuiopasdfghjklzxcvbnm";
     var span = $("<span>", { text: text });
     $(this.termNode).append(span);
-    var charWidth = span.width() / 26;
+    var charWidth = span.width() / text.length;
     span.remove();
     return {
         cols: Math.floor($(window).width() / charWidth),
