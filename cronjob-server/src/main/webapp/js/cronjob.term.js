@@ -21,7 +21,7 @@
     var charWidth = span.width() / text.length;
     span.remove();
     return {
-        cols: Math.floor($(window).width() / charWidth),
+        cols: Math.floor($(window).width() / charWidth)+2,
         rows: Math.floor($(window).height() / 15) - 1
     };
 }
