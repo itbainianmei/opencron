@@ -687,12 +687,14 @@
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="登录">
-                                    <i aria-hidden="true" class="fa fa-desktop"></i>
-                                </a>&nbsp;&nbsp;
+                                <c:if test="${w.proxy eq 0}">
+                                    <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="ssh登录">
+                                        <i aria-hidden="true" class="fa fa-tv"></i>
+                                    </a>&nbsp;&nbsp;
+                                </c:if>
 
                                 <a href="${contextPath}/job/addpage?id=${w.agentId}" title="新任务">
-                                    <i aria-hidden="true" class="fa fa-plus-square"></i>
+                                    <i aria-hidden="true" class="fa fa-plus-square-o"></i>
                                 </a>&nbsp;&nbsp;
                                 <c:if test="${permission eq true}">
                                     <a href="#" onclick="edit('${w.agentId}')" title="编辑">
