@@ -46,6 +46,21 @@ public class TerminalHandler extends TextWebSocketHandler {
 		sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
 		if (sessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sessionId);
+
+			/**
+			 *
+			 * 当前的执行器是否已经被同一个用户打开过,如果已经打开过则关闭,通知下线..
+			 * 实际使用下应该有同一个终端多开的情况,不应该剔除下线.
+			if(TerminalSession.isOpened(terminal)){
+				WebSocketSession preSession = TerminalSession.findSession(terminal);
+				preSession.sendMessage(new TextMessage("Sorry! Another Cronjob Terminal is opened! this terminal changed to closed. "));
+				TerminalSession.get(preSession).disconnect();
+				TerminalSession.remove(preSession);
+				preSession.close();
+			}
+			 *
+			**/
+
 			if (terminal!=null) {
 				try {
 					session.sendMessage(new TextMessage("Welcome to Cronjob Terminal! Connect Starting. "));
