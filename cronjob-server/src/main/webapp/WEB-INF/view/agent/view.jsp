@@ -534,20 +534,30 @@
                             showCancelButton: true,
                             closeOnConfirm: false,
                             confirmButtonText: "打开"
-                        },function () {
-                            $("div[class^='sweet-']").remove();
                         });
 
+                        /**
+                         *
+                         * 默认打开新的弹窗浏览器会阻止,有的浏览器如Safair连询问用户是否打开新窗口的对话框都没有.
+                         * 这里页面自己弹出询问框,当用户点击"打开"产生了真正的点击行为,然后利用事件冒泡就触发了包裹它的a标签,使得可以在新窗口打开a标签的连接
+                         *
+                         */
                         if( $("#openLink").length == 0 ) {
                             $(".sweet-alert").find(".confirm").wrap("<a id='openLink' href='"+url+"'  target='_blank'/></a>");
                         }else {
                             $("#openLink").attr("href",url);
                         }
 
-                        $(".sweet-alert").find(".cancel").click(function () {
+                        $("#openLink").click(function () {
                             window.setTimeout(function () {
                                 $("div[class^='sweet-']").remove();
                             },200)
+                        });
+
+                        $(".sweet-alert").find(".cancel").click(function () {
+                            window.setTimeout(function () {
+                                $("div[class^='sweet-']").remove();
+                            },500)
                         });
                     }
                 }
