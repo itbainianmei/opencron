@@ -26,6 +26,7 @@ import com.jcronjob.common.utils.RSAUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -184,6 +185,7 @@ public class Terminal implements Serializable{
         this.authorization = authorization;
     }
 
+
     @Override
     public String toString() {
         return "Terminal{" +
@@ -192,11 +194,10 @@ public class Terminal implements Serializable{
                 ", host='" + host + '\'' +
                 ", port=" + port +
                 ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
                 ", status='" + status + '\'' +
                 ", logintime=" + logintime +
                 ", agent=" + agent +
-                ", user=" + user.toString() +
+                ", password='" + password + '\'' +
                 '}';
     }
 
