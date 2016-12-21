@@ -79,7 +79,7 @@ public class TerminalService {
         Terminal term = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
         if (term!=null) {
             queryDao.getSession().clear();
-            term.desDecrypt();
+            term.decode();
         }
         return term;
     }
@@ -90,8 +90,7 @@ public class TerminalService {
             term.setId(dbTerm.getId());
         }
         try {
-            //私钥.
-            term.desEncrypt(CommonUtils.uuid());
+            term.encode(CommonUtils.uuid());
             term.setLogintime(new Date());
             queryDao.save(term);
             return true;
@@ -301,8 +300,8 @@ public class TerminalService {
                     }
                 }
             }
-
         }
+
     }
 
 

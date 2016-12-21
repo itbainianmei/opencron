@@ -1,10 +1,34 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ *
+ */
 package com.jcronjob.server.domain;
 
 import com.jcronjob.common.utils.DigestUtils;
+import com.jcronjob.common.utils.RSAUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by benjobs on 16/5/21.
@@ -24,8 +48,9 @@ public class Terminal implements Serializable{
     private String password;
     private String status = SUCCESS;
     private Date logintime;
-    private String token;
 
+    @Column(length = 1024)
+    private String token;
 
     @Transient
     private Agent agent;
@@ -45,6 +70,24 @@ public class Terminal implements Serializable{
     public static final String SUCCESS ="SUCCESS";
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
+
+    @Transient
+    private static String publicKey = null;
+
+    @Transient
+    private static String privateKey = null;
+
+    static {
+        try {
+            Map<String, Object> keyMap = RSAUtils.genKeyPair();
+            publicKey = RSAUtils.getPublicKey(keyMap);
+            privateKey = RSAUtils.getPrivateKey(keyMap);
+            System.err.println("公钥: \n\r" + publicKey);
+            System.err.println("私钥： \n\r" + privateKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public Long getId() {
         return id;
@@ -106,8 +149,10 @@ public class Terminal implements Serializable{
         return token;
     }
 
-    public void desDecrypt(){
+    public void decode(){
         try {
+            byte[] decodedData = RSAUtils.decryptByPrivateKey(this.token.getBytes(), privateKey);
+            this.token = new String(decodedData);
             this.userName = DigestUtils.desDecrypt(this.token,userName);
             this.password = DigestUtils.desDecrypt(this.token,password);
         } catch (Exception e) {
@@ -115,9 +160,10 @@ public class Terminal implements Serializable{
         }
     }
 
-    public void desEncrypt(String key){
+    public void encode(String key){
         try {
-            this.token = key;
+            //对key进行非对称加密
+            this.token = new String(RSAUtils.encryptByPublicKey(key.getBytes(), publicKey));
             this.userName = DigestUtils.desEncrypt(key,userName);
             this.password = DigestUtils.desEncrypt(key,password);
         } catch (Exception e) {
