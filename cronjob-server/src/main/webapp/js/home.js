@@ -346,10 +346,10 @@ function CronjobChart() {
 
             if (i == 2) {
                 if (self.screen == 2) {
-                    var html = "<div style='display: inline-block;'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    var html = "<div class='gauge-cpu-warp'><div id=\"gauge-cpu\" class=\"gaugeChart_m\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 } else {
-                    var html = "<div style='display: inline-block;'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
+                    var html = "<div class='gauge-cpu-warp'><div id=\"gauge-cpu\" class=\"gaugeChart\"></div><span class='gaugeChartTitle' ><i class=\"icon\" >&#61881;</i>&nbsp;" + title + "</span></div>";
                     $("#overview-chart").append(html);
                 }
                 self.gauge = echarts.init(document.getElementById('gauge-cpu'));
