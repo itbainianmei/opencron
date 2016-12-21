@@ -23,10 +23,12 @@
 package com.jcronjob.server.domain;
 
 import com.jcronjob.common.utils.RSAUtils;
+import org.junit.runners.model.InitializationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
@@ -37,6 +39,9 @@ import java.util.Map;
 @Entity
 @Table(name = "T_TERM")
 public class Terminal implements Serializable{
+
+    @Transient
+    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
 
     @Id
     @GeneratedValue
@@ -56,7 +61,6 @@ public class Terminal implements Serializable{
 
     @Transient
     private Agent agent;
-
 
     @Transient
     public static final String INITIAL ="INITIAL";
@@ -83,15 +87,14 @@ public class Terminal implements Serializable{
     @Transient
     private static String privateKey = null;
 
-    static {
+    public void initRSA() throws InitializationError {
         try {
             Map<String, Object> keyMap = RSAUtils.genKeyPair();
             publicKey = RSAUtils.getPublicKey(keyMap);
             privateKey = RSAUtils.getPrivateKey(keyMap);
-            System.err.println("公钥: \n\r" + publicKey);
-            System.err.println("私钥： \n\r" + privateKey);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[cronjob] error:{}"+e.getMessage());
+            throw new RuntimeException("init RSA'publicKey and privateKey error!");
         }
     }
 
@@ -144,12 +147,18 @@ public class Terminal implements Serializable{
     }
 
     public String getPassword() throws Exception {
+        if (privateKey==null) {
+            initRSA();
+        }
         byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, privateKey);
         return new String(decodedData);
     }
 
     public void setPassword(String password) throws Exception {
         //对key进行非对称加密
+        if (privateKey==null) {
+            initRSA();
+        }
         this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), publicKey);
     }
 
