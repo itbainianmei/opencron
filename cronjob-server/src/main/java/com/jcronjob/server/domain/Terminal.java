@@ -55,12 +55,23 @@ public class Terminal implements Serializable{
     @Column(columnDefinition = "BLOB")
     private byte[] authorization;
 
-
     private String status = SUCCESS;
     private Date logintime;
 
     @Transient
+    private User user;
+
+    @Transient
+    private String password;
+
+    @Transient
     private Agent agent;
+
+    @Transient
+    private static String publicKey = null;
+
+    @Transient
+    private static String privateKey = null;
 
     @Transient
     public static final String INITIAL ="INITIAL";
@@ -74,18 +85,6 @@ public class Terminal implements Serializable{
     public static final String SUCCESS ="SUCCESS";
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
-
-    @Transient
-    private User user;
-
-    @Transient
-    private String password;
-
-    @Transient
-    private static String publicKey = null;
-
-    @Transient
-    private static String privateKey = null;
 
     public void initRSA() throws InitializationError {
         try {
