@@ -22,7 +22,6 @@
  */
 package com.jcronjob.server.domain;
 
-import com.jcronjob.common.utils.DigestUtils;
 import com.jcronjob.common.utils.RSAUtils;
 
 import javax.persistence.*;
@@ -45,18 +44,18 @@ public class Terminal implements Serializable{
     private String host;
     private int port;
     private String userName;
-    private String password;
+
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    private byte[] authorization;
+
+
     private String status = SUCCESS;
     private Date logintime;
-
-    @Column(length = 1024)
-    private String token;
 
     @Transient
     private Agent agent;
 
-    @Transient
-    private User user;
 
     @Transient
     public static final String INITIAL ="INITIAL";
@@ -70,6 +69,12 @@ public class Terminal implements Serializable{
     public static final String SUCCESS ="SUCCESS";
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
+
+    @Transient
+    private User user;
+
+    @Transient
+    private String password;
 
     @Transient
     private static String publicKey = null;
@@ -137,42 +142,14 @@ public class Terminal implements Serializable{
         this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPassword() throws Exception {
+        byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, privateKey);
+        return new String(decodedData);
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void decode(){
-        try {
-            byte[] decodedData = RSAUtils.decryptByPrivateKey(this.token.getBytes(), privateKey);
-            this.token = new String(decodedData);
-            this.userName = DigestUtils.desDecrypt(this.token,userName);
-            this.password = DigestUtils.desDecrypt(this.token,password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void encode(String key){
-        try {
-            //对key进行非对称加密
-            this.token = new String(RSAUtils.encryptByPublicKey(key.getBytes(), publicKey));
-            this.userName = DigestUtils.desEncrypt(key,userName);
-            this.password = DigestUtils.desEncrypt(key,password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public void setPassword(String password) throws Exception {
+        //对key进行非对称加密
+        this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), publicKey);
     }
 
     public String getStatus() {
@@ -199,6 +176,13 @@ public class Terminal implements Serializable{
         this.agent = agent;
     }
 
+    public byte[] getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(byte[] authorization) {
+        this.authorization = authorization;
+    }
 
     @Override
     public String toString() {
@@ -211,7 +195,6 @@ public class Terminal implements Serializable{
                 ", password='" + password + '\'' +
                 ", status='" + status + '\'' +
                 ", logintime=" + logintime +
-                ", token='" + token + '\'' +
                 ", agent=" + agent +
                 ", user=" + user.toString() +
                 '}';

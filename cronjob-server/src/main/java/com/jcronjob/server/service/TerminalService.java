@@ -79,7 +79,6 @@ public class TerminalService {
         Terminal term = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
         if (term!=null) {
             queryDao.getSession().clear();
-            term.decode();
         }
         return term;
     }
@@ -90,7 +89,6 @@ public class TerminalService {
             term.setId(dbTerm.getId());
         }
         try {
-            term.encode(CommonUtils.uuid());
             term.setLogintime(new Date());
             queryDao.save(term);
             return true;
@@ -109,9 +107,12 @@ public class TerminalService {
                 return "authfail";
             }
             return "success";
-        } catch (IOException e) {
+        } catch (Exception e) {
             if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
                 return "timeout";
+            }
+            if (e instanceof javax.crypto.BadPaddingException) {
+                return "authfail";
             }
            return "error";
         }finally {
@@ -139,7 +140,7 @@ public class TerminalService {
             this.terminal = terminal;
         }
 
-        public boolean connect() throws IOException {
+        public boolean connect() throws Exception {
             connection = new Connection(terminal.getHost(), terminal.getPort());
             connection.connect();
             if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
