@@ -136,8 +136,8 @@ public class CronjobCaller {
         Session session = null;
         try {
             connection.connect();
-            boolean isAuthenticated = connection.authenticateWithPassword(terminal.getUserName(), terminal.getPassword());
-            if (isAuthenticated == false) {
+            boolean authenticated = connection.authenticateWithPassword(terminal.getUserName(), terminal.getPassword());
+            if (authenticated == false) {
                 throw new IOException("Authentication failed.");
             }
             session = connection.openSession();

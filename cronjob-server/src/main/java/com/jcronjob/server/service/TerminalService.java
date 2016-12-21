@@ -76,11 +76,7 @@ public class TerminalService {
     private QueryDao queryDao;
 
     public Terminal getTerm(Long userId, String host) throws Exception {
-        Terminal term = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
-        if (term!=null) {
-            queryDao.getSession().clear();
-        }
-        return term;
+        return queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
     }
 
     public boolean saveOrUpdate(Terminal term) {

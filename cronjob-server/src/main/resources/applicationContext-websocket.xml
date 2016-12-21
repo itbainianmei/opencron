@@ -7,6 +7,27 @@
         http://www.springframework.org/schema/websocket
         http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
+
+    <bean id="mornitorHandler" class="com.jcronjob.server.websocket.MornitorHandler"/>
+    <bean id="mornitorHandShaker" class="com.jcronjob.server.websocket.MornitorHandShaker"/>
+
+    <websocket:handlers>
+        <websocket:mapping path="/mornitor.ws" handler="mornitorHandler" />
+        <websocket:handshake-interceptors>
+            <ref bean="mornitorHandShaker"/>
+        </websocket:handshake-interceptors>
+    </websocket:handlers>
+
+    <websocket:handlers>
+        <websocket:mapping path="/mornitor.js" handler="mornitorHandler" />
+        <websocket:handshake-interceptors>
+            <ref bean="mornitorHandShaker"/>
+        </websocket:handshake-interceptors>
+        <websocket:sockjs/>
+    </websocket:handlers>
+
+
+
     <bean id="terminalHandler" class="com.jcronjob.server.websocket.TerminalHandler"/>
     <bean id="webSocketHandShaker" class="com.jcronjob.server.websocket.WebSocketHandShaker"/>
 
@@ -24,5 +45,8 @@
         </websocket:handshake-interceptors>
         <websocket:sockjs/>
     </websocket:handlers>
+
+
+
 
 </beans>
