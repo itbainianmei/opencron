@@ -7,8 +7,10 @@ import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.Monitor;
 import com.jcronjob.common.utils.DateUtils;
 import com.jcronjob.common.utils.DigestUtils;
+import com.jcronjob.common.utils.IOUtils;
 import com.jcronjob.common.utils.ReflectUitls;
 import com.jcronjob.server.domain.Terminal;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -33,49 +35,8 @@ public class MornitorClient {
     private Terminal terminal;
     private Format format = new DecimalFormat("##0.00");
 
-    private String shell = "disk=$(df -h|sed -r 's/\\s+/ /g'|sed -r 's/Mounted\\s+on/Mounted/g'|sed -r 's/%//g');\n" +
-            "\n" +
-            "load=$(cat /proc/loadavg |awk '{print $1\",\"$2\",\"$3}');\n" +
-            "\n" +
-            "total=$(cat /proc/meminfo |grep SwapTotal |awk '{print $2}');\n" +
-            "free=$(cat /proc/meminfo |grep SwapFree |awk '{print $2}');\n" +
-            "swap=$(echo  \"{total:$total,free:$free}\");\n" +
-            "\n" +
-            "cpulog_1=$(cat /proc/stat | grep 'cpu ' | awk '{print $2\" \"$3\" \"$4\" \"$5\" \"$6\" \"$7\" \"$8}');\n" +
-            "sysidle1=$(echo $cpulog_1 | awk '{print $4}');\n" +
-            "total1=$(echo $cpulog_1 | awk '{print $1+$2+$3+$4+$5+$6+$7}');\n" +
-            "cpulog_2=$(cat /proc/stat | grep 'cpu ' | awk '{print $2\" \"$3\" \"$4\" \"$5\" \"$6\" \"$7\" \"$8}');\n" +
-            "sysidle2=$(echo $cpulog_2 | awk '{print $4}');\n" +
-            "total2=$(echo $cpulog_2 | awk '{print $1+$2+$3+$4+$5+$6+$7}');\n" +
-            "cpudetail=$(top -b -n 1 | grep Cpu |sed -r 's/\\s+//g'|awk -F \":\" '{print $2}');\n" +
-            "cpu=$(echo  \"{id2:\\\"$sysidle2\\\",id1:\\\"$sysidle1\\\",total2:\\\"$total2\\\",total1:\\\"$total1\\\",detail:\\\"$cpudetail\\\"}\");\n" +
-            "\n" +
-            "loadmemory=$(cat /proc/meminfo | awk '{print $2}');\n" +
-            "total=$(echo $loadmemory | awk '{print $1}');\n" +
-            "free1=$(echo $loadmemory | awk '{print $2}');\n" +
-            "free2=$(echo $loadmemory | awk '{print $3}');\n" +
-            "free3=$(echo $loadmemory | awk '{print $4}');\n" +
-            "used=$(($total - $free1 - $free2 - $free3));\n" +
-            "mem=$(echo  \"{total:$total,used:$used}\");\n" +
-            "\n" +
-            "hostname=$(echo `hostname`|sed 's/\\\\.//g');\n" +
-            "os=$(echo `head -n 1 /etc/issue`|sed 's/\\\\.//g');\n" +
-            "if [ -z \"$os\" ];then\n" +
-            " os=$(echo `cat /etc/redhat-release`|sed 's/\\\\.//g');\n" +
-            "fi\n" +
-            "kernel=$(uname -r);\n" +
-            "machine=$(uname -m);\n" +
-            "\n" +
-            "top=$(echo \"P\"|top -b -n 1| head -18|sed -r 's/\\s+/ /g'| sed  '1,6d');\n" +
-            "\n" +
-            "cpucount=$(cat /proc/cpuinfo | grep name | wc -l);\n" +
-            "cpuname=$(cat /proc/cpuinfo | grep name|uniq -c |awk -F \":\" '{print $2}'|awk -F \"@\" '{print $1}'|sed -r 's/^\\\\s|\\\\s$//g');\n" +
-            "cpuinfo=$(cat /proc/cpuinfo | grep name|uniq -c |awk -F \":\" '{print $2}'|awk -F \"@\" '{print $2}'|sed -r 's/^\\\\s|\\\\s$//g');\n" +
-            "cpuconf=\"cpuinfo:{\\\"count\\\":\\\"$cpucount\\\",\\\"name\\\":\\\"$cpuname\\\",\\\"info\\\":\\\"$cpuinfo\\\"}\";\n" +
-            "\n" +
-            "conf=$(echo  \"{\"hostname\":\\\"$hostname\\\",\"os\":\\\"$os\\\",\"kernel\":\\\"$kernel\\\",\"machine\":\\\"$machine\\\",$cpuconf}\");\n" +
-            "\n" +
-            "echo  \"{top:\\\"$top\\\",cpu:$cpu,disk:\\\"$disk\\\",mem:$mem,swap:$swap,load:\\\"$load\\\",conf:$conf}\";";
+    private String shell = null;
+
 
     public MornitorClient(WebSocketSession webSocketSession, Terminal terminal) {
         this.webSocketSession = webSocketSession;
@@ -98,6 +59,10 @@ public class MornitorClient {
             public void run() {
                 StringBuilder builder = new StringBuilder();
                 try {
+                    if (shell == null) {
+                        File shellFile = ResourceUtils.getFile("classpath:monitor.sh");
+                        shell = IOUtils.readText(shellFile,"UTF-8");
+                    }
                     session.execCommand(shell);
                     InputStream stdout = new StreamGobbler(session.getStdout());
                     BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
