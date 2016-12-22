@@ -7,10 +7,8 @@ import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.job.Monitor;
 import com.jcronjob.common.utils.DateUtils;
 import com.jcronjob.common.utils.DigestUtils;
-import com.jcronjob.common.utils.IOUtils;
 import com.jcronjob.common.utils.ReflectUitls;
 import com.jcronjob.server.domain.Terminal;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -19,6 +17,7 @@ import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,9 +32,58 @@ public class MornitorClient {
     private Connection connection;
     private Session session;
     private Terminal terminal;
+    private InputStream inputStream;
+    private OutputStream outputStream;
+    private BufferedWriter writer;
+
     private Format format = new DecimalFormat("##0.00");
 
-    private String shell = null;
+    private String shell = "disk=$(df -h|sed -r 's/\\s+/ /g'|sed -r 's/Mounted\\s+on/Mounted/g'|sed -r 's/%//g');\n" +
+            "\n" +
+            "load=$(cat /proc/loadavg |awk '{print $1\",\"$2\",\"$3}');\n" +
+            "\n" +
+            "total=$(cat /proc/meminfo |grep SwapTotal |awk '{print $2}');\n" +
+            "free=$(cat /proc/meminfo |grep SwapFree |awk '{print $2}');\n" +
+            "swap=$(echo  \"{total:$total,free:$free}\");\n" +
+            "\n" +
+            "cpulog_1=$(cat /proc/stat | grep 'cpu ' | awk '{print $2\" \"$3\" \"$4\" \"$5\" \"$6\" \"$7\" \"$8}');\n" +
+            "sysidle1=$(echo $cpulog_1 | awk '{print $4}');\n" +
+            "total1=$(echo $cpulog_1 | awk '{print $1+$2+$3+$4+$5+$6+$7}');\n" +
+            "cpulog_2=$(cat /proc/stat | grep 'cpu ' | awk '{print $2\" \"$3\" \"$4\" \"$5\" \"$6\" \"$7\" \"$8}');\n" +
+            "sysidle2=$(echo $cpulog_2 | awk '{print $4}');\n" +
+            "total2=$(echo $cpulog_2 | awk '{print $1+$2+$3+$4+$5+$6+$7}');\n" +
+            "cpudetail=$(top -b -n 1 | grep Cpu |sed -r 's/\\s+//g'|awk -F \":\" '{print $2}');\n" +
+            "cpu=$(echo  \"{id2:\\\"$sysidle2\\\",id1:\\\"$sysidle1\\\",total2:\\\"$total2\\\",total1:\\\"$total1\\\",detail:\\\"$cpudetail\\\"}\");\n" +
+            "\n" +
+            "loadmemory=$(cat /proc/meminfo | awk '{print $2}');\n" +
+            "total=$(echo $loadmemory | awk '{print $1}');\n" +
+            "free1=$(echo $loadmemory | awk '{print $2}');\n" +
+            "free2=$(echo $loadmemory | awk '{print $3}');\n" +
+            "free3=$(echo $loadmemory | awk '{print $4}');\n" +
+            "used=$(($total - $free1 - $free2 - $free3));\n" +
+            "mem=$(echo  \"{total:$total,used:$used}\");\n" +
+            "\n" +
+            "hostname=$(echo `hostname`|sed 's/\\\\.//g');\n" +
+            "os=$(echo `head -n 1 /etc/issue`|sed 's/\\\\.//g');\n" +
+            "if [ -z \"$os\" ];then\n" +
+            " os=$(echo `cat /etc/redhat-release`|sed 's/\\\\.//g');\n" +
+            "fi\n" +
+            "kernel=$(uname -r);\n" +
+            "machine=$(uname -m);\n" +
+            "\n" +
+            "top=$(echo \"P\"|top -b -n 1| head -18|sed -r 's/\\s+/ /g'| sed  '1,6d');\n" +
+            "\n" +
+            "cpucount=$(cat /proc/cpuinfo | grep name | wc -l);\n" +
+            "cpuname=$(cat /proc/cpuinfo | grep name|uniq -c |awk -F \":\" '{print $2}'|awk -F \"@\" '{print $1}'|sed -r 's/^\\\\s|\\\\s$//g');\n" +
+            "cpuinfo=$(cat /proc/cpuinfo | grep name|uniq -c |awk -F \":\" '{print $2}'|awk -F \"@\" '{print $2}'|sed -r 's/^\\\\s|\\\\s$//g');\n" +
+            "cpuconf=\"cpuinfo:{\\\"count\\\":\\\"$cpucount\\\",\\\"name\\\":\\\"$cpuname\\\",\\\"info\\\":\\\"$cpuinfo\\\"}\";\n" +
+            "\n" +
+            "conf=$(echo  \"{\"hostname\":\\\"$hostname\\\",\"os\":\\\"$os\\\",\"kernel\":\\\"$kernel\\\",\"machine\":\\\"$machine\\\",$cpuconf}\");\n" +
+            "\n" +
+            "echo  \"{top:\\\"$top\\\",cpu:$cpu,disk:\\\"$disk\\\",mem:$mem,swap:$swap,load:\\\"$load\\\",conf:$conf}\";";
+
+
+    private String echo = "echo  \"{top:\\\"$top\\\",cpu:$cpu,disk:\\\"$disk\\\",mem:$mem,swap:$swap,load:\\\"$load\\\",conf:$conf}\";";
 
 
     public MornitorClient(WebSocketSession webSocketSession, Terminal terminal) {
@@ -50,50 +98,61 @@ public class MornitorClient {
             return false;
         }
         session = connection.openSession();
+        session.startShell();
+        inputStream = session.getStdout();
+        outputStream = session.getStdin();
+        writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+        write(shell);
         return true;
     }
 
+    public void write(String text) throws IOException {
+        if (writer != null) {
+            writer.write(text);
+            writer.flush();
+        }
+    }
+
     public void sendMessage() {
-        new Timer().schedule(new TimerTask() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                StringBuilder builder = new StringBuilder();
                 try {
-                    if (shell == null) {
-                        File shellFile = ResourceUtils.getFile("classpath:monitor.sh");
-                        shell = IOUtils.readText(shellFile,"UTF-8");
-                    }
-                    session.execCommand(shell);
-                    InputStream stdout = new StreamGobbler(session.getStdout());
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+                    TimeUnit.MICROSECONDS.sleep(1000);
+                    //写入指令
+                    write(echo);
+
+                    StringBuilder builder = new StringBuilder();
+                    inputStream = new StreamGobbler(session.getStdout());
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
                     StringBuffer buffer = new StringBuffer();
-                    while (true)  {
+                    while (true) {
                         String line = reader.readLine();
                         if (line == null) {
                             break;
-                        }else {
-                            line+="\n";
+                        } else {
+                            line += "\n";
                         }
                         buffer.append(line);
                     }
 
                     Monitor monitor = monitor(buffer.toString());
-
                     String json = JSON.toJSONString(monitor);
 
-                    if( webSocketSession != null && webSocketSession.isOpen() ) {
+                    if (webSocketSession != null && webSocketSession.isOpen()) {
                         if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
                             webSocketSession.sendMessage(new TextMessage(new String(json.getBytes("ISO-8859-1"), "UTF-8")));
                         } else {
                             webSocketSession.sendMessage(new TextMessage(new String(json.getBytes("gb2312"), "UTF-8")));
                         }
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 5 * 1000);
+        }).start();
     }
 
     public void disconnect() throws IOException {
@@ -114,12 +173,12 @@ public class MornitorClient {
 
             Monitor monitor = new Monitor();
 
-            Monitor.Info info = JSON.parseObject(monitorString,Monitor.Info.class);
+            Monitor.Info info = JSON.parseObject(monitorString, Monitor.Info.class);
 
-            monitor.setTop( getTop(info.getTop()) );
+            monitor.setTop(getTop(info.getTop()));
 
             //config...
-            monitor.setConfig( info.getConf() );
+            monitor.setConfig(info.getConf());
 
             //cpu
             monitor.setCpuData(getCpuData(info));
@@ -160,7 +219,7 @@ public class MornitorClient {
             if (isFirst) {
                 for (int i = 0; i < data.length; i++) {
                     for (Field f : fields) {
-                        if (f.getName().equalsIgnoreCase(data[i].replaceAll("%|\\+",""))) {
+                        if (f.getName().equalsIgnoreCase(data[i].replaceAll("%|\\+", ""))) {
                             index.put(i, f.getName());
                         }
                     }
@@ -171,22 +230,22 @@ public class MornitorClient {
                 for (Map.Entry<Integer, String> entry : index.entrySet()) {
                     ReflectUitls.setter(Monitor.Top.class, entry.getValue()).invoke(top, data[entry.getKey()]);
                 }
-                topList.add( JSON.toJSONString(top) );
+                topList.add(JSON.toJSONString(top));
             }
 
         }
         scan.close();
 
-        return  JSON.toJSONString(topList);
+        return JSON.toJSONString(topList);
     }
 
 
-    public  String getCpuData(Monitor.Info info) {
+    public String getCpuData(Monitor.Info info) {
         //cpu usage report..
         Long sysIdle = toLong(info.getCpu().getId2()) - toLong(info.getCpu().getId1());
-        Long total = toLong(info.getCpu().getTotal2())- toLong(info.getCpu().getTotal1());
+        Long total = toLong(info.getCpu().getTotal2()) - toLong(info.getCpu().getTotal1());
 
-        float sysUsage = (sysIdle.floatValue()/ total.floatValue()) * 100;
+        float sysUsage = (sysIdle.floatValue() / total.floatValue()) * 100;
         float sysRate = 100 - sysUsage;
 
         Map<String, String> cpuData = new HashMap<String, String>(0);
@@ -196,7 +255,7 @@ public class MornitorClient {
         //cpu detail...
         String cpuDetail[] = info.getCpu().getDetail().split(",");
         for (String detail : cpuDetail) {
-            String key=null,val=null;
+            String key = null, val = null;
             Matcher valMatcher = Pattern.compile("^\\d+(\\.\\d+)?").matcher(detail);
             if (valMatcher.find()) {
                 val = valMatcher.group();
@@ -208,11 +267,11 @@ public class MornitorClient {
             }
             cpuData.put(key, val);
         }
-        return  JSON.toJSONString(cpuData);
+        return JSON.toJSONString(cpuData);
     }
 
 
-    private  String getDiskUsage(Monitor.Info info) throws Exception {
+    private String getDiskUsage(Monitor.Info info) throws Exception {
 
         /**
          * get info...
@@ -301,11 +360,11 @@ public class MornitorClient {
         return JSON.toJSONString(disks);
     }
 
-    public  String getNetwork(Monitor.Info info) {
-        Map<String,Float> newWork = new HashMap<String, Float>();
+    public String getNetwork(Monitor.Info info) {
+        Map<String, Float> newWork = new HashMap<String, Float>();
         float read = 0;
         float write = 0;
-        for(Monitor.Net net:info.getNet()){
+        for (Monitor.Net net : info.getNet()) {
             read += net.getRead();
             write += net.getWrite();
         }
@@ -314,19 +373,19 @@ public class MornitorClient {
         return JSON.toJSONString(newWork);
     }
 
-    public  String getSwap(Monitor.Info info) {
-        return format.format( ((info.getSwap().getTotal() - info.getSwap().getFree() ) / info.getSwap().getTotal() ) * 100);
+    public String getSwap(Monitor.Info info) {
+        return format.format(((info.getSwap().getTotal() - info.getSwap().getFree()) / info.getSwap().getTotal()) * 100);
     }
 
-    public  List<String> getLoad(Monitor.Info info) {
+    public List<String> getLoad(Monitor.Info info) {
         return Arrays.asList(info.getLoad().split(","));
     }
 
-    private  String setMemUsage( Monitor.Info info) {
-        return format.format( (info.getMem().getUsed() / info.getMem().getTotal() ) * 100);
+    private String setMemUsage(Monitor.Info info) {
+        return format.format((info.getMem().getUsed() / info.getMem().getTotal()) * 100);
     }
 
-    private   Double generateDiskSpace(String value) {
+    private Double generateDiskSpace(String value) {
         String fix = value.substring(value.length() - 1);
         String space = value.substring(0, value.length() - 1);
 

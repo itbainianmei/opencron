@@ -151,14 +151,22 @@ public class TerminalService {
             return true;
         }
 
-        public void write(String text) throws IOException {
+        /**
+         * 向ssh终端输入内容
+         * @param text
+         * @throws IOException
+         */
+        public void input(String text) throws IOException {
             if (writer != null) {
                 writer.write(text);
                 writer.flush();
             }
         }
 
-        public void sendMessage() {
+        /**
+         * 读取ssh终端的输出内容
+         */
+        public void output() {
             new Thread(new Runnable() {
                 @Override
                 public void run() {

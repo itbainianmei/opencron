@@ -23,14 +23,11 @@
 package com.jcronjob.server.domain;
 
 import com.jcronjob.common.utils.RSAUtils;
-import org.junit.runners.model.InitializationError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.jcronjob.server.job.CronjobAuth;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by benjobs on 16/5/21.
@@ -39,9 +36,6 @@ import java.util.Map;
 @Entity
 @Table(name = "T_TERM")
 public class Terminal implements Serializable{
-
-    @Transient
-    private static Logger logger = LoggerFactory.getLogger(Terminal.class);
 
     @Id
     @GeneratedValue
@@ -68,12 +62,6 @@ public class Terminal implements Serializable{
     private Agent agent;
 
     @Transient
-    private static String publicKey = null;
-
-    @Transient
-    private static String privateKey = null;
-
-    @Transient
     public static final String INITIAL ="INITIAL";
     @Transient
     public static final String AUTH_FAIL ="AUTHFAIL";
@@ -85,17 +73,6 @@ public class Terminal implements Serializable{
     public static final String SUCCESS ="SUCCESS";
     @Transient
     public static final String HOST_FAIL ="HOSTFAIL";
-
-    public void initRSA() throws InitializationError {
-        try {
-            Map<String, Object> keyMap = RSAUtils.genKeyPair();
-            publicKey = RSAUtils.getPublicKey(keyMap);
-            privateKey = RSAUtils.getPrivateKey(keyMap);
-        } catch (Exception e) {
-            logger.error("[cronjob] error:{}"+e.getMessage());
-            throw new RuntimeException("init RSA'publicKey and privateKey error!");
-        }
-    }
 
     public Long getId() {
         return id;
@@ -146,19 +123,12 @@ public class Terminal implements Serializable{
     }
 
     public String getPassword() throws Exception {
-        if (privateKey==null) {
-            initRSA();
-        }
-        byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, privateKey);
+        byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, CronjobAuth.getPrivateKey());
         return new String(decodedData);
     }
 
     public void setPassword(String password) throws Exception {
-        //对key进行非对称加密
-        if (privateKey==null) {
-            initRSA();
-        }
-        this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), publicKey);
+        this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), CronjobAuth.getPublicKey());
     }
 
     public String getStatus() {

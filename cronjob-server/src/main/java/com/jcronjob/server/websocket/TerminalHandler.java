@@ -70,7 +70,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 					terminalClient.setCols(cols);
 					terminalClient.setRows(rows);
 					if (terminalClient.connect()) {
-						terminalClient.sendMessage();
+						terminalClient.output();
 					} else {
 						terminalClient.disconnect();
 						session.sendMessage(new TextMessage("Sorry! Connect failed, please try again."));
@@ -108,7 +108,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 						session.close();
 						return;
 					}
-					terminalClient.write(new String(message.asBytes(), "UTF-8"));
+					terminalClient.input(new String(message.asBytes(), "UTF-8"));
 				}else {
 					session.close();
 				}
