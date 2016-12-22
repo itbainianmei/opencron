@@ -1,3 +1,24 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.jcronjob.server.job;
 
 import com.jcronjob.common.utils.CommonUtils;
@@ -46,35 +67,38 @@ public class CronjobAuth {
     }
 
     public static String getPublicKey() {
-        return getKey(true);
+        return getKey(KeyType.PUBLIC);
     }
 
     public static String getPrivateKey() {
-        return getKey(false);
+        return getKey(KeyType.PRIVATE);
     }
 
-    private static String getKey(boolean type) {
-        File file = new File(type ? PUBLIC_KEY_PATH : PRIVATE_KEY_PATH);
+    private static String getKey(KeyType type) {
+        File file = new File(type.equals(KeyType.PUBLIC) ? PUBLIC_KEY_PATH : PRIVATE_KEY_PATH);
         if (file.exists()) {
-            try {
-                if (type) {
+            switch (type) {
+                case PUBLIC:
                     publicKey = IOUtils.readText(file, charset);
                     if (CommonUtils.isEmpty(publicKey)) {
                         load();
                     }
-                } else {
+                    break;
+                case PRIVATE:
                     privateKey = IOUtils.readText(file, charset);
                     if (CommonUtils.isEmpty(privateKey)) {
                         load();
                     }
-                }
-            } catch (Exception ex) {
-                logger.error(ex.toString(), ex);
+                    break;
             }
         } else {
             load();
         }
-        return type ? publicKey : privateKey;
+        return type.equals(KeyType.PUBLIC)? publicKey : privateKey;
+    }
+
+    enum KeyType{
+        PUBLIC,PRIVATE;
     }
 
 }
