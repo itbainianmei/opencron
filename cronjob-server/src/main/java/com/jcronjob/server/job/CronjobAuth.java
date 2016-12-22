@@ -45,6 +45,14 @@ public class CronjobAuth {
         }
     }
 
+    public static String getPublicKey() {
+        return getKey(true);
+    }
+
+    public static String getPrivateKey() {
+        return getKey(false);
+    }
+
     private static String getKey(boolean type) {
         File file = new File(type ? PUBLIC_KEY_PATH : PRIVATE_KEY_PATH);
         if (file.exists()) {
@@ -68,14 +76,5 @@ public class CronjobAuth {
         }
         return type ? publicKey : privateKey;
     }
-
-    public static String getPublicKey() {
-        return getKey(true);
-    }
-
-    public static String getPrivateKey() {
-        return getKey(false);
-    }
-
 
 }
