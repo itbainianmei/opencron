@@ -47,7 +47,7 @@ public class CronjobAuth {
     public static String PRIVATE_KEY_PATH = null;
     public static String PUBLIC_KEY_PATH = null;
 
-    private static void load() {
+    private static void generateKey() {
         if (CommonUtils.isEmpty(publicKey, privateKey)) {
             try {
                 File keyPath = new File(KEY_PATH);
@@ -83,18 +83,18 @@ public class CronjobAuth {
                 case PUBLIC:
                     publicKey = IOUtils.readText(file, charset);
                     if (CommonUtils.isEmpty(publicKey)) {
-                        load();
+                        generateKey();
                     }
                     break;
                 case PRIVATE:
                     privateKey = IOUtils.readText(file, charset);
                     if (CommonUtils.isEmpty(privateKey)) {
-                        load();
+                        generateKey();
                     }
                     break;
             }
         } else {
-            load();
+            generateKey();
         }
         return type.equals(KeyType.PUBLIC) ? publicKey : privateKey;
     }
