@@ -19,14 +19,12 @@
  * under the License.
  */
 
-
 package com.jcronjob.server.job;
 
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
-import com.jcronjob.server.service.TerminalService;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -56,9 +54,6 @@ public class CronjobCaller {
 
     @Autowired
     private AgentService agentService;
-
-    @Autowired
-    private TerminalService terminalService;
 
     public Response call(Request request,Agent agent) throws Exception {
 

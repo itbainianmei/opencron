@@ -22,9 +22,7 @@
  */
 package com.jcronjob.server.service;
 
-import com.jcraft.jsch.ChannelShell;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import ch.ethz.ssh2.*;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
@@ -34,12 +32,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.crypto.BadPaddingException;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.jcronjob.common.utils.CommonUtils.notEmpty;
+
 
 /**
  *
@@ -98,44 +96,37 @@ public class TerminalService {
     }
 
     public String auth(Terminal terminal) {
-        JSch jsch = new JSch();
-        Session session = null;
-        String result = "success";
+        Connection connection = null;
         try {
-            session = jsch.getSession(terminal.getUserName(),terminal.getHost(),terminal.getPort());
-            session.setPassword(terminal.getPassword());
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
-            session.connect(Integer.MAX_VALUE);
-            if (session.isConnected()) {
-                return result;
+            connection = new Connection(terminal.getHost(), terminal.getPort());
+            connection.connect();
+            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
+                return "authfail";
             }
+            return "success";
         } catch (Exception e) {
-            String error = e.getMessage().toLowerCase();
-            if (error.contains("auth fail") ||  error.contains("auth cancel") || error.contains("unknownhostexception")) {
-                result = "authfail";
-            } else if (e instanceof BadPaddingException) {
-                result = "authfail";
+            if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
+                return "timeout";
             }
-            result = "error";
+            return "error";
         }finally {
-            if (session!=null) {
-                session.disconnect();
+            if (connection!=null) {
+                connection.close();
             }
-            return result;
         }
     }
+
 
     public static class TerminalClient {
 
         private WebSocketSession webSocketSession;
+        private Connection connection;
         private Session session;
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
         private boolean closed = false;
-        public static final int SERVER_ALIVE_INTERVAL = 60;
 
         public TerminalClient(WebSocketSession webSocketSession,Terminal terminal){
             this.webSocketSession = webSocketSession;
@@ -143,39 +134,17 @@ public class TerminalService {
         }
 
         public void openTerminal(int cols,int rows,int width,int height) throws Exception {
-            JSch jsch = new JSch();
-            this.session = jsch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
-            this.session.setPassword(terminal.getPassword());
-            this.session.setConfig("StrictHostKeyChecking", "no");
-            this.session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
-            this.session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
-            this.session.connect(Integer.MAX_VALUE);
-            ChannelShell channel = (ChannelShell) session.openChannel("shell");
-            channel.setPtyType("xterm", cols, rows, width, height);
-            inputStream = channel.getInputStream();
-            this.output();
+            connection = new Connection(terminal.getHost(), terminal.getPort());
+            connection.connect();
+            connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword());
 
-            outputStream = channel.getOutputStream();
+            session = connection.openSession();
+            session.requestPTY("xterm",cols, rows, width, height,null);
+            session.startShell();
+            inputStream = session.getStdout();
+            outputStream = session.getStdin();
             writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            channel.connect(Integer.MAX_VALUE);
-        }
 
-        /**
-         * 向ssh终端输入内容
-         * @param text
-         * @throws IOException
-         */
-        public void input(String text) throws IOException {
-            if (writer != null) {
-                writer.write(text);
-                writer.flush();
-            }
-        }
-
-        /**
-         * 读取ssh终端的输出内容
-         */
-        private void output() {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -203,12 +172,29 @@ public class TerminalService {
                     }
                 }
             }).start();
+
+        }
+
+        /**
+         * 向ssh终端输入内容
+         * @param text
+         * @throws IOException
+         */
+        public void write(String text) throws IOException {
+            if (writer != null) {
+                writer.write(text);
+                writer.flush();
+            }
         }
 
         public void disconnect() throws IOException {
             if (session != null) {
-                session.disconnect();
+                session.close();
                 session = null;
+            }
+            if (connection!=null) {
+                connection.close();
+                connection = null;
             }
             closed = true;
         }

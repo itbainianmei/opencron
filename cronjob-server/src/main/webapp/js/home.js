@@ -136,37 +136,55 @@ function CronjobChart() {
         self.socket = null;
     }
 
+    $.ajax({
+        type: "POST",
+        url: self.path + "/monitor",
+        data: "agentId=" + $("#agentId").val(),
+        dataType: "html",
+        success: function (dataResult) {
 
-    if (self.intervalId != null) {
-        window.clearInterval(self.intervalId);
-        self.intervalId = null;
-        self.clear();
-    }
+            if (dataResult.toString().indexOf("login") > -1) {
+                window.location.href = self.path;
+            }
+            //remobe loader...
+            $(".loader").remove();
+            var connType = dataResult.toString().charAt(0);
+            var data = dataResult.substring(2);
+            //代理
+            if (connType == 1) {
+                self.data = $.parseJSON(data);
+                if (self.intervalId == null) {
+                    /**
+                     * 第一个轮询不显示,等下一个轮询开始渲染...
+                     * @type {number}
+                     */
+                    self.intervalId = window.setInterval(function () {
+                        self.monitor(connType);
+                    }, self.intervalTime);
+                } else {
+                    self.render();
+                }
+            } else {//直联-->发送websocket...
+                if (self.intervalId != null) {
+                    window.clearInterval(self.intervalId);
+                    self.intervalId = null;
+                    self.clear();
+                }
 
-    this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
-    var url = this.contextPath+'/mornitor.ws';
-    var params = "?agentId="+ $("#agentId").val()+"&userId=1";
+                self.socket = new io.connect(data, {'reconnect': false, 'auto connect': false});
+                self.socket.on("monitor", function (data) {
+                    self.data = data;
+                    self.render();
+                });
+                //when close then clear data...
+                self.socket.on("disconnect", function () {
+                    console.log('close');
+                    self.clear();
+                });
+            }
 
-    if ('WebSocket' in window) {
-        self.socket = new WebSocket(url+params);
-    } else if ('MozWebSocket' in window) {
-        self.socket = new MozWebSocket(url+params);
-    } else {
-        url = "http://"+window.location.host+"/mornitor.js";
-        self.socket= SockJS(url+params);
-    }
-
-    self.socket.onmessage = function(event) {
-        self.data = JSON.parse(event.data);
-        self.render();
-    };
-
-    //when close then clear data...
-    self.socket.onclose = function () {
-        console.log('close');
-        self.clear();
-    };
-
+        }
+    });
 };
 
 ;CronjobChart.prototype.clear = function () {

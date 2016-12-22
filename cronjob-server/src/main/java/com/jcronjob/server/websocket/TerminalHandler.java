@@ -59,13 +59,9 @@ public class TerminalHandler extends TextWebSocketHandler {
 					int height = Integer.parseInt(session.getAttributes().get("height").toString());
 					terminalClient.openTerminal(cols,rows,width,height);
 				} catch (Exception e) {
-					String message = e.getMessage().toLowerCase();
-					if (e instanceof BadPaddingException || message.contains("auth fail") ||  message.contains("auth cancel") || message.contains("unknownhostexception")) {
-						session.sendMessage(new TextMessage("Sorry! Connect failed, please check account and try again. "));
-					}
-					if (message.replaceAll("\\s+","").contentEquals("Operationtimedout")) {
+					if (e.getLocalizedMessage().replaceAll("\\s+", "").contentEquals("Operationtimedout")) {
 						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again. "));
-					}else {
+					} else {
 						session.sendMessage(new TextMessage("Sorry! Operation error, please try again. "));
 					}
 					terminalClient.disconnect();
@@ -94,7 +90,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 						session.close();
 						return;
 					}
-					terminalClient.input(new String(message.asBytes(), "UTF-8"));
+					terminalClient.write(new String(message.asBytes(), "UTF-8"));
 				}else {
 					session.close();
 				}

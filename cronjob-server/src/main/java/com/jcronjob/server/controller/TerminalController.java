@@ -94,7 +94,7 @@ public class TerminalController {
     @RequestMapping("/addterm")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
-        if ("success".equals(message)) {
+        if ("success".equalsIgnoreCase(message)) {
             User user = (User)session.getAttribute(Globals.LOGIN_USER);
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
