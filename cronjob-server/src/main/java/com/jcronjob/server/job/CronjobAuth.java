@@ -102,12 +102,14 @@ public class CronjobAuth {
     private static String getKeyPath() {
         if (KEY_PATH == null) {
             KEY_PATH = System.getProperties().getProperty("user.home")+File.separator+".cronjob";
-
             InputStream inputStream = CronjobAuth.class.getClassLoader().getResourceAsStream("config.properties");
             Properties properties = new Properties();
             try {
                 properties.load(inputStream);
-                KEY_PATH = properties.getProperty("cronjob.keypath");
+                String path = properties.getProperty("cronjob.keypath");
+                if (path!=null) {
+                    KEY_PATH = path;
+                }
             } catch (Exception e) {
             }
         }
