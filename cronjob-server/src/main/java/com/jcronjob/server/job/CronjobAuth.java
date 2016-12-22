@@ -94,11 +94,11 @@ public class CronjobAuth {
         } else {
             load();
         }
-        return type.equals(KeyType.PUBLIC)? publicKey : privateKey;
+        return type.equals(KeyType.PUBLIC) ? publicKey : privateKey;
     }
 
-    enum KeyType{
-        PUBLIC,PRIVATE;
+    enum KeyType {
+        PUBLIC, PRIVATE;
     }
 
 }
