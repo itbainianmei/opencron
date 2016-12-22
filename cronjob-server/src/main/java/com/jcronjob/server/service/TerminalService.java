@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.crypto.BadPaddingException;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,6 +106,9 @@ public class TerminalService {
             }
             return "success";
         } catch (Exception e) {
+            if (e instanceof BadPaddingException) {
+                return "authfail";
+            }
             if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
                 return "timeout";
             }

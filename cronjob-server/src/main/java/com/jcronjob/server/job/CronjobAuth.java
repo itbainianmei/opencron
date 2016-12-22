@@ -28,7 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by benjobs on 2016/12/22.
@@ -41,9 +43,9 @@ public class CronjobAuth {
     public static String privateKey = null;
     private static final String charset = "UTF-8";
 
-    public static final String KEY_PATH = CronjobAuth.class.getClassLoader().getResource(".").getPath() + "cronjob";
-    public static final String PRIVATE_KEY_PATH = KEY_PATH + "/id_rsa";
-    public static final String PUBLIC_KEY_PATH = PRIVATE_KEY_PATH + ".pub";
+    public static String KEY_PATH =  null;
+    public static String PRIVATE_KEY_PATH = null;
+    public static String PUBLIC_KEY_PATH = null;
 
     private static void load() {
         if (CommonUtils.isEmpty(publicKey, privateKey)) {
@@ -75,7 +77,7 @@ public class CronjobAuth {
     }
 
     private static String getKey(KeyType type) {
-        File file = new File(type.equals(KeyType.PUBLIC) ? PUBLIC_KEY_PATH : PRIVATE_KEY_PATH);
+        File file = new File(type.equals(KeyType.PUBLIC) ? getPublicKeyPath() : getPrivateKeyPath());
         if (file.exists()) {
             switch (type) {
                 case PUBLIC:
@@ -97,8 +99,33 @@ public class CronjobAuth {
         return type.equals(KeyType.PUBLIC) ? publicKey : privateKey;
     }
 
+    private static String getKeyPath(){
+        InputStream inputStream = CronjobAuth.class.getClassLoader().getResourceAsStream("config.properties");
+        Properties properties = new Properties();
+        try{
+            properties.load(inputStream);
+            KEY_PATH = properties.getProperty("cronjob.keypath");
+            if (KEY_PATH == null) {
+                KEY_PATH = "~/";
+            }
+        } catch (Exception e){
+            KEY_PATH = "~/";
+        }
+        return KEY_PATH;
+    }
+
+    private static String getPrivateKeyPath() {
+        PRIVATE_KEY_PATH = getKeyPath()+"/id_rsa";
+        return PRIVATE_KEY_PATH;
+    }
+
+    private static String getPublicKeyPath() {
+        PUBLIC_KEY_PATH =  getPrivateKeyPath()+".pub";
+        return PUBLIC_KEY_PATH;
+    }
+
     enum KeyType {
-        PUBLIC, PRIVATE;
+        PUBLIC, PRIVATE
     }
 
 }
