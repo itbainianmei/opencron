@@ -55,9 +55,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 					getClient(session,terminal);
 					int cols = Integer.parseInt(session.getAttributes().get("cols").toString());
 					int rows = Integer.parseInt(session.getAttributes().get("rows").toString());
-					int width = Integer.parseInt(session.getAttributes().get("width").toString());
-					int height = Integer.parseInt(session.getAttributes().get("height").toString());
-					terminalClient.openTerminal(cols,rows,width,height);
+					terminalClient.openTerminal(cols,rows);
 				} catch (Exception e) {
 					if (e.getLocalizedMessage().replaceAll("\\s+", "").contentEquals("Operationtimedout")) {
 						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again. "));

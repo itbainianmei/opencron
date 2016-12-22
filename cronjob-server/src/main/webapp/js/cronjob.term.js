@@ -21,8 +21,6 @@
     var charWidth = span.width() / text.length;
     span.remove();
     return {
-        width:$(window).width(),
-        height:$(window).height(),
         cols: Math.floor($(window).width() / charWidth)+2,
         rows: Math.floor($(window).height() / 15) - 1
     };
@@ -54,7 +52,7 @@
     var size = this.size();
 
     var url = this.contextPath+'/terminal.ws';
-    var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
+    var params = "?cols="+size.cols+"&rows="+size.rows;
 
     if ('WebSocket' in window) {
         self.socket = new WebSocket(url+params);

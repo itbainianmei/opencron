@@ -41,8 +41,6 @@ public class TerminalHandShaker extends HttpSessionHandshakeInterceptor {
             HttpSession session = servletRequest.getServletRequest().getSession(false);
             attributes.put("cols",servletRequest.getServletRequest().getParameter("cols"));
             attributes.put("rows",servletRequest.getServletRequest().getParameter("rows"));
-            attributes.put("width",servletRequest.getServletRequest().getParameter("width"));
-            attributes.put("height",servletRequest.getServletRequest().getParameter("height"));
             attributes.put(Globals.SSH_SESSION_ID,session.getAttribute(Globals.SSH_SESSION_ID));
         }
         return super.beforeHandshake(request,response,wsHandler,attributes);

@@ -137,13 +137,13 @@ public class TerminalService {
             this.terminal = terminal;
         }
 
-        public void openTerminal(int cols,int rows,int width,int height) throws Exception {
+        public void openTerminal(int cols,int rows) throws Exception {
             connection = new Connection(terminal.getHost(), terminal.getPort());
             connection.connect();
             connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword());
 
             session = connection.openSession();
-            session.requestPTY("xterm",cols, rows, width, height,null);
+            session.requestPTY("xterm",cols, rows, 0, 0,null);
             session.startShell();
             inputStream = session.getStdout();
             outputStream = session.getStdin();
