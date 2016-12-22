@@ -59,7 +59,6 @@ public class CronjobAuth {
                 privateKey = RSAUtils.getPrivateKey(keyMap);
                 File pubFile = new File(getPublicKeyPath());
                 File prvFile = new File(getPrivateKeyPath());
-                System.out.println(pubFile.getAbsolutePath());
                 IOUtils.writeText(pubFile, publicKey, charset);
                 IOUtils.writeText(prvFile, privateKey, charset);
             } catch (Exception e) {
