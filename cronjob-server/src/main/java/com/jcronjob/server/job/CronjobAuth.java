@@ -57,8 +57,9 @@ public class CronjobAuth {
                 Map<String, Object> keyMap = RSAUtils.genKeyPair();
                 publicKey = RSAUtils.getPublicKey(keyMap);
                 privateKey = RSAUtils.getPrivateKey(keyMap);
-                File pubFile = new File(PUBLIC_KEY_PATH);
-                File prvFile = new File(PRIVATE_KEY_PATH);
+                File pubFile = new File(getPublicKeyPath());
+                File prvFile = new File(getPrivateKeyPath());
+                System.out.println(pubFile.getAbsolutePath());
                 IOUtils.writeText(pubFile, publicKey, charset);
                 IOUtils.writeText(prvFile, privateKey, charset);
             } catch (Exception e) {
@@ -117,7 +118,7 @@ public class CronjobAuth {
     }
 
     private static String getPrivateKeyPath() {
-        PRIVATE_KEY_PATH = getKeyPath() + "/id_rsa";
+        PRIVATE_KEY_PATH = getKeyPath() + File.separator+ "id_rsa";
         return PRIVATE_KEY_PATH;
     }
 
