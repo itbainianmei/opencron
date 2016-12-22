@@ -43,7 +43,7 @@ public class CronjobAuth {
     public static String privateKey = null;
     private static final String charset = "UTF-8";
 
-    public static String KEY_PATH =  null;
+    public static String KEY_PATH = null;
     public static String PRIVATE_KEY_PATH = null;
     public static String PUBLIC_KEY_PATH = null;
 
@@ -99,28 +99,30 @@ public class CronjobAuth {
         return type.equals(KeyType.PUBLIC) ? publicKey : privateKey;
     }
 
-    private static String getKeyPath(){
-        InputStream inputStream = CronjobAuth.class.getClassLoader().getResourceAsStream("config.properties");
-        Properties properties = new Properties();
-        try{
-            properties.load(inputStream);
-            KEY_PATH = properties.getProperty("cronjob.keypath");
-            if (KEY_PATH == null) {
+    private static String getKeyPath() {
+        if (KEY_PATH == null) {
+            InputStream inputStream = CronjobAuth.class.getClassLoader().getResourceAsStream("config.properties");
+            Properties properties = new Properties();
+            try {
+                properties.load(inputStream);
+                KEY_PATH = properties.getProperty("cronjob.keypath");
+                if (KEY_PATH == null) {
+                    KEY_PATH = "~/";
+                }
+            } catch (Exception e) {
                 KEY_PATH = "~/";
             }
-        } catch (Exception e){
-            KEY_PATH = "~/";
         }
         return KEY_PATH;
     }
 
     private static String getPrivateKeyPath() {
-        PRIVATE_KEY_PATH = getKeyPath()+"/id_rsa";
+        PRIVATE_KEY_PATH = getKeyPath() + "/id_rsa";
         return PRIVATE_KEY_PATH;
     }
 
     private static String getPublicKeyPath() {
-        PUBLIC_KEY_PATH =  getPrivateKeyPath()+".pub";
+        PUBLIC_KEY_PATH = getPrivateKeyPath() + ".pub";
         return PUBLIC_KEY_PATH;
     }
 
