@@ -83,9 +83,6 @@ public class MornitorClient {
             "echo  \"{top:\\\"$top\\\",cpu:$cpu,disk:\\\"$disk\\\",mem:$mem,swap:$swap,load:\\\"$load\\\",conf:$conf}\";";
 
 
-    private String echo = "echo  \"{top:\\\"$top\\\",cpu:$cpu,disk:\\\"$disk\\\",mem:$mem,swap:$swap,load:\\\"$load\\\",conf:$conf}\";";
-
-
     public MornitorClient(WebSocketSession webSocketSession, Terminal terminal) {
         this.webSocketSession = webSocketSession;
         this.terminal = terminal;
@@ -97,32 +94,16 @@ public class MornitorClient {
         if (!connection.authenticateWithPassword(terminal.getUserName(), terminal.getPassword())) {
             return false;
         }
-        session = connection.openSession();
-        session.startShell();
-        inputStream = session.getStdout();
-        outputStream = session.getStdin();
-        writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-        write(shell);
         return true;
     }
 
-    public void write(String text) throws IOException {
-        if (writer != null) {
-            writer.write(text);
-            writer.flush();
-        }
-    }
-
     public void sendMessage() {
-        new Thread(new Runnable() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
-                    TimeUnit.MICROSECONDS.sleep(1000);
-                    //写入指令
-                    write(echo);
-
-                    StringBuilder builder = new StringBuilder();
+                    Session session = connection.openSession();
+                    session.execCommand(shell);
                     inputStream = new StreamGobbler(session.getStdout());
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -137,11 +118,13 @@ public class MornitorClient {
                         buffer.append(line);
                     }
 
+                    session.close();
+
                     Monitor monitor = monitor(buffer.toString());
                     String json = JSON.toJSONString(monitor);
 
                     if (webSocketSession != null && webSocketSession.isOpen()) {
-                        if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
+                        if (DigestUtils.getEncoding(json).equals("ISO-8859-1")) {
                             webSocketSession.sendMessage(new TextMessage(new String(json.getBytes("ISO-8859-1"), "UTF-8")));
                         } else {
                             webSocketSession.sendMessage(new TextMessage(new String(json.getBytes("gb2312"), "UTF-8")));
@@ -152,7 +135,7 @@ public class MornitorClient {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        }, 0, 1000);
     }
 
     public void disconnect() throws IOException {
