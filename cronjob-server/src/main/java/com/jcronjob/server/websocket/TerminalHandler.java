@@ -34,6 +34,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.crypto.BadPaddingException;
+
 
 public class TerminalHandler extends TextWebSocketHandler {
 
@@ -47,37 +49,21 @@ public class TerminalHandler extends TextWebSocketHandler {
 		if (sessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sessionId);
 
-			/**
-			 *
-			 * 当前的执行器是否已经被同一个用户打开过,如果已经打开过则关闭,通知下线..
-			 * 实际使用下应该有同一个终端多开的情况,不应该剔除下线.
-			if(TerminalSession.isOpened(terminal)){
-				WebSocketSession preSession = TerminalSession.findSession(terminal);
-				preSession.sendMessage(new TextMessage("Sorry! Another Cronjob Terminal is opened! this terminal changed to closed. "));
-				TerminalSession.get(preSession).disconnect();
-				TerminalSession.remove(preSession);
-				preSession.close();
-			}
-			 *
-			**/
-
 			if (terminal!=null) {
 				try {
 					session.sendMessage(new TextMessage("Welcome to Cronjob Terminal! Connect Starting. "));
 					getClient(session,terminal);
-					Integer cols = session.getAttributes().get("cols")==null?null:Integer.parseInt(session.getAttributes().get("cols").toString());
-					Integer rows = session.getAttributes().get("rows")==null?null:Integer.parseInt(session.getAttributes().get("rows").toString());
-					terminalClient.setCols(cols);
-					terminalClient.setRows(rows);
-					if (terminalClient.connect()) {
-						terminalClient.output();
-					} else {
-						terminalClient.disconnect();
-						session.sendMessage(new TextMessage("Sorry! Connect failed, please try again."));
-						session.close();
+					int cols = Integer.parseInt(session.getAttributes().get("cols").toString());
+					int rows = Integer.parseInt(session.getAttributes().get("rows").toString());
+					int width = Integer.parseInt(session.getAttributes().get("width").toString());
+					int height = Integer.parseInt(session.getAttributes().get("height").toString());
+					terminalClient.openTerminal(cols,rows,width,height);
+				} catch (Exception e) {
+					String message = e.getMessage().toLowerCase();
+					if (e instanceof BadPaddingException || message.contains("auth fail") ||  message.contains("auth cancel") || message.contains("unknownhostexception")) {
+						session.sendMessage(new TextMessage("Sorry! Connect failed, please check account and try again. "));
 					}
-				} catch (IOException e) {
-					if (e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")) {
+					if (message.replaceAll("\\s+","").contentEquals("Operationtimedout")) {
 						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again. "));
 					}else {
 						session.sendMessage(new TextMessage("Sorry! Operation error, please try again. "));

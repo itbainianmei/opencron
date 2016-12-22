@@ -114,28 +114,5 @@ public class CronjobTask implements InitializingBean {
         CronjobContext.remove(Globals.CACHED_CRONTAB_JOB);
     }
 
-    //@Scheduled(cron = "0 0/1 * * * ?")
-  /*
-  //离线监控.....
-  public void monitor() throws Exception {
-        List<Agent> agents = agentService.getAll();
-
-        for (Agent agent : agents) {
-            Map<String, String> systemData = executeService.monitor(agent);
-
-            String cpuUsage = systemData.remove("cpuUsage");
-            Float cpuUs = Float.parseFloat(cpuUsage.split(",")[0]);
-            Float cpuSy = Float.parseFloat(cpuUsage.split(",")[1]);
-            Float cpuId = Float.parseFloat(cpuUsage.split(",")[2]);
-
-            String memUsage = systemData.remove("memUsage");
-            Long memUsed = Long.parseLong(memUsage.split(",")[0]);
-            Long memFree = Long.parseLong(memUsage.split(",")[1]);
-
-            Monitor monitor = new Monitor(agent.getAgentId(), cpuUs, cpuSy, cpuId, memUsed, memFree);
-            monitorService.save(monitor);
-        }
-    }*/
-
 
 }

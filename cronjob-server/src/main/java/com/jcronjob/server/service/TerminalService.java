@@ -22,7 +22,9 @@
  */
 package com.jcronjob.server.service;
 
-import ch.ethz.ssh2.*;
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.crypto.BadPaddingException;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -95,60 +98,66 @@ public class TerminalService {
     }
 
     public String auth(Terminal terminal) {
-        Connection connection = null;
+        JSch jsch = new JSch();
+        Session session = null;
+        String result = "success";
         try {
-            connection = new Connection(terminal.getHost(), terminal.getPort());
-            connection.connect();
-            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
-                return "authfail";
+            session = jsch.getSession(terminal.getUserName(),terminal.getHost(),terminal.getPort());
+            session.setPassword(terminal.getPassword());
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.connect(Integer.MAX_VALUE);
+            if (session.isConnected()) {
+                return result;
             }
-            return "success";
         } catch (Exception e) {
-            if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
-                return "timeout";
+            String error = e.getMessage().toLowerCase();
+            if (error.contains("auth fail") ||  error.contains("auth cancel") || error.contains("unknownhostexception")) {
+                result = "authfail";
+            } else if (e instanceof BadPaddingException) {
+                result = "authfail";
             }
-            if (e instanceof javax.crypto.BadPaddingException) {
-                return "authfail";
-            }
-           return "error";
+            result = "error";
         }finally {
-            if (connection!=null) {
-                connection.close();
+            if (session!=null) {
+                session.disconnect();
             }
+            return result;
         }
     }
 
     public static class TerminalClient {
 
         private WebSocketSession webSocketSession;
-        private Connection connection;
         private Session session;
         private Terminal terminal;
-        private int rows;
-        private int cols;
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
         private boolean closed = false;
+        public static final int SERVER_ALIVE_INTERVAL = 60;
 
         public TerminalClient(WebSocketSession webSocketSession,Terminal terminal){
             this.webSocketSession = webSocketSession;
             this.terminal = terminal;
         }
 
-        public boolean connect() throws Exception {
-            connection = new Connection(terminal.getHost(), terminal.getPort());
-            connection.connect();
-            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
-                return false;
-            }
-            session = connection.openSession();
-            session.requestPTY("xterm",this.cols,this.rows,0,0,null);
-            session.startShell();
-            inputStream = session.getStdout();
-            outputStream = session.getStdin();
+        public void openTerminal(int cols,int rows,int width,int height) throws Exception {
+            JSch jsch = new JSch();
+            this.session = jsch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
+            this.session.setPassword(terminal.getPassword());
+            this.session.setConfig("StrictHostKeyChecking", "no");
+            this.session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            this.session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
+            this.session.connect(Integer.MAX_VALUE);
+            ChannelShell channel = (ChannelShell) session.openChannel("shell");
+            channel.setPtyType("xterm", cols, rows, width, height);
+            inputStream = channel.getInputStream();
+            this.output();
+
+            outputStream = channel.getOutputStream();
             writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            return true;
+            channel.connect(Integer.MAX_VALUE);
         }
 
         /**
@@ -166,11 +175,11 @@ public class TerminalService {
         /**
          * 读取ssh终端的输出内容
          */
-        public void output() {
+        private void output() {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024*8 ];
+                    byte[] buffer = new byte[ 1024 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -197,12 +206,8 @@ public class TerminalService {
         }
 
         public void disconnect() throws IOException {
-            if (connection != null) {
-                connection.close();
-                connection = null;
-            }
             if (session != null) {
-                session.close();
+                session.disconnect();
                 session = null;
             }
             closed = true;
@@ -224,21 +229,6 @@ public class TerminalService {
             return webSocketSession;
         }
 
-        public int getRows() {
-            return rows;
-        }
-
-        public void setRows(int rows) {
-            this.rows = rows;
-        }
-
-        public int getCols() {
-            return cols;
-        }
-
-        public void setCols(int cols) {
-            this.cols = cols;
-        }
     }
 
     public static class TerminalContext implements Serializable {

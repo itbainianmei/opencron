@@ -22,16 +22,11 @@
 
 package com.jcronjob.server.job;
 
-import ch.ethz.ssh2.Connection;
-import ch.ethz.ssh2.Session;
-import ch.ethz.ssh2.StreamGobbler;
 import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.server.domain.Agent;
-import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.service.TerminalService;
-import com.jcronjob.server.vo.JobVo;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
@@ -43,10 +38,6 @@ import com.jcronjob.common.job.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -115,64 +106,5 @@ public class CronjobCaller {
        transport.close();
        return response;
    }
-
-
-    /**
-     *
-     * 其实可以不用agent端,server直接通过ssh连接目标服务器执行任务...考虑到安全性,已经通过agent端实现的性能监控等等种种原因,还是用server调agent的方式.
-     * 方法已经实现,暂时保留.不排除以后彻底移除cronjob-agent
-     * @param job
-     * @return
-     * @throws Exception
-     */
-    public Response execute(JobVo job) throws Exception {
-        Agent agent = job.getAgent();
-        Terminal terminal = terminalService.getTerm(job.getOperateId(), agent.getIp());
-        if (terminal==null) {
-            return null;
-        }
-
-        Connection connection = new Connection(terminal.getHost());
-        Session session = null;
-        try {
-            connection.connect();
-            boolean authenticated = connection.authenticateWithPassword(terminal.getUserName(), terminal.getPassword());
-            if (authenticated == false) {
-                throw new IOException("Authentication failed.");
-            }
-            session = connection.openSession();
-            Response response = new Response().start();
-            session.execCommand(job.getCommand());
-
-            InputStream stdout = new StreamGobbler(session.getStdout());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-
-            StringBuffer stringBuffer = new StringBuffer();
-            while (true)  {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }else {
-                    line+="\n";
-                }
-                stringBuffer.append(line);
-            }
-
-            int exitStatus = session.getExitStatus();
-            response.setMessage(stringBuffer.toString()).setExitCode(exitStatus).setSuccess(exitStatus == 0).end();
-
-            return response;
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
-            if (session != null) {
-                session.close();
-            }
-        }
-        return null;
-    }
 
 }
