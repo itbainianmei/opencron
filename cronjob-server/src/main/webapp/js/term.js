@@ -824,8 +824,8 @@
                 var button = ev.button != null
                     ? +ev.button
                     : ev.which != null
-                    ? ev.which - 1
-                    : null;
+                        ? ev.which - 1
+                        : null;
 
                 // Does IE9 do this?
                 if (self.isMSIE) {
@@ -1058,8 +1058,8 @@
                     button = ev.button != null
                         ? +ev.button
                         : ev.which != null
-                        ? ev.which - 1
-                        : null;
+                            ? ev.which - 1
+                            : null;
 
                     if (self.isMSIE) {
                         button = button === 1 ? 0 : button === 4 ? 1 : button;
