@@ -188,7 +188,7 @@
                 falg = false;
             }else {
                 if(user.length>255){
-                    $("#sshuser_lab").text("登陆账号太长了,不合法");
+                    $("#sshuser_lab").text("登陆账号太长,不合法");
                     falg = false;
                 }
             }
