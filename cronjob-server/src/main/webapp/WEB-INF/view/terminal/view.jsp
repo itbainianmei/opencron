@@ -167,11 +167,30 @@
             if(!port){
                 $("#sshport_lab").text("连接端口不能为空");
                 falg = false;
+            }else {
+                if(!isNaN(port)){
+                    $("#sshport_lab").text("连接端口输入不合法,必须为数字");
+                    falg = false;
+                }else {
+                    port = parseInt(port);
+                    if (port<0){
+                        $("#sshport_lab").text("连接端口输入不合法,不能为负数");
+                        falg = false;
+                    }else if(port>65535){
+                        $("#sshport_lab").text("连接端口输入不合法,不能超过65535");
+                        falg = false;
+                    }
+                }
             }
 
             if(!user){
                 $("#sshuser_lab").text("登陆账号不能为空");
                 falg = false;
+            }else {
+                if(user.length>255){
+                    $("#sshuser_lab").text("登陆账号太长了,不合法");
+                    falg = false;
+                }
             }
 
             if(!pwd){
