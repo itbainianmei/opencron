@@ -29,6 +29,8 @@ import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.job.Globals;
 import static com.jcronjob.server.service.TerminalService.*;
 
+import com.jcronjob.server.service.TerminalService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -41,6 +43,8 @@ public class TerminalHandler extends TextWebSocketHandler {
 
 	private TerminalClient terminalClient;
 	private String sessionId;
+	@Autowired
+	private TerminalService terminalService;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -56,6 +60,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 					int cols = Integer.parseInt(session.getAttributes().get("cols").toString());
 					int rows = Integer.parseInt(session.getAttributes().get("rows").toString());
 					terminalClient.openTerminal(cols,rows);
+					terminalService.login(terminal);
 				} catch (Exception e) {
 					if (e.getLocalizedMessage().replaceAll("\\s+", "").contentEquals("Operationtimedout")) {
 						session.sendMessage(new TextMessage("Sorry! Connect timed out, please try again. "));

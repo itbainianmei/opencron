@@ -173,8 +173,8 @@
 			</li>
 
 			<li class="<c:if test="${fn:contains(uri,'/terminal')}">active</c:if>">
-				<a href="${contextPath}/terminal">
-					<i aria-hidden="true" class="fa fa-terminal"></i><span class="menu-item">Terminal</span>
+				<a href="${contextPath}/terminal/view">
+					<i aria-hidden="true" class="fa fa-terminal"></i><span class="menu-item">WEB终端</span>
 				</a>
 			</li>
 

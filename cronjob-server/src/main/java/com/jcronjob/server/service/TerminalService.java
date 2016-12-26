@@ -27,13 +27,16 @@ import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.User;
+import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.tag.PageBean;
+import com.jcronjob.server.vo.LogVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.crypto.BadPaddingException;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -78,17 +81,12 @@ public class TerminalService {
     @Autowired
     private QueryDao queryDao;
 
-    public Terminal getTerm(Long userId, String host) throws Exception {
-        return queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
-    }
-
     public boolean saveOrUpdate(Terminal term) {
         Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=?",term.getUserId(),term.getHost());
         if (dbTerm!=null) {
             term.setId(dbTerm.getId());
         }
         try {
-            term.setLogintime(new Date());
             queryDao.save(term);
             return true;
         }catch (Exception e) {
@@ -121,10 +119,34 @@ public class TerminalService {
         }
     }
 
-    public PageBean<Terminal> getTerminalByUser(Long userIdBySession) {
-            return null;
+    public PageBean<Terminal> getPageBeanByUser(PageBean pageBean,Long userId) {
+        String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ORDER BY ID ASC";
+        return queryDao.getPageBySql(pageBean, Terminal.class, sql,userId);
     }
 
+    public Terminal getById(Long id) {
+        return queryDao.get(Terminal.class,id);
+    }
+
+    public String delete(HttpSession session, Long id) {
+        Terminal term = getById(id);
+        if (term==null) {
+            return "error";
+        }
+        User user = (User)session.getAttribute(Globals.LOGIN_USER);
+
+        if ( !Globals.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
+            return "error";
+        }
+        queryDao.delete(term);
+        return "success";
+    }
+
+    public void login(Terminal terminal) {
+        terminal = getById(terminal.getId());
+        terminal.setLogintime(new Date());
+        queryDao.save(terminal);
+    }
 
     public static class TerminalClient {
 

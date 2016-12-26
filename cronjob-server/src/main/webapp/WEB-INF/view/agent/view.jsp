@@ -8,8 +8,6 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
-    <script type="text/javascript" src="${contextPath}/js/socket/socket.io.js"></script>
-
     <script type="text/javascript">
         function showContact() {
             $(".contact").show()
@@ -504,99 +502,6 @@
 
         }
 
-        function ssh(agentId, ip, type) {
-            $.ajax({
-                type: "POST",
-                url: "${contextPath}/terminal/ssh",
-                data: "agentId=" + agentId + "&ip=" + ip,
-                dataType: "html",
-                success: function (data) {
-                    var json = eval("(" + data + ")");
-                    if (json.status == "null") {
-                        $("#sship").val(ip);
-                        $("#sshagent").val(agentId);
-                        $("#sshModal").modal("show");
-                    } else {
-                        if (json.status == "authfail") {
-                            if (type == 2) {
-                                alert("登录失败,请确认登录口令的正确性");
-                            } else {
-                                $("#sship").val(ip);
-                                $("#sshagent").val(agentId);
-                                $("#sshModal").modal("show");
-                            }
-                        } else if (json.status == "timeout") {
-                            alert("连接到远端主机超时");
-                        } else if (json.status == "error") {
-                            alert("连接失败请重试");
-                        } else if (json.status == "success") {
-                            var url = '${contextPath}' + json.url;
-                            swal({
-                                title: "",
-                                text: "您确定要打开Terminal吗？",
-                                type: "warning",
-                                showCancelButton: true,
-                                closeOnConfirm: false,
-                                confirmButtonText: "打开"
-                            });
-
-                            /**
-                             *
-                             * 默认打开新的弹窗浏览器会阻止,有的浏览器如Safair连询问用户是否打开新窗口的对话框都没有.
-                             * 这里页面自己弹出询问框,当用户点击"打开"产生了真正的点击行为,然后利用事件冒泡就触发了包裹它的a标签,使得可以在新窗口打开a标签的连接
-                             *
-                             */
-                            if ($("#openLink").length == 0) {
-                                $(".sweet-alert").find(".confirm").wrap("<a id='openLink' href='" + url + "'  target='_blank'/></a>");
-                            } else {
-                                $("#openLink").attr("href", url);
-                            }
-
-                            $("#openLink").click(function () {
-                                window.setTimeout(function () {
-                                    $("div[class^='sweet-']").remove();
-                                }, 200)
-                            });
-
-                            $(".sweet-alert").find(".cancel").click(function () {
-                                window.setTimeout(function () {
-                                    $("div[class^='sweet-']").remove();
-                                }, 500)
-                            });
-                        }
-                    }
-                }
-            });
-        }
-
-        function saveSsh() {
-            var user = $("#sshuser").val();
-            var pwd = $("#sshpwd").val();
-            var port = $("#sshport").val();
-            var ip = $("#sship").val();
-            var agent = $("#sshagent").val();
-            $.ajax({
-                type: "POST",
-                url: "${contextPath}/terminal/add",
-                data: {
-                    "userName": user,
-                    "password": pwd,
-                    "port": port,
-                    "host": ip
-                },
-                dataType: "html",
-                success: function (status) {
-                    $("#sshModal").modal("hide");
-                    $("#sshform")[0].reset();
-                    if (status == "success") {
-                        ssh(agent, ip, 2);
-                    } else {
-                        alert("登录失败,请确认登录口令的正确性");
-                    }
-                }
-            });
-        }
-
     </script>
 
     <style type="text/css">
@@ -687,11 +592,6 @@
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                <c:if test="${w.proxy eq 0}">
-                                    <a href="javascript:ssh('${w.agentId}','${w.ip}',1)" title="ssh登录">
-                                        <i aria-hidden="true" class="fa fa-tv"></i>
-                                    </a>&nbsp;&nbsp;
-                                </c:if>
 
                                 <a href="${contextPath}/job/addpage?id=${w.agentId}" title="新任务">
                                     <i aria-hidden="true" class="fa fa-plus-square-o"></i>
@@ -857,56 +757,6 @@
                 <div class="modal-footer">
                     <center>
                         <button type="button" class="btn btn-sm" onclick="savePwd()">保存</button>
-                        &nbsp;&nbsp;
-                        <button type="button" class="btn btn-sm" data-dismiss="modal">关闭</button>
-                    </center>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="term" align="center"></div>
-
-    <!-- 修改密码弹窗 -->
-    <div class="modal fade" id="sshModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4>SSH登录</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal" role="form" id="sshform">
-                        <input type="hidden" id="sship"/>
-                        <input type="hidden" id="sshagent"/>
-                        <div class="form-group" style="margin-bottom: 4px;">
-                            <label for="sshuser" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;帐&nbsp;&nbsp;号&nbsp;&nbsp;：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="sshuser"
-                                       placeholder="请输入账户">&nbsp;&nbsp;<label id="sshuser_lab"></label>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 4px;">
-                            <label for="sshport" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;端&nbsp;&nbsp;口&nbsp;&nbsp;：</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control " id="sshport"
-                                       placeholder="请输入端口">&nbsp;&nbsp;<label id="sshport_lab"></label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="sshpwd" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;密&nbsp;&nbsp;码&nbsp;&nbsp;：</label>
-                            <div class="col-md-9">
-                                <input type="password" class="form-control " id="sshpwd" placeholder="请输入密码"/>&nbsp;&nbsp;<label
-                                    id="sshpwd_lab"></label>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <center>
-                        <button type="button" class="btn btn-sm" onclick="saveSsh()">保存</button>
                         &nbsp;&nbsp;
                         <button type="button" class="btn btn-sm" data-dismiss="modal">关闭</button>
                     </center>

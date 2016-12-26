@@ -22,6 +22,7 @@
  */
 package com.jcronjob.server.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.jcronjob.common.utils.RSAUtils;
 import com.jcronjob.server.job.CronjobAuth;
 
@@ -40,6 +41,7 @@ public class Terminal implements Serializable{
     @Id
     @GeneratedValue
     private Long id;
+    private String name;
     private Long userId;
     private String host;
     private int port;
@@ -47,31 +49,37 @@ public class Terminal implements Serializable{
 
     @Lob
     @Column(columnDefinition = "BLOB")
+    @JSONField(serialize=false)
     private byte[] authorization;
 
     private String status = SUCCESS;
     private Date logintime;
 
     @Transient
+    @JSONField(serialize=false)
     private User user;
 
     @Transient
+    @JSONField(serialize=false)
     private String password;
 
     @Transient
-    private Agent agent;
-
-    @Transient
+    @JSONField(serialize=false)
     public static final String INITIAL ="INITIAL";
     @Transient
+    @JSONField(serialize=false)
     public static final String AUTH_FAIL ="AUTHFAIL";
     @Transient
+    @JSONField(serialize=false)
     public static final String PUBLIC_KEY_FAIL ="KEYAUTHFAIL";
     @Transient
+    @JSONField(serialize=false)
     public static final String GENERIC_FAIL ="GENERICFAIL";
     @Transient
+    @JSONField(serialize=false)
     public static final String SUCCESS ="SUCCESS";
     @Transient
+    @JSONField(serialize=false)
     public static final String HOST_FAIL ="HOSTFAIL";
 
     public Long getId() {
@@ -80,6 +88,14 @@ public class Terminal implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Long getUserId() {
@@ -147,14 +163,6 @@ public class Terminal implements Serializable{
         this.logintime = logintime;
     }
 
-    public Agent getAgent() {
-        return agent;
-    }
-
-    public void setAgent(Agent agent) {
-        this.agent = agent;
-    }
-
     public byte[] getAuthorization() {
         return authorization;
     }
@@ -174,7 +182,6 @@ public class Terminal implements Serializable{
                 ", userName='" + userName + '\'' +
                 ", status='" + status + '\'' +
                 ", logintime=" + logintime +
-                ", agent=" + agent +
                 ", password='" + password + '\'' +
                 '}';
     }
@@ -187,14 +194,12 @@ public class Terminal implements Serializable{
         Terminal terminal = (Terminal) o;
 
         if (userName != null ? !userName.equals(terminal.userName) : terminal.userName != null) return false;
-        if (agent != null ? !agent.equals(terminal.agent) : terminal.agent != null) return false;
         return user != null ? user.equals(terminal.user) : terminal.user == null;
     }
 
     @Override
     public int hashCode() {
         int result = userName != null ? userName.hashCode() : 0;
-        result = 31 * result + (agent != null ? agent.hashCode() : 0);
         result = 31 * result + (user != null ? user.hashCode() : 0);
         return result;
     }

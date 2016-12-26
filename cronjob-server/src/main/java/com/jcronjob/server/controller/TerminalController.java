@@ -21,12 +21,12 @@
 
 package com.jcronjob.server.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.jcronjob.common.utils.CommonUtils;
 import com.jcronjob.common.utils.WebUtils;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.domain.User;
-import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.service.TerminalService;
 
@@ -56,22 +56,16 @@ public class TerminalController {
     private AgentService agentService;
 
     @RequestMapping("/ssh")
-    public void ssh(HttpSession session,HttpServletResponse response, Agent agent) throws Exception {
+    public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
         User user = (User) session.getAttribute(Globals.LOGIN_USER);
 
         String json = "{status:'%s',url:'%s'}";
-        final Terminal terminal = termService.getTerm(user.getUserId(), agent.getIp());
-        if (terminal == null) {
-            WebUtils.writeJson(response, String.format(json,"null","null"));
-            return;
-        }
 
+        terminal = termService.getById(terminal.getId());
         String authStr = termService.auth(terminal);
         //登陆认证成功
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
-            agent = agentService.getByHost(agent.getIp());
             String token = CommonUtils.uuid();
-            terminal.setAgent(agent);
             terminal.setUser(user);
 
             TerminalContext.put(token,terminal);
@@ -84,10 +78,16 @@ public class TerminalController {
         }
     }
 
+    @RequestMapping("/detail")
+    public void detail(HttpServletResponse response, Terminal terminal) throws Exception {
+        terminal = termService.getById(terminal.getId());
+        WebUtils.writeJson(response, JSON.toJSONString(terminal));
+    }
+
     @RequestMapping("/view")
-    public String view(HttpSession session,Model model ) throws Exception {
-        PageBean<Terminal> pageBean = termService.getTerminalByUser(Globals.getUserIdBySession(session));
-        model.addAttribute("page",pageBean);
+    public String view(HttpSession session,PageBean pageBean,Model model ) throws Exception {
+        pageBean = termService.getPageBeanByUser(pageBean,Globals.getUserIdBySession(session));
+        model.addAttribute("pageBean",pageBean);
         return "/terminal/view";
     }
 
@@ -95,7 +95,7 @@ public class TerminalController {
     public String open(HttpServletRequest request,String token ) throws Exception {
         Terminal terminal = TerminalContext.get(token);
         if (terminal!=null) {
-            request.setAttribute("name",terminal.getAgent().getName()+"("+terminal.getAgent().getIp()+")");
+            request.setAttribute("name",terminal.getName()+"("+terminal.getHost()+")");
             return "/terminal/console";
         }
         return "/terminal/error";
@@ -112,5 +112,11 @@ public class TerminalController {
         WebUtils.writeHtml(response,message);
     }
 
+
+    @RequestMapping("/del")
+    public void del(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
+        String message = termService.delete(session,term.getId());
+        WebUtils.writeHtml(response,message);
+    }
 
 }
