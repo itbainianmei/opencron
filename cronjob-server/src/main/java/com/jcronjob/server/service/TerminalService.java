@@ -82,6 +82,11 @@ public class TerminalService {
     @Autowired
     private QueryDao queryDao;
 
+    public boolean exists(Long userId, String host) throws Exception {
+        Terminal terminal = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=?",userId,host);
+        return terminal!=null;
+    }
+
     public boolean saveOrUpdate(Terminal term) {
         Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=?",term.getUserId(),term.getHost());
         if (dbTerm!=null) {

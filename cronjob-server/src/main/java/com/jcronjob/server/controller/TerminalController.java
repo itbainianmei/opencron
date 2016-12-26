@@ -79,9 +79,16 @@ public class TerminalController {
     }
 
     @RequestMapping("/detail")
-    public void detail(HttpServletResponse response, Terminal terminal) throws Exception {
+    public void detail(HttpServletResponse response,Terminal terminal) throws Exception {
         terminal = termService.getById(terminal.getId());
         WebUtils.writeJson(response, JSON.toJSONString(terminal));
+    }
+
+    @RequestMapping("/exists")
+    public void exists(HttpServletResponse response,HttpSession session,  Terminal terminal) throws Exception {
+        User user = Globals.getUserBySession(session);
+        boolean exists = termService.exists( user.getUserId(),terminal.getHost());
+        WebUtils.writeHtml(response,exists?"true":"false");
     }
 
     @RequestMapping("/view")

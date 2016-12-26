@@ -63,6 +63,7 @@
                         $("#openLink").click(function () {
                             window.setTimeout(function () {
                                 $("div[class^='sweet-']").remove();
+                                location.reload();
                             }, 200)
                         });
 
@@ -158,7 +159,7 @@
                     //验证是否为IP
                     reg = /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
                     if (!reg.test(host)) {
-                        $("#sshhost_lab").text("机器地址不合法");
+                        $("#sshhost_lab").text("机器地址不合法,必须你网址或者IP");
                         falg = false;
                     }
                 }
@@ -168,7 +169,7 @@
                 $("#sshport_lab").text("连接端口不能为空");
                 falg = false;
             }else {
-                if(!isNaN(port)){
+                if(isNaN(port)){
                     $("#sshport_lab").text("连接端口输入不合法,必须为数字");
                     falg = false;
                 }else {
@@ -208,8 +209,7 @@
                 dataType: "html",
                 sync:true,
                 success: function (status) {
-                    if(status=="true"){
-
+                    if(status=="false"){
                         $.ajax({
                             type: "POST",
                             url: "${contextPath}/terminal/add",
