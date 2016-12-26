@@ -53,9 +53,12 @@ public class RSATest {
         System.err.println("公钥加密——私钥解密");
         String source = "这是一行没有任何意义的文字，你看完了等于没看，不是吗？";
         System.out.println("\r加密前文字：\r\n" + source);
+
         byte[] data = source.getBytes();
         byte[] encodedData = RSAUtils.encryptByPublicKey(data, publicKey);
         System.out.println("加密后文字：\r\n" + new String(encodedData));
+
+
         byte[] decodedData = RSAUtils.decryptByPrivateKey(encodedData, privateKey);
         String target = new String(decodedData);
         System.out.println("解密后文字: \r\n" + target);

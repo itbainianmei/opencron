@@ -66,18 +66,23 @@ public class Terminal implements Serializable{
     @Transient
     @JSONField(serialize=false)
     public static final String INITIAL ="INITIAL";
+
     @Transient
     @JSONField(serialize=false)
     public static final String AUTH_FAIL ="AUTHFAIL";
+
     @Transient
     @JSONField(serialize=false)
     public static final String PUBLIC_KEY_FAIL ="KEYAUTHFAIL";
+
     @Transient
     @JSONField(serialize=false)
     public static final String GENERIC_FAIL ="GENERICFAIL";
+
     @Transient
     @JSONField(serialize=false)
     public static final String SUCCESS ="SUCCESS";
+
     @Transient
     @JSONField(serialize=false)
     public static final String HOST_FAIL ="HOSTFAIL";
