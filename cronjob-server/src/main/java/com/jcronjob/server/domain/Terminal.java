@@ -34,7 +34,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "T_TERM")
+@Table(name = "T_TERMINAL")
 public class Terminal implements Serializable{
 
     @Id

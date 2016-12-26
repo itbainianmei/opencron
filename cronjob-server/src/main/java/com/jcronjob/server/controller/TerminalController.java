@@ -30,8 +30,10 @@ import com.jcronjob.server.domain.Agent;
 import com.jcronjob.server.service.AgentService;
 import com.jcronjob.server.service.TerminalService;
 
+import com.jcronjob.server.tag.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ import static com.jcronjob.server.service.TerminalService.*;
  * benjobs..
  */
 @Controller
+@RequestMapping("/terminal")
 public class TerminalController {
 
     @Autowired
@@ -73,7 +76,7 @@ public class TerminalController {
 
             TerminalContext.put(token,terminal);
             session.setAttribute(Globals.SSH_SESSION_ID,token);
-            WebUtils.writeJson(response, String.format(json,"success","/term?token="+token));
+            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
@@ -81,17 +84,24 @@ public class TerminalController {
         }
     }
 
-    @RequestMapping("/term")
+    @RequestMapping("/view")
+    public String view(HttpSession session,Model model ) throws Exception {
+        PageBean<Terminal> pageBean = termService.getTerminalByUser(Globals.getUserIdBySession(session));
+        model.addAttribute("page",pageBean);
+        return "/terminal/view";
+    }
+
+    @RequestMapping("/open")
     public String open(HttpServletRequest request,String token ) throws Exception {
         Terminal terminal = TerminalContext.get(token);
         if (terminal!=null) {
             request.setAttribute("name",terminal.getAgent().getName()+"("+terminal.getAgent().getIp()+")");
-            return "/term/console";
+            return "/terminal/console";
         }
-        return "/term/error";
+        return "/terminal/error";
     }
 
-    @RequestMapping("/addterm")
+    @RequestMapping("/add")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
         if ("success".equalsIgnoreCase(message)) {

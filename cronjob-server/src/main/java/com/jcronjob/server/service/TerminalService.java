@@ -27,6 +27,7 @@ import com.jcronjob.common.utils.*;
 import com.jcronjob.server.domain.Terminal;
 import com.jcronjob.server.dao.QueryDao;
 import com.jcronjob.server.domain.User;
+import com.jcronjob.server.tag.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -78,11 +79,11 @@ public class TerminalService {
     private QueryDao queryDao;
 
     public Terminal getTerm(Long userId, String host) throws Exception {
-        return queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
+        return queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=? And status=?",userId,host, Terminal.SUCCESS);
     }
 
     public boolean saveOrUpdate(Terminal term) {
-        Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERM WHERE userId=? AND host=?",term.getUserId(),term.getHost());
+        Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=?",term.getUserId(),term.getHost());
         if (dbTerm!=null) {
             term.setId(dbTerm.getId());
         }
@@ -118,6 +119,10 @@ public class TerminalService {
                 connection.close();
             }
         }
+    }
+
+    public PageBean<Terminal> getTerminalByUser(Long userIdBySession) {
+            return null;
     }
 
 

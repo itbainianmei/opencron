@@ -172,6 +172,12 @@
 				</ul>
 			</li>
 
+			<li class="<c:if test="${fn:contains(uri,'/terminal')}">active</c:if>">
+				<a href="${contextPath}/terminal">
+					<i aria-hidden="true" class="fa fa-terminal"></i><span class="menu-item">Terminal</span>
+				</a>
+			</li>
+
 			<c:if test="${permission eq true}">
 				<li <c:if test="${fn:contains(uri,'/user')}">class="active"</c:if>>
 					<a href="${contextPath}/user/view">
