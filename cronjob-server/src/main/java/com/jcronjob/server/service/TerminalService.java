@@ -30,6 +30,7 @@ import com.jcronjob.server.domain.User;
 import com.jcronjob.server.job.Globals;
 import com.jcronjob.server.tag.PageBean;
 import com.jcronjob.server.vo.LogVo;
+import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -138,7 +139,7 @@ public class TerminalService {
         if ( !Globals.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
             return "error";
         }
-        queryDao.delete(term);
+        queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?",term.getId()).executeUpdate();
         return "success";
     }
 

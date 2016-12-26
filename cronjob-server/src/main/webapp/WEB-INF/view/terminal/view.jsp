@@ -9,6 +9,14 @@
 <html lang="en">
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
+
+    <style type="text/css">
+        .error_msg {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+
     <script type="text/javascript">
 
         function ssh(id, type) {
@@ -119,36 +127,102 @@
         }
 
         function saveSsh() {
+
+            $(".error_msg").empty();
+
             var user = $("#sshuser").val();
             var name = $("#sshname").val();
             var pwd = $("#sshpwd").val();
             var port = $("#sshport").val();
             var host = $("#sshhost").val();
+            var falg = true;
+
+            if(!name){
+                $("#sshname_lab").text("Terminal实例名称不能为空");
+                falg = false;
+            }else {
+                if (name.length>20){
+                    $("#sshname_lab").text("Terminal名称输入太长不合法");
+                    falg = false;
+                }
+            }
+
+            if(!host) {
+                $("#sshhost_lab").text("机器地址不能为空");
+                falg = false;
+            }else {
+                var reg = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)(([A-Za-z0-9-~]+)\.)+([A-Za-z0-9-~\/])+$/;
+                //验证是否为网址
+                var objExp=new RegExp(reg);
+                if(!objExp.test(host)){
+                    //验证是否为IP
+                    reg = /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
+                    if (!reg.test(host)) {
+                        $("#sshhost_lab").text("机器地址不合法");
+                        falg = false;
+                    }
+                }
+            }
+
+            if(!port){
+                $("#sshport_lab").text("连接端口不能为空");
+                falg = false;
+            }
+
+            if(!user){
+                $("#sshuser_lab").text("登陆账号不能为空");
+                falg = false;
+            }
+
+            if(!pwd){
+                $("#sshpwd_lab").text("登陆密码不能为空");
+                falg = false;
+            }
+
+            if (!falg) return;
+
+            var host = $("#sshhost").val();
             $.ajax({
                 type: "POST",
-                url: "${contextPath}/terminal/add",
-                data: {
-                    "name":name,
-                    "userName": user,
-                    "password": pwd,
-                    "port": port,
-                    "host": host
-                },
+                url: "${contextPath}/terminal/exists",
+                data: "host="+host,
                 dataType: "html",
+                sync:true,
                 success: function (status) {
-                    $("#sshModal").modal("hide");
-                    $("#sshform")[0].reset();
-                    if (status == "success") {
-                        alertMsg("恭喜你添加Terminal成功!");
-                        location.reload();
-                    } else {
-                        alert("添加Terminal失败,请确认登录口令的正确性");
+                    if(status=="true"){
+
+                        $.ajax({
+                            type: "POST",
+                            url: "${contextPath}/terminal/add",
+                            data: {
+                                "name":name,
+                                "userName": user,
+                                "password": pwd,
+                                "port": port,
+                                "host": host
+                            },
+                            dataType: "html",
+                            success: function (status) {
+                                $("#sshModal").modal("hide");
+                                $("#sshform")[0].reset();
+                                if (status == "success") {
+                                    alertMsg("恭喜你添加Terminal成功!");
+                                    location.reload();
+                                } else {
+                                    alert("添加Terminal失败,请确认登录口令的正确性");
+                                }
+                            }
+                        });
+                    }else {
+                        alert("添加Terminal失败,该机器Terminal实例已存在!");
                     }
                 }
             });
         }
 
+
         function addSSH() {
+            $(".error_msg").empty();
             $("#sshform")[0].reset();
             $("#sshhost").removeAttr("readonly");
             $("#sshTitle").text("添加Terminal");
@@ -262,7 +336,7 @@
                             <label for="sshname" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;名&nbsp;&nbsp;称&nbsp;&nbsp;：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="sshname"
-                                       placeholder="请输入该web终端的实例名字">&nbsp;&nbsp;<label id="sshname_lab"></label>
+                                       placeholder="请输入终端的实例名称">&nbsp;&nbsp;<label class="error_msg" id="sshname_lab"></label>
                             </div>
                         </div>
 
@@ -270,7 +344,7 @@
                             <label for="sshhost" class="col-lab control-label"><i class="glyphicon glyphicon-tag"></i>&nbsp;&nbsp;地&nbsp;&nbsp;址&nbsp;&nbsp;：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="sshhost"
-                                       placeholder="请输入主机地址(IP)">&nbsp;&nbsp;<label id="sshhost_lab"></label>
+                                       placeholder="请输入主机地址(IP)">&nbsp;&nbsp;<label class="error_msg" id="sshhost_lab"></label>
                             </div>
                         </div>
 
@@ -279,7 +353,7 @@
                             <label for="sshport" class="col-lab control-label"><i class="glyphicon glyphicon-question-sign"></i>&nbsp;&nbsp;端&nbsp;&nbsp;口&nbsp;&nbsp;：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="sshport"
-                                       placeholder="请输入端口">&nbsp;&nbsp;<label id="sshport_lab"></label>
+                                       placeholder="请输入端口">&nbsp;&nbsp;<label class="error_msg" id="sshport_lab"></label>
                             </div>
                         </div>
 
@@ -287,15 +361,14 @@
                             <label for="sshuser" class="col-lab control-label"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;帐&nbsp;&nbsp;号&nbsp;&nbsp;：</label>
                             <div class="col-md-9">
                                 <input type="text" class="form-control " id="sshuser"
-                                       placeholder="请输入账户">&nbsp;&nbsp;<label id="sshuser_lab"></label>
+                                       placeholder="请输入账户">&nbsp;&nbsp;<label class="error_msg" id="sshuser_lab"></label>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="sshpwd" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;密&nbsp;&nbsp;码&nbsp;&nbsp;：</label>
                             <div class="col-md-9">
-                                <input type="password" class="form-control " id="sshpwd" placeholder="请输入密码"/>&nbsp;&nbsp;<label
-                                    id="sshpwd_lab"></label>
+                                <input type="password" class="form-control " id="sshpwd" placeholder="请输入密码"/>&nbsp;&nbsp;<label class="error_msg" id="sshpwd_lab"></label>
                             </div>
                         </div>
                     </form>
