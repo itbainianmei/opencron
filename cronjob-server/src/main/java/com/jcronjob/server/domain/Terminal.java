@@ -178,7 +178,6 @@ public class Terminal implements Serializable{
         this.authorization = authorization;
     }
 
-
     @Override
     public String toString() {
         return "Terminal{" +

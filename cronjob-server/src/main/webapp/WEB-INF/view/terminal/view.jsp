@@ -20,6 +20,13 @@
 
     <script type="text/javascript">
 
+        $(document).ready(function () {
+            $("#size").change(function () {
+                var pageSize = $("#size").val();
+                window.location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize="+pageSize+"&orderBy=${pageBean.orderBy}&order=${pageBean.order}";
+            });
+        })
+
         function ssh(id, type) {
             $.ajax({
                 type: "POST",
@@ -266,6 +273,10 @@
 
         }
 
+        function sortPage(field) {
+            location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize=${pageBean.pageSize}&orderBy="+field+"&order="+("${pageBean.order}"=="asc"?"desc":"asc");
+        }
+
     </script>
 
     <style type="text/css">
@@ -314,8 +325,30 @@
         <table class="table tile textured">
             <thead>
             <tr>
-                <th>实例名称</th>
-                <th>主机地址</th>
+                <th style="cursor: pointer" onclick="sortPage('name')"　title="点击排序">实例名称
+                    <c:choose>
+                        <c:when test="${pageBean.orderBy eq 'name'}">
+                            <c:if test="${pageBean.order eq 'asc'}">
+                                <i class="glyphicon glyphicon-sort-by-attributes" style="font-size: 10px;"></i>
+                            </c:if>
+                            <c:if test="${pageBean.order eq 'desc'}">
+                                <i class="glyphicon glyphicon-sort-by-attributes-alt" style="font-size: 10px;"></i>
+                            </c:if>
+                        </c:when>
+                    </c:choose>
+                </th>
+                <th style="cursor: pointer" onclick="sortPage('host')"　title="点击排序">主机地址
+                    <c:choose>
+                        <c:when test="${pageBean.orderBy eq 'host'}">
+                            <c:if test="${pageBean.order eq 'asc'}">
+                                <i class="glyphicon glyphicon-sort-by-attributes" style="font-size: 10px;"></i>
+                            </c:if>
+                            <c:if test="${pageBean.order eq 'desc'}">
+                                <i class="glyphicon glyphicon-sort-by-attributes-alt"  style="font-size: 10px;"></i>
+                            </c:if>
+                        </c:when>
+                    </c:choose>
+                </th>
                 <th>SSH端口</th>
                 <th>最后登陆</th>
                 <th>
