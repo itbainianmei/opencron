@@ -22,7 +22,7 @@
     span.remove();
     return {
         cols: Math.floor($(window).width() / charWidth) + 2,
-        rows: Math.floor($(window).height() / 15) - 1
+        rows: Math.floor($(window).height() / 16)
     };
 }
 
@@ -45,28 +45,28 @@
         self.socket.send(data);
     });
 
-    /*
     //支持中文输入
-    document.onkeydown = function(e){
+    /*document.onkeydown = function(e){
         var ev = document.all ? window.event : e;
         if (ev.keyCode==16) {
             //获取光标所在位置
             if($("#chinese").length==0){
                 var cursor = $(".terminal-cursor");
-                $("<input type='text' id='chinese' style='border: 0;background-color: #000000;color: #cccccc;font-family:Courier, monospace;outline:none' unselectable='on'/>").appendTo(cursor).focus();
+                var chineseNode =  $("<input type='text' id='chinese' style='border: 0;background-color: #000000;color: #cccccc;font-family:Courier, monospace;outline:none' unselectable='on'/>");
+                chineseNode.appendTo(cursor).focus();
                 $(document).keyup(function() {
                     if($("#chinese").length>0){
                         var text = $("#chinese").val();
                         if (text.length>0){
                             self.socket.send(text);
-                            $("#chinese").val('').focus();
+                            chineseNode.empty().appendTo(cursor).focus();
                         }
                     }
                 });
             }
         }
-    };
-    */
+    };*/
+
 
     self.resize();
 

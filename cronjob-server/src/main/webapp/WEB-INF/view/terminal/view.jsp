@@ -81,8 +81,10 @@
         function editSsh(id,type) {
             if (type == 1) {
                 $("#sshTitle").text("编辑Terminal");
+                $("#sshbtn").text("保存");
             }else {
                 $("#sshTitle").text("SSH登陆");
+                $("#sshbtn").text("登陆");
             }
             $.ajax({
                 type: "POST",
@@ -240,13 +242,14 @@
             });
         }
 
-
         function addSSH() {
             $(".error_msg").empty();
             $("#sshform")[0].reset();
             $("#sshhost").removeAttr("readonly");
             $("#sshTitle").text("添加Terminal");
+            $("#sshbtn").text("保存");
             $("#sshModal").modal("show");
+
         }
 
     </script>
@@ -395,7 +398,7 @@
                 </div>
                 <div class="modal-footer">
                     <center>
-                        <button type="button" class="btn btn-sm" onclick="saveSsh()">保存</button>
+                        <button type="button" class="btn btn-sm" id="sshbtn" onclick="saveSsh()">保存</button>
                         &nbsp;&nbsp;
                         <button type="button" class="btn btn-sm" data-dismiss="modal">关闭</button>
                     </center>
