@@ -357,8 +357,7 @@
             </tr>
             </thead>
 
-            <tbody id="tableContent">
-
+            <tbody>
             <c:forEach var="t" items="${pageBean.result}" varStatus="index">
                 <tr id="tr_${t.id}">
                     <td id="name_${t.id}">${t.name}</td>
@@ -368,9 +367,9 @@
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                                    <a href="javascript:ssh('${t.id}')" title="登录">
-                                        <i aria-hidden="true" class="fa fa-tv"></i>
-                                    </a>&nbsp;&nbsp;
+                                <a href="javascript:ssh('${t.id}')" title="登录">
+                                    <i aria-hidden="true" class="fa fa-tv"></i>
+                                </a>&nbsp;&nbsp;
                                 <a href="javascript:editSsh('${t.id}',1)" title="编辑">
                                     <i aria-hidden="true" class="fa fa-edit"></i>
                                 </a>&nbsp;&nbsp;
@@ -386,8 +385,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/terminal/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}"
-                   total="${pageBean.totalCount}"/>
+        <ben:pager href="${contextPath}/terminal/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 
