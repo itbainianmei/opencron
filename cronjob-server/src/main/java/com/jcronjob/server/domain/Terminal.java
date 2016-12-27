@@ -53,6 +53,8 @@ public class Terminal implements Serializable{
     private byte[] authorization;
 
     private String status = SUCCESS;
+
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date logintime;
 
     @Transient

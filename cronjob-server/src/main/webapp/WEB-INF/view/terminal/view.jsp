@@ -64,7 +64,7 @@
                         $("#openLink").click(function () {
                             window.setTimeout(function () {
                                 $("div[class^='sweet-']").remove();
-                                location.reload();
+                                loginTime(id)
                             }, 200)
                         });
 
@@ -76,6 +76,19 @@
                     }
                 }
             });
+        }
+
+        function loginTime(id) {
+            $.ajax({
+                type: "POST",
+                url: "${contextPath}/terminal/detail",
+                data: "id="+id,
+                dataType: "JSON",
+                success: function (json) {
+                    $("#time_"+id).text(json.logintime);
+                }
+            });
+
         }
 
         function editSsh(id,type) {
@@ -317,7 +330,7 @@
                     <td id="name_${t.id}">${t.name}</td>
                     <td>${t.host}</td>
                     <td>${t.port}</td>
-                    <td><fmt:formatDate value="${t.logintime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+                    <td id="time_${t.id}"><fmt:formatDate value="${t.logintime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
                     <td>
                         <center>
                             <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
