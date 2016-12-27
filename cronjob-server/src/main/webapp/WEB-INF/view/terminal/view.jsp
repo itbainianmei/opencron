@@ -49,7 +49,7 @@
                         var url = '${contextPath}' + json.url;
                         swal({
                             title: "",
-                            text: "您确定要打开Terminal吗？",
+                            text: "您确定要打开终端吗？",
                             type: "warning",
                             showCancelButton: true,
                             closeOnConfirm: false,
@@ -100,8 +100,9 @@
         }
 
         function editSsh(id,type) {
+            $(".error_msg").empty();
             if (type == 1) {
-                $("#sshTitle").text("编辑Terminal");
+                $("#sshTitle").text("编辑终端");
                 $("#sshbtn").text("保存");
             }else {
                 $("#sshTitle").text("SSH登陆");
@@ -128,7 +129,7 @@
         function del(id) {
             swal({
                 title: "",
-                text: "您确定要删除该Terminal实例吗?",
+                text: "您确定要删除该终端吗?",
                 type: "warning",
                 showCancelButton: true,
                 closeOnConfirm: false,
@@ -163,11 +164,11 @@
             var falg = true;
 
             if(!name){
-                $("#sshname_lab").text("Terminal实例名称不能为空");
+                $("#sshname_lab").text("终端实例名称不能为空");
                 falg = false;
             }else {
                 if (name.length>20){
-                    $("#sshname_lab").text("Terminal名称输入太长不合法");
+                    $("#sshname_lab").text("终端实例名称输入太长不合法");
                     falg = false;
                 }
             }
@@ -249,15 +250,15 @@
                                 $("#sshModal").modal("hide");
                                 $("#sshform")[0].reset();
                                 if (status == "success") {
-                                    alertMsg("恭喜你添加Terminal成功!");
+                                    alertMsg("恭喜你添加终端成功!");
                                     location.reload();
                                 } else {
-                                    alert("添加Terminal失败,请确认登录口令的正确性");
+                                    alert("添加终端失败,请确认登录口令的正确性");
                                 }
                             }
                         });
                     }else {
-                        alert("添加Terminal失败,该机器Terminal实例已存在!");
+                        alert("添加终端失败,该机器终端实例已存在!");
                     }
                 }
             });
@@ -267,7 +268,7 @@
             $(".error_msg").empty();
             $("#sshform")[0].reset();
             $("#sshhost").removeAttr("readonly");
-            $("#sshTitle").text("添加Terminal");
+            $("#sshTitle").text("添加终端");
             $("#sshbtn").text("保存");
             $("#sshModal").modal("show");
 
