@@ -62,10 +62,24 @@
                         }
 
                         $("#openLink").click(function () {
+
                             window.setTimeout(function () {
                                 $("div[class^='sweet-']").remove();
-                                loginTime(id)
-                            }, 200)
+                            }, 200);
+
+                            //更改最后登录日期
+                            window.setTimeout(function(){
+                                $.ajax({
+                                    type: "POST",
+                                    url: "${contextPath}/terminal/detail",
+                                    data: "id="+id,
+                                    dataType: "JSON",
+                                    success: function (json) {
+                                        $("#time_"+id).text(json.logintime);
+                                    }
+                                })
+                            },2000);
+
                         });
 
                         $(".sweet-alert").find(".cancel").click(function () {
@@ -76,19 +90,6 @@
                     }
                 }
             });
-        }
-
-        function loginTime(id) {
-            $.ajax({
-                type: "POST",
-                url: "${contextPath}/terminal/detail",
-                data: "id="+id,
-                dataType: "JSON",
-                success: function (json) {
-                    $("#time_"+id).text(json.logintime);
-                }
-            });
-
         }
 
         function editSsh(id,type) {
