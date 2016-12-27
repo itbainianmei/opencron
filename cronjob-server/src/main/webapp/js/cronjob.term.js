@@ -45,9 +45,10 @@
         self.socket.send(data);
     });
 
-    //支持中文输入
+    //支持中文输入,目前有bug..
     /*document.onkeydown = function(e){
         var ev = document.all ? window.event : e;
+        //shift唤醒中文输入
         if (ev.keyCode==16) {
             //获取光标所在位置
             if($("#chinese").length==0){
