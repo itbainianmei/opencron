@@ -325,7 +325,7 @@
         <table class="table tile textured">
             <thead>
             <tr>
-                <th style="cursor: pointer" onclick="sortPage('name')"　title="点击排序">实例名称
+                <th style="cursor: pointer" onclick="sortPage('name')" title="点击排序">实例名称
                     <c:choose>
                         <c:when test="${pageBean.orderBy eq 'name'}">
                             <c:if test="${pageBean.order eq 'asc'}">
@@ -337,7 +337,7 @@
                         </c:when>
                     </c:choose>
                 </th>
-                <th style="cursor: pointer" onclick="sortPage('host')"　title="点击排序">主机地址
+                <th style="cursor: pointer" onclick="sortPage('host')" title="点击排序">主机地址
                     <c:choose>
                         <c:when test="${pageBean.orderBy eq 'host'}">
                             <c:if test="${pageBean.order eq 'asc'}">
