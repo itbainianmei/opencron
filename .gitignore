@@ -8,5 +8,5 @@
 */.settings
 */.DS_Store
 .idea/
-cronjob-server/src/main/webapp/upload/
-cronjob-server/webapp/
+opencron-server/src/main/webapp/upload/
+opencron-server/webapp/
