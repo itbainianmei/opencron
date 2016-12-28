@@ -86,12 +86,12 @@
     }
 
     self.socket.onerror = function() {
-        self.term.write("Sorry! cronjob terminal connect error!please try again.\n");
+        self.term.write("Sorry! opencron terminal connect error!please try again.\n");
         window.clearInterval(self.term._blink);
     };
 
     self.socket.onopen = function(event) {
-        //self.term.write("Welcome to cronjob terminal!Connect Starting...\n");
+        //self.term.write("Welcome to opencron terminal!Connect Starting...\n");
     };
 
     self.socket.onmessage = function(event) {
@@ -100,7 +100,7 @@
 
     self.socket.onclose = function() {
         //清除光标闪烁
-        self.term.write("Thank you for using cronjob terminal! bye...");
+        self.term.write("Thank you for using opencron terminal! bye...");
         window.clearInterval(self.term._blink);
     };
 }

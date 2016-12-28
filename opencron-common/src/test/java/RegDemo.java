@@ -34,7 +34,7 @@ public class RegDemo {
     public static void main(String[] args) {
 
         String str = "3D81ADD95B39EBFD9E83BB6FD1391904";
-        String text = "cronjob";
+        String text = "opencron";
         System.out.println(DigestUtils.md5Hex(text));
 
 

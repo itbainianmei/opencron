@@ -1,4 +1,4 @@
-## Cronjob
+## opencron
 
     
 一个强大的linux定时任务调度系统.一个功能完善真正通用的linux定时任务调度定系统,满足多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,webssh,提供一个方便管理定时任务的平台.
@@ -48,23 +48,23 @@ IE10+
    
 ## 项目截图   
 
-![Main](https://github.com/wolfboys/cronjob/blob/master/img/main.png)
+![Main](https://github.com/wolfboys/opencron/blob/master/img/main.png)
 
-![Agent](https://github.com/wolfboys/cronjob/blob/master/img/agent.png)
+![Agent](https://github.com/wolfboys/opencron/blob/master/img/agent.png)
 
-![Job](https://github.com/wolfboys/cronjob/blob/master/img/job.png)
+![Job](https://github.com/wolfboys/opencron/blob/master/img/job.png)
 
-![Record](https://github.com/wolfboys/cronjob/blob/master/img/record.png)
+![Record](https://github.com/wolfboys/opencron/blob/master/img/record.png)
 
-![Terminal](https://github.com/wolfboys/cronjob/blob/master/img/terminal.png)
+![Terminal](https://github.com/wolfboys/opencron/blob/master/img/terminal.png)
 
 
 ## 安装步骤
 
- cronjob分为两个cronjob-server端和cronjob-agent端，cronjob-server端即为一个web可视化的中央管理调度平台,cronjob-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装cronjob-agent, cronjob-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器.
+ cronjob分为两个cronjob-server端和cronjob-agent端，opencron-server端即为一个web可视化的中央管理调度平台,opencron-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装cronjob-agent, opencron-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器.
 
 
-## Cronjob-agent 安装步骤:
+## opencron-agent 安装步骤:
 ```
 1·)下载编译好的cronjob-agent-${version}.tar.gz包
 
@@ -72,7 +72,7 @@ IE10+
 ---bin/
 |  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
 |  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
-|  cronjob.sh         #agent控制启动|停止的脚本
+|  opencron.sh         #agent控制启动|停止的脚本
 |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
 |  kill.sh            #kill任务时需要的脚本,由系统调度
 ---conf/
@@ -82,27 +82,27 @@ IE10+
 ---temp/
 | *.sh                #用于存放项目生成的零时文件的目录
 ---logs
-| cronjob.out         #项目启动会产生的Log文件
+| opencron.out         #项目启动会产生的Log文件
 
-> tar -xzvf cronjob-agent-${version}.tar.gz
+> tar -xzvf opencron-agent-${version}.tar.gz
 3)启动cronjob-agent 进入cronjob-agent/bin
-> cd cronjob-agent/bin
+> cd opencron-agent/bin
 > sh startup.sh
-这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:cronjob
+这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:opencron
 如要指定参数启动命令如下:
 > sh startup.sh -P10001 -p123456
 参数说明:
 -P (大写的p)为agent启动的端口，选填，如果不输入默认启动端口是1577
 -p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是cronjob
-启动完后会看到有一个cronjob.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/cronjob.out
+启动完后会看到有一个cronjob.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/opencron.out
 
 4)停止cronjob-agent 进入cronjob-agent/bin 执行：
-> cd cronjob-agent/bin
+> cd opencron-agent/bin
 > sh shutdown.sh
 
 ```
   
-## Cronjob-server 部署步骤:
+## opencron-server 部署步骤:
 
 ```
 1):下载已经编译好的cronjob-server-${version}.war包
@@ -111,7 +111,7 @@ IE10+
 如:
 --mysql
 jdbc.driver=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://${you_mysql_host}:3306/cronjob?useUnicode=true&characterEncoding=UTF-8
+jdbc.url=jdbc:mysql://${you_mysql_host}:3306/opencron?useUnicode=true&characterEncoding=UTF-8
 jdbc.username=${user}
 jdbc.password=${password}
 

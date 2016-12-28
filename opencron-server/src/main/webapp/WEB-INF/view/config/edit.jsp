@@ -18,7 +18,7 @@
                 alert("请填写发件邮箱!");
                 return false;
             }
-            if(!cronjob.testEmail(senderEmail)){
+            if(!opencron.testEmail(senderEmail)){
                 alert("请填写正确的邮箱地址!");
                 return false;
             }
@@ -33,7 +33,7 @@
             if (!smtpPort){
                 alert("请填写发件SMTP端口号!");
                 return false;
-            }else if(!cronjob.testNumber(smtpPort)){
+            }else if(!opencron.testNumber(smtpPort)){
                 alert("SMTP端口号必须是数字!");
                 return false;
             }
@@ -53,7 +53,7 @@
                 alert("请填写告警发送的时间间隔!");
                 return false;
             }
-            if(!cronjob.testNumber(interval)){
+            if(!opencron.testNumber(interval)){
                 alert("时间间隔必须为数字!");
                 return false;
             }

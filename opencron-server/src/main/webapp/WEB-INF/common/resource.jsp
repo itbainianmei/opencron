@@ -10,7 +10,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="description" content="OPENCRON">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="cronjob,crontab,a better crontab,Let's crontab easy">
+    <meta name="keywords" content="opencron,crontab,a better crontab,Let's crontab easy">
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
     <!-- CSS -->
@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="${contextPath}/css/icons.css" rel="stylesheet">
     <link rel="stylesheet" href="${contextPath}/css/generics.css" rel="stylesheet">
     <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' rel='stylesheet'>
-    <link rel="stylesheet" href='${contextPath}/css/cronjob.css' rel='stylesheet'>
+    <link rel="stylesheet" href='${contextPath}/css/opencron.css' rel='stylesheet'>
     <link rel="stylesheet" href='${contextPath}/css/loading.css' rel='stylesheet'>
     <link rel="stylesheet" href='${contextPath}/css/morris.css' rel='stylesheet'>
     <link rel="stylesheet" href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
@@ -68,13 +68,13 @@
     <script type="text/javascript" src="${contextPath}/js/jquery.cookie.js"></script>
     <script type="text/javascript" src="${contextPath}/js/My97DatePicker/WdatePicker.js"></script>
     <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/cronjob.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
 
     <!--upfile-->
     <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.main.css" type="text/css" />
     <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.css" type="text/css" />
     <script type="text/javascript" src="${contextPath}/js/cropper/cropper.js" ></script>
-    <script type="text/javascript" src="${contextPath}/js/cronjob.cropper.js" ></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.cropper.js" ></script>
 
 
 

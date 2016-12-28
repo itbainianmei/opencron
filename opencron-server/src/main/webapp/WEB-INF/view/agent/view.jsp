@@ -212,7 +212,7 @@
                 alert("请填写机器IP!");
                 return false;
             }
-            if (!cronjob.testIp(ip)) {
+            if (!opencron.testIp(ip)) {
                 alert("请填写正确的IP地址!");
                 return false;
             }
@@ -221,7 +221,7 @@
                 alert("请填写端口号!");
                 return false;
             }
-            if (!cronjob.testPort(port)) {
+            if (!opencron.testPort(port)) {
                 alert("请填写正确的端口号!");
                 return false;
             }
@@ -236,7 +236,7 @@
                     alert("请填写手机号码!");
                     return false;
                 }
-                if (!cronjob.testMobile(mobiles)) {
+                if (!opencron.testMobile(mobiles)) {
                     alert("请填写正确的手机号码!");
                     return false;
                 }
@@ -245,7 +245,7 @@
                     alert("请填写邮箱地址!");
                     return false;
                 }
-                if (!cronjob.testEmail(email)) {
+                if (!opencron.testEmail(email)) {
                     alert("请填写正确的邮箱地址!");
                     return false;
                 }
@@ -460,7 +460,7 @@
                 alert("页面异常，请刷新重试！");
                 return false;
             }
-            if (!cronjob.testIp(ip)) {
+            if (!opencron.testIp(ip)) {
                 alert("请填写正确的IP地址!");
                 return false;
             }
@@ -469,7 +469,7 @@
                 alert("请填写端口号!");
                 return false;
             }
-            if (!cronjob.testPort(port)) {
+            if (!opencron.testPort(port)) {
                 alert("请填写正确的端口号!");
                 return false;
             }

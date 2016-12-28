@@ -15,7 +15,7 @@
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
 	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float: left; width: 165px; margin-top: 5px; margin-left: 14px;">
-		<img src="${contextPath}/img/cronjob.png">
+		<img src="${contextPath}/img/opencron.png">
 	</div>
 	</a>
 	<div class="media-body">

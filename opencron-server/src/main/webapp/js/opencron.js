@@ -28,7 +28,7 @@ function goback() {
     });
 }
 
-var cronjob = {
+var opencron = {
     testIp:function(ip){
         var reg = /^([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.([0-9]|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])$/;
         return reg.test(ip);

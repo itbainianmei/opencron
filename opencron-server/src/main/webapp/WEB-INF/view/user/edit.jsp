@@ -28,19 +28,19 @@
                 return false;
             }
             if ($("#contact").val()){
-                if(!cronjob.testMobile($("#contact").val())){
+                if(!opencron.testMobile($("#contact").val())){
                     alert("请填写正确的手机号码!");
                     return false;
                 }
             }
             if ($("#email").val()){
-                if(!cronjob.testEmail($("#email").val())){
+                if(!opencron.testEmail($("#email").val())){
                     alert("请填写正确的邮箱地址!");
                     return false;
                 }
             }
             if ($("#qq").val()){
-                if(!cronjob.testQq($("#qq").val())){
+                if(!opencron.testQq($("#qq").val())){
                     alert("请填写正确的QQ号码!");
                     return false;
                 }

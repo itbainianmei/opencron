@@ -202,7 +202,7 @@
                     alert("请填写重跑次数!");
                     return false;
                 }
-                if(!cronjob.testNumber(runCount)){
+                if(!opencron.testNumber(runCount)){
                     alert("截止重跑次数必须为正整数!");
                     return false;
                 }
@@ -217,7 +217,7 @@
                 }
                 var mobs = mobiles.split(",");
                 for (var i in mobs){
-                    if(!cronjob.testMobile(mobs[i])){
+                    if(!opencron.testMobile(mobs[i])){
                         alert("请填写正确的手机号码!");
                         return false;
                     }
@@ -231,7 +231,7 @@
 
                 var emas = emails.split(",");
                 for (var i in emas){
-                    if(!cronjob.testEmail(emas[i])){
+                    if(!opencron.testEmail(emas[i])){
                         alert("请填写正确的邮箱地址!");
                         return false;
                     }

@@ -13,7 +13,7 @@
 <!--[if IE 9 ]><html class="ie9"><![endif]-->
 <head>
     <meta charset="UTF-8">
-    <meta name="keywords" content="cronjob,crontab,a better crontab,Let's crontab easy">
+    <meta name="keywords" content="opencron,crontab,a better crontab,Let's crontab easy">
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
     <title>OPENCRON</title>
@@ -468,7 +468,7 @@
 <section id="login">
     <header>
         <h1 style="width: 250px;">
-            <img src="${contextPath}/img/cronjob.png">
+            <img src="${contextPath}/img/opencron.png">
         </h1>
         <h4 style="margin-top: 5px;">Welcome to OPENCRON,Let's crontab easy</h4>
     </header>

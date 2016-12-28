@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png" />
     <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/cronjob.term.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.term.js"></script>
     <title>OPENCRON Terminal</title>
 </head>
 
