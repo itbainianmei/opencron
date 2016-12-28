@@ -5,20 +5,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.cronjob</groupId>
-    <artifactId>cronjob</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>org.opencron</groupId>
+    <artifactId>opencron</artifactId>
+    <version>1.0-RELEASE</version>
     <modules>
-        <module>cronjob-common</module>
-        <module>cronjob-agent</module>
-        <module>cronjob-server</module>
+        <module>opencron-common</module>
+        <module>opencron-agent</module>
+        <module>opencron-server</module>
     </modules>
     <packaging>pom</packaging>
 
     <scm>
-        <url>scm:git:git@github.com:wolfboys/cronjob.git</url>
-        <connection>scm:git:git@github.com:wolfboys/cronjob.git</connection>
-        <developerConnection>scm:git:git@github.com:wolfboys/cronjob.git</developerConnection>
+        <url>scm:git:git@github.com:wolfboys/opencron.git</url>
+        <connection>scm:git:git@github.com:wolfboys/opencron.git</connection>
+        <developerConnection>scm:git:git@github.com:wolfboys/opencron.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -26,7 +26,7 @@
         <license>
             <name>Apache v2</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-            <distribution>cronjob</distribution>
+            <distribution>opencron</distribution>
         </license>
     </licenses>
 
@@ -73,20 +73,20 @@
         <dependencies>
 
             <dependency>
-                <groupId>org.cronjob</groupId>
-                <artifactId>cronjob-common</artifactId>
+                <groupId>org.opencron</groupId>
+                <artifactId>opencron-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.cronjob</groupId>
-                <artifactId>cronjob-agent</artifactId>
+                <groupId>org.opencron</groupId>
+                <artifactId>opencron-agent</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.cronjob</groupId>
-                <artifactId>cronjob-server</artifactId>
+                <groupId>org.opencron</groupId>
+                <artifactId>opencron-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
