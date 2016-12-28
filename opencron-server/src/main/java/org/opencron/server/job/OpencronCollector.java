@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by benjobs on 16/3/28.
  */
 @Component
-public class CronjobCollector implements TaskCollector {
+public class OpencronCollector implements TaskCollector {
 
     @Autowired
     private JobService jobService;

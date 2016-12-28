@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <!DOCTYPE html>
@@ -91,7 +91,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">OPENCRON</a></li>
+        <li><a href="">opencron</a></li>
         <li><a href="">告警日志</a></li>
     </ol>
     <h4 class="page-title"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;日志详情</h4>
@@ -100,7 +100,7 @@
         <c:if test="${log.type eq 0}">
                 <div class="email">
                     <div class="email-title">
-                        <h4 style="color: #000000;font-size: 12px;font-weight: 900">cronjob监控告警</h4>
+                        <h4 style="color: #000000;font-size: 12px;font-weight: 900">opencron监控告警</h4>
                         <div>
                             <span style="color: #808080;font-size: 12px;">发件人：&nbsp;&nbsp;${sender}</span><br>
                             <span style="color: #808080;font-size: 12px;">时&nbsp;&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;<fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span><br>

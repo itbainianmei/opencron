@@ -30,8 +30,8 @@ import org.opencron.common.utils.ParamsMap;
 import org.opencron.server.domain.Record;
 import org.opencron.server.domain.Agent;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.CronjobCaller;
-import org.opencron.server.job.CronjobHeartBeat;
+import org.opencron.server.job.OpencronCaller;
+import org.opencron.server.job.OpencronHeartBeat;
 import org.opencron.server.vo.JobVo;
 import com.mysql.jdbc.PacketTooBigException;
 import org.quartz.Job;
@@ -61,7 +61,7 @@ public class ExecuteService implements Job {
     private NoticeService noticeService;
 
     @Autowired
-    private CronjobCaller cronjobCaller;
+    private OpencronCaller opencronCaller;
 
     @Autowired
     private AgentService agentService;
@@ -419,7 +419,7 @@ public class ExecuteService implements Job {
                                 recordService.save(cord);
                                 job = jobService.getJobVoById(cord.getJobId());
                                 //向远程机器发送kill指令
-                                cronjobCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
+                                opencronCaller.call(Request.request(job.getIp(), job.getPort(), Action.KILL, job.getPassword()).putParam("pid", cord.getPid()), job.getAgent());
                                 cord.setStatus(RunStatus.STOPED.getStatus());
                                 cord.setEndTime(new Date());
                                 recordService.save(cord);
@@ -455,7 +455,7 @@ public class ExecuteService implements Job {
      * 向执行器发送请求，并封装响应结果
      */
     private Response responseToRecord(final JobVo job, final Record record) throws Exception {
-        Response response = cronjobCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword())
+        Response response = opencronCaller.call(Request.request(job.getIp(), job.getPort(), Action.EXECUTE, job.getPassword())
                 .putParam("command", job.getCommand()).putParam("pid", record.getPid()).putParam("timeout",job.getTimeout()+"") , job.getAgent());
         logger.info("[opencron]:execute response:{}", response.toString());
         record.setReturnCode(response.getExitCode());
@@ -512,7 +512,7 @@ public class ExecuteService implements Job {
     public boolean ping(Agent agent) {
         boolean ping = false;
         try {
-            ping = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverPort", CronjobHeartBeat.port+""),agent).isSuccess();
+            ping = opencronCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverPort", OpencronHeartBeat.port+""),agent).isSuccess();
         } catch (Exception e) {
             logger.error("[opencron]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {
@@ -526,7 +526,7 @@ public class ExecuteService implements Job {
     public boolean password(Agent agent, final String newPassword) {
         boolean ping = false;
         try {
-            Response response = cronjobCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PASSWORD, agent.getPassword())
+            Response response = opencronCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PASSWORD, agent.getPassword())
                     .putParam("newPassword", newPassword),agent);
             ping = response.isSuccess();
         } catch (Exception e) {
@@ -539,7 +539,7 @@ public class ExecuteService implements Job {
      * 监测执行器运行状态
      */
     public Response monitor(Agent agent) throws Exception {
-        return cronjobCaller.call(
+        return opencronCaller.call(
                 Request.request(agent.getIp(), agent.getPort(), Action.MONITOR, agent.getPassword())
                         .setParams( ParamsMap.instance().fill("connType",ConnType.getByType(agent.getProxy()).getName()) ), agent);
     }

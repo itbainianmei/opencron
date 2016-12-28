@@ -78,7 +78,7 @@
             });
         }
 
-        var skin = $.cookie("cronjob_skin");
+        var skin = $.cookie("opencron_skin");
         if(skin) {
             $('body').attr('id', skin);
         }
@@ -88,7 +88,7 @@
             var skin = $(this).data('skin');
             $('body').attr('id', skin);
             $('#changeSkin').modal('hide');
-            $.cookie("cronjob_skin", skin, {
+            $.cookie("opencron_skin", skin, {
                 expires : 30,
                 domain:document.domain,
                 path:"/"

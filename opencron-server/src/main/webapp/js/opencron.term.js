@@ -1,4 +1,4 @@
-;function CronjobTerm() {
+;function OpencronTerm() {
     'use strict';
     this.socket = null;
     this.term = null;
@@ -7,14 +7,14 @@
     this.open();
 }
 
-;CronjobTerm.prototype.resize = function () {
+;OpencronTerm.prototype.resize = function () {
     var self = this;
    $(window).resize(function () {
        self.term.resize(self.size().cols,self.size().rows);
    });
 }
 
-;CronjobTerm.prototype.size = function () {
+;OpencronTerm.prototype.size = function () {
     var text="qwertyuiopasdfghjklzxcvbnm";
     var span = $("<span>", { text: text });
     $(this.termNode).append(span);
@@ -26,7 +26,7 @@
     };
 }
 
-;CronjobTerm.prototype.open = function () {
+;OpencronTerm.prototype.open = function () {
     'use strict';
     var self = this;
 

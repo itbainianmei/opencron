@@ -278,7 +278,7 @@ case "$1" in
         -Djava.io.tmpdir="$OPENCRON_TMPDIR" \
         -Dopencron.port="$OPENCRON_PORT" \
         -Dopencron.password="$OPENCRON_PASSWORD" \
-        com.jopencron.agent.Bootstrap start \
+        org.opencron.agent.Bootstrap start \
         >> "$OPENCRON_OUT" 2>&1 "&";
 
       if [ ! -z "$OPENCRON_PID" ]; then
@@ -329,7 +329,7 @@ case "$1" in
           eval "\"$RUNJAVA\"" \
             -classpath "\"$CLASSPATH\"" \
             -Dopencron.home="\"$OPENCRON_HOME\"" \
-             com.jopencron.agent.Bootstrap stop
+             org.opencron.agent.Bootstrap stop
 
           # stop failed. Shutdown port disabled? Try a normal kill.
           if [ $? != 0 ]; then

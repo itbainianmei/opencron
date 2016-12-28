@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by benjobs on 2016/12/9.
  */
-public class CronjobContext {
+public class OpencronContext {
 
     private static Map<String,Object> context = new ConcurrentHashMap<String,Object>(0);
 

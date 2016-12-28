@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,7 +75,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">OPENCRON</a></li>
+        <li><a href="">opencron</a></li>
         <li><a href="">系统设置</a></li>
     </ol>
     <h4 class="page-title"><i class="fa fa-edit" aria-hidden="true" style="font-style: 30px;"></i>&nbsp;修改设置</h4>

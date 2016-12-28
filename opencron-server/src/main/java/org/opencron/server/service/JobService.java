@@ -31,7 +31,7 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Job;
 import org.opencron.server.domain.User;
 import org.opencron.server.domain.Agent;
-import org.opencron.server.job.CronjobContext;
+import org.opencron.server.job.OpencronContext;
 import org.opencron.server.job.Globals;
 import org.opencron.server.tag.PageBean;
 
@@ -113,8 +113,8 @@ public class JobService {
         return getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB);
     }
 
-    private void flushCronjob(){
-        CronjobContext.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
+    private void flushOpencron(){
+        OpencronContext.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
     }
 
     public PageBean<JobVo> getJobVos(HttpSession session, PageBean pageBean, JobVo job) {
@@ -170,7 +170,7 @@ public class JobService {
 
     public Job addOrUpdate(Job job) {
         Job saveJob = (Job)queryDao.save(job);
-        flushCronjob();
+        flushOpencron();
         return saveJob;
     }
 
@@ -204,7 +204,7 @@ public class JobService {
     @Transactional(readOnly = false)
     public int delete(Long jobId) {
         int count = queryDao.createSQLQuery("UPDATE T_JOB SET status=0 WHERE jobId = " + jobId).executeUpdate();
-        flushCronjob();
+        flushOpencron();
         return count;
     }
 

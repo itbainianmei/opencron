@@ -31,6 +31,6 @@
 
 	<context:component-scan base-package="org.opencron.server.service,org.opencron.server.dao,org.opencron.server.job,org.opencron.server.websocket" scoped-proxy="targetClass" use-default-filters="true"/>
 
-	<bean class="org.opencron.server.job.CronjobTask" lazy-init="false"/>
+	<bean class="org.opencron.server.job.OpencronTask" lazy-init="false"/>
 
 </beans>

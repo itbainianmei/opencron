@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben" uri="ben-taglib" %>
+<%@ taglib prefix="cron" uri="http://org.opencron" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,27 +107,27 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var cronjobChart = new CronjobChart('${contextPath}');
+            var opencronChart = new OpencronChart('${contextPath}');
 
             //跨时段查询任务运行比例
-            cronjobChart.query();
+            opencronChart.query();
 
             //系统实时监控
-            cronjobChart.monitor();
+            opencronChart.monitor();
 
             $("#queryChart").click(function () {
-                cronjobChart.query();
+                opencronChart.query();
             });
 
             $("#agentId").change(
                 function () {
                     //清理上一个轮询...
-                    if (cronjobChart.intervalId != null) {
-                        window.clearInterval(cronjobChart.intervalId);
-                        cronjobChart.intervalId = null;
-                        cronjobChart.clear();
+                    if (opencronChart.intervalId != null) {
+                        window.clearInterval(opencronChart.intervalId);
+                        opencronChart.intervalId = null;
+                        opencronChart.clear();
                     }
-                    cronjobChart.monitor();
+                    opencronChart.monitor();
                 }
             );
 
@@ -173,7 +173,7 @@
             }
 
             $(window).resize(function(){
-                cronjobChart.resize();
+                opencronChart.resize();
                 $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
             });
 
@@ -205,7 +205,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">OPENCRON</a></li>
+        <li><a href="">opencron</a></li>
         <li><a href="">首页</a></li>
     </ol>
 

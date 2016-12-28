@@ -136,7 +136,7 @@ public class NoticeService {
             email.setSslSmtpPort(config.getSmtpPort().toString());
             email.setAuthentication(config.getSenderEmail(), config.getPassword());
             email.setFrom(config.getSenderEmail());
-            email.setSubject("cronjob监控告警");
+            email.setSubject("opencron监控告警");
             email.setHtmlMsg(msgToHtml(receiverId, content));
             email.addTo(emailAddress.split(","));
             email.send();

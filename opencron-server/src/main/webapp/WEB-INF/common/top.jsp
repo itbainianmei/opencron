@@ -42,7 +42,7 @@
 		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<form class="avatar-form" name="picform" action="${contextPath}/headpic/upload" enctype="multipart/form-data" method="post">
-					<input name="userId" type="hidden" value="${cronjob_user.userId}">
+					<input name="userId" type="hidden" value="${opencron_user.userId}">
 					<div class="modal-header">
 						<button class="close" data-dismiss="modal" type="button">&times;</button>
 						<h4 class="modal-title" id="avatar-modal-label">更改图像</h4>
@@ -114,12 +114,12 @@
 			<!-- Profile Menu -->
 			<div class="text-center s-widget m-b-25 dropdown" id="profile-menu">
 				<a href="" id="header-img" data-toggle="dropdown" class="animated a-hover">
-					<img class="profile-pic" id="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${cronjob_user.userId}${cronjob_user.picExtName}?<%=System.currentTimeMillis()%>">
+					<img class="profile-pic" id="profile-pic" width="140px;" height="140px;"  onerror="javascript:this.src='${contextPath}/img/profile-pic.jpg'" src="${contextPath}/upload/${opencron_user.userId}${opencron_user.picExtName}?<%=System.currentTimeMillis()%>">
 					<div class="change-text" id="change-img" href="javascript:void(0);">更换头像</div>
 				</a>
-				<h4 class="m-0">${cronjob_user.userName}</h4>
+				<h4 class="m-0">${opencron_user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="${contextPath}/user/detail?userId=${cronjob_user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/user/detail?userId=${opencron_user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 					<li><a href="${contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>

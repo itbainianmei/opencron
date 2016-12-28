@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -10,14 +10,14 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <style type="text/css">
-        .cronjob_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .opencron_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
 
         function rewidth() {
             var width = $(window).width();
-            $(".cronjob_command").show().css("width",500+(width-1500)+"px");
+            $(".opencron_command").show().css("width",500+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -133,7 +133,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="#">OPENCRON</a></li>
+        <li><a href="#">opencron</a></li>
         <li><a href="#">调度记录</a></li>
         <li><a href="#">正在运行</a></li>
     </ol>
@@ -225,11 +225,11 @@
                         <c:if test="${r.execType eq 3}"><span class="label label-default" style="color: green;font-weight:bold">&nbsp;&nbsp;现&nbsp;场&nbsp;&nbsp;</span></c:if>
                     </td>
                     <td title="${r.command}">
-                        <div class="cronjob_command">${r.command}</div>
+                        <div class="opencron_command">${r.command}</div>
                     </td>
 
                     <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                    <td>${ben:diffdate(r.startTime,r.endTime)}</td>
+                    <td>${cron:diffdate(r.startTime,r.endTime)}</td>
                     <td>
                         <c:if test="${r.jobType eq 1}">流程作业</c:if>
                         <c:if test="${r.jobType eq 0}">单一作业</c:if>

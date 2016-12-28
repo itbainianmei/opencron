@@ -6,13 +6,13 @@
                     <th style="text-align: center;height: 25px; line-height: 25px; padding: 15px 35px; background-color: rgba(100, 149, 255,0.8);" valign="middle">
                         <span style="color: rgb(255, 255, 255);">
                             <font size="7">
-                                OPENCRON
+                                opencron
                             </font>
                         </span>
                         <br>
                         <font style="color: rgb(255, 255, 255); " face="微软雅黑" size="4">
                             <span style="font-weight: normal;">
-                                Welcome to OPENCRON,Let's crontab easy
+                                Welcome to opencron,Let's crontab easy
                             </span>
                         </font>
                     </th>
@@ -22,7 +22,7 @@
                         <div style="border: 1px solid #eeeeee;padding: 0px 20px;margin: 35px 0px">
                             <div style="text-align: center;margin: 10px 0px 8px 0px;border-bottom: 1px solid #eeeeee;">
                                 <font size="5">
-                                    Cronjob告警
+                                    Opencron告警
                                 </font>
                             </div>
                             <div style="padding:25px 35px 10px; background-color:#fff;">

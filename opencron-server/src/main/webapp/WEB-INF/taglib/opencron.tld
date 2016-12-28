@@ -3,14 +3,14 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
         version="2.0">
 
-    <description>OPENCRON Tag Library</description>
+    <description>opencron Tag Library</description>
     <tlib-version>1.0</tlib-version>
     <short-name>ben</short-name>
-    <uri>ben-taglib</uri>
+    <uri>http://org.opencron</uri>
 
     <tag>
         <name>pager</name>
-        <tag-class>com.jcronjob.server.tag.PagerTag</tag-class>
+        <tag-class>org.opencron.server.tag.PagerTag</tag-class>
         <body-content>empty</body-content>
 
         <attribute>
@@ -57,13 +57,13 @@
 
     <function>
         <name>substr</name>
-        <function-class>com.jcronjob.server.tag.CronTag</function-class>
+        <function-class>org.opencron.server.tag.CronTag</function-class>
         <function-signature>java.lang.String substr(java.lang.Object,int,int,java.lang.String)</function-signature>
     </function>
 
     <function>
         <name>diffdate</name>
-        <function-class>com.jcronjob.server.tag.CronTag</function-class>
+        <function-class>org.opencron.server.tag.CronTag</function-class>
         <function-signature>java.lang.String diffdate(java.util.Date,java.util.Date)</function-signature>
     </function>
 

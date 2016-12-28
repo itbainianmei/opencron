@@ -42,7 +42,7 @@ import java.util.Map;
 
 /**
  *
- * agent CronjobCaller
+ * agent OpencronCaller
  *
  * @author  <a href="mailto:benjobs@qq.com">B e n</a>
  * @version 1.0
@@ -50,7 +50,7 @@ import java.util.Map;
  */
 
 @Component
-public class CronjobCaller {
+public class OpencronCaller {
 
     @Autowired
     private AgentService agentService;

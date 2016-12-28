@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
@@ -38,13 +38,13 @@
             text-align:center;
             font-size: 10px;
         }
-        .cronjob_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .opencron_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
         function rewidth() {
             var width = $(window).width();
-            $(".cronjob_command").show().css("width",500+(width-1500)+"px");
+            $(".opencron_command").show().css("width",500+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -191,7 +191,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="#">OPENCRON</a></li>
+        <li><a href="#">opencron</a></li>
         <li><a href="#">调度记录</a></li>
         <li><a href="#">已完成</a></li>
     </ol>
@@ -310,9 +310,9 @@
                         </c:if>
                         <td>${r.agentName}</td>
 
-                        <td title="${r.command}"><div class="cronjob_command">${r.command}</div></td>
+                        <td title="${r.command}"><div class="opencron_command">${r.command}</div></td>
                         <td><fmt:formatDate value="${r.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                        <td>${ben:diffdate(r.startTime,r.endTime)}</td>
+                        <td>${cron:diffdate(r.startTime,r.endTime)}</td>
                         <td>
                             <c:if test="${r.success eq 1}">
                                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -362,9 +362,9 @@
                         <c:forEach var="rc" items="${r.childRecord}" varStatus="index">
                             <tr class="redoGroup_${r.recordId} groupRecord_${r.groupId}" style="display: none;">
                                 <td class="${index.count eq 1 ? (r.redoCount eq index.count ? "redo-first" : "redo-first-top") : (r.redoCount eq index.count ? "redo-first-bottom" : "")}" >${rc.agentName}</td>
-                                <td title="${rc.command}"><div class="cronjob_command">${rc.command}</div> </td>
+                                <td title="${rc.command}"><div class="opencron_command">${rc.command}</div> </td>
                                 <td><fmt:formatDate value="${rc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                <td>${ben:diffdate(rc.startTime,rc.endTime)}</td>
+                                <td>${cron:diffdate(rc.startTime,rc.endTime)}</td>
                                 <td>
                                     <c:if test="${rc.success eq 1}">
                                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -402,9 +402,9 @@
 
                             <tr class="flowGroup_${r.recordId} tr-flow_${empty r.groupId ? "" : r.groupId+index.count}" style="display: none;">
                                 <td>${t.agentName}</td>
-                                <td title="${t.command}"><div class="cronjob_command">${t.command}</div></td>
+                                <td title="${t.command}"><div class="opencron_command">${t.command}</div></td>
                                 <td><fmt:formatDate value="${t.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                <td>${ben:diffdate(t.startTime,t.endTime)}</td>
+                                <td>${cron:diffdate(t.startTime,t.endTime)}</td>
                                 <td>
                                     <c:if test="${t.success eq 1}">
                                         <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
@@ -445,9 +445,9 @@
                                 <c:forEach var="tc" items="${t.childRecord}" varStatus="index">
                                     <tr class="redoGroup_${t.recordId} groupRecord_${r.groupId}" style="display: none;">
                                         <td class="${index.count eq 1 ? (t.redoCount eq index.count ? "redo-first" : "redo-first-top") : (t.redoCount eq index.count ? "redo-first-bottom" : "")} ">${tc.agentName}</td>
-                                        <td title="${tc.command}"><div class="cronjob_command">${tc.command}</div></td>
+                                        <td title="${tc.command}"><div class="opencron_command">${tc.command}</div></td>
                                         <td><fmt:formatDate value="${tc.startTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
-                                        <td>${ben:diffdate(tc.startTime,tc.endTime)}</td>
+                                        <td>${cron:diffdate(tc.startTime,tc.endTime)}</td>
                                         <td>
                                             <c:if test="${tc.success eq 1}">
                                                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>

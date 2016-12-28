@@ -1,4 +1,4 @@
-## opencron
+## Opencron
 
     
 一个强大的linux定时任务调度系统.一个功能完善真正通用的linux定时任务调度定系统,满足多种场景下各种复杂的定时任务调度,同时集成了linux实时监控,webssh,提供一个方便管理定时任务的平台.
@@ -12,7 +12,7 @@
  -  正在运行的任务要kill掉很麻烦,查看进程然后才能kill
 ......
 
-Cronjob的出现将彻底的解决上面所有问题.功能如下:
+Opencron的出现将彻底的解决上面所有问题.功能如下:
  -  自动化管理任务,提供可操作的web图形化管理
  -  要当场执行只需点击执行即可,非常方便
  -  时间规则支持quartz和crontab,更强大更灵活
@@ -61,17 +61,17 @@ IE10+
 
 ## 安装步骤
 
- cronjob分为两个cronjob-server端和cronjob-agent端，opencron-server端即为一个web可视化的中央管理调度平台,opencron-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装cronjob-agent, opencron-agent在要管理的服务器中安装执行完后，可以直接在cronjob-server添加当前的机器.
+ opencron分为两个opencron-server端和opencron-agent端，opencron-server端即为一个web可视化的中央管理调度平台,opencron-agent为要管理的任务的机器,每个要纳入中央统一管理的机器都必须安装opencron-agent, opencron-agent在要管理的服务器中安装执行完后，可以直接在opencron-server添加当前的机器.
 
 
-## opencron-agent 安装步骤:
+## Opencron-agent 安装步骤:
 ```
-1·)下载编译好的cronjob-agent-${version}.tar.gz包
+1·)下载编译好的opencron-agent-${version}.tar.gz包
 
-2)部署agent，将cronjob-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
+2)部署agent，将opencron-agent-${version}.tar.gz包拷贝到要管理任务的目标服务器,解包,会看到以下目录
 ---bin/
-|  startup.sh         #agent的启动脚本,调用的是cronjob.sh来完成
-|  shutdown.sh        #agent停止脚本，调用的是cronjob.sh来完成
+|  startup.sh         #agent的启动脚本,调用的是opencron.sh来完成
+|  shutdown.sh        #agent停止脚本，调用的是opencron.sh来完成
 |  opencron.sh         #agent控制启动|停止的脚本
 |  monitor.sh         #实时监控获取数据需要的脚本,由系统调度
 |  kill.sh            #kill任务时需要的脚本,由系统调度
@@ -85,7 +85,7 @@ IE10+
 | opencron.out         #项目启动会产生的Log文件
 
 > tar -xzvf opencron-agent-${version}.tar.gz
-3)启动cronjob-agent 进入cronjob-agent/bin
+3)启动opencron-agent 进入opencron-agent/bin
 > cd opencron-agent/bin
 > sh startup.sh
 这里可以接受两个参数，分别是服务启动的端口和密码，默认端口是:1577,默认密码:opencron
@@ -93,19 +93,19 @@ IE10+
 > sh startup.sh -P10001 -p123456
 参数说明:
 -P (大写的p)为agent启动的端口，选填，如果不输入默认启动端口是1577
--p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是cronjob
-启动完后会看到有一个cronjob.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/opencron.out
+-p (小写的p)为当前agent的连接密码,选填，如果不输入默认连接该机器的密码是opencron
+启动完后会看到有一个opencron.pid，这个文件记录了当前agent进程的pid.更多详细的启动，运行日志请查看logs/opencron.out
 
-4)停止cronjob-agent 进入cronjob-agent/bin 执行：
+4)停止opencron-agent 进入opencron-agent/bin 执行：
 > cd opencron-agent/bin
 > sh shutdown.sh
 
 ```
   
-## opencron-server 部署步骤:
+## Opencron-server 部署步骤:
 
 ```
-1):下载已经编译好的cronjob-server-${version}.war包
+1):下载已经编译好的opencron-server-${version}.war包
 
 2):更改项目的mysql连接信息和memcached连接,mysql和memcached配置在config.properties里，更改即可:
 如:
@@ -117,13 +117,13 @@ jdbc.password=${password}
 
 --memcached
 memcached.server=${memcached_host}:${memcached_port}
-3)发布到tomcat或者其他的web服务器启动即可.第一次会创建表,默认初始用户名cronjob,密码cronjob
+3)发布到tomcat或者其他的web服务器启动即可.第一次会创建表,默认初始用户名opencron,密码opencron
 
-4):进入到cronjob的管理端第一件要做的事情就是添加要管理的执行器.在菜单的第二栏点击"执行器管理"->添加执行器,执行器ip，就是上面你部署的cronjob-agent的机器ip，端口号是要连接的cronjob-agent的启动端口，密码也是cronjob-agent端的连接密码,输入ip,端口和密码后点击"检查通信",如果成功则server和agnet端已经成功通信，server可以管理agent了,添加保持即可.如果连接失败，
+4):进入到opencron的管理端第一件要做的事情就是添加要管理的执行器.在菜单的第二栏点击"执行器管理"->添加执行器,执行器ip，就是上面你部署的opencron-agent的机器ip，端口号是要连接的opencron-agent的启动端口，密码也是opencron-agent端的连接密码,输入ip,端口和密码后点击"检查通信",如果成功则server和agnet端已经成功通信，server可以管理agent了,添加保持即可.如果连接失败，
 可能有一下即可原因:
 1):agent端启动失败,检查logs,查看详情
 2):检查agent端口是否开放(如很多云服务器得开放端口才能访问)
 ```  
 
-更多问题请加入cronjob交流群156429713,欢迎大家加入
+更多问题请加入opencron交流群156429713,欢迎大家加入
     

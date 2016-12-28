@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
@@ -9,7 +9,7 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
     <style type="text/css">
-        .cronjob_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
+        .opencron_command{display: none;overflow:hidden; text-overflow:ellipsis; white-space: nowrap;}
     </style>
 
     <script type="text/javascript">
@@ -359,7 +359,7 @@
 
         function rewidth() {
             var width = $(window).width();
-            $(".cronjob_command").show().css("width",300+(width-1500)+"px");
+            $(".opencron_command").show().css("width",300+(width-1500)+"px");
         }
 
         $(document).ready(function(){
@@ -602,7 +602,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">OPENCRON</a></li>
+        <li><a href="">opencron</a></li>
         <li><a href="">作业管理</a></li>
         <li><a href="">作业列表</a></li>
     </ol>
@@ -705,7 +705,7 @@
                     <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td style="white-space: nowrap;">
-                        <div class="cronjob_command">
+                        <div class="opencron_command">
                             <a href="#" title="${r.command}" onclick="editCmd('${r.jobId}')"  id="command_${r.jobId}">
                                     ${r.command}
                             </a>
@@ -763,7 +763,7 @@
                             <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
                             <td style="white-space: nowrap;">
-                                <div class="cronjob_command">
+                                <div class="opencron_command">
                                     <a href="#" title="${c.command}" onclick="editCmd('${c.jobId}')" id="command_${c.jobId}">
                                             ${c.command}
                                     </a>

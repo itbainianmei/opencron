@@ -1,4 +1,4 @@
-function CronjobChart() {
+function OpencronChart() {
     this.path = arguments[0] || "/";
     this.intervalId = null;
     this.intervalTime = 2000;
@@ -34,7 +34,7 @@ function CronjobChart() {
 
 }
 
-;CronjobChart.prototype.query = function () {
+;OpencronChart.prototype.query = function () {
     var self = this;
     $.ajax({
         type: "POST",
@@ -107,7 +107,7 @@ function CronjobChart() {
     });
 }
 
-;CronjobChart.prototype.monitor = function () {
+;OpencronChart.prototype.monitor = function () {
 
     var self = this;
 
@@ -187,7 +187,7 @@ function CronjobChart() {
     });
 };
 
-;CronjobChart.prototype.clear = function () {
+;OpencronChart.prototype.clear = function () {
     if (this.socket != null) {
         this.socket.close();
         this.socket = null;
@@ -202,7 +202,7 @@ function CronjobChart() {
     this.cpuY = [];
 }
 
-;CronjobChart.prototype.render = function () {
+;OpencronChart.prototype.render = function () {
     var self = this;
     $(".loader").remove();
     //解决子页面登录失联,不能跳到登录页面的bug
@@ -651,7 +651,7 @@ function CronjobChart() {
     }
 };
 
-;CronjobChart.prototype.resize = function () {
+;OpencronChart.prototype.resize = function () {
 
     if ($.isMobile()) {
         $("#overview_pie_div").remove();

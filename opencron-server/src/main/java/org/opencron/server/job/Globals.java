@@ -7,11 +7,11 @@ import javax.servlet.http.HttpSession;
 
 public final class Globals {
 
-    public static final String CACHED_AGENT_ID = "cronjob_agent";
+    public static final String CACHED_AGENT_ID = "opencron_agent";
 
-    public static final String CACHED_CRONTAB_JOB = "cronjob_cron_job";
+    public static final String CACHED_CRONTAB_JOB = "opencron_cron_job";
 
-    public static final String LOGIN_USER = "cronjob_user";
+    public static final String LOGIN_USER = "opencron_user";
 
     public static final String PERMISSION = "permission";
 

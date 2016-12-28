@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="ben"  uri="ben-taglib"%>
+<%@ taglib prefix="cron"  uri="http://org.opencron"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
@@ -34,7 +34,7 @@
     <ol class="breadcrumb hidden-xs">
         <li class="icon">&#61753;</li>
         当前位置：
-        <li><a href="">OPENCRON</a></li>
+        <li><a href="">opencron</a></li>
         <li><a href="">系统设置</a></li>
     </ol>
     <h4 class="page-title">告警日志</h4>
@@ -90,8 +90,8 @@
                         <c:if test="${log.type eq 1}"><i class="icon" title="短信">&#61704;</i></c:if>
                     </center></td>
                     <td>${log.agentName}</td>
-                    <td title="${log.receiver}">${ben:substr(log.receiver,0,20,"...")}</td>
-                    <td title="${log.message}">${ben:substr(log.message,0,60,"...")}</td>
+                    <td title="${log.receiver}">${cron:substr(log.receiver,0,20,"...")}</td>
+                    <td title="${log.message}">${cron:substr(log.message,0,60,"...")}</td>
                     <td>${log.sendTime}</td>
                     <td>
                         <center>

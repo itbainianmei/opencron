@@ -24,7 +24,7 @@ package org.opencron.server.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import org.opencron.common.utils.RSAUtils;
-import org.opencron.server.job.CronjobAuth;
+import org.opencron.server.job.OpencronAuth;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -146,12 +146,12 @@ public class Terminal implements Serializable{
     }
 
     public String getPassword() throws Exception {
-        byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, CronjobAuth.getPrivateKey());
+        byte[] decodedData = RSAUtils.decryptByPrivateKey(this.authorization, OpencronAuth.getPrivateKey());
         return new String(decodedData);
     }
 
     public void setPassword(String password) throws Exception {
-        this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), CronjobAuth.getPublicKey());
+        this.authorization = RSAUtils.encryptByPublicKey(password.getBytes(), OpencronAuth.getPublicKey());
     }
 
     public String getStatus() {

@@ -6,9 +6,9 @@
     String contextPath = request.getScheme()+"://"+request.getServerName()+port+path;
     pageContext.setAttribute("contextPath",contextPath);
 %>
-<title>OPENCRON</title>
+<title>opencron</title>
     <meta name="format-detection" content="telephone=no">
-    <meta name="description" content="OPENCRON">
+    <meta name="description" content="opencron">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="keywords" content="opencron,crontab,a better crontab,Let's crontab easy">
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />

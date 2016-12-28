@@ -39,9 +39,9 @@ import java.util.List;
 
 
 @Component
-public class CronjobTask implements InitializingBean {
+public class OpencronTask implements InitializingBean {
 
-    private final Logger logger = LoggerFactory.getLogger(CronjobTask.class);
+    private final Logger logger = LoggerFactory.getLogger(OpencronTask.class);
 
     @Autowired
     private AgentService agentService;
@@ -62,7 +62,7 @@ public class CronjobTask implements InitializingBean {
     private SchedulerService schedulerService;
 
     @Autowired
-    private CronjobHeartBeat cronjobHeartBeat;
+    private OpencronHeartBeat opencronHeartBeat;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -78,7 +78,7 @@ public class CronjobTask implements InitializingBean {
 
     public void heartBeat() {
         logger.info("[opencron]:checking Agent connection...");
-        cronjobHeartBeat.start();
+        opencronHeartBeat.start();
         List<Agent> agents = agentService.getAll();
         for (final Agent agent : agents) {
             executeService.ping(agent);
@@ -110,8 +110,8 @@ public class CronjobTask implements InitializingBean {
     }
 
     private void clearCache() {
-        CronjobContext.remove(Globals.CACHED_AGENT_ID);
-        CronjobContext.remove(Globals.CACHED_CRONTAB_JOB);
+        OpencronContext.remove(Globals.CACHED_AGENT_ID);
+        OpencronContext.remove(Globals.CACHED_CRONTAB_JOB);
     }
 
 

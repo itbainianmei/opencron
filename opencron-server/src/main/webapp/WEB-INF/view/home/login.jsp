@@ -16,12 +16,12 @@
     <meta name="keywords" content="opencron,crontab,a better crontab,Let's crontab easy">
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
-    <title>OPENCRON</title>
+    <title>opencron</title>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
     <script type="text/javascript">
 
         $(document).ready(function(){
-            var skin = $.cookie("cronjob_skin");
+            var skin = $.cookie("opencron_skin");
             if(skin) {
                 $('body').attr('id', skin);
             }
@@ -470,7 +470,7 @@
         <h1 style="width: 250px;">
             <img src="${contextPath}/img/opencron.png">
         </h1>
-        <h4 style="margin-top: 5px;">Welcome to OPENCRON,Let's crontab easy</h4>
+        <h4 style="margin-top: 5px;">Welcome to opencron,Let's crontab easy</h4>
     </header>
 
     <div id="box-login" class="box tile animated active" style="margin-top:30px;">

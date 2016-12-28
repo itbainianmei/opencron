@@ -36,9 +36,9 @@ import java.util.Properties;
  * Created by benjobs on 2016/12/22.
  */
 
-public class CronjobAuth {
+public class OpencronAuth {
 
-    private static Logger logger = LoggerFactory.getLogger(CronjobAuth.class);
+    private static Logger logger = LoggerFactory.getLogger(OpencronAuth.class);
     public static String publicKey = null;
     public static String privateKey = null;
     private static final String charset = "UTF-8";
@@ -104,7 +104,7 @@ public class CronjobAuth {
             KEY_PATH = System.getProperties().getProperty("user.home")+File.separator+".opencron";
             // 从config.properties配置都读取用户手动设置的keypath的位置,配置文件里默认没有,不建议用户指定
             // 如果指定了位置可能会导致之前所有已可ssh登录的机器无法登陆,需要再次输入用户名密码
-            InputStream inputStream = CronjobAuth.class.getClassLoader().getResourceAsStream("config.properties");
+            InputStream inputStream = OpencronAuth.class.getClassLoader().getResourceAsStream("config.properties");
             Properties properties = new Properties();
             try {
                 properties.load(inputStream);

@@ -23,7 +23,7 @@
 package org.opencron.server.service;
 
 import org.opencron.common.job.Opencron;
-import org.opencron.server.job.CronjobCollector;
+import org.opencron.server.job.OpencronCollector;
 import org.opencron.server.vo.JobVo;
 import org.quartz.*;
 import org.quartz.Job;
@@ -53,7 +53,7 @@ public final class SchedulerService {
     private AgentService agentService;
 
     @Autowired
-    private CronjobCollector cronJobCollector;
+    private OpencronCollector opencronCollector;
 
     private Scheduler quartzScheduler;
 
@@ -130,7 +130,7 @@ public final class SchedulerService {
     public void startCrontab() {
         if (this.crontabScheduler == null) {
             this.crontabScheduler = new it.sauronsoftware.cron4j.Scheduler();
-            crontabScheduler.addTaskCollector(cronJobCollector);
+            crontabScheduler.addTaskCollector(opencronCollector);
         } else {
             this.crontabScheduler.stop();
         }
@@ -145,7 +145,7 @@ public final class SchedulerService {
         /**
          * 从crontab或者quartz里删除任务
          */
-        cronJobCollector.removeTask(job.getJobId());
+        opencronCollector.removeTask(job.getJobId());
         remove(job.getJobId());
 
         //自动执行
@@ -159,7 +159,7 @@ public final class SchedulerService {
                 /**
                  * 将作业加到crontab任务计划
                  */
-                cronJobCollector.addTask(job);
+                opencronCollector.addTask(job);
             }
         }
     }
