@@ -467,7 +467,7 @@
 
 <section id="login">
     <header>
-        <h1 style="width: 250px;">
+        <h1 style="width: 250px;opacity:0.9">
             <img src="${contextPath}/img/opencron.png">
         </h1>
         <h4 style="margin-top: 5px;">Welcome to opencron,Let's crontab easy</h4>

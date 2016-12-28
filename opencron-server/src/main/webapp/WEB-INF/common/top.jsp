@@ -14,7 +14,7 @@
 <div id="mask" class="mask"></div>
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float: left; width: 165px; margin-top: 5px; margin-left: 14px;">
+	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float: left; width: 165px; margin-top: 5px; margin-left: 14px;opacity:0.9">
 		<img src="${contextPath}/img/opencron.png">
 	</div>
 	</a>
