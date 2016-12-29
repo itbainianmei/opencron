@@ -37,7 +37,7 @@
                     var json = eval("(" + data + ")");
                     if (json.status == "authfail") {
                         if (type == 2) {
-                            alert("登录失败,请确认登录口令的正确性");
+                            alert("用户名密码错误,登录失败");
                         } else {
                             editSsh(id,0);
                         }
@@ -49,7 +49,7 @@
                         var url = '${contextPath}' + json.url;
                         swal({
                             title: "",
-                            text: "您确定要打开终端吗？",
+                            text: "登陆成功,您确定要打开终端吗？",
                             type: "warning",
                             showCancelButton: true,
                             closeOnConfirm: false,
@@ -102,19 +102,21 @@
         function editSsh(id,type) {
             $(".error_msg").empty();
             if (type == 1) {
+                $("#sshform").attr("action","edit");
                 $("#sshTitle").text("编辑终端");
                 $("#sshbtn").text("保存");
             }else {
-                $("#sshTitle").text("SSH登陆");
+                $("#sshform").attr("action","login");
+                $("#sshTitle").text("登陆终端");
                 $("#sshbtn").text("登陆");
             }
             $.ajax({
                 type: "POST",
                 url: "${contextPath}/terminal/detail",
                 data: "id="+id,
-                dataType: "html",
-                success: function (term) {
-                    var json = $.parseJSON(term);
+                dataType: "json",
+                success: function (json) {
+                    $("#sshid").val(id);
                     $("#sshuser").val(json.user);
                     $("#sshname").val(json.name);
                     $("#sshport").val(json.port);
@@ -227,49 +229,90 @@
             if (!falg) return;
 
             var host = $("#sshhost").val();
-            $.ajax({
-                type: "POST",
-                url: "${contextPath}/terminal/exists",
-                data: "host="+host,
-                dataType: "html",
-                sync:true,
-                success: function (status) {
-                    if(status=="false"){
-                        $.ajax({
-                            type: "POST",
-                            url: "${contextPath}/terminal/add",
-                            data: {
-                                "name":name,
-                                "userName": user,
-                                "password": pwd,
-                                "port": port,
-                                "host": host
-                            },
-                            dataType: "html",
-                            success: function (status) {
-                                $("#sshModal").modal("hide");
-                                $("#sshform")[0].reset();
-                                if (status == "success") {
-                                    alertMsg("恭喜你添加终端成功!");
-                                    location.reload();
-                                } else {
-                                    alert("添加终端失败,请确认登录口令的正确性");
+
+            var action = $("#sshform").attr("action");
+
+            if (action == "add") {
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/terminal/exists",
+                    data: {
+                        "host":host
+                    },
+                    dataType: "html",
+                    success: function (status) {
+                        if(status=="false"){
+                            $.ajax({
+                                type: "POST",
+                                url: "${contextPath}/terminal/save",
+                                data: {
+                                    "name":name,
+                                    "userName": user,
+                                    "password": pwd,
+                                    "port": port,
+                                    "host": host
+                                },
+                                dataType: "html",
+                                success: function (status) {
+                                    $("#sshModal").modal("hide");
+                                    $("#sshform")[0].reset();
+                                    if (status == "success") {
+                                        alertMsg("恭喜你添加终端成功!");
+                                        location.reload();
+                                    } else {
+                                        alert("用户名密码错误,添加终端失败");
+                                    }
                                 }
-                            }
-                        });
-                    }else {
-                        alert("添加终端失败,该机器终端实例已存在!");
+                            });
+                        }else {
+                            alert("添加终端失败,该机器终端实例已存在!");
+                        }
                     }
-                }
-            });
+                });
+            }else {
+                $.ajax({
+                    type: "POST",
+                    url: "${contextPath}/terminal/save",
+                    data: {
+                        "id":$("#sshid").val(),
+                        "name":name,
+                        "userName": user,
+                        "password": pwd,
+                        "port": port,
+                        "host": host
+                    },
+                    dataType: "html",
+                    success: function (status) {
+                        $("#sshModal").modal("hide");
+                        $("#sshform")[0].reset();
+                        if(action == "login") {
+                            if (status == "success") {
+                                ssh($("#sshid").val(), 0);
+                            }else {
+                                alert("用户名密码错误,登陆终端失败!");
+                            }
+                        }else {
+                            if (status == "success") {
+                                alertMsg("恭喜你修改终端成功!");
+                                location.reload();
+                            } else {
+                                alert("用户名密码错误,修改终端失败");
+                            }
+                        }
+                    }
+                });
+            }
+
         }
 
         function addSSH() {
             $(".error_msg").empty();
             $("#sshform")[0].reset();
+            $("#sshform").attr("action","add");
             $("#sshhost").removeAttr("readonly");
             $("#sshTitle").text("添加终端");
             $("#sshbtn").text("保存");
+            $("#sshid").empty();
             $("#sshModal").modal("show");
 
         }
@@ -400,7 +443,7 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="sshform">
-
+                        <input type="hidden" id="sshid">
                         <div class="form-group" style="margin-bottom: 4px;">
                             <label for="sshname" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;名&nbsp;&nbsp;称&nbsp;&nbsp;：</label>
                             <div class="col-md-9">

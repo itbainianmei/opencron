@@ -108,7 +108,7 @@ public class TerminalController {
         return "/terminal/error";
     }
 
-    @RequestMapping("/add")
+    @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
         if ("success".equalsIgnoreCase(message)) {
