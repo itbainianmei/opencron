@@ -41,65 +41,6 @@ b{color: red;}
     width: 110px;
 }
 
-.dialog-title {
-    background: #3296e6 none repeat scroll 0 0;
-    color: #fff;
-    font-size: 16px;
-    font-weight: normal;
-    height: 50px;
-    line-height: 50px;
-    padding-left: 20px;
-    width: 740px;
-}
-
-.swfupload {
-    color: #ffffff;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.uploadify span{width: 80px;height: 25px;vertical-align:baseline; text-align: center; }
-.uploadify {
-    color: #ffffff;
-    font-size:13px;
-    width:60px;height:25px;
-    border:none;
-    background-color: #5CB85C;
-    cursor: pointer;
-    float: left;
-    position: relative;
-    margin-top: 15px;
-    margin-bottom: 15px;
-}
-.uploadify:hover { background-color: #5CB86C;}
-.uploadify:active{ background-color: #5CB86C;}
-.uploadify-queue{height: 0px; overflow: hidden;}
-.swfupload{left:0;}
-dd .uploadify span{color:#fff; text-align: center; }
-.uploadify-button{text-align: center;}
-
-.dialog-title span {
-    background: rgba(0, 0, 0, 0) url("/img/dialog_closed.png") no-repeat scroll 0 0;
-    cursor: pointer;
-    display: inline-block;
-    float: right;
-    height: 15px;
-    margin-right: 20px;
-    margin-top: 20px;
-    transition: transform 0.5s ease 0s;
-    width: 15px;
-}
-
-.dialog-title span:hover {
-    transform: rotate(90deg);
-}
-
-.dialog-next input {
-    margin: 0 5px;
-}
-.dialog-next input {
-    margin: 0 5px;
-}
 .btn-login {
     height: 30px;
     width: 80px;
@@ -119,41 +60,9 @@ dd .uploadify span{color:#fff; text-align: center; }
     width: 80px;
 }
 
-#target-pane {
-    border: 6px rgba(0, 0, 0, 0.2) solid;
-    background-color: white;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-}
 
-#preview-pane {
-    display: block;
-    margin: -154px 63px;
-    position: absolute;
-    z-index: 100000;
-}
-
-#preview-border {
-    border: 6px solid rgba(0, 0, 0, 0.2);
-    border-radius: 100px !important;
-    display: block;
-    height: 152px;
-    margin: -160px 57px;
-    position: absolute;
-    width: 152px;
-    z-index: 100001;
-}
-
-#preview-unborder {
-    border: 30px solid rgb(255, 255, 255);
-    border-radius: 100px !important;
-    display: block;
-    height: 200px;
-    margin: -184px 33px;
-    position: absolute;
-    width: 200px;
-    z-index: 100000;
+#avatar-modal .btn {
+    padding: 2px 8px 3px;
 }
 
 .head-set td,.head-set tr{border:0}
