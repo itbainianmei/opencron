@@ -157,10 +157,10 @@ fi
 
 # Add bootstrap.jar to classpath
 # bootstrap can be over-ridden per instance
-if [ -r "$OPENCRON_BASE/lib/opencron-agent-1.0-SNAPSHOT.jar" ] ; then
-  CLASSPATH=$CLASSPATH$OPENCRON_BASE/lib/opencron-agent-1.0-SNAPSHOT.jar
+if [ -r "$OPENCRON_BASE/lib/opencron-agent-1.0-RELEASE.jar" ] ; then
+  CLASSPATH=$CLASSPATH$OPENCRON_BASE/lib/opencron-agent-1.0-RELEASE.jar
 else
-   CLASSPATH=$CLASSPATH$OPENCRON_BASE/lib/opencron-agent-1.0-SNAPSHOT.jar
+   CLASSPATH=$CLASSPATH$OPENCRON_BASE/lib/opencron-agent-1.0-RELEASE.jar
 fi
 
 # Bugzilla 37848: When no TTY is available, don't output to console
