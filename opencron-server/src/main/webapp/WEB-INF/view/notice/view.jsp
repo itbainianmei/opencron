@@ -105,7 +105,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/notice/view?agentId=${agentId}&sendTime=${sendTime}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/notice/view?agentId=${agentId}&sendTime=${sendTime}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 

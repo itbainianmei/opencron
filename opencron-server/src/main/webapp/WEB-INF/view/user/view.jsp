@@ -210,7 +210,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/user/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/user/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 

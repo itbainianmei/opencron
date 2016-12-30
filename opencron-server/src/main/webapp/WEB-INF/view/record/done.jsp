@@ -481,7 +481,7 @@
                 </tbody>
             </c:forEach>
         </table>
-        <ben:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/record/done?queryTime=${queryTime}&success=${success}&agentId=${agentId}&jobId=${jobId}&execType=${execType}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
     </div>
 
 </section>

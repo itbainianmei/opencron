@@ -429,7 +429,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/terminal/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/terminal/view" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 

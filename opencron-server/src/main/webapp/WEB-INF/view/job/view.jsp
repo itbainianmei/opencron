@@ -796,7 +796,7 @@
             </tbody>
         </table>
 
-        <ben:pager href="${contextPath}/job/view?agentId=${agentId}&execType=${execType}&redo=${redo}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/job/view?agentId=${agentId}&execType=${execType}&redo=${redo}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 
