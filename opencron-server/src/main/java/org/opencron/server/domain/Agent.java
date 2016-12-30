@@ -24,10 +24,6 @@ package org.opencron.server.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.hibernate.annotations.Type;
 import org.opencron.common.utils.CommonUtils;
 
 import javax.persistence.*;
