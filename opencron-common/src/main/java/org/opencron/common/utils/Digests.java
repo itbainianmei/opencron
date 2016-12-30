@@ -37,7 +37,7 @@ import java.security.SecureRandom;
  *
  * @author calvin
  */
-public class Digests {
+public abstract class Digests {
 
     private static final String SHA1 = "SHA-1";
     private static final String MD5 = "MD5";

@@ -31,7 +31,7 @@ import java.io.StringWriter;
  *
  * @author calvin
  */
-public class Exceptions {
+public abstract class Exceptions {
 
     /**
      * 将CheckedException转换为UncheckedException.

@@ -30,7 +30,7 @@ import java.io.File;
 /**
  * Created by benjobs on 14-4-28.
  */
-public class LoggerFactory {
+public abstract class LoggerFactory {
 
     public static Logger getLogger(@SuppressWarnings("rawtypes") Class clazz) {
         String currPath = LoggerFactory.class.getProtectionDomain().getCodeSource().getLocation().getFile();

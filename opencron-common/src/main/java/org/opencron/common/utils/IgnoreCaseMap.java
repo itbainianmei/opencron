@@ -31,7 +31,7 @@ import java.util.Map.Entry;
  * @param <K>
  * @param <V>
  */
-public class IgnoreCaseMap<K, V> extends HashMap<K, V> {
+public abstract class IgnoreCaseMap<K, V> extends HashMap<K, V> {
 
     private static final long serialVersionUID = 1L;
     private Map<String, String> keyMap = new HashMap<String, String>();

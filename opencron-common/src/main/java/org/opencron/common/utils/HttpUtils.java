@@ -29,7 +29,7 @@ import java.util.Random;
 /**
  * Created by benjobs on 15/9/30.
  */
-public class HttpUtils {
+public abstract class HttpUtils {
 
     public static String doGet(String url, String charset) throws Exception {
         AssertUtils.notNull(url);

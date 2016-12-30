@@ -25,7 +25,7 @@ package org.opencron.common.utils;
  * 异常处理类,以运行时异常的形式将指定的异常抛出
  *
  */
-public class ExceptionHandler {
+public abstract class ExceptionHandler {
 
     /**
      * 抛出指定类型的异常信息<br/>

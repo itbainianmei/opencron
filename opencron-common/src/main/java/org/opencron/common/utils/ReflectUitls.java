@@ -25,7 +25,7 @@ import java.util.jar.JarFile;
  */
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ReflectUitls {
+public abstract class ReflectUitls {
 
     //获取泛型上的具体类型（第一个）
     public static Class<?> getGenericType(Class<?> clazz) {

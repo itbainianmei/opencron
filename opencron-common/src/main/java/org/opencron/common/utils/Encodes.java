@@ -41,7 +41,7 @@ import java.net.URLEncoder;
  *
  * @author calvin
  */
-public class Encodes {
+public abstract class Encodes {
 
     private static final String DEFAULT_URL_ENCODING = "UTF-8";
     private static final char[] BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();

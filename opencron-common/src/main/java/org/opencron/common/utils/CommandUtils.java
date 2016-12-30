@@ -38,7 +38,7 @@ import java.io.*;
  * @date: 2012-10-9 pa 18:03<br/><br/>
  **/
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class CommandUtils implements Serializable {
+public abstract class CommandUtils implements Serializable {
 
     private static final long serialVersionUID = 6458428317155311192L;
 

@@ -105,7 +105,7 @@ import java.util.*;
  */
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class CommonUtils implements Serializable {
+public abstract class CommonUtils implements Serializable {
 
     private static final long serialVersionUID = 6458428317155311192L;
 

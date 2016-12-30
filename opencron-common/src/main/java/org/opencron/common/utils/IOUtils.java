@@ -26,7 +26,7 @@ import java.io.*;
 /**
  * Created by benjobs on 15/6/24.
  */
-public class IOUtils implements Serializable {
+public abstract class IOUtils implements Serializable {
 
     private static final int EOF = -1;
     /**

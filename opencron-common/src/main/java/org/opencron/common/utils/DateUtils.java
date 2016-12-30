@@ -36,7 +36,7 @@ import static org.opencron.common.utils.CommonUtils.toInt;
  *
  *         2011-9-15
  */
-public class DateUtils {
+public abstract class DateUtils {
 
     public static String format = "yyyy-MM-dd HH:mm:ss";
 

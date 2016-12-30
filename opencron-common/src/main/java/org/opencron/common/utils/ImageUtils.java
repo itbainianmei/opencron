@@ -33,7 +33,7 @@ import java.io.IOException;
 /**
  * Created by evilgod528 on 15/2/11.
  */
-public class ImageUtils {
+public abstract class ImageUtils {
 
     private File originImage;
     //正在处理的内存中的图片

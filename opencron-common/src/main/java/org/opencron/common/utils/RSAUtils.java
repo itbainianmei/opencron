@@ -27,7 +27,7 @@ import java.util.Map;
  * @version 1.0
  * @date 2012-4-26
  */
-public class RSAUtils {
+public abstract class RSAUtils {
 
     /**
      * 加密算法RSA

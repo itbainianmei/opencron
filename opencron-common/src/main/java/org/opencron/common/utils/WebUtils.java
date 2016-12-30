@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 
-public class WebUtils {
+public abstract class WebUtils {
 
     public static void writeXml(HttpServletResponse response, String xml) {
         response.setCharacterEncoding("UTF-8");

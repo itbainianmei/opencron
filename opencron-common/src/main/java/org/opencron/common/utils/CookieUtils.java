@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CookieUtils {
+public abstract class CookieUtils {
 
     @SuppressWarnings("unchecked")
     public static Map<String, Cookie> cookieToMap(Cookie[] cookies) {
