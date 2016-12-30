@@ -44,7 +44,7 @@
                                 <p align="right">
                                     <font style="line-height: 16px;font-style:italic; " size="3">
                                         <b>
-                                            蓝光联盟任务调度系统
+                                            Opencron,Let's crontab easy
                                         </b>
                                     </font>
                                 </p>
@@ -57,10 +57,10 @@
                         <div style="text-align:center; margin-top:0px; background:rgba(100, 149, 255,0.8); padding:1px 0px;">
                             <p>
                                 Copyright © 2012 - 2016
-                                <a href="http://u.languang.com" target="_blank" style="text-decoration:none;">
+                                <a href="http://www.opencron.org" target="_blank" style="text-decoration:none;">
                                     &nbsp;
                                     <font color="#fff">
-                                        蓝光联盟
+                                        benjobs
                                     </font>
                                 </a>
                             </p>
