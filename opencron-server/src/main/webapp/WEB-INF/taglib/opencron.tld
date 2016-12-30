@@ -6,7 +6,7 @@
     <description>opencron Tag Library</description>
     <tlib-version>1.0</tlib-version>
     <short-name>ben</short-name>
-    <uri>http://org.opencron</uri>
+    <uri>http://www.opencron.org</uri>
 
     <tag>
         <name>pager</name>
