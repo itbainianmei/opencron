@@ -73,7 +73,7 @@ public class JobVo implements Serializable {
     private List<JobVo> children;
 
     //是否为流程任务的最后一个子任务
-    private Boolean isLastChild;
+    private Boolean isLastChild = false;
 
     private Boolean warning;
 

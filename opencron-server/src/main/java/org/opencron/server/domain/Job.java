@@ -57,7 +57,7 @@ public class Job implements Serializable {
     private Integer runModel;//0:串行|1:并行
 
     //是否为流程任务的最后一个子任务
-    private Boolean isLastChild;
+    private Boolean isLastChild = false;
 
     private Boolean warning;
 
