@@ -210,7 +210,7 @@ public class JobService {
 
     @Transactional(readOnly = false)
     public void saveFlowJob(Job job, List<Job> children) throws SchedulerException {
-        job.setLastFlag(false);
+        job.setLastChild(false);
         job.setUpdateTime(new Date());
         job.setFlowNum(0);//顶层sort是0
 
@@ -262,7 +262,7 @@ public class JobService {
             child.setUpdateTime(new Date());
             child.setJobType(JobType.FLOW.getCode());
             child.setFlowNum(i+1);
-            child.setLastFlag(child.getFlowNum()==children.size());
+            child.setLastChild(child.getFlowNum()==children.size());
             child.setWarning(job.getWarning());
             child.setMobiles(job.getMobiles());
             child.setEmailAddress(job.getEmailAddress());

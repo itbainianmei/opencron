@@ -110,7 +110,7 @@ public class NoticeService {
 
     public void sendMessage(Long receiverId,Long workId, String emailAddress, String mobiles, String content) {
         Log log = new Log();
-        log.setIsread(0);
+        log.setIsread(false);
         log.setAgentId(workId);
         log.setMessage(content);
         //手机号和邮箱都为空则发送站内信

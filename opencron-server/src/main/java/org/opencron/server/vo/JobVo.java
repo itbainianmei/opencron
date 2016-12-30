@@ -73,7 +73,7 @@ public class JobVo implements Serializable {
     private List<JobVo> children;
 
     //是否为流程任务的最后一个子任务
-    private Boolean lastFlag;
+    private Boolean isLastChild;
 
     private Boolean warning;
 
@@ -294,12 +294,13 @@ public class JobVo implements Serializable {
         this.flowNum = flowNum;
     }
 
-    public Boolean getLastFlag() {
-        return lastFlag;
+
+    public Boolean getLastChild() {
+        return isLastChild;
     }
 
-    public void setLastFlag(Boolean lastFlag) {
-        this.lastFlag = lastFlag;
+    public void setLastChild(Boolean lastChild) {
+        isLastChild = lastChild;
     }
 
     public Integer getRunModel() {

@@ -233,7 +233,7 @@ public class ExecuteService implements Job {
                 return false;
             } else {
                 //当前任务是流程任务的最后一个任务,则整个任务运行完毕
-                if (job.getLastFlag()) {
+                if (job.getLastChild()) {
                     recordService.save(record);
                     recordService.flowJobDone(record);
                 } else {

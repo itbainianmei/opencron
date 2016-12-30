@@ -65,31 +65,4 @@ public class QueryDao extends BaseDao {
         return pageBean;
     }
 
-    private static String preparedCount(String sql) {
-
-        Pattern pattern = Pattern.compile("\\((.*?)\\)");
-        Matcher matcher = pattern.matcher(sql);
-
-        String tmpSql = sql.toLowerCase();
-        while (matcher.find()) {
-            String strFinded = matcher.group(1);
-            String strReplace = strFinded.replace("from", "####");
-            tmpSql = tmpSql.replace(strFinded, strReplace);
-        }
-
-        Pattern groupPattern = Pattern.compile(".from.*group\\s+{1,}by\\s+{1,}.*");
-        Matcher groupMatcher = groupPattern.matcher(sql.toLowerCase());
-
-        if (groupMatcher.find()) {
-            sql = "select count(1) as total from ( " + sql + " ) as t ";
-        } else {
-            int startIndex = tmpSql.indexOf("select");
-            int endIndex = tmpSql.indexOf(" from ");
-            String repaceSql = sql.substring(startIndex + 6, endIndex);
-            sql = sql.replace(repaceSql, " count(1) as total ");
-        }
-        return sql;
-    }
-
-
 }

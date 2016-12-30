@@ -112,8 +112,7 @@ public class BaseDao<T, PK extends Serializable> extends HibernateDao {
         return toLong(createQuery(hql, values).uniqueResult());
     }
 
-    private static String preparedCount(String sql) {
-
+    public static String preparedCount(String sql) {
         Pattern pattern = Pattern.compile("\\((.*?)\\)");
         Matcher matcher = pattern.matcher(sql);
 

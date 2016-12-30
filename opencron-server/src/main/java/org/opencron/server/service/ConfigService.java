@@ -58,7 +58,7 @@ public class ConfigService {
             session.getTransaction().begin();
 
             Config config = new Config();
-            config.setConfigId(1);
+            config.setConfigId(1L);
             config.setSenderEmail("you_mail_name");
             config.setSmtpHost("smtp.exmail.qq.com");
             config.setSmtpPort(465);

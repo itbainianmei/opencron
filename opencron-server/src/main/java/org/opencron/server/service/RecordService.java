@@ -103,7 +103,7 @@ public class RecordService {
                     parentRecord.setSuccess(Opencron.ResultStatus.FAILED.getStatus());
                     parentRecord.setChildRecord(records);
                 }
-                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastFlag,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u on t.userId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
+                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.isLastChild,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u on t.userId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
                 List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getGroupId());
                 if (notEmpty(childJobs)) {
                     parentRecord.setChildJob(childJobs);
