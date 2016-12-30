@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var fusrc = document.getElementById('themeFunctions').src;
 	var contextPath=fusrc.substr(fusrc.indexOf("?")+1);
     var settings =  '<a id="settings" href="#changeSkin" data-toggle="modal">' +
-			'<i aria-hidden="true" class="fa fa-photo"></i> 主题更换' +
+			'<i aria-hidden="true" class="fa fa-gear"></i> 主题更换' +
 		    '</a>' +   
 		    '<div class="modal fade" id="changeSkin" tabindex="-1" role="dialog" aria-hidden="true">' +
 			'<div class="modal-dialog modal-lg">' +
