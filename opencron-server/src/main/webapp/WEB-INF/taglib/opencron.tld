@@ -5,7 +5,7 @@
 
     <description>opencron Tag Library</description>
     <tlib-version>1.0</tlib-version>
-    <short-name>ben</short-name>
+    <short-name>cron</short-name>
     <uri>http://www.opencron.org</uri>
 
     <tag>
