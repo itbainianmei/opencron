@@ -44,7 +44,7 @@ public class RecordVo implements Serializable {
     private Long groupId;
 
     private String cronExp;
-    private Long operateId;
+    private Long userId;
     private String operateUname;
     private Long agentId;
     private String agentName;
@@ -179,12 +179,12 @@ public class RecordVo implements Serializable {
         this.cronExp = cronExp;
     }
 
-    public Long getOperateId() {
-        return operateId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setOperateId(Long operateId) {
-        this.operateId = operateId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getOperateUname() {

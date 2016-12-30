@@ -702,7 +702,7 @@
                         </td>
                     </c:if>
                     <td><a href="${contextPath}/agent/detail?id=${r.agentId}">${r.agentName}</a></td>
-                    <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.operateId}">${r.operateUname}</a></td></c:if>
+                    <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${r.userId}">${r.operateUname}</a></td></c:if>
                     <c:if test="${permission eq false}"><td>${r.operateUname}</td></c:if>
                     <td style="white-space: nowrap;">
                         <div class="opencron_command">
@@ -760,7 +760,7 @@
                     <c:forEach var="c" items="${r.children}" varStatus="index">
                         <tr class="child${r.jobId} trGroup${r.flowId}" style="display: none;">
                             <td><a href="${contextPath}/agent/detail?id=${c.agentId}">${c.agentName}</a></td>
-                            <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.operateId}">${c.operateUname}</a></td></c:if>
+                            <c:if test="${permission eq true}"><td><a href="${contextPath}/user/detail?userId=${c.userId}">${c.operateUname}</a></td></c:if>
                             <c:if test="${permission eq false}"><td>${c.operateUname}</td></c:if>
                             <td style="white-space: nowrap;">
                                 <div class="opencron_command">

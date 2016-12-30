@@ -64,7 +64,7 @@ public class User implements Serializable {
     private String roleName;
 
     @Lob
-    @Column(name = "headerpic", columnDefinition = "longblob")
+    @Column(name = "headerpic", columnDefinition = "LONGBLOB")
     private Blob headerpic;
 
     @Transient

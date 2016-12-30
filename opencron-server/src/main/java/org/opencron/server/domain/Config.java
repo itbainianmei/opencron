@@ -36,23 +36,21 @@ public class Config implements Serializable {
     @Id
     @GenericGenerator(name="gen_id",strategy="assigned")
     @GeneratedValue(generator="gen_id")
-    private Integer configId;
+    private Long configId;
     private String senderEmail;
     private String password;
     private String sendUrl;
     private Integer spaceTime;
 
-    @Column(updatable=false)
-    private String aeskey;
     private String template;
     private String smtpHost;
     private Integer smtpPort;
 
-    public Integer getConfigId() {
+    public Long getConfigId() {
         return configId;
     }
 
-    public void setConfigId(Integer configId) {
+    public void setConfigId(Long configId) {
         this.configId = configId;
     }
 
@@ -112,13 +110,6 @@ public class Config implements Serializable {
         this.smtpPort = smtpPort;
     }
 
-    public String getAeskey() {
-        return aeskey;
-    }
-
-    public void setAeskey(String aeskey) {
-        this.aeskey = aeskey;
-    }
 
     @Override
     public String toString() {
@@ -128,7 +119,6 @@ public class Config implements Serializable {
                 ", password='" + password + '\'' +
                 ", sendUrl='" + sendUrl + '\'' +
                 ", spaceTime=" + spaceTime +
-                ", aeskey='" + aeskey + '\'' +
                 ", template='" + template + '\'' +
                 ", smtpHost='" + smtpHost + '\'' +
                 ", smtpPort=" + smtpPort +

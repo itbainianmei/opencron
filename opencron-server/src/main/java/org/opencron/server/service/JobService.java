@@ -103,7 +103,7 @@ public class JobService {
         }
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " AND operateId = " + user.getUserId() + " AND agentId IN ("+user.getAgentIds()+")";
+            sql += " AND userId = " + user.getUserId() + " AND agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Job.class,sql,jobType.getCode());
     }
@@ -119,7 +119,7 @@ public class JobService {
 
     public PageBean<JobVo> getJobVos(HttpSession session, PageBean pageBean, JobVo job) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.userName AS operateUname " +
-                " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.operateId = U.userId WHERE IFNULL(flowNum,0)=0 AND T.status=1 ";
+                " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE IFNULL(flowNum,0)=0 AND T.status=1 ";
         if (job != null) {
             if (notEmpty(job.getAgentId())) {
                 sql += " AND T.agentId=" + job.getAgentId();
@@ -138,7 +138,7 @@ public class JobService {
             }
             if (!Globals.isPermission(session)) {
                 User user = userService.getUserBySession(session);
-                sql += " AND T.operateId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
+                sql += " AND T.userId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
             }
         }
         pageBean = queryDao.getPageBySql(pageBean, JobVo.class, sql);
@@ -155,7 +155,7 @@ public class JobService {
         if (job.getJobType().equals(JobType.FLOW.getCode())) {
             String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.userName AS operateUname" +
                     " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U " +
-                    " ON T.operateId = U.userId WHERE T.status=1 AND T.flowId = ? AND T.flowNum>0 ORDER BY T.flowNum ASC";
+                    " ON T.userId = U.userId WHERE T.status=1 AND T.flowId = ? AND T.flowNum>0 ORDER BY T.flowNum ASC";
             List<JobVo> childJobs = queryDao.sqlQuery(JobVo.class, sql, job.getFlowId());
             if (CommonUtils.notEmpty(childJobs)) {
                 for(JobVo jobVo:childJobs){
@@ -176,7 +176,7 @@ public class JobService {
 
     public JobVo getJobVoById(Long id) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.username AS operateUname " +
-                " FROM T_JOB AS t LEFT JOIN T_AGENT AS d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.operateId = u.userId WHERE t.jobId =?";
+                " FROM T_JOB AS t LEFT JOIN T_AGENT AS d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE t.jobId =?";
         JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
         job.setAgent(agentService.getAgent(job.getAgentId()));
         queryChildren(job);
@@ -189,7 +189,7 @@ public class JobService {
 
     public List<JobVo> getJobByAgentId(Long agentId) {
         String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname " +
-                " FROM T_JOB t LEFT JOIN T_USER u ON t.operateId = u.userId LEFT JOIN T_AGENT d ON t.agentId = d.agentId WHERE t.agentId =?";
+                " FROM T_JOB t LEFT JOIN T_USER u ON t.userId = u.userId LEFT JOIN T_AGENT d ON t.agentId = d.agentId WHERE t.agentId =?";
         return queryDao.sqlQuery(JobVo.class, sql, agentId);
     }
 
@@ -257,7 +257,7 @@ public class JobService {
              * 子作业的流程编号都为顶层父任务的jobId
              */
             child.setFlowId(job.getJobId());
-            child.setOperateId(job.getOperateId());
+            child.setUserId(job.getUserId());
             child.setExecType(job.getExecType());
             child.setUpdateTime(new Date());
             child.setJobType(JobType.FLOW.getCode());
@@ -270,8 +270,8 @@ public class JobService {
         }
     }
 
-    public boolean checkJobOwner(Long operateId, HttpSession session) {
-        return Globals.isPermission(session) || operateId.equals(Globals.getUserIdBySession(session));
+    public boolean checkJobOwner(Long userId, HttpSession session) {
+        return Globals.isPermission(session) || userId.equals(Globals.getUserIdBySession(session));
     }
 
 }

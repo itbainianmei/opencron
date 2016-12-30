@@ -39,7 +39,7 @@ public class JobVo implements Serializable {
     private String command;
     private Integer execType;
     private String comment;
-    private Long operateId;
+    private Long userId;
     private Date updateTime;
     private Integer redo;
     private Integer runCount;
@@ -86,10 +86,10 @@ public class JobVo implements Serializable {
 
     public JobVo(){}
 
-    public JobVo(Long operateId, String command, Agent agent) {
+    public JobVo(Long userId, String command, Agent agent) {
         this.jobId = 0L;
         this.jobName = agent.getName()+"-batchJob";
-        this.operateId = operateId;
+        this.userId = userId;
         this.command = command;
         this.execType = Opencron.ExecType.BATCH.getStatus();
         this.agent = agent;
@@ -173,12 +173,12 @@ public class JobVo implements Serializable {
         this.comment = comment;
     }
 
-    public Long getOperateId() {
-        return operateId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setOperateId(Long operateId) {
-        this.operateId = operateId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Date getUpdateTime() {

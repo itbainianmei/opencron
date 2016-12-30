@@ -27,6 +27,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 import org.opencron.common.utils.CommonUtils;
 
 import javax.persistence.*;
@@ -47,6 +48,9 @@ public class Agent implements Serializable {
     private String name;
     private String password;
     private Boolean warning;
+
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String emailAddress;
     private String mobiles;
     private Boolean status;

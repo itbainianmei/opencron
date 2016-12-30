@@ -143,7 +143,7 @@ public class RecordController {
             //得到当前正在重跑的子记录
             record = recordService.getReRunningSubJob(recordId);
         }
-        if (!jobService.checkJobOwner(record.getOperateId(),session))return;
+        if (!jobService.checkJobOwner(record.getUserId(),session))return;
         Boolean flag = executeService.killJob(record);
         WebUtils.writeHtml(response, flag.toString());
     }

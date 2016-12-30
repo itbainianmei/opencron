@@ -46,7 +46,7 @@
 
                 <td><i class="glyphicon glyphicon-user"></i>&nbsp;作&nbsp;&nbsp;业&nbsp;&nbsp;人</td>
                 <td>
-                    <c:if test="${permission eq true}"><a href="${contextPath}/user/detail?userId=${record.operateId}">${record.operateUname}</a></c:if>
+                    <c:if test="${permission eq true}"><a href="${contextPath}/user/detail?userId=${record.userId}">${record.operateUname}</a></c:if>
                     <c:if test="${permission eq false}">${record.operateUname}</c:if></td>
             </tr>
             <tr>

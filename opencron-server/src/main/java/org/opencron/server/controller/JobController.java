@@ -115,7 +115,7 @@ public class JobController {
 
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
-            if (!jobService.checkJobOwner(job1.getOperateId(),session)) return "redirect:/job/view";
+            if (!jobService.checkJobOwner(job1.getUserId(),session)) return "redirect:/job/view";
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
@@ -124,7 +124,7 @@ public class JobController {
 
         //单任务
         if ( Opencron.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
-            job.setOperateId( Globals.getUserIdBySession(session) );
+            job.setUserId( Globals.getUserIdBySession(session) );
             job.setUpdateTime(new Date());
             job = jobService.addOrUpdate(job);
         } else { //流程任务
@@ -171,8 +171,8 @@ public class JobController {
                 return "redirect:/job/view";
             }
 
-            if (job.getOperateId() == null) {
-                job.setOperateId( Globals.getUserIdBySession(session));
+            if (job.getUserId() == null) {
+                job.setUserId( Globals.getUserIdBySession(session));
             }
 
             jobService.saveFlowJob(job, chindren);
@@ -186,14 +186,14 @@ public class JobController {
     @RequestMapping("/editsingle")
     public void editSingleJob(HttpServletResponse response,HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(job.getOperateId(),session))return;
+        if (!jobService.checkJobOwner(job.getUserId(),session))return;
         WebUtils.writeJson(response, JSON.toJSONString(job));
     }
 
     @RequestMapping("/editflow")
     public String editFlowJob(HttpSession session,Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(job.getOperateId(),session))return "redirect:/job/view";
+        if (!jobService.checkJobOwner(job.getUserId(),session))return "redirect:/job/view";
         model.addAttribute("job", job);
         List<Agent> agents = agentService.getAgentsBySession(session);
         model.addAttribute("agents", agents);
@@ -204,7 +204,7 @@ public class JobController {
     @RequestMapping("/edit")
     public void edit(HttpServletResponse response,HttpSession session, Job job) throws SchedulerException {
         Job jober = jobService.getJob(job.getJobId());
-        if (!jobService.checkJobOwner(jober.getOperateId(),session)) return;
+        if (!jobService.checkJobOwner(jober.getUserId(),session)) return;
         jober.setExecType(job.getExecType());
         jober.setCronType(job.getCronType());
         jober.setCronExp(job.getCronExp());
@@ -228,7 +228,7 @@ public class JobController {
     @RequestMapping("/editcmd")
     public void editCmd(HttpServletResponse response,HttpSession session,Long jobId, String command) throws SchedulerException {
         Job jober = jobService.getJob(jobId);
-        if (!jobService.checkJobOwner(jober.getOperateId(),session)) return;
+        if (!jobService.checkJobOwner(jober.getUserId(),session)) return;
         jober.setCommand(command);
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
@@ -244,10 +244,10 @@ public class JobController {
     @RequestMapping("/execute")
     public void remoteExecute(HttpSession session, Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
-        if (!jobService.checkJobOwner(job.getOperateId(),session)) return;
+        if (!jobService.checkJobOwner(job.getUserId(),session)) return;
         //手动执行
-        Long operateId = Globals.getUserIdBySession(session);
-        job.setOperateId(operateId);
+        Long userId = Globals.getUserIdBySession(session);
+        job.setUserId(userId);
         job.setExecType(ExecType.OPERATOR.getStatus());
         job.setAgent(agentService.getAgent(job.getAgentId()));
         try {
@@ -266,9 +266,9 @@ public class JobController {
     @RequestMapping("/batchexec")
     public void batchExec(HttpSession session, String command, String agentIds) {
         if (notEmpty(agentIds) && notEmpty(command)){
-            Long operateId = Globals.getUserIdBySession(session);
+            Long userId = Globals.getUserIdBySession(session);
             try {
-                this.executeService.batchExecuteJob(operateId,command,agentIds);
+                this.executeService.batchExecuteJob(userId,command,agentIds);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -278,7 +278,7 @@ public class JobController {
     @RequestMapping("/detail")
     public String showDetail(Model model,HttpSession session, Long id) {
         JobVo jobVo = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(jobVo.getOperateId(),session)) return "redirect:/job/view";
+        if (!jobService.checkJobOwner(jobVo.getUserId(),session)) return "redirect:/job/view";
         model.addAttribute("job", jobVo);
         return "/job/detail";
     }

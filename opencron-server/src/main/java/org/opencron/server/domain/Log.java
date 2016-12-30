@@ -22,10 +22,7 @@
 
 package org.opencron.server.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -46,13 +43,17 @@ public class Log implements Serializable {
 
     private String receiver;
 
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String message;
 
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String result;
 
     private Date sendTime;
 
-    private Integer isread;
+    private Boolean isread;
 
     public Long getLogId() {
         return logId;
@@ -110,11 +111,11 @@ public class Log implements Serializable {
         this.sendTime = sendTime;
     }
 
-    public Integer getIsread() {
+    public Boolean getIsread() {
         return isread;
     }
 
-    public void setIsread(Integer isread) {
+    public void setIsread(Boolean isread) {
         this.isread = isread;
     }
 

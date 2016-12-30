@@ -471,7 +471,7 @@
         <div class="tile p-15">
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"><br>
                 <input type="hidden" id="jobId" name="jobId" value="${job.jobId}">
-                <input type="hidden" name="operateId" value="${job.operateId}">
+                <input type="hidden" name="userId" value="${job.userId}">
                 <input type="hidden" id="agentId" name="agentId" class="input-self" value="${job.agentId}">
 
                 <div class="form-group">

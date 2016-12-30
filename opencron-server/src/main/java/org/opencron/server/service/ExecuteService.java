@@ -94,7 +94,7 @@ public class ExecuteService implements Job {
         JobType jobType = JobType.getJobType(job.getJobType());
         switch (jobType) {
             case SINGLETON:
-                return executeSingleJob(job,job.getOperateId());//单一任务
+                return executeSingleJob(job,job.getUserId());//单一任务
             case FLOW:
                 return executeFlowJob(job);//流程任务
             default:
@@ -145,7 +145,7 @@ public class ExecuteService implements Job {
      */
     private boolean executeFlowJob(JobVo job) {
 
-        if (!checkJobPermission(job.getAgentId(),job.getOperateId()))return false;
+        if (!checkJobPermission(job.getAgentId(),job.getUserId()))return false;
 
         final long groupId = System.nanoTime()+Math.abs(new Random().nextInt());//分配一个流程组Id
         final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
@@ -287,13 +287,13 @@ public class ExecuteService implements Job {
     /**
      * 多执行器同时 现场执行过程
      */
-    public void batchExecuteJob(final Long operateId, String command, String agentIds) {
+    public void batchExecuteJob(final Long userId, String command, String agentIds) {
         final Queue<JobVo> jobQueue = new LinkedBlockingQueue<JobVo>();
 
         String[] arrayIds = agentIds.split(";");
         for (String agentId:arrayIds) {
             Agent agent = agentService.getAgent(Long.parseLong(agentId));
-            JobVo jobVo = new JobVo(operateId, command, agent);
+            JobVo jobVo = new JobVo(userId, command, agent);
             jobQueue.add(jobVo);
         }
 
@@ -304,7 +304,7 @@ public class ExecuteService implements Job {
                     //如果批量现场执行(则启动多线程,所有任务同时执行)
                     Thread thread = new Thread(new Runnable() {
                         public void run() {
-                            executeSingleJob(jobVo,operateId);
+                            executeSingleJob(jobVo,userId);
                         }
                     });
                     thread.start();

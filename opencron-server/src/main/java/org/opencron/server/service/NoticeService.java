@@ -97,7 +97,7 @@ public class NoticeService {
         String content = getMessage(agent,message);
         logger.info(content);
         try {
-            sendMessage(job.getOperateId(),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);
+            sendMessage(job.getUserId(),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }

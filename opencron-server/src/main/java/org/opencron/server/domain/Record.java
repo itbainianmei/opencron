@@ -40,13 +40,19 @@ public class Record implements Serializable {
     private Long recordId;
     private Long jobId;
     private Long agentId;
-    private Long operateId;
+    private Long userId;
+
+
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String command;
     private Integer returnCode;
     private Integer success;
     private Date startTime;
     private Date endTime;
     private Integer execType;
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String message;
     private Integer redoCount;
     private Integer status;
@@ -77,7 +83,7 @@ public class Record implements Serializable {
     public Record(JobVo jobVo) {
         this.setJobId(jobVo.getJobId());
         this.setAgentId(jobVo.getAgentId());
-        this.setOperateId(jobVo.getOperateId());
+        this.setUserId(jobVo.getUserId());
         this.setExecType( jobVo.getExecType() );
         this.setCommand(jobVo.getCommand());//执行的命令
         this.setStartTime(new Date());//开始执行的时间
@@ -113,12 +119,12 @@ public class Record implements Serializable {
         this.agentId = agentId;
     }
 
-    public Long getOperateId() {
-        return operateId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setOperateId(Long operateId) {
-        this.operateId = operateId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getCommand() {
@@ -256,7 +262,7 @@ public class Record implements Serializable {
                 "recordId=" + recordId +
                 ", jobId=" + jobId +
                 ", agentId=" + agentId +
-                ", operateId=" + operateId +
+                ", userId=" + userId +
                 ", command='" + command + '\'' +
                 ", returnCode=" + returnCode +
                 ", success=" + success +

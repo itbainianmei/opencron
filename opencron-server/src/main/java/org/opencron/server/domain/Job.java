@@ -39,7 +39,7 @@ public class Job implements Serializable {
     private String command;
     private Integer execType;
     private String comment;
-    private Long operateId;
+    private Long userId;
     private Date updateTime;
     private Integer redo;
     private Integer runCount;
@@ -63,6 +63,8 @@ public class Job implements Serializable {
 
     private String mobiles;
 
+    @Lob
+    @Column(columnDefinition="TEXT")
     private String emailAddress;
 
     private Boolean status;//是否有效
@@ -135,12 +137,12 @@ public class Job implements Serializable {
         this.comment = comment;
     }
 
-    public Long getOperateId() {
-        return operateId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setOperateId(Long operateId) {
-        this.operateId = operateId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Date getUpdateTime() {
@@ -258,7 +260,7 @@ public class Job implements Serializable {
                 ", command='" + command + '\'' +
                 ", execType=" + execType +
                 ", comment='" + comment + '\'' +
-                ", operateId=" + operateId +
+                ", userId=" + userId +
                 ", updateTime=" + updateTime +
                 ", redo=" + redo +
                 ", runCount=" + runCount +
