@@ -134,7 +134,7 @@ public class ImageUtils {
 
         int width = this.dealedImage.getWidth();
         int height = this.dealedImage.getHeight();
-        int new_w = 0, new_h = 0;
+        int new_w, new_h;
         int new_radian = angle;
         if (angle <= 90) {
             new_w = (int) (width * Math.cos(Math.toRadians(new_radian)) + height * Math.sin(Math.toRadians(new_radian)));
