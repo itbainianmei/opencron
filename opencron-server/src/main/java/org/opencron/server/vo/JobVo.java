@@ -125,14 +125,6 @@ public class JobVo implements Serializable {
         this.agentId = agentId;
     }
 
-    public Agent getAgent() {
-        return agent;
-    }
-
-    public void setAgent(Agent agent) {
-        this.agent = agent;
-    }
-
     public Integer getCronType() {
         return cronType;
     }
@@ -205,68 +197,12 @@ public class JobVo implements Serializable {
         this.runCount = runCount;
     }
 
-    public User getUser() {
-        return user;
+    public Integer getRunModel() {
+        return runModel;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getAgentName() {
-        return agentName;
-    }
-
-    public void setAgentName(String agentName) {
-        this.agentName = agentName;
-    }
-
-    public String getOperateUname() {
-        return operateUname;
-    }
-
-    public void setOperateUname(String operateUname) {
-        this.operateUname = operateUname;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
-
-    public Agent getWorker() {
-        return agent;
-    }
-
-    public void setWorker(Agent agent) {
-        this.agent = agent;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<JobVo> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<JobVo> children) {
-        this.children = children;
+    public void setRunModel(Integer runModel) {
+        this.runModel = runModel;
     }
 
     public Integer getJobType() {
@@ -293,20 +229,76 @@ public class JobVo implements Serializable {
         this.flowNum = flowNum;
     }
 
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getOperateUname() {
+        return operateUname;
+    }
+
+    public void setOperateUname(String operateUname) {
+        this.operateUname = operateUname;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<JobVo> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<JobVo> children) {
+        this.children = children;
+    }
+
     public Boolean getLastChild() {
         return lastChild;
     }
 
     public void setLastChild(Boolean lastChild) {
-        lastChild = lastChild;
-    }
-
-    public Integer getRunModel() {
-        return runModel;
-    }
-
-    public void setRunModel(Integer runModel) {
-        this.runModel = runModel;
+        this.lastChild = lastChild;
     }
 
     public Boolean getWarning() {
@@ -340,5 +332,4 @@ public class JobVo implements Serializable {
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
     }
-
 }
