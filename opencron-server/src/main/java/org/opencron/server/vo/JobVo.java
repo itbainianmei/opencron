@@ -73,7 +73,7 @@ public class JobVo implements Serializable {
     private List<JobVo> children;
 
     //是否为流程任务的最后一个子任务
-    private Boolean lastChild = false;
+    private Boolean lastChild;
 
     private Boolean warning;
 
@@ -285,7 +285,6 @@ public class JobVo implements Serializable {
         this.flowId = flowId;
     }
 
-
     public Integer getFlowNum() {
         return flowNum;
     }
@@ -293,7 +292,6 @@ public class JobVo implements Serializable {
     public void setFlowNum(Integer flowNum) {
         this.flowNum = flowNum;
     }
-
 
     public Boolean getLastChild() {
         return lastChild;

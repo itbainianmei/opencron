@@ -73,7 +73,7 @@ public class RecordVo implements Serializable {
     private List<RecordVo> childJob;
 
     //是否为流程任务的最后一个子任务
-    private Boolean lastChild = false;
+    private Boolean lastChild;
 
     public Long getRecordId() {
         return recordId;

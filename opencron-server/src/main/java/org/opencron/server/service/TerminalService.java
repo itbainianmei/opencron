@@ -29,8 +29,6 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.Globals;
 import org.opencron.server.tag.PageBean;
-import org.opencron.server.vo.LogVo;
-import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;

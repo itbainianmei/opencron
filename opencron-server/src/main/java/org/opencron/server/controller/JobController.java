@@ -126,6 +126,7 @@ public class JobController {
         if ( Opencron.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
             job.setUserId( Globals.getUserIdBySession(session) );
             job.setUpdateTime(new Date());
+            job.setLastChild(false);
             job = jobService.addOrUpdate(job);
         } else { //流程任务
             Map<String, String[]> map = request.getParameterMap();
