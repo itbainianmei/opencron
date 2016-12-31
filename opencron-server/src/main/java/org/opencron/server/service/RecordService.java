@@ -80,15 +80,15 @@ public class RecordService {
 
         if (status) {
             //已完成任务的子任务及重跑记录查询
-            queryChildrenAndRedo(pageBean, sql);
+            queryChildrenAndRedo(pageBean);
         }
         return pageBean;
     }
 
-    private void queryChildrenAndRedo(PageBean<RecordVo> pageBean, String sql) {
+    private void queryChildrenAndRedo(PageBean<RecordVo> pageBean) {
         List<RecordVo> parentRecords = pageBean.getResult();
         for (RecordVo parentRecord : parentRecords) {
-            sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
+            String sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
             //单一任务有重跑记录的，查出后并把最后一条重跑记录的执行结果记作整个任务的成功、失败状态
             if (parentRecord.getJobType() == 0 && parentRecord.getRedoCount() > 0) {
                 List<RecordVo> records = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getRecordId());
@@ -103,7 +103,7 @@ public class RecordService {
                     parentRecord.setSuccess(Opencron.ResultStatus.FAILED.getStatus());
                     parentRecord.setChildRecord(records);
                 }
-                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.isLastChild,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u on t.userId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
+                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastChild,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u on t.userId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
                 List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getGroupId());
                 if (notEmpty(childJobs)) {
                     parentRecord.setChildJob(childJobs);
