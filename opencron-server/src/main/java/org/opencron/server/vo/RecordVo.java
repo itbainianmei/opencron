@@ -291,11 +291,11 @@ public class RecordVo implements Serializable {
         this.childJob = childJob;
     }
 
-    public Boolean getLastFlag() {
+    public Boolean getLastChild() {
         return lastChild;
     }
 
-    public void setLastFlag(Boolean lastChild) {
+    public void setLastChild(Boolean lastChild) {
         this.lastChild = lastChild;
     }
 }

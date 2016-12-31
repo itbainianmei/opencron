@@ -117,7 +117,7 @@ public class RecordService {
                     }
                     //判断整个流程任务最终执行的成功、失败状态
                     RecordVo lastJob = childJobs.get(childJobs.size() - 1);
-                    if (lastJob.getLastFlag()) {
+                    if (lastJob.getLastChild()) {
                         if (notEmpty(lastJob.getChildRecord())) {
                             parentRecord.setSuccess(lastJob.getChildRecord().get(lastJob.getChildRecord().size() - 1).getSuccess());
                         } else {
