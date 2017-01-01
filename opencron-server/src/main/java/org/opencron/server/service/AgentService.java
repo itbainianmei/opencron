@@ -22,6 +22,7 @@
 
 package org.opencron.server.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.opencron.common.utils.CommonUtils;
@@ -40,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 
+import static org.opencron.common.utils.CommonUtils.isEmpty;
 import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 @Service
@@ -96,9 +98,18 @@ public class AgentService {
     }
 
     public Agent getAgent(Long id) {
-        return queryDao.get(Agent.class, id);
+        Agent agent =  queryDao.get(Agent.class, id);
+        if (agent!=null) {
+            agent.setUsers(getAgentUsers(agent.getAgentId()));
+        }
+        return agent;
     }
 
+    private List<User> getAgentUsers(Long agentId){
+        String sql = "SELECT * FROM T_USER WHERE FIND_IN_SET(?,AGENTIDS)";
+        List<User> users = queryDao.sqlQuery(User.class,sql,agentId);
+        return isEmpty(users)? Collections.<User>emptyList():users;
+    }
     public void addOrUpdate(Agent agent) {
         /**
          * 修改过agent
@@ -192,6 +203,10 @@ public class AgentService {
 
     public Agent getByHost(String host) {
         String sql = "SELECT * FROM T_AGENT WHERE ip=?";
-        return queryDao.sqlUniqueQuery(Agent.class,sql,host);
+        Agent agent = queryDao.sqlUniqueQuery(Agent.class,sql,host);
+        if (agent!=null) {
+            agent.setUsers(getAgentUsers(agent.getAgentId()));
+        }
+        return agent;
     }
 }

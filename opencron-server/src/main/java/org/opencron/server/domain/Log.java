@@ -55,6 +55,8 @@ public class Log implements Serializable {
 
     private Boolean isread;
 
+    private Long userId;
+
     public Long getLogId() {
         return logId;
     }
@@ -117,6 +119,14 @@ public class Log implements Serializable {
 
     public void setIsread(Boolean isread) {
         this.isread = isread;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

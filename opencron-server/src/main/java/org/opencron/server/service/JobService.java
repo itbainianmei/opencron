@@ -22,6 +22,7 @@
 
 package org.opencron.server.service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -75,25 +76,25 @@ public class JobService {
     public List<JobVo> getJobVo(ExecType execType, CronType cronType) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password FROM T_JOB T LEFT JOIN T_AGENT D ON T.agentId = D.agentId WHERE IFNULL(T.flowNum,0)=0 AND cronType=? AND execType = ? AND T.status=1";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus());
-        if (CommonUtils.notEmpty(jobs)) {
-            for (JobVo job : jobs) {
-                job.setAgent(agentService.getAgent(job.getAgentId()));
-                job.setChildren(queryChildren(job));
-            }
-        }
+        queryJobMore(jobs);
         return jobs;
     }
 
     public List<JobVo> getJobVoByAgentId(Agent agent, ExecType execType, CronType cronType) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password FROM T_JOB T INNER JOIN T_AGENT D ON T.agentId = D.agentId WHERE IFNULL(T.flowNum,0)=0 AND cronType=? AND execType = ? AND T.status=1 AND D.agentId=? ";
         List<JobVo> jobs = queryDao.sqlQuery(JobVo.class, sql, cronType.getType(), execType.getStatus(),agent.getAgentId());
+        queryJobMore(jobs);
+        return jobs;
+    }
+
+    private void queryJobMore(List<JobVo> jobs) {
         if (CommonUtils.notEmpty(jobs)) {
             for (JobVo job : jobs) {
                 job.setAgent(agentService.getAgent(job.getAgentId()));
-                job.setChildren(queryChildren(job));
+                queryChildren(job);
+                queryJobUser(job);
             }
         }
-        return jobs;
     }
 
     public List<Job> getJobsByJobType(JobType jobType,HttpSession session){
@@ -178,9 +179,15 @@ public class JobService {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.username AS operateUname " +
                 " FROM T_JOB AS t LEFT JOIN T_AGENT AS d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE t.jobId =?";
         JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
-        job.setAgent(agentService.getAgent(job.getAgentId()));
-        queryChildren(job);
+        queryJobMore(Arrays.asList(job));
         return job;
+    }
+
+    private void queryJobUser(JobVo job) {
+        if (job!=null && job.getUserId()!=null) {
+            User user = userService.getUserById(job.getUserId());
+            job.setUser(user);
+        }
     }
 
     public List<Job> getAll() {

@@ -51,7 +51,6 @@ import static org.opencron.common.utils.CommonUtils.notEmpty;
 @Service
 public class NoticeService {
 
-
     @Autowired
     private ConfigService configService;
 
@@ -79,7 +78,7 @@ public class NoticeService {
         String content = getMessage(agent, "通信失败,请速速处理!");
         logger.info(content);
         try {
-            sendMessage(null,agent.getAgentId(), agent.getEmailAddress(), agent.getMobiles(), content);
+            sendMessage(agent.getUsers(), agent.getAgentId(), agent.getEmailAddress(), agent.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,7 +96,7 @@ public class NoticeService {
         String content = getMessage(agent,message);
         logger.info(content);
         try {
-            sendMessage(job.getUserId(),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);
+            sendMessage(Arrays.asList(job.getUser()),agent.getAgentId(), job.getEmailAddress(), job.getMobiles(), content);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,7 +107,7 @@ public class NoticeService {
         return String.format(msgFormat, agent.getName(), agent.getIp(), agent.getPort(), message, DateUtils.formatFullDate(new Date()));
     }
 
-    public void sendMessage(Long receiverId,Long workId, String emailAddress, String mobiles, String content) {
+    public void sendMessage(List<User> users,Long workId, String emailAddress, String mobiles, String content) {
         Log log = new Log();
         log.setIsread(false);
         log.setAgentId(workId);
@@ -137,7 +136,7 @@ public class NoticeService {
             email.setAuthentication(config.getSenderEmail(), config.getPassword());
             email.setFrom(config.getSenderEmail());
             email.setSubject("opencron监控告警");
-            email.setHtmlMsg(msgToHtml(receiverId, content));
+            email.setHtmlMsg(msgToHtml(content));
             email.addTo(emailAddress.split(","));
             email.send();
             emailSuccess = true;
@@ -155,11 +154,9 @@ public class NoticeService {
          * 发送短信并且记录发送日志
          */
         try {
-
             for (String mobile : mobiles.split(",")) {
                 //发送POST请求
                 String sendUrl = String.format(config.getSendUrl(), mobile, String.format(config.getTemplate(), content));
-
                 String url = sendUrl.substring(0, sendUrl.indexOf("?"));
                 String postData = sendUrl.substring(sendUrl.indexOf("?") + 1);
                 String message = HttpUtils.doPost(url, postData, "UTF-8");
@@ -178,22 +175,20 @@ public class NoticeService {
         /**
          * 短信和邮件都发送失败,则发送站内信
          */
-        if( !mobileSuccess && !emailSuccess ){
+        if( !mobileSuccess && !emailSuccess ) {
             log.setType(Opencron.MsgType.WEBSITE.getValue());
             log.setSendTime(new Date());
-            homeService.saveLog(log);
+            for(User user:users) {
+                //一一发送站内信
+                log.setUserId(user.getUserId());
+                homeService.saveLog(log);
+            }
         }
 
     }
 
-    private String msgToHtml(Long receiverId,String content) throws Exception {
+    private String msgToHtml(String content) throws Exception {
         Map root = new HashMap();
-        if (receiverId!=null) {
-            User user = userService.getUserById(receiverId);
-            root.put("receiver", notEmpty(user) ? user.getRealName() : "管理员");
-        }else {
-            root.put("receiver","管理员");
-        }
         root.put("message", content);
         StringWriter writer = new StringWriter();
         template.process(root, writer);

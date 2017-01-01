@@ -23,7 +23,10 @@
 package org.opencron.server.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.opencron.common.utils.CommonUtils;
 
 import javax.persistence.*;
@@ -61,6 +64,9 @@ public class Agent implements Serializable {
      */
     @Transient
     private Integer taskCount;
+
+    @Transient
+    private List<User> users = new ArrayList<User>();
 
     public String getIp() {
         return ip;
@@ -191,6 +197,14 @@ public class Agent implements Serializable {
         Agent agent = (Agent) o;
 
         return agentId.equals(agent.agentId);
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override
