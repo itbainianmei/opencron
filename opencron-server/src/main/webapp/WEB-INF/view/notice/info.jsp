@@ -7,7 +7,11 @@
 
     <div class="media">
         <div class="pull-left">
-            <i class="icon" style="font-size: 28px;color:rgba(255,255,255,0.75)">${m.type eq 0?"&#61880;":"&#61704;"}</i>
+            <i class="icon" style="font-size: 28px;color:rgba(255,255,255,0.75)">
+            <c:if test="${m.type eq 0}">&#61880;</c:if>
+            <c:if test="${m.type eq 1}">&#61704;</c:if>
+            <c:if test="${m.type eq 2}">&#61884;</c:if>
+            </i>
         </div>
         <div class="media-body">
             <small class="text-muted">opencron告警 - <fmt:formatDate value="${m.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></small><br>

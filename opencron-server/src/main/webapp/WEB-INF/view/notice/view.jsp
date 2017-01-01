@@ -88,6 +88,7 @@
                     <td style="padding: 5px"><center style="font-size: 16px">
                         <c:if test="${log.type eq 0}"><i class="icon" title="邮件">&#61880;</i></c:if>
                         <c:if test="${log.type eq 1}"><i class="icon" title="短信">&#61704;</i></c:if>
+                        <c:if test="${log.type eq 2}"><i class="icon" title="站内信">&#61884;</i></c:if>
                     </center></td>
                     <td>${log.agentName}</td>
                     <td title="${log.receiver}">${cron:substr(log.receiver,0,20,"...")}</td>
