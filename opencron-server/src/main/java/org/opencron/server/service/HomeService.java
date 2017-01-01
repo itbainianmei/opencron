@@ -21,6 +21,7 @@
 
 package org.opencron.server.service;
 
+import org.opencron.common.job.Opencron;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Log;
 import org.opencron.server.domain.User;
@@ -119,8 +120,8 @@ public class HomeService {
 
     @Transactional(readOnly = false)
     public void updateAfterRead(Long logId) {
-        String sql = "UPDATE T_LOG SET isRead = 1 WHERE logId = ?";
-        queryDao.createSQLQuery(sql,logId).executeUpdate();
+        String sql = "UPDATE T_LOG SET isRead = 1 WHERE logId = ? and Type = ?";
+        queryDao.createSQLQuery(sql,logId, Opencron.MsgType.WEBSITE.getValue()).executeUpdate();
     }
 
 
