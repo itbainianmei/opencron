@@ -62,7 +62,6 @@
 
         if($.isMobile()){
             $("#time").remove();
-            $("#contactDialog").remove();
             $("#change-img").remove();
         }else {
             $("#profile-pic").mouseover(function () {
