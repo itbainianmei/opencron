@@ -8,66 +8,6 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
     <style type="text/css">
-        .email{
-            height: 100%;
-            overflow: visible;
-            position: relative;
-            top: 20px;
-            z-index: 50;
-            height: 968px !important;
-            margin: 0 auto;
-            padding: 165px 115px 100px 100px;
-            width: 1256px !important;
-            margin-top: 5px;
-            background: url(${contextPath}/img/bg-mob.png) no-repeat 0 -1249px;
-        }
-        .email-title{
-            height: 126px;
-            margin-left: 171px;
-            margin-top: 140px;
-            width: 864px;
-            padding-top: 1px;
-            padding-left: 20px;
-        }
-        .email-content{
-            height: 126px;
-            margin-left: 171px;
-            margin-top: 10px;
-            width: 850px;
-            padding-top: 0px;
-            padding-left: 20px;
-        }
-        .mobile{
-            height: 100%;
-            overflow: visible;
-            position: relative;
-            top: 20px;
-            z-index: 50;
-            height: 720px !important;
-            width: 387px !important;
-            margin: 0 auto;
-            padding: 125px 25px 159px 25px;
-            margin-top: 20px;
-            background: url(${contextPath}/img/bg-mob.png) no-repeat 0 -2217px;
-        }
-        .mobile-in{
-            background-color: rgba(255, 255, 255, 0.30);
-            height: 463px;
-            margin-left: -7px;
-            margin-top: -31px;
-            width: 351px;
-        }
-
-        .message-border{
-            width:85%;
-            background-color:rgba(0,0,0,0.1);
-            margin-top: 20px;
-            margin-left: 10px;
-            padding: 8px 8px 8px 8px;
-            -moz-border-radius: 10px !important;
-            -webkit-border-radius: 10px !important;
-            border-radius:10px !important;
-        }
         ::selection {
             background:#d3d3d3;
             color:#555;
@@ -96,16 +36,15 @@
     </ol>
     <h4 class="page-title"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;日志详情</h4>
 
-
     <div class="block-area" id="defaultStyle">
         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="float: right;margin-bottom: 8px;"><i class="icon">&#61740;</i>&nbsp;返回</button>
         <table class="table tile textured">
             <tbody id="tableContent">
             <tr>
-                <td>
+                <td width="150px;">
                     <c:if test="${log.type eq 0}"><i class="glyphicon glyphicons-message-plus"></i></c:if>
                     <c:if test="${log.type eq 1}"><i class="glyphicons glyphicons-chat"></i></c:if>
-                    <c:if test="${log.type eq 2}"><i class="glyphicon glyphicon-tasks"></i></c:if>
+                    <c:if test="${log.type eq 2}"><i class="glyphicon glyphicon-link"></i></c:if>
                     &nbsp;通知类型
                 </td>
                 <td>
@@ -116,7 +55,7 @@
             </tr>
 
             <tr>
-                <td><i class="glyphicons glyphicons-user-conversation"></i>&nbsp;发件人</td>
+                <td width="150px;"><i class="glyphicons glyphicons-user-conversation"></i>&nbsp;发件人</td>
                 <td>${sender}</td>
             </tr>
 
@@ -126,13 +65,13 @@
             </tr>
 
             <tr>
-                <td><i class="glyphicons glyphicons-user-add"></i>&nbsp;收件人</td>
+                <td width="150px;"><i class="glyphicons glyphicons-user-add"></i>&nbsp;收件人</td>
                 <td>${log.receiver}</td>
             </tr>
 
             <tr>
                 <td colspan="2">
-                    <i class="glyphicons glyphicons-eye-open"></i>&nbsp;<strong>信&nbsp;&nbsp;息</strong></p>
+                    <i class="glyphicons glyphicons-eye-open"></i>&nbsp;&nbsp;<strong>信&nbsp;&nbsp;息</strong></p>
                     <pre id="pre" style="font-size:11px;color:#FFF;border: none;background: none;white-space: pre-wrap;word-wrap: break-word;">${log.message}</pre>
                 </td>
             </tr>
