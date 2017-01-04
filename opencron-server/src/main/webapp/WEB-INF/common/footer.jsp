@@ -14,7 +14,7 @@
 <!--[if lt IE 9]>
 <div class="ie-block">
     <h1 class="Ops">Ooops!</h1>
-    <p> 您正在使用一个过时的互联网浏览器，升级到下列任何一个网络浏览器，以访问该网站的最大功能。 </p>
+    <p> 您使用的浏览器太老啦，升级到下列任何一个最新浏览器，以便您愉快的访问该网站。 </p>
     <ul class="browsers">
         <li>
             <a href="https://www.google.com/intl/en/chrome/browser/">
@@ -47,7 +47,7 @@
             </a>
         </li>
     </ul>
-    <p>请升级您的浏览器以便带来更好更好的用户体验 <br/>谢谢...</p>
+    <p>请升级您的浏览器以便带来更好的用户体验 <br/>谢谢...</p>
 </div>
 <![endif]-->
 
