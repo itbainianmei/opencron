@@ -95,42 +95,49 @@
         <li><a href="">告警日志</a></li>
     </ol>
     <h4 class="page-title"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;日志详情</h4>
+
+
     <div class="block-area" id="defaultStyle">
         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="float: right;margin-bottom: 8px;"><i class="icon">&#61740;</i>&nbsp;返回</button>
-        <c:if test="${log.type eq 0}">
-                <div class="email">
-                    <div class="email-title">
-                        <h4 style="color: #000000;font-size: 12px;font-weight: 900">opencron监控告警</h4>
-                        <div>
-                            <span style="color: #808080;font-size: 12px;">发件人：&nbsp;&nbsp;${sender}</span><br>
-                            <span style="color: #808080;font-size: 12px;">时&nbsp;&nbsp;&nbsp;&nbsp;间：&nbsp;&nbsp;<fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></span><br>
-                            <span style="color: #808080;font-size: 12px;">收件人：&nbsp;&nbsp;${log.receiver}</span><br>
-                        </div>
-                    </div>
-                    <div class="email-content">
-                        <span style="color: #0b0b0b;font-size: 15px;font-weight: 600">${log.message}</span>
-                    </div>
+        <table class="table tile textured">
+            <tbody id="tableContent">
+            <tr>
+                <td>
+                    <c:if test="${log.type eq 0}"><i class="glyphicon glyphicons-message-plus"></i></c:if>
+                    <c:if test="${log.type eq 1}"><i class="glyphicons glyphicons-chat"></i></c:if>
+                    <c:if test="${log.type eq 2}"><i class="glyphicon glyphicon-tasks"></i></c:if>
+                    &nbsp;通知类型
+                </td>
+                <td>
+                    <c:if test="${log.type eq 0}">邮件</c:if>
+                    <c:if test="${log.type eq 1}">短信</c:if>
+                    <c:if test="${log.type eq 2}">站内信</c:if>
+                </td>
+            </tr>
 
-                </div>
-        </c:if>
+            <tr>
+                <td><i class="glyphicons glyphicons-user-conversation"></i>&nbsp;发件人</td>
+                <td>${sender}</td>
+            </tr>
 
-        <c:if test="${log.type eq 1}">
-            <div class="mobile">
-                <div class="mobile-in">
-                    <span style="color: #31b0d5;font-size: 20px;font-weight: 600"><i class="icon">&#61903;</i>信息</span>
-                    <span style="color: #0b0b0b;font-size: 18px;font-weight:600;margin-left: 15px">106905705189615</span>
-                    <hr>
-                    <center style="color: #393939;font-size: 12px;margin-top: 10px">短信/彩信</center>
-                    <center style="color: #393939;font-size: 12px;"><fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></center>
-                    <div class="message-border">
-                        <span style="color: #0b0b0b;font-size: 15px;font-weight: 600">${log.message}</span>
-                    </div>
-                </div>
-                <div>
-                </div>
-            </div>
+            <tr>
+                <td><i class="glyphicons glyphicons-alarm"></i>&nbsp;发送时间</td>
+                <td><fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
+            </tr>
 
-        </c:if>
+            <tr>
+                <td><i class="glyphicons glyphicons-user-add"></i>&nbsp;收件人</td>
+                <td>${log.receiver}</td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <i class="glyphicons glyphicons-eye-open"></i>&nbsp;<strong>信&nbsp;&nbsp;息</strong></p>
+                    <pre id="pre" style="font-size:11px;color:#FFF;border: none;background: none;white-space: pre-wrap;word-wrap: break-word;">${log.message}</pre>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
 </section>

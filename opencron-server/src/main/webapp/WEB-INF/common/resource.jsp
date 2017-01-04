@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="${contextPath}/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${contextPath}/css/form.css" rel="stylesheet">
+    <link rel="stylesheet" href="${contextPath}/css/glyphicons.css" rel="stylesheet">
+
     <link rel="stylesheet" href="${contextPath}/css/calendar.css" rel="stylesheet">
     <link rel="stylesheet" href="${contextPath}/css/style.css" rel="stylesheet">
     <link rel="stylesheet" href="${contextPath}/css/icons.css" rel="stylesheet">
