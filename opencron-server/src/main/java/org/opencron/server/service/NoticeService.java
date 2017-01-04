@@ -181,6 +181,7 @@ public class NoticeService {
             for(User user:users) {
                 //一一发送站内信
                 log.setUserId(user.getUserId());
+                log.setReceiver(user.getUserName());
                 homeService.saveLog(log);
             }
         }

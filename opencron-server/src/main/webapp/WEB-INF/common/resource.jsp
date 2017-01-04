@@ -14,23 +14,23 @@
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/animate.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/form.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/glyphicons.css" rel="stylesheet">
+    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
+    <link rel="stylesheet" href="${contextPath}/css/animate.min.css" >
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome.min.css" >
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
+    <link rel="stylesheet" href="${contextPath}/css/form.css" >
 
-    <link rel="stylesheet" href="${contextPath}/css/calendar.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="${contextPath}/css/generics.css" rel="stylesheet">
-    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' rel='stylesheet'>
-    <link rel="stylesheet" href='${contextPath}/css/opencron.css' rel='stylesheet'>
-    <link rel="stylesheet" href='${contextPath}/css/loading.css' rel='stylesheet'>
-    <link rel="stylesheet" href='${contextPath}/css/morris.css' rel='stylesheet'>
-    <link rel="stylesheet" href='${contextPath}/css/prettify.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="${contextPath}/css/calendar.css" >
+    <link rel="stylesheet" href="${contextPath}/css/style.css" >
+    <link rel="stylesheet" href="${contextPath}/css/icons.css" >
+    <link rel="stylesheet" href="${contextPath}/css/generics.css" >
+    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' >
+    <link rel="stylesheet" href='${contextPath}/css/opencron.css' >
+    <link rel="stylesheet" href='${contextPath}/css/loading.css' >
+    <link rel="stylesheet" href='${contextPath}/css/morris.css' >
+    <link rel="stylesheet" href='${contextPath}/css/prettify.min.css' >
     <link rel="shortcut icon" href="${contextPath}/img/favicon.ico"/>
+    <link rel="stylesheet" href="${contextPath}/css/glyphicons.css" >
 
     <!-- Javascript Libraries -->
     <!-- jQuery -->

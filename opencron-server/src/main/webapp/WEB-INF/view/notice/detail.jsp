@@ -16,6 +16,7 @@
             background:#d3d3d3;
             color:#555;
         }
+
     </style>
 
 </head>
@@ -34,7 +35,7 @@
         <li><a href="">opencron</a></li>
         <li><a href="">告警日志</a></li>
     </ol>
-    <h4 class="page-title"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;日志详情</h4>
+    <h4 class="page-title"><i class="glyphicon glyphicon-eye-open"></i>&nbsp;告警详情</h4>
 
     <div class="block-area" id="defaultStyle">
         <button type="button" onclick="history.back()" class="btn btn-sm m-t-10" style="float: right;margin-bottom: 8px;"><i class="icon">&#61740;</i>&nbsp;返回</button>
@@ -42,9 +43,9 @@
             <tbody id="tableContent">
             <tr>
                 <td width="150px;">
-                    <c:if test="${log.type eq 0}"><i class="glyphicon glyphicons-message-plus"></i></c:if>
-                    <c:if test="${log.type eq 1}"><i class="glyphicons glyphicons-chat"></i></c:if>
-                    <c:if test="${log.type eq 2}"><i class="glyphicon glyphicon-link"></i></c:if>
+                    <c:if test="${log.type eq 0}"><i style="font-Size:15px;" class="glyphicons glyphicons-message-plus"></i></c:if>
+                    <c:if test="${log.type eq 1}"><i style="font-Size:15px;" class="glyphicons glyphicons-chat"></i></c:if>
+                    <c:if test="${log.type eq 2}"><i style="font-Size:15px;" class="glyphicons glyphicon-link"></i></c:if>
                     &nbsp;通知类型
                 </td>
                 <td>
@@ -55,23 +56,20 @@
             </tr>
 
             <tr>
-                <td width="150px;"><i class="glyphicons glyphicons-user-conversation"></i>&nbsp;发件人</td>
-                <td>${sender}</td>
-            </tr>
-
-            <tr>
-                <td><i class="glyphicons glyphicons-alarm"></i>&nbsp;发送时间</td>
+                <td><i style="font-Size:15px;" class="glyphicons glyphicons-alarm"></i>&nbsp;&nbsp;发送时间</td>
                 <td><fmt:formatDate value="${log.sendTime}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
             </tr>
 
             <tr>
-                <td width="150px;"><i class="glyphicons glyphicons-user-add"></i>&nbsp;收件人</td>
+                <td width="150px;"><i style="font-Size:15px;" class="glyphicons glyphicons-user-add"></i>
+                    <c:if test="${log.type eq 0}">&nbsp;收&nbsp;&nbsp;件&nbsp;&nbsp;人</c:if>
+                    <c:if test="${log.type ne 0}">&nbsp;收&nbsp;&nbsp;信&nbsp;&nbsp;人</c:if>
                 <td>${log.receiver}</td>
             </tr>
 
             <tr>
                 <td colspan="2">
-                    <i class="glyphicons glyphicons-eye-open"></i>&nbsp;&nbsp;<strong>信&nbsp;&nbsp;息</strong></p>
+                    <i  style="font-Size:15px;" class="glyphicons glyphicons-eye-open"></i>&nbsp;&nbsp;<strong>&nbsp;信&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;息</strong></p>
                     <pre id="pre" style="font-size:11px;color:#FFF;border: none;background: none;white-space: pre-wrap;word-wrap: break-word;">${log.message}</pre>
                 </td>
             </tr>
