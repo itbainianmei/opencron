@@ -115,6 +115,7 @@
                 }else {
                     $("#messages").remove();
                     $(".n-count").remove();
+                    $("#toggle_message").css({"padding":"10px 0px 0"});
                     $("#msg-icon").click(function () {
                         window.location.href="${contextPath}/notice/view";
                     })
