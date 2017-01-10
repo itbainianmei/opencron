@@ -28,6 +28,7 @@ import org.opencron.server.domain.Terminal;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronContext;
 import org.opencron.server.tag.PageBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,6 +160,11 @@ public class TerminalService {
         queryDao.save(terminal);
     }
 
+    public List<Terminal> getListByUser(User user) {
+        String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ";
+        return queryDao.sqlQuery(Terminal.class,sql,user.getUserId());
+    }
+
     public static class TerminalClient {
 
         private WebSocketSession webSocketSession;
@@ -268,7 +274,10 @@ public class TerminalService {
         }
 
         public static void put(String key, Terminal terminal) {
+            //该终端实例只能被的打开一次,之后就失效
             terminalContext.put(key, terminal);
+            //保存打开的实例,用于复制终端实例
+            OpencronContext.put(key,terminal);
         }
 
         public static Terminal remove(String key) {

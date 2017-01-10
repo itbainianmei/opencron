@@ -1,0 +1,39 @@
+body{
+    margin: 0px;background-color: #000000
+}
+.navbar{
+    background-image: linear-gradient(#ffffff, #eeeeee 50%, #e4e4e4);
+    font-size: 13px;
+    min-height:30px;
+    margin-bottom:0px;
+}
+
+.navbar-nav{
+    float: none;
+}
+.navbar-nav > li > a{
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.container{
+    float: left;
+    padding-left:0px;
+    width: 100%;
+}
+.dropdown-menu{
+    font-size: 13px;
+}
+
+.navbar-fixed-top{
+    position: relative;
+}
+
+.fa{
+    font-size: 14px;
+}
+
+.circle {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}

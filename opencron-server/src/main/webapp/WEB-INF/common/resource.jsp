@@ -16,7 +16,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
     <link rel="stylesheet" href="${contextPath}/css/animate.min.css" >
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome.min.css" >
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" >
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
     <link rel="stylesheet" href="${contextPath}/css/form.css" >
 

@@ -27,6 +27,7 @@ import org.opencron.common.utils.WebUtils;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.Globals;
 import org.opencron.server.domain.User;
+import org.opencron.server.job.OpencronContext;
 import org.opencron.server.service.AgentService;
 import org.opencron.server.service.TerminalService;
 
@@ -40,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.util.List;
+
 import static org.opencron.server.service.TerminalService.*;
 
 /**
@@ -51,9 +54,6 @@ public class TerminalController {
 
     @Autowired
     private TerminalService termService;
-
-    @Autowired
-    private AgentService agentService;
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
@@ -67,7 +67,6 @@ public class TerminalController {
         if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
-
             TerminalContext.put(token,terminal);
             session.setAttribute(Globals.SSH_SESSION_ID,token);
             WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
@@ -76,6 +75,26 @@ public class TerminalController {
             WebUtils.writeJson(response, String.format(json,authStr,"null"));
             return;
         }
+    }
+
+    @RequestMapping("/ssh2")
+    public String ssh2(HttpSession session,Terminal terminal) throws Exception {
+        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+
+        terminal = termService.getById(terminal.getId());
+        String authStr = termService.auth(terminal);
+        //登陆认证成功
+        if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
+            String token = CommonUtils.uuid();
+            terminal.setUser(user);
+            TerminalContext.put(token,terminal);
+            session.setAttribute(Globals.SSH_SESSION_ID,token);
+            return "redirect:/terminal/open?token="+token;
+        }else {
+            //重新输入密码进行认证...
+            return "redirect:/terminal/open?id="+terminal.getId();
+        }
+
     }
 
     @RequestMapping("/detail")
@@ -99,11 +118,32 @@ public class TerminalController {
     }
 
     @RequestMapping("/open")
-    public String open(HttpServletRequest request,String token ) throws Exception {
+    public String open(HttpServletRequest request,String token,Long id) throws Exception {
+        //登陆失败
+        if (token==null && id!=null) {
+            Terminal terminal = termService.getById(id);
+            request.setAttribute("terminal",terminal);
+            return "/terminal/error";
+        }
         Terminal terminal = TerminalContext.get(token);
         if (terminal!=null) {
             request.setAttribute("name",terminal.getName()+"("+terminal.getHost()+")");
+            request.setAttribute("token",token);
+            List<Terminal> terminas = termService.getListByUser(terminal.getUser());
+            request.setAttribute("terms",terminas);
             return "/terminal/console";
+        }
+        return "/terminal/error";
+    }
+
+    @RequestMapping("/reopen")
+    public String reopen(HttpSession session,String token ) throws Exception {
+        Terminal terminal = (Terminal) OpencronContext.get(token);
+        if (terminal!=null) {
+            token = CommonUtils.uuid();
+            TerminalContext.put(token,terminal);
+            session.setAttribute(Globals.SSH_SESSION_ID,token);
+            return "redirect:/terminal/open?token="+token;
         }
         return "/terminal/error";
     }
