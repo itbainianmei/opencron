@@ -28,7 +28,6 @@ import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.Globals;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronContext;
-import org.opencron.server.service.AgentService;
 import org.opencron.server.service.TerminalService;
 
 import org.opencron.server.tag.PageBean;
