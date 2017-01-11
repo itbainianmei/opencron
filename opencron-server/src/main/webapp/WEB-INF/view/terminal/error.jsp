@@ -7,9 +7,14 @@
 <html lang="en">
 <head>
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png"/>
-
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
-
+    <style type="text/css">
+        .error_msg {
+            color: red;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+    </style>
     <title>Terminal Error</title>
 </head>
 <body>
@@ -20,8 +25,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 id="sshTitle" style="color: red">用户名密码错误</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="closeWin();" aria-hidden="true">&times;</button>
+                <h4 id="sshTitle" style="color: red;font-size: 13px;">用户名密码错误</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" role="form" id="sshform">
@@ -76,7 +81,7 @@
                 <center>
                     <button type="button" class="btn btn-sm" id="sshbtn" onclick="saveSsh()">登陆</button>
                     &nbsp;&nbsp;
-                    <button type="button" class="btn btn-sm" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-sm" onclick="resetForm()">重置</button>
                 </center>
             </div>
         </div>
@@ -98,7 +103,6 @@
             window.close();
         });
     </c:if>
-
     <c:if test="${!empty terminal}">
         $("#sshModal").modal("show");
         function saveSsh() {
@@ -203,8 +207,19 @@
                 }
             });
         }
-    </c:if>
 
+        function closeWin() {
+            window.close();
+        }
+
+        function resetForm() {
+            $(".error_msg").empty();
+            $("#sshuser").val('');
+            $("#sshuser")[0].focus();
+            $("#sshpwd").val('');
+        }
+    </c:if>
 </script>
+
 </body>
 </html>

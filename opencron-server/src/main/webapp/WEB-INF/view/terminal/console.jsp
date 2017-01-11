@@ -40,10 +40,10 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-original-title="" title=""><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;选择主题<b class="caret"></b></a>
                     <ul class="dropdown-menu theme" >
-                        <li><span class="circle" style="color:#ffff00">▇</span><a href="#">橙色&nbsp;</a></li>
-                        <li><span class="circle" style="color:green">▇</span><a href="#">绿色&nbsp;</a></li>
-                        <li><span class="circle" style="color:black">▇</span><a href="#">黑色&nbsp;</a></li>
-                        <li><span class="circle" style="color:blue">▇</span><a href="#">蓝色风暴&nbsp;</a></li>
+                        <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
+                        <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
+                        <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
+                        <li><a theme="blue" href="javascript:void(0)"><span class="circle" style="background-color:blue"></span>&nbsp;蓝色</a></li>
                     </ul>
                 </li>
 
@@ -79,7 +79,14 @@
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-       new OpencronTerm();
+       var term = new OpencronTerm();
+       $(".theme").find("a").each(function (i,e) {
+           var theme = $(e).attr('theme');
+           $(e).click(function () {
+               term.theme(theme);
+           });
+       });
+
     });
 </script>
 </html>

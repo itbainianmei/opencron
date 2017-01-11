@@ -45,11 +45,26 @@
         self.socket.send(data);
     });
 
-    $("#chinput").click(function () {
+    //给发送按钮绑定事件
+    $("#chinput").bind("click",function () {
         var chinese = $("#chinese").val();
-        if (chinese&&chinese.length>0){
+        if ( chinese && chinese.length>0 ){
             self.socket.send(chinese);
             $("#chinese").val('');
+        }
+    });
+
+    $("#chinese").focus(function () {
+        self.chfocus = true;
+    }).blur(function () {
+        self.chfocus = false;
+    });
+
+    //在中文输入框里点击Enter按钮触发发送事件.
+    $(document).keypress(function (e) {
+        var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
+        if ( keyCode == 13 && self.hasOwnProperty("chfocus") && self.chfocus ){
+            $("#chinput").click();
         }
     });
 
@@ -88,5 +103,33 @@
         window.clearInterval(self.term._blink);
     };
 
+}
 
+;OpencronTerm.prototype.theme = function () {
+    'use strict';
+    var yellow  = {
+        colors: [
+            '#000000',
+            '#cd0000',
+            '#00cd00',
+            '#cdcd00',
+            '#0000ee',
+            '#cd00cd',
+            '#00cdcd',
+            '#e5e5e5',
+            '#7f7f7f',
+            '#ff0000',
+            '#00ff00',
+            '#ffff00',
+            '#5c5cff',
+            '#ff00ff',
+            '#00ffff',
+            '#ffffff'
+        ],
+        color256:'#FFFFFF',
+        color257:'#000000'
+    }
+    this.term.colors = yellow.colors;
+    this.term.colors[256] = yellow.color256;
+    this.term.colors[257] = yellow.color257;
 }

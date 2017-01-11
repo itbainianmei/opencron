@@ -34,6 +34,12 @@ body{
 
 .circle {
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    margin-bottom: -3px;
+}
+
+.dropdown-menu > li > a {
+    color: #7A7A7A;
 }
