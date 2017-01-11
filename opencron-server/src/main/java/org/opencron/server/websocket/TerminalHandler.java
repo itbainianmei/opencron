@@ -23,7 +23,6 @@ package org.opencron.server.websocket;
 
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.Globals;
@@ -40,6 +39,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class TerminalHandler extends TextWebSocketHandler {
 
 	private TerminalClient terminalClient;
+
 	private String sessionId;
 	@Autowired
 	private TerminalService terminalService;
