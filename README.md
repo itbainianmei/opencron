@@ -115,9 +115,7 @@ jdbc.url=jdbc:mysql://${you_mysql_host}:3306/opencron?useUnicode=true&characterE
 jdbc.username=${user}
 jdbc.password=${password}
 
---memcached
-memcached.server=${memcached_host}:${memcached_port}
-3)发布到tomcat或者其他的web服务器启动即可.第一次会创建表,默认初始用户名opencron,密码opencron
+3)发布到tomcat或者其他的web服务器启动即可.第一次会自动创建表,默认初始用户名opencron,密码opencron
 
 4):进入到opencron的管理端第一件要做的事情就是添加要管理的执行器.在菜单的第二栏点击"执行器管理"->添加执行器,执行器ip，就是上面你部署的opencron-agent的机器ip，端口号是要连接的opencron-agent的启动端口，密码也是opencron-agent端的连接密码,输入ip,端口和密码后点击"检查通信",如果成功则server和agnet端已经成功通信，server可以管理agent了,添加保持即可.如果连接失败，
 可能有一下即可原因:
