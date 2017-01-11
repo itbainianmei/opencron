@@ -23,8 +23,8 @@ public class OpencronContext {
         context.put(key,value);
     }
 
-    public static void remove(String key){
-        context.remove(key);
+    public static Object remove(String key){
+        return context.remove(key);
     }
 
 }

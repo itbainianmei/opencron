@@ -401,20 +401,21 @@ public abstract class DigestUtils {
     }
 
     public static String getEncoding(String text) {
-        String encode = "GB2312";
-        try {
-            if (text.equals(new String(text.getBytes(encode), encode))) {
-                return encode;
-            }
-        } catch (Exception exception) {}
-
-        encode = "ISO-8859-1";
+        String encode = "ISO-8859-1";
         try {
             if (text.equals(new String(text.getBytes(encode), encode))) {
                 return encode;
             }
         } catch (Exception exception1) {
         }
+
+        encode = "GB2312";
+        try {
+            if (text.equals(new String(text.getBytes(encode), encode))) {
+                return encode;
+            }
+        } catch (Exception exception) {}
+
         encode = "UTF-8";
         try {
             if (text.equals(new String(text.getBytes(encode), encode))) {
@@ -422,6 +423,7 @@ public abstract class DigestUtils {
             }
         } catch (Exception exception2) {
         }
+
         encode = "GBK";
         try {
             if (text.equals(new String(text.getBytes(encode), encode))) {
@@ -429,6 +431,6 @@ public abstract class DigestUtils {
             }
         } catch (Exception exception3) {
         }
-        return "";
+        return encode;
     }
 }

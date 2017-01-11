@@ -60,11 +60,20 @@
         self.chfocus = false;
     });
 
-    //在中文输入框里点击Enter按钮触发发送事件.
     $(document).keypress(function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-        if ( keyCode == 13 && self.hasOwnProperty("chfocus") && self.chfocus ){
-            $("#chinput").click();
+        if ( keyCode == 13 ){
+            console.log(self.termClosed)
+
+            //在中文输入框里点击Enter按钮触发发送事件.
+            if (self.hasOwnProperty("chfocus") && self.chfocus ) {
+                $("#chinput").click();
+            }
+            //(终端已经logout的情况下,再点击Enter则关闭当前页面
+            if (self.hasOwnProperty("termClosed")) {
+                self.term.close();
+                window.close();
+            }
         }
     });
 
@@ -84,6 +93,7 @@
         self.socket= SockJS(url+params);
     }
 
+
     self.socket.onerror = function() {
         self.term.write("Sorry! opencron terminal connect error!please try again.\n");
         window.clearInterval(self.term._blink);
@@ -98,9 +108,12 @@
     };
 
     self.socket.onclose = function() {
-        //清除光标闪烁
         self.term.write("Thank you for using opencron terminal! bye...");
+        //清除光标闪烁
         window.clearInterval(self.term._blink);
+        self.termClosed = true;
+        //转移焦点到零时的输入框,主要是为了接管term对键盘的监听(终端已经logout的情况下,再点击Enter则关闭当前页面)
+        $("<input type='text' width='0px' height='0px' style='border:0;outline:none;position: absolute;top: -1000px;left: -1000px;'>").appendTo('body')[0].focus();
     };
 
 }

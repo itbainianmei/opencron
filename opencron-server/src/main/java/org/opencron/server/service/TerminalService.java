@@ -209,11 +209,10 @@ public class TerminalService {
                                 char chr = (char) (buffer[i] & 0xff);
                                 builder.append(chr);
                             }
-
-                            if (DigestUtils.getEncoding(builder.toString()).equals("ISO-8859-1")) {
-                                webSocketSession.sendMessage(new TextMessage(new String(builder.toString().getBytes("ISO-8859-1"), "UTF-8")));
-                            } else {
-                                webSocketSession.sendMessage(new TextMessage(new String(builder.toString().getBytes("gb2312"), "UTF-8")));
+                            String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
+                            webSocketSession.sendMessage(new TextMessage(message));
+                            if (message.replace("\r\n","").equalsIgnoreCase("logout")) {
+                                disconnect();
                             }
                         }
                     } catch (Exception e) {
@@ -236,6 +235,10 @@ public class TerminalService {
         }
 
         public void disconnect() throws IOException {
+            if (writer!=null) {
+                writer.close();
+                writer = null;
+            }
             if (session != null) {
                 session.close();
                 session = null;

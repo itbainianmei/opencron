@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png" />
     <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.term.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170111"></script>
     <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" >
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
     <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
@@ -16,7 +16,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
     <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css" >
+    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170111" >
 
     <title>opencron Terminal</title>
 </head>
@@ -48,7 +48,7 @@
                 <li><a href="${contextPath}/terminal/reopen?token=${token}" target="_blank" title="复制会话"><i aria-hidden="true" class="fa fa-window-restore"></i>&nbsp;复制会话</a></li>
                 <li><a href="javascript:window.close();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出终端</a></li>
                 <li style="padding-top: 9px;margin-left: 18px;">
-                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-pencil"></i>中文输入</label>&nbsp;&nbsp;<input id="chinese" size="40" placeholder="发送中文请在这里输入" type="text">
+                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-pencil"></i>&nbsp;中文输入</label>&nbsp;&nbsp;<input id="chinese" size="40" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="chinput" style="margin-top: -3px;">发送</div>
                 </li>
                 <li style="float: right;margin-right: 10px;"><a href="https://github.com/wolfboys/opencron" target="_blank"><i aria-hidden="true" class="fa fa-github" style="font-size:30px;position:absolute;top:6px"></i></a></li>

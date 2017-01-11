@@ -84,13 +84,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 			getClient(session,null);
 			if (this.terminalClient != null ) {
 				if ( !terminalClient.isClosed()) {
-					if (Arrays.equals("exit".getBytes(), message.asBytes())) {
-						if (this.terminalClient != null) {
-							this.terminalClient.disconnect();
-						}
-						session.close();
-						return;
-					}
 					terminalClient.write(new String(message.asBytes(), "UTF-8"));
 				}else {
 					session.close();
@@ -98,7 +91,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			session.sendMessage(new TextMessage("Sorry! Websocket is closed, please try again. "));
+			session.sendMessage(new TextMessage("Sorry! Opencron Terminal is closed, please try again. "));
 			session.close();
 		}
 	}
