@@ -23,7 +23,7 @@
 
 <body>
 
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div id="navigation" class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">

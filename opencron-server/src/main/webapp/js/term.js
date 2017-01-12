@@ -446,7 +446,7 @@
         debug: false,
         useStyle: false,
         fontSize:11,
-        lineHeight:16
+        lineHeight:15
         // programFeatures: false,
         // focusKeys: false,
     };

@@ -22,7 +22,7 @@
     span.remove();
     return {
         cols: Math.floor($(window).width() / charWidth) + 2,
-        rows: Math.floor( ($(window).height()-45) / 16)
+        rows: Math.floor( ($(window).height()-$("#navigation").height()) / 15)
     };
 }
 
