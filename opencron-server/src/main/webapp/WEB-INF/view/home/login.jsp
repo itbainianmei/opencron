@@ -20,8 +20,6 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
     <script type="text/javascript">
 
-
-
         <c:if test="${!empty opencron_user}">
             window.location.href="${contextPath}/home";
         </c:if>

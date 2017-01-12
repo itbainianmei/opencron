@@ -22,6 +22,7 @@
 package org.opencron.server.service;
 
 import org.opencron.common.job.Opencron;
+import org.opencron.common.utils.PropertyPlaceholder;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Log;
 import org.opencron.server.domain.User;
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.opencron.common.utils.CommonUtils.notEmpty;
@@ -49,7 +51,7 @@ public class HomeService {
     @Autowired
     private QueryDao queryDao;
 
-    public int checkLogin(HttpSession httpSession, String username, String password) {
+    public int checkLogin(HttpSession httpSession, String username, String password) throws IOException {
         //将session置为无效
        /* if (!httpSession.isNew()) {
             httpSession.invalidate();
@@ -69,29 +71,21 @@ public class HomeService {
             } else {
                 httpSession.setAttribute(Globals.PERMISSION, false);
             }
-
-            Boolean logined = SingletonLoginListener.logined(user);
-            if (logined) {
-                HttpSession session = SingletonLoginListener.getLoginedSession(user.getUserId());
-                if (session!=null) {
-                    session.setAttribute("message","你的账号在其他地方登录,请重新登录");
+            if( PropertyPlaceholder.getBoolean("opencron.singlelogin") ){
+                Boolean logined = SingleLoginListener.logined(user);
+                if (logined) {
+                    HttpSession session = SingleLoginListener.getLoginedSession(user.getUserId());
+                    if (session!=null) {
+                        session.setAttribute("message","你的账号在其他地方登录,请重新登录");
+                    }
+                    //拿到已经登录的session,将其踢下线
+                    SingleLoginListener.removeUserSession(user.getUserId());
+                    //已经登录的用户开启的终端全部关闭...
+                    TerminalService.TerminalSession.exit(user,session.getId());
                 }
-                //拿到已经登录的session,将其踢下线
-                SingletonLoginListener.removeUserSession(user.getUserId());
+                SingleLoginListener.addUserSession(httpSession);
             }
-            SingletonLoginListener.addUserSession(httpSession);
-
             httpSession.setAttribute(Globals.LOGIN_USER, user);
-/*
-            Map<Long,User> loginUsers = (Map<Long, User>) OpencronContext.get("loginUsers");
-            if (CommonUtils.isEmpty(loginUsers)) {
-                loginUsers = new HashMap<Long, User>();
-                loginUsers.put(user.getUserId(),user);
-
-            }
-            OpencronContext.put("loginUsers",loginUsers);
-*/
-
             return 200;
         } else {
             return 500;

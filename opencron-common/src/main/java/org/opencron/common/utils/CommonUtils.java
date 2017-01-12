@@ -249,6 +249,8 @@ public abstract class CommonUtils implements Serializable {
         }
     }
 
+
+
     public static float toFloat(Object val, float defVal) {
         if (isEmpty(val)) {
             return defVal;
@@ -258,6 +260,21 @@ public abstract class CommonUtils implements Serializable {
         } catch (NumberFormatException e) {
             return defVal;
         }
+    }
+
+    public static Boolean toBoolean(String text,Boolean defVal) {
+        if (isEmpty(text)) {
+            return false;
+        }
+        try {
+            return Boolean.parseBoolean(text);
+        } catch (NumberFormatException e) {
+            return defVal;
+        }
+    }
+
+    public static Boolean toBoolean(String text) {
+      return toBoolean(text,false);
     }
 
     public static Integer toInt(Object val) {
@@ -518,6 +535,7 @@ public abstract class CommonUtils implements Serializable {
         }
         return sb.toString().substring(0,len);
     }
+
 
 }
 

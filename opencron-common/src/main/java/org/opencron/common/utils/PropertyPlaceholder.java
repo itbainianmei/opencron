@@ -25,6 +25,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -37,7 +39,7 @@ import java.util.Properties;
  */
 public class PropertyPlaceholder extends PropertyPlaceholderConfigurer {
 
-    private static Properties properties = new Properties();
+    private static Map<String,String> properties = new HashMap<String,String>();
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
@@ -49,19 +51,26 @@ public class PropertyPlaceholder extends PropertyPlaceholderConfigurer {
         }
     }
 
-    public static Object getProperty(String name) {
+    public static String get(String name) {
         return properties.get(name);
     }
 
-    public static String get(String name) {
-        return (String) properties.get(name);
+    public static Integer getInt(String name) {
+        return CommonUtils.toInt(get(name));
     }
 
-    public static <T> T getProperty(String name, Class<T> clazz) {
-        return (T) properties.get(name);
+    public static Long getLong(String name) {
+        return CommonUtils.toLong(get(name));
     }
 
-    public static Properties getProperties() {
+    public static Float getFolat(String name) {
+        return CommonUtils.toFloat(get(name));
+    }
+
+    public static Boolean getBoolean(String name) {
+        return CommonUtils.toBoolean(get(name));
+    }
+    public static Map<String, String> getProperties() {
         return properties;
     }
 }

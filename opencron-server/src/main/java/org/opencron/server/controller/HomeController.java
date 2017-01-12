@@ -175,6 +175,7 @@ public class HomeController {
 
     @RequestMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
+
         //用户信息验证
         int status = homeService.checkLogin(httpSession, username, password);
 

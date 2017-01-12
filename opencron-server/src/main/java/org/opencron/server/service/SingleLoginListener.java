@@ -39,10 +39,10 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * Created by benjobs on 2017/1/12.
  */
-public class SingletonLoginListener implements HttpSessionListener {
+public class SingleLoginListener implements HttpSessionListener {
 
     // key为sessionId，value为HttpSession，使用static，定义静态变量，使之程序运行时，一直存在内存中。
-    private static Map<String, HttpSession> singletonLoginSessionMap = new ConcurrentHashMap<String, HttpSession>(500);
+    private static Map<String, HttpSession> singleLoginSessionMap = new ConcurrentHashMap<String, HttpSession>(500);
 
     /**
      * HttpSessionListener中的方法，在创建session
@@ -54,7 +54,7 @@ public class SingletonLoginListener implements HttpSessionListener {
      * HttpSessionListener中的方法，回收session时,删除sessionMap中对应的session
      */
     public void sessionDestroyed(HttpSessionEvent event) {
-        getSingletonLoginSessionMap().remove(event.getSession().getId());
+        getSingleLoginSessionMap().remove(event.getSession().getId());
     }
 
     /**
@@ -62,7 +62,7 @@ public class SingletonLoginListener implements HttpSessionListener {
      */
     public static List<HttpSession> getUserSessions() {
         List<HttpSession> list = new ArrayList<HttpSession>();
-        for(Map.Entry<String,HttpSession> entry: singletonLoginSessionMap.entrySet()) {
+        for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()) {
             HttpSession session = entry.getValue();
             list.add(session);
         }
@@ -74,7 +74,7 @@ public class SingletonLoginListener implements HttpSessionListener {
      */
     public static Map<Long, String> getSessionIds() {
         Map<Long, String> map = new HashMap<Long, String>();
-        for(Map.Entry<String,HttpSession> entry: singletonLoginSessionMap.entrySet()){
+        for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
             String sessionId = entry.getKey();
             HttpSession session = entry.getValue();
             User user = (User) session.getAttribute(Globals.LOGIN_USER);
@@ -92,12 +92,12 @@ public class SingletonLoginListener implements HttpSessionListener {
         Map<Long, String> userSessionMap = getSessionIds();
         if (userSessionMap.containsKey(userId)) {
             String sessionId = userSessionMap.get(userId);
-            HttpSession httpSession = singletonLoginSessionMap.get(sessionId);
+            HttpSession httpSession = singleLoginSessionMap.get(sessionId);
             if (!httpSession.isNew()) {
                 httpSession.removeAttribute(Globals.LOGIN_USER);
                 //httpSession.invalidate();
             }
-            singletonLoginSessionMap.remove(sessionId);
+            singleLoginSessionMap.remove(sessionId);
         }
     }
 
@@ -105,22 +105,22 @@ public class SingletonLoginListener implements HttpSessionListener {
      * 增加用户到session集合中
      */
     public static void addUserSession(HttpSession session) {
-        getSingletonLoginSessionMap().put(session.getId(), session);
+        getSingleLoginSessionMap().put(session.getId(), session);
     }
 
     /**
      * 移除一个session
      */
     public static void removeSession(String sessionID) {
-        getSingletonLoginSessionMap().remove(sessionID);
+        getSingleLoginSessionMap().remove(sessionID);
     }
 
     public static boolean containsKey(String key) {
-        return getSingletonLoginSessionMap().containsKey(key);
+        return getSingleLoginSessionMap().containsKey(key);
     }
 
     public synchronized static boolean logined(User user) {
-        for(Map.Entry<String,HttpSession> entry: singletonLoginSessionMap.entrySet()){
+        for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
             HttpSession session = entry.getValue();
             User sessionuser = (User) session.getAttribute(Globals.LOGIN_USER);
             if (sessionuser != null) {
@@ -135,14 +135,14 @@ public class SingletonLoginListener implements HttpSessionListener {
     /**
      * 获取在线的sessionMap
      */
-    public static Map<String, HttpSession> getSingletonLoginSessionMap() {
-        return singletonLoginSessionMap;
+    public static Map<String, HttpSession> getSingleLoginSessionMap() {
+        return singleLoginSessionMap;
     }
 
     public static HttpSession getLoginedSession(Long userId) {
         String sessionId = getSessionIds().get(userId);
         if (sessionId!=null) {
-           return getSingletonLoginSessionMap().get(sessionId);
+           return getSingleLoginSessionMap().get(sessionId);
         }
         return null;
     }
