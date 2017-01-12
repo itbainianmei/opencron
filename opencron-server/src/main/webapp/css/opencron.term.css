@@ -1,5 +1,6 @@
 body{
-    margin: 0px;background-color: #000000
+    margin: 0px;background-color: #000000;
+    overflow: hidden;
 }
 .navbar{
     background-image: linear-gradient(#ffffff, #eeeeee 50%, #e4e4e4);
