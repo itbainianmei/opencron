@@ -67,6 +67,15 @@
     $(document).ready(function () {
        document.title = '${name}';
        var term = new OpencronTerm();
+
+        //去掉a点击时的虚线框
+        $(".container").find("a").each(function (i,a) {
+            $(a).focus(function () {
+                this.blur();
+            });
+        });
+
+        //主题
        $(".theme").find("a").each(function (i,e) {
            var theme = $(e).attr('theme');
            $(e).click(function () {
