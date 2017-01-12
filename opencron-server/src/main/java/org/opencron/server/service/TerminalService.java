@@ -20,6 +20,7 @@
  *
  *
  */
+
 package org.opencron.server.service;
 
 import ch.ethz.ssh2.*;
@@ -167,6 +168,7 @@ public class TerminalService {
 
     public static class TerminalClient {
 
+        private String httpSessionId;
         private WebSocketSession webSocketSession;
         private Connection connection;
         private Session session;
@@ -176,8 +178,9 @@ public class TerminalService {
         private BufferedWriter writer;
         private boolean closed = false;
 
-        public TerminalClient(WebSocketSession webSocketSession,Terminal terminal){
+        public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,Terminal terminal){
             this.webSocketSession = webSocketSession;
+            this.httpSessionId = httpSessionId;
             this.terminal = terminal;
         }
 
@@ -266,6 +269,13 @@ public class TerminalService {
             return webSocketSession;
         }
 
+        public String getHttpSessionId() {
+            return httpSessionId;
+        }
+
+        public void setHttpSessionId(String sessionId) {
+            this.httpSessionId = sessionId;
+        }
     }
 
     public static class TerminalContext implements Serializable {
@@ -324,13 +334,13 @@ public class TerminalService {
             return null;
         }
 
-        public static void exit(User user) throws IOException {
+        public static void exit(User user,String httpSessionId) throws IOException {
             if (notEmpty(terminalSession)) {
                 for(Map.Entry<WebSocketSession, TerminalClient> entry: terminalSession.entrySet()){
                     TerminalClient terminalClient = entry.getValue();
-                    if (terminalClient.getTerminal().getUser().equals(user)) {
+                    if (terminalClient.getHttpSessionId().equals(httpSessionId) && terminalClient.getTerminal().getUser().equals(user)) {
                         terminalClient.disconnect();
-                        terminalClient.getWebSocketSession().sendMessage(new TextMessage("Sorry! logout, so Opencron Terminal changed to closed. "));
+                        terminalClient.getWebSocketSession().sendMessage(new TextMessage("Sorry! Session was invalidated, so opencron Terminal changed to closed. "));
                         terminalClient.getWebSocketSession().close();
                     }
                 }

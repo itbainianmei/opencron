@@ -40,17 +40,15 @@ public class TerminalHandler extends TextWebSocketHandler {
 
 	private TerminalClient terminalClient;
 
-	private String sessionId;
 	@Autowired
 	private TerminalService terminalService;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
-		sessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
-		if (sessionId != null) {
-			final Terminal terminal = TerminalContext.remove(sessionId);
-
+		String sshSessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
+		if (sshSessionId != null) {
+			final Terminal terminal = TerminalContext.remove(sshSessionId);
 			if (terminal!=null) {
 				try {
 					session.sendMessage(new TextMessage("Welcome to Opencron Terminal! Connect Starting. "));
@@ -110,9 +108,10 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
+		String httpSessionId = (String) session.getAttributes().get(Globals.HTTP_SESSION_ID);
 		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
-			this.terminalClient = new TerminalClient(session,terminal);
+			this.terminalClient = new TerminalClient(session,httpSessionId,terminal);
 			TerminalSession.put(session,this.terminalClient);
 		}
 		return this.terminalClient;
