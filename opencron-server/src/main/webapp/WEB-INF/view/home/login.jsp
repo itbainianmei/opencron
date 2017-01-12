@@ -20,6 +20,12 @@
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
     <script type="text/javascript">
 
+
+
+        <c:if test="${!empty opencron_user}">
+            window.location.href="${contextPath}/home";
+        </c:if>
+
         $(document).ready(function(){
             var skin = $.cookie("opencron_skin");
             if(skin) {
@@ -484,9 +490,12 @@
         </div>
 
         <button id="btnLogin" class="btn btn-sm m-r-5" type="button">登录</button>
-        <span id="error_msg" style=" color: rgb(192,192,192)">
-            请输入您的用户名和密码进行登陆
-        </span>
+        <c:if test="${empty message}">
+            <span id="error_msg" style=" color: rgb(192,192,192)">请输入您的用户名和密码进行登陆 </span>
+        </c:if>
+        <c:if test="${!empty message}">
+            <span id="error_msg" style=" color: rgb(255,0,0)"> 你的账号在其他地方登录,请重新登录  </span>
+        </c:if>
     </div>
 
     <div class="modal fade" id="pwdModal" tabindex="-1" role="dialog" aria-hidden="true">

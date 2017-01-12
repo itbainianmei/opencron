@@ -64,12 +64,34 @@ public class HomeService {
         String saltPassword = Encodes.encodeHex(Digests.sha1(password.getBytes(), salt, 1024));
 
         if (saltPassword.equals(user.getPassword())) {
-            httpSession.setAttribute(Globals.LOGIN_USER, user);
             if (user.getRoleId() == 999L) {
                 httpSession.setAttribute(Globals.PERMISSION, true);
             } else {
                 httpSession.setAttribute(Globals.PERMISSION, false);
             }
+
+            Boolean logined = SingletonLoginListener.logined(user);
+            if (logined) {
+                HttpSession session = SingletonLoginListener.getLoginedSession(user.getUserId());
+                if (session!=null) {
+                    session.setAttribute("message","你的账号在其他地方登录,请重新登录");
+                }
+                //拿到已经登录的session,将其踢下线
+                SingletonLoginListener.removeUserSession(user.getUserId());
+            }
+            SingletonLoginListener.addUserSession(httpSession);
+
+            httpSession.setAttribute(Globals.LOGIN_USER, user);
+/*
+            Map<Long,User> loginUsers = (Map<Long, User>) OpencronContext.get("loginUsers");
+            if (CommonUtils.isEmpty(loginUsers)) {
+                loginUsers = new HashMap<Long, User>();
+                loginUsers.put(user.getUserId(),user);
+
+            }
+            OpencronContext.put("loginUsers",loginUsers);
+*/
+
             return 200;
         } else {
             return 500;
