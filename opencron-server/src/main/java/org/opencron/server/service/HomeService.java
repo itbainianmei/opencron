@@ -77,7 +77,7 @@ public class HomeService {
                 if (logined) {
                     HttpSession session = SingleLoginListener.getLoginedSession(user.getUserId());
                     if (session!=null) {
-                        session.setAttribute("message","你的账号在其他地方登录,请重新登录");
+                        session.setAttribute("loginMsg","你的账号在其他地方登录,请重新登录");
                     }
                     //拿到已经登录的session,将其踢下线
                     SingleLoginListener.removeUserSession(user.getUserId());

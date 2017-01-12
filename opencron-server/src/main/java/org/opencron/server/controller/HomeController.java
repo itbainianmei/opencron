@@ -216,6 +216,7 @@ public class HomeController {
         //用户退出后当前用户的所有终端全部退出.
         TerminalSession.exit(user,httpSession.getId());
         httpSession.removeAttribute(Globals.LOGIN_USER);
+        httpSession.removeAttribute("loginMsg");
         return "redirect:/";
     }
 

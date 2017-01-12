@@ -488,11 +488,11 @@
         </div>
 
         <button id="btnLogin" class="btn btn-sm m-r-5" type="button">登录</button>
-        <c:if test="${empty message}">
+        <c:if test="${empty loginMsg}">
             <span id="error_msg" style=" color: rgb(192,192,192)">请输入您的用户名和密码进行登陆 </span>
         </c:if>
-        <c:if test="${!empty message}">
-            <span id="error_msg" style=" color: rgb(255,0,0)"> 你的账号在其他地方登录,请重新登录  </span>
+        <c:if test="${!empty loginMsg}">
+            <span id="error_msg" style=" color: rgb(255,0,0)"> ${loginMsg} </span>
         </c:if>
     </div>
 

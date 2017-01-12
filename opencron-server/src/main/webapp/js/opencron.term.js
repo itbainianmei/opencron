@@ -113,7 +113,11 @@
         window.clearInterval(self.term._blink);
         self.termClosed = true;
         //转移焦点到零时的输入框,主要是为了接管term对键盘的监听(终端已经logout的情况下,再点击Enter则关闭当前页面)
-        $("<input type='text' width='0px' height='0px' style='border:0;outline:none;position: absolute;top: -1000px;left: -1000px;'>").appendTo('body')[0].focus();
+        $("<input type='text' id='unfocusinput' width='0px' height='0px' style='border:0;outline:none;position: absolute;top: -1000px;left: -1000px;'>").appendTo('body');
+        document.getElementById("unfocusinput").focus();
+        $("#term").bind("click",function () {
+            document.getElementById("unfocusinput").focus();
+        });
     };
 
 }

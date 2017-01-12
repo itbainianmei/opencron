@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png" />
     <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170111"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170112"></script>
     <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" >
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
     <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
@@ -16,7 +16,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
     <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170111" >
+    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170112" >
 
     <title>opencron Terminal</title>
 </head>
@@ -28,6 +28,7 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a class="term-logo" href="javascript:void(0)" title="" title="">Opencron</a></li>
+               <%--
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="选择主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;选择主题<b class="caret"></b></a>
                     <ul class="dropdown-menu theme" >
@@ -37,6 +38,7 @@
                         <li><a theme="blue" href="javascript:void(0)"><span class="circle" style="background-color:blue"></span>&nbsp;蓝色</a></li>
                     </ul>
                 </li>
+               --%>
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="打开终端"><i aria-hidden="true" class="fa fa-folder-open-o"></i>&nbsp;打开终端<b class="caret"></b></a>
                     <ul class="dropdown-menu">
