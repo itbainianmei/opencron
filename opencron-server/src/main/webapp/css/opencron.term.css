@@ -11,7 +11,9 @@ body{
 
 .navbar-nav{
     float: none;
+    margin:2px;
 }
+
 .navbar-nav > li > a{
     padding-top: 12px;
     padding-bottom: 12px;

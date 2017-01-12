@@ -445,7 +445,7 @@
         screenKeys: false,
         debug: false,
         useStyle: false,
-        fontSize:11,
+        fontSize:13,
         lineHeight:16
         // programFeatures: false,
         // focusKeys: false,
