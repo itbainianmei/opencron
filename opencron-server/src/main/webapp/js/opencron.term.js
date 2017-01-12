@@ -71,8 +71,10 @@
             }
             //(终端已经logout的情况下,再点击Enter则关闭当前页面
             if (self.hasOwnProperty("termClosed")) {
-                self.term.close();
-                window.close();
+                if ( $("#unfocusinput").is(":focus")||$("#chinese").is(":focus") ){
+                    self.term.close();
+                    window.close();
+                }
             }
         }
     });
@@ -117,6 +119,9 @@
         document.getElementById("unfocusinput").focus();
         $("#term").bind("click",function () {
             document.getElementById("unfocusinput").focus();
+        });
+        $("#chinput").bind("click",function () {
+            window.close();
         });
     };
 
