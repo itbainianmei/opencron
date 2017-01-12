@@ -71,7 +71,8 @@ public class HomeService {
             } else {
                 httpSession.setAttribute(Globals.PERMISSION, false);
             }
-            if( PropertyPlaceholder.getBoolean("opencron.singlelogin") ){
+
+            if( ! PropertyPlaceholder.getBoolean("opencron.multilogin") ){
                 Boolean logined = SingleLoginListener.logined(user);
                 if (logined) {
                     HttpSession session = SingleLoginListener.getLoginedSession(user.getUserId());
