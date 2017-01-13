@@ -147,6 +147,14 @@ public class TerminalController {
         return "/terminal/error";
     }
 
+    @RequestMapping("/resize")
+    public void resize(String token,Integer cols,Integer rows) throws Exception {
+        TerminalClient terminalClient = TerminalSession.get(token);
+        if (terminalClient!=null) {
+            terminalClient.resize(cols,rows);
+        }
+    }
+
     @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);

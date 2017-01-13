@@ -43,10 +43,12 @@ public class TerminalHandler extends TextWebSocketHandler {
 	@Autowired
 	private TerminalService terminalService;
 
+	private String sshSessionId;
+
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
-		String sshSessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
+		sshSessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
 		if (sshSessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sshSessionId);
 			if (terminal!=null) {
@@ -111,7 +113,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 		String httpSessionId = (String) session.getAttributes().get(Globals.HTTP_SESSION_ID);
 		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
-			this.terminalClient = new TerminalClient(session,httpSessionId,terminal);
+			this.terminalClient = new TerminalClient(session,httpSessionId,sshSessionId,terminal);
 			TerminalSession.put(session,this.terminalClient);
 		}
 		return this.terminalClient;

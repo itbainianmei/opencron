@@ -3,6 +3,7 @@
     this.socket = null;
     this.term = null;
     this.termNode = null;
+    this.args = arguments;
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.open();
 }
@@ -10,19 +11,22 @@
 ;OpencronTerm.prototype.resize = function () {
     var self = this;
    $(window).resize(function () {
-       self.term.resize(self.size().cols,self.size().rows);
+       var currSize = self.size();
+       if (self.display.cols != currSize.cols || self.display.rows != currSize.rows) {
+           self.display = currSize;
+           self.term.resize(self.display.cols,self.display.rows);
+           $.ajax({
+               url: '/terminal/resize?token=' + self.args[0] + '&cols=' + self.display.cols + '&rows=' + self.display.rows,
+               cache: false
+           });
+       }
    });
 }
 
 ;OpencronTerm.prototype.size = function () {
-    var text="qwertyuiopasdfghjklzxcvbnm";
-    var span = $("<span>", { text: text });
-    $(this.termNode).append(span);
-    var charWidth = span.width() / text.length;
-    span.remove();
     return {
-        cols: Math.floor($(window).width() / charWidth) + 2,
-        rows: Math.floor( ($(window).height()-$("#navigation").outerHeight()) / 16)
+        cols: Math.floor($(window).innerWidth() / 7.2981),
+        rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight()) / 16)
     };
 }
 
@@ -41,6 +45,7 @@
         convertEol: true
     });
     self.term.open(self.termNode.empty()[0]);
+    self.display = self.size();
     self.term.on('data', function(data) {
         self.socket.send(data);
     });
@@ -126,6 +131,7 @@
     };
 
 }
+/*
 
 ;OpencronTerm.prototype.theme = function () {
     'use strict';
@@ -155,3 +161,4 @@
     this.term.colors[256] = yellow.color256;
     this.term.colors[257] = yellow.color257;
 }
+*/

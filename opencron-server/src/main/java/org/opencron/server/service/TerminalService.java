@@ -168,6 +168,7 @@ public class TerminalService {
 
     public static class TerminalClient {
 
+        private String clientId;
         private String httpSessionId;
         private WebSocketSession webSocketSession;
         private Connection connection;
@@ -178,10 +179,11 @@ public class TerminalService {
         private BufferedWriter writer;
         private boolean closed = false;
 
-        public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,Terminal terminal){
+        public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,String clientId,Terminal terminal){
             this.webSocketSession = webSocketSession;
             this.httpSessionId = httpSessionId;
             this.terminal = terminal;
+            this.clientId = clientId;
         }
 
         public void openTerminal(int cols,int rows) throws Exception {
@@ -276,6 +278,18 @@ public class TerminalService {
         public void setHttpSessionId(String sessionId) {
             this.httpSessionId = sessionId;
         }
+
+        public void resize(Integer cols, Integer rows) throws IOException {
+            this.session.requestWindowChange(cols, rows, 0, 0);
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
     }
 
     public static class TerminalContext implements Serializable {
@@ -305,6 +319,16 @@ public class TerminalService {
 
         public static TerminalClient get(WebSocketSession key) {
             return terminalSession.get(key);
+        }
+
+        public static TerminalClient get(String key) {
+            for (Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()) {
+                TerminalClient client = entry.getValue();
+                if (client.getClientId().equals(key)) {
+                    return client;
+                }
+            }
+            return null;
         }
 
         public static void put(WebSocketSession key, TerminalClient terminalClient) {
