@@ -23,9 +23,7 @@ package org.opencron.server.websocket;
 
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import ch.ethz.ssh2.channel.ChannelClosedException;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.Globals;
 import static org.opencron.server.service.TerminalService.*;
