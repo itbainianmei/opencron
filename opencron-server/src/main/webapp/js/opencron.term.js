@@ -16,7 +16,7 @@
            self.display = currSize;
            self.term.resize(self.display.cols,self.display.rows);
            $.ajax({
-               url: '/terminal/resize?token=' + self.args[0] + '&cols=' + self.display.cols + '&rows=' + self.display.rows,
+               url: '/terminal/resize?token=' + self.args[0] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
                cache: false
            });
        }
@@ -27,7 +27,7 @@
     return {
         width: $(window).innerWidth(),
         height: $(window).innerHeight()-$("#navigation").outerHeight(),
-        cols: Math.floor($(window).innerWidth() / 7.2981),
+        cols: Math.floor($(window).innerWidth() / 7.2261),
         rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight()) / 16)
     };
 }

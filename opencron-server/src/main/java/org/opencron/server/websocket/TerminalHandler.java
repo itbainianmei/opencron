@@ -23,7 +23,9 @@ package org.opencron.server.websocket;
 
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import ch.ethz.ssh2.channel.ChannelClosedException;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.Globals;
 import static org.opencron.server.service.TerminalService.*;
@@ -86,14 +88,15 @@ public class TerminalHandler extends TextWebSocketHandler {
 			getClient(session,null);
 			if (this.terminalClient != null ) {
 				if ( !terminalClient.isClosed()) {
-					terminalClient.write(new String(message.asBytes(), "UTF-8"));
+					String line = message.getPayload();
+					terminalClient.write(line);
 				}else {
 					session.close();
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			session.sendMessage(new TextMessage("Sorry! Opencron Terminal is closed, please try again. "));
+			session.sendMessage(new TextMessage("Sorry! Opencron Terminal was closed, please try again. "));
+			terminalClient.disconnect();
 			session.close();
 		}
 	}

@@ -24,6 +24,7 @@
 package org.opencron.server.service;
 
 import ch.ethz.ssh2.*;
+import ch.ethz.ssh2.channel.ChannelClosedException;
 import org.opencron.common.utils.*;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.dao.QueryDao;
@@ -31,6 +32,8 @@ import org.opencron.server.domain.User;
 import org.opencron.server.job.Globals;
 import org.opencron.server.job.OpencronContext;
 import org.opencron.server.tag.PageBean;
+import org.slf4j.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -78,6 +81,8 @@ import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 @Service
 public class TerminalService {
+
+    private static Logger logger = LoggerFactory.getLogger(TerminalService.class);
 
     @Autowired
     private QueryDao queryDao;
@@ -177,6 +182,8 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+
+        //记录了按Enter之前的发送数据,Enter之后清零
         private boolean closed = false;
 
         public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,String clientId,Terminal terminal){
@@ -216,9 +223,6 @@ public class TerminalService {
                             }
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
                             webSocketSession.sendMessage(new TextMessage(message));
-                            if (message.replace("\r\n","").equalsIgnoreCase("logout")) {
-                                disconnect();
-                            }
                         }
                     } catch (Exception e) {
                     }
