@@ -80,7 +80,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 		}
 	}
 
-
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		super.handleTextMessage(session, message);
@@ -123,7 +122,6 @@ public class TerminalHandler extends TextWebSocketHandler {
 		}
 		return this.terminalClient;
 	}
-
 
 	private void closeTerminal(WebSocketSession session) throws IOException {
 		terminalClient = TerminalSession.remove(session);
