@@ -148,11 +148,12 @@ public class TerminalController {
     }
 
     @RequestMapping("/resize")
-    public void resize(String token,Integer cols,Integer rows,Integer width,Integer height) throws Exception {
+    public void resize(HttpServletResponse response, String token,Integer cols,Integer rows,Integer width,Integer height) throws Exception {
         TerminalClient terminalClient = TerminalSession.get(token);
         if (terminalClient!=null) {
             terminalClient.resize(cols,rows,width,height);
         }
+        WebUtils.writeJson(response, "");
     }
 
     @RequestMapping("/save")

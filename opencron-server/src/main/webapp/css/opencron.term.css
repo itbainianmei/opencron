@@ -4,7 +4,7 @@ body{
 }
 
 .terminal {
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .dropdown-menu > li > a {
@@ -29,9 +29,6 @@ body{
     min-height: 45px;
 }
 
-.navbar-nav > li > a{
-    line-height: 15px;
-}
 .container{
     float: left;
     width: 100%;
@@ -40,6 +37,10 @@ body{
 
 .navbar-nav {
     float: none;
+}
+
+.navbar-nav > li > a{
+    line-height: 15px;
 }
 
 .dropdown-menu{

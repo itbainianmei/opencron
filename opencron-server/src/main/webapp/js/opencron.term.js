@@ -11,15 +11,17 @@
 ;OpencronTerm.prototype.resize = function () {
     var self = this;
    $(window).resize(function () {
-       var currSize = self.size();
-       if (self.display.cols != currSize.cols || self.display.rows != currSize.rows) {
-           self.display = currSize;
-           self.term.resize(self.display.cols,self.display.rows);
-           $.ajax({
-               url: '/terminal/resize?token=' + self.args[0] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
-               cache: false
-           });
-       }
+       window.setTimeout(function () {
+           var currSize = self.size();
+           if (self.display.cols != currSize.cols || self.display.rows != currSize.rows) {
+               self.display = currSize;
+               self.term.resize(self.display.cols,self.display.rows);
+               $.ajax({
+                   url: '/terminal/resize?token=' + self.args[0] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
+                   cache: false
+               });
+           }
+       },1000);
    });
 }
 
