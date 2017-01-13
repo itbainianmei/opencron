@@ -57,7 +57,9 @@ public class TerminalHandler extends TextWebSocketHandler {
 					getClient(session,terminal);
 					int cols = Integer.parseInt(session.getAttributes().get("cols").toString());
 					int rows = Integer.parseInt(session.getAttributes().get("rows").toString());
-					terminalClient.openTerminal(cols,rows);
+					int width = Integer.parseInt(session.getAttributes().get("width").toString());
+					int height = Integer.parseInt(session.getAttributes().get("height").toString());
+					terminalClient.openTerminal(cols,rows,width,height);
 					terminalService.login(terminal);
 				} catch (Exception e) {
 					if (e.getLocalizedMessage().replaceAll("\\s+", "").contentEquals("Operationtimedout")) {

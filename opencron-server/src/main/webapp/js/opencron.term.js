@@ -25,6 +25,8 @@
 
 ;OpencronTerm.prototype.size = function () {
     return {
+        width: $(window).innerWidth(),
+        height: $(window).innerHeight()-$("#navigation").outerHeight(),
         cols: Math.floor($(window).innerWidth() / 7.2981),
         rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight()) / 16)
     };
@@ -89,7 +91,7 @@
     var size = this.size();
 
     var url = this.contextPath+'/terminal.ws';
-    var params = "?cols="+size.cols+"&rows="+size.rows;
+    var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
 
     if ('WebSocket' in window) {
         self.socket = new WebSocket(url+params);
@@ -99,7 +101,6 @@
         url = "http://"+window.location.host+"/terminal.js";
         self.socket= SockJS(url+params);
     }
-
 
     self.socket.onerror = function() {
         self.term.write("Sorry! opencron terminal connect error!please try again.\n");

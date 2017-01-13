@@ -186,13 +186,13 @@ public class TerminalService {
             this.clientId = clientId;
         }
 
-        public void openTerminal(int cols,int rows) throws Exception {
+        public void openTerminal(int cols,int rows,int width,int height) throws Exception {
             connection = new Connection(terminal.getHost(), terminal.getPort());
             connection.connect();
             connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword());
 
             session = connection.openSession();
-            session.requestPTY("xterm",cols, rows, 0, 0,null);
+            session.requestPTY("xterm",cols, rows, width, height,null);
             session.startShell();
             inputStream = session.getStdout();
             outputStream = session.getStdin();
@@ -279,8 +279,8 @@ public class TerminalService {
             this.httpSessionId = sessionId;
         }
 
-        public void resize(Integer cols, Integer rows) throws IOException {
-            this.session.requestWindowChange(cols, rows, 0, 0);
+        public void resize(Integer cols, Integer rows,Integer width,Integer height) throws IOException {
+            this.session.requestWindowChange(cols, rows, width, height);
         }
 
         public String getClientId() {
