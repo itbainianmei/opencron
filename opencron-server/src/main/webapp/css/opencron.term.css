@@ -4,7 +4,7 @@ body{
 }
 
 .terminal {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .dropdown-menu > li > a {
@@ -19,14 +19,19 @@ body{
 }
 
 .navbar {
+    position: absolute;
     background-image: linear-gradient(#ffffff, #eeeeee 50%, #e4e4e4);
     margin-bottom:0px;
     border-radius:0px;
     float: left;
     width:100%;
     left: 0px;
+    min-height: 45px;
 }
 
+.navbar-nav > li > a{
+    line-height: 15px;
+}
 .container{
     float: left;
     width: 100%;
@@ -48,8 +53,6 @@ body{
 .fa{
     font-size: 14px;
 }
-
-
 
 .circle {
     border-radius: 50%;

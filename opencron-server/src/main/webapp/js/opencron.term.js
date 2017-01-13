@@ -28,7 +28,7 @@
         width: $(window).innerWidth(),
         height: $(window).innerHeight()-$("#navigation").outerHeight(),
         cols: Math.floor($(window).innerWidth() / 7.2261),
-        rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight()) / 16)
+        rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight() - 8 )/ 16)
     };
 }
 

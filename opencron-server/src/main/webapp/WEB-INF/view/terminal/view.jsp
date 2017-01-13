@@ -34,6 +34,9 @@
                 data: "id=" + id,
                 dataType: "html",
                 success: function (data) {
+                    if(data.indexOf("login")>-1){
+                        window.location.href="${contextPath}";
+                    }
                     var json = eval("(" + data + ")");
                     if (json.status == "authfail") {
                         if (type == 2) {
