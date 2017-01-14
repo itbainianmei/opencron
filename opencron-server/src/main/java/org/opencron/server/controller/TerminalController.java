@@ -71,7 +71,7 @@ public class TerminalController {
             WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
         }else {
             //重新输入密码进行认证...
-            WebUtils.writeJson(response, String.format(json,authStr,"null"));
+            WebUtils.writeJson(response, String.format(json,authStr.toLowerCase(),"null"));
             return;
         }
     }
@@ -153,7 +153,6 @@ public class TerminalController {
         if (terminalClient!=null) {
             terminalClient.resize(cols,rows,width,height);
         }
-        WebUtils.writeJson(response, "");
     }
 
     @RequestMapping("/save")

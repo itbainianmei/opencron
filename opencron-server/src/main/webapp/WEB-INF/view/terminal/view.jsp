@@ -38,15 +38,15 @@
                         window.location.href="${contextPath}";
                     }
                     var json = eval("(" + data + ")");
-                    if (json.status == "authfail") {
+                    if (json.status == "authfail" || json.status == "keyauthfail") {
                         if (type == 2) {
                             alert("用户名密码错误,登录失败");
                         } else {
                             editSsh(id,0);
                         }
-                    } else if (json.status == "timeout") {
-                        alert("连接到远端主机超时");
-                    } else if (json.status == "error") {
+                    } else if (json.status == "hostfail") {
+                        alert("DNS解析失败");
+                    } else if (json.status == "genericfail") {
                         alert("连接失败请重试");
                     } else if (json.status == "success") {
                         var url = '${contextPath}' + json.url;

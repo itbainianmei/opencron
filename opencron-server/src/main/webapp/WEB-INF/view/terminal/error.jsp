@@ -202,7 +202,6 @@
                         window.setTimeout(function () {
                             $("#sshModal").modal("show");
                         },1000);
-
                     }
                 }
             });

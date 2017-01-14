@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.crypto.BadPaddingException;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
@@ -125,7 +126,9 @@ public class TerminalService {
             } else if (e.getMessage().toLowerCase().contains("unknownhostexception")) {
                 logger.info("[opencron]:error: DNS Lookup Failed " );
                 return Terminal.HOST_FAIL;
-            } else {
+            } else if(e instanceof BadPaddingException) {//RSA解码错误..密码错误...
+                return Terminal.AUTH_FAIL;
+            }else {
                 return Terminal.GENERIC_FAIL;
             }
         }finally {
@@ -192,7 +195,6 @@ public class TerminalService {
         public static final int SESSION_TIMEOUT = 60000;
         public static final int CHANNEL_TIMEOUT = 60000;
 
-        //记录了按Enter之前的发送数据,Enter之后清零
         private boolean closed = false;
 
         public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,String clientId,Terminal terminal){
@@ -213,8 +215,7 @@ public class TerminalService {
             session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
             session.connect(SESSION_TIMEOUT);
             this.channelShell = (ChannelShell) session.openChannel("shell");
-            this.channelShell.setPtyType("xterm");
-
+            this.channelShell.setPtyType("xterm",cols,rows,width,height);
 
             this.inputStream = this.channelShell.getInputStream();
             this.outputStream = channelShell.getOutputStream();
