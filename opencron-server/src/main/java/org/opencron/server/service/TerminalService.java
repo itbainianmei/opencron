@@ -216,12 +216,10 @@ public class TerminalService {
             session.connect(SESSION_TIMEOUT);
             this.channelShell = (ChannelShell) session.openChannel("shell");
             this.channelShell.setPtyType("xterm",cols,rows,width,height);
-
-            this.inputStream = this.channelShell.getInputStream();
-            this.outputStream = channelShell.getOutputStream();
-
             this.channelShell.connect();
-            writer = new PrintStream(new PrintStream(outputStream, true));
+            this.inputStream = this.channelShell.getInputStream();
+            this.outputStream = this.channelShell.getOutputStream();
+            this.writer = new PrintStream(this.outputStream, true);
 
             new Thread(new Runnable() {
                 @Override
