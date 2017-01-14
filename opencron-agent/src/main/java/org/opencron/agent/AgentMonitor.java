@@ -69,10 +69,17 @@ public class AgentMonitor {
                 logger.info("[opencron]:monitor connected:SessionId @ {},port @ {}", sessionId, port);
                 clients.put(sessionId, client);
                 /**
-                 * 断开连接就不在推送数据
+                 * 断开连接或者获取数据错误,不在推送数据...
                  */
                 while ( clients.get(sessionId) !=null ) {
-                    client.sendEvent("monitor", monitor());
+                    Monitor monitor = monitor();
+                    if (monitor == null) {
+                        stop = true;
+                        clients.remove(sessionId);
+                        server.stop();
+                        break;
+                    }
+                    client.sendEvent("monitor", monitor);
                     try {
                         TimeUnit.MICROSECONDS.sleep(1000);
                     } catch (InterruptedException e) {
