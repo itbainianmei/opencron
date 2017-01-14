@@ -63,7 +63,7 @@ public class TerminalController {
         terminal = termService.getById(terminal.getId());
         String authStr = termService.auth(terminal);
         //登陆认证成功
-        if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
+        if (authStr.equals(Terminal.SUCCESS)) {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
@@ -159,7 +159,7 @@ public class TerminalController {
     @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         String message = termService.auth(term);
-        if ("success".equalsIgnoreCase(message)) {
+        if (message.equals(Terminal.SUCCESS)) {
             User user = (User)session.getAttribute(Globals.LOGIN_USER);
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);

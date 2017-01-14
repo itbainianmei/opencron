@@ -26,10 +26,24 @@
 }
 
 ;OpencronTerm.prototype.size = function () {
+    var cols = Math.floor($(window).innerWidth() / 7.2261);
+    var span = $("<span>");
+    $('body').append(span);
+    var array = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m','1','2','3','4','5','6','7','8','9','0'];
+    var i = 0;
+    while (true){
+        span.text( span.text()+ (i <array.length?array[i]:array[i % (array.length-1)]) );
+        if( $(window).width() < span.width() ){
+            cols = i-1;
+            break;
+        }
+        ++i;
+    }
+    span.remove();
     return {
         width: $(window).innerWidth(),
         height: $(window).innerHeight()-$("#navigation").outerHeight(),
-        cols: Math.floor($(window).innerWidth() / 7.2261),
+        cols: cols,
         rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight() - 8 )/ 16)
     };
 }

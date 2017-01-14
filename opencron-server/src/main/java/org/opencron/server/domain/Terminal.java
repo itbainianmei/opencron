@@ -89,6 +89,7 @@ public class Terminal implements Serializable{
     @JSONField(serialize=false)
     public static final String HOST_FAIL ="HOSTFAIL";
 
+
     public Long getId() {
         return id;
     }

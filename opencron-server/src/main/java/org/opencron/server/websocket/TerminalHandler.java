@@ -85,8 +85,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 			getClient(session,null);
 			if (this.terminalClient != null ) {
 				if ( !terminalClient.isClosed()) {
-					String line = message.getPayload();
-					terminalClient.write(line);
+					terminalClient.write(message.asBytes());
 				}else {
 					session.close();
 				}

@@ -23,8 +23,9 @@
 
 package org.opencron.server.service;
 
-import ch.ethz.ssh2.*;
-import ch.ethz.ssh2.channel.ChannelClosedException;
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 import org.opencron.common.utils.*;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.dao.QueryDao;
@@ -39,7 +40,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import javax.crypto.BadPaddingException;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.*;
@@ -107,25 +107,30 @@ public class TerminalService {
     }
 
     public String auth(Terminal terminal) {
-        Connection connection = null;
+        JSch jSch = new JSch();
+        Session session = null;
         try {
-            connection = new Connection(terminal.getHost(), terminal.getPort());
-            connection.connect();
-            if (!connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword() )) {
-                return "authfail";
-            }
-            return "success";
+            session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
+            session.setPassword(terminal.getPassword());
+
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.connect(TerminalClient.SESSION_TIMEOUT);
+            return  Terminal.SUCCESS;
         } catch (Exception e) {
-            if (e instanceof BadPaddingException) {
-                return "authfail";
+            if (e.getMessage().toLowerCase().contains("userauth fail")) {
+                return Terminal.PUBLIC_KEY_FAIL;
+            } else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
+                return Terminal.AUTH_FAIL;
+            } else if (e.getMessage().toLowerCase().contains("unknownhostexception")) {
+                logger.info("[opencron]:error: DNS Lookup Failed " );
+                return Terminal.HOST_FAIL;
+            } else {
+                return Terminal.GENERIC_FAIL;
             }
-            if(e.getLocalizedMessage().replaceAll("\\s+","").contentEquals("Operationtimedout")){
-                return "timeout";
-            }
-            return "error";
         }finally {
-            if (connection!=null) {
-                connection.close();
+            if (session!=null) {
+                session.disconnect();
             }
         }
     }
@@ -176,12 +181,16 @@ public class TerminalService {
         private String clientId;
         private String httpSessionId;
         private WebSocketSession webSocketSession;
-        private Connection connection;
+        private JSch jSch;
+        private ChannelShell channelShell ;
         private Session session;
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
-        private BufferedWriter writer;
+        private PrintStream writer;
+        public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
+        public static final int SESSION_TIMEOUT = 60000;
+        public static final int CHANNEL_TIMEOUT = 60000;
 
         //记录了按Enter之前的发送数据,Enter之后清零
         private boolean closed = false;
@@ -191,19 +200,27 @@ public class TerminalService {
             this.httpSessionId = httpSessionId;
             this.terminal = terminal;
             this.clientId = clientId;
+            this.jSch = new JSch();
         }
 
         public void openTerminal(int cols,int rows,int width,int height) throws Exception {
-            connection = new Connection(terminal.getHost(), terminal.getPort());
-            connection.connect();
-            connection.authenticateWithPassword(terminal.getUserName(),terminal.getPassword());
 
-            session = connection.openSession();
-            session.requestPTY("xterm",cols, rows, width, height,null);
-            session.startShell();
-            inputStream = session.getStdout();
-            outputStream = session.getStdin();
-            writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+            Session session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
+            session.setPassword(terminal.getPassword());
+
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
+            session.connect(SESSION_TIMEOUT);
+            this.channelShell = (ChannelShell) session.openChannel("shell");
+            this.channelShell.setPtyType("xterm");
+
+
+            this.inputStream = this.channelShell.getInputStream();
+            this.outputStream = channelShell.getOutputStream();
+
+            this.channelShell.connect();
+            writer = new PrintStream(new PrintStream(outputStream, true));
 
             new Thread(new Runnable() {
                 @Override
@@ -233,12 +250,12 @@ public class TerminalService {
 
         /**
          * 向ssh终端输入内容
-         * @param text
+         * @param data
          * @throws IOException
          */
-        public void write(String text) throws IOException {
+        public void write(byte[] data) throws IOException {
             if (writer != null) {
-                writer.write(text);
+                writer.write(data);
                 writer.flush();
             }
         }
@@ -249,12 +266,11 @@ public class TerminalService {
                 writer = null;
             }
             if (session != null) {
-                session.close();
+                session.disconnect();
                 session = null;
             }
-            if (connection!=null) {
-                connection.close();
-                connection = null;
+            if (jSch!=null) {
+                jSch = null;
             }
             closed = true;
         }
@@ -284,7 +300,7 @@ public class TerminalService {
         }
 
         public void resize(Integer cols, Integer rows,Integer width,Integer height) throws IOException {
-            this.session.requestWindowChange(cols, rows, width, height);
+            channelShell.setPtySize(cols,rows,width,height);
         }
 
         public String getClientId() {
