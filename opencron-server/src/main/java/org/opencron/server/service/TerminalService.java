@@ -190,7 +190,7 @@ public class TerminalService {
         private Terminal terminal;
         private InputStream inputStream;
         private OutputStream outputStream;
-        private PrintStream writer;
+        private BufferedWriter writer;
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
         public static final int CHANNEL_TIMEOUT = 60000;
@@ -219,7 +219,7 @@ public class TerminalService {
             this.channelShell.connect();
             this.inputStream = this.channelShell.getInputStream();
             this.outputStream = this.channelShell.getOutputStream();
-            this.writer = new PrintStream(this.outputStream, true);
+            writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 
             new Thread(new Runnable() {
                 @Override
@@ -249,12 +249,12 @@ public class TerminalService {
 
         /**
          * 向ssh终端输入内容
-         * @param data
+         * @param message
          * @throws IOException
          */
-        public void write(byte[] data) throws IOException {
+        public void write(TextMessage message) throws IOException {
             if (writer != null) {
-                writer.write(data);
+                writer.write(message.getPayload());
                 writer.flush();
             }
         }

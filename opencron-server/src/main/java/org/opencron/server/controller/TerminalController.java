@@ -163,7 +163,7 @@ public class TerminalController {
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
         }
-        WebUtils.writeHtml(response,message);
+        WebUtils.writeHtml(response,message.toLowerCase());
     }
 
 

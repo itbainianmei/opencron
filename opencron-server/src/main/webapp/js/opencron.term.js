@@ -128,6 +128,7 @@
     };
 
     self.socket.onmessage = function(event) {
+        console.log(event.data);
         self.term.write(event.data);
     };
 
