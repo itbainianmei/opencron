@@ -62,3 +62,7 @@ body{
     width: 16px;
     margin-bottom: -3px;
 }
+
+.sweet-alert {
+    background-color:rgba(245, 255,255, 0.5);
+}

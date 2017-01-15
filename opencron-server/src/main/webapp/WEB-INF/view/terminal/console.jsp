@@ -11,8 +11,10 @@
     <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170113"></script>
     <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" >
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
-    <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
+    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' >
+    <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js"></script>
 
+    <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
     <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
@@ -46,7 +48,7 @@
                     </ul>
                 </li>
                 <li><a href="${contextPath}/terminal/reopen?token=${token}" target="_blank" title="复制会话"><i aria-hidden="true" class="fa fa-window-restore"></i>&nbsp;复制会话</a></li>
-                <li><a href="javascript:window.close();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出终端</a></li>
+                <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出终端</a></li>
                 <li style="padding-top: 9px;margin-left: 18px;">
                     <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-pencil"></i>&nbsp;中文输入</label>&nbsp;&nbsp;<input id="chinese" size="30" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="chinput" style="margin-top: -3px;">发送</div>
@@ -84,5 +86,18 @@
        });
 
     });
+
+    function closeTerminal() {
+        swal({
+            title: "",
+            text: "您确定要退出终端吗？",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            confirmButtonText: "退出"
+        }, function() {
+            window.close();
+        });
+    }
 </script>
 </html>
