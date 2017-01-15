@@ -61,9 +61,9 @@ public class TerminalController {
         String json = "{status:'%s',url:'%s'}";
 
         terminal = termService.getById(terminal.getId());
-        String authStr = termService.auth(terminal);
+        Terminal.AuthStatus authStatus = termService.auth(terminal);
         //登陆认证成功
-        if (authStr.equals(Terminal.SUCCESS)) {
+        if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
@@ -71,7 +71,7 @@ public class TerminalController {
             WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
         }else {
             //重新输入密码进行认证...
-            WebUtils.writeJson(response, String.format(json,authStr.toLowerCase(),"null"));
+            WebUtils.writeJson(response, String.format(json,authStatus.status,"null"));
             return;
         }
     }
@@ -81,9 +81,9 @@ public class TerminalController {
         User user = (User) session.getAttribute(Globals.LOGIN_USER);
 
         terminal = termService.getById(terminal.getId());
-        String authStr = termService.auth(terminal);
+        Terminal.AuthStatus authStatus = termService.auth(terminal);
         //登陆认证成功
-        if (authStr.equalsIgnoreCase(Terminal.SUCCESS)) {
+        if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
@@ -148,7 +148,7 @@ public class TerminalController {
     }
 
     @RequestMapping("/resize")
-    public void resize(HttpServletResponse response, String token,Integer cols,Integer rows,Integer width,Integer height) throws Exception {
+    public void resize(String token,Integer cols,Integer rows,Integer width,Integer height) throws Exception {
         TerminalClient terminalClient = TerminalSession.get(token);
         if (terminalClient!=null) {
             terminalClient.resize(cols,rows,width,height);
@@ -157,13 +157,13 @@ public class TerminalController {
 
     @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
-        String message = termService.auth(term);
-        if (message.equals(Terminal.SUCCESS)) {
+        Terminal.AuthStatus authStatus = termService.auth(term);
+        if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
             User user = (User)session.getAttribute(Globals.LOGIN_USER);
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
         }
-        WebUtils.writeHtml(response,message.toLowerCase());
+        WebUtils.writeHtml(response,authStatus.status);
     }
 
 

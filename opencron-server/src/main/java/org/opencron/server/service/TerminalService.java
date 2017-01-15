@@ -107,7 +107,7 @@ public class TerminalService {
         }
     }
 
-    public String auth(Terminal terminal) {
+    public Terminal.AuthStatus auth(Terminal terminal) {
         JSch jSch = new JSch();
         Session session = null;
         try {
@@ -117,19 +117,19 @@ public class TerminalService {
             session.setConfig("StrictHostKeyChecking", "no");
             session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
             session.connect(TerminalClient.SESSION_TIMEOUT);
-            return  Terminal.SUCCESS;
+            return  Terminal.AuthStatus.SUCCESS;
         } catch (Exception e) {
             if (e.getMessage().toLowerCase().contains("userauth fail")) {
-                return Terminal.PUBLIC_KEY_FAIL;
+                return Terminal.AuthStatus.PUBLIC_KEY_FAIL;
             } else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
-                return Terminal.AUTH_FAIL;
+                return Terminal.AuthStatus.AUTH_FAIL;
             } else if (e.getMessage().toLowerCase().contains("unknownhostexception")) {
                 logger.info("[opencron]:error: DNS Lookup Failed " );
-                return Terminal.HOST_FAIL;
+                return Terminal.AuthStatus.HOST_FAIL;
             } else if(e instanceof BadPaddingException) {//RSA解码错误..密码错误...
-                return Terminal.AUTH_FAIL;
+                return Terminal.AuthStatus.AUTH_FAIL;
             }else {
-                return Terminal.GENERIC_FAIL;
+                return Terminal.AuthStatus.GENERIC_FAIL;
             }
         }finally {
             if (session!=null) {

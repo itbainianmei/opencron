@@ -52,7 +52,7 @@ public class Terminal implements Serializable{
     @JSONField(serialize=false)
     private byte[] authorization;
 
-    private String status = SUCCESS;
+    private String status = AuthStatus.SUCCESS.status;
 
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date logintime;
@@ -64,31 +64,6 @@ public class Terminal implements Serializable{
     @Transient
     @JSONField(serialize=false)
     private String password;
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String INITIAL ="INITIAL";
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String AUTH_FAIL ="AUTHFAIL";
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String PUBLIC_KEY_FAIL ="KEYAUTHFAIL";
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String GENERIC_FAIL ="GENERICFAIL";
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String SUCCESS ="SUCCESS";
-
-    @Transient
-    @JSONField(serialize=false)
-    public static final String HOST_FAIL ="HOSTFAIL";
-
 
     public Long getId() {
         return id;
@@ -209,5 +184,20 @@ public class Terminal implements Serializable{
         int result = userName != null ? userName.hashCode() : 0;
         result = 31 * result + (user != null ? user.hashCode() : 0);
         return result;
+    }
+
+    public enum AuthStatus {
+        INITIAL("initial"),
+        AUTH_FAIL("authfail"),
+        PUBLIC_KEY_FAIL("keyauthfail"),
+        GENERIC_FAIL("genericfail"),
+        HOST_FAIL("hostfail"),
+        SUCCESS("success");
+        public String status;
+
+        AuthStatus(String status){
+            this.status = status;
+        }
+
     }
 }
