@@ -94,10 +94,8 @@
             }
             //(终端已经logout的情况下,再点击Enter则关闭当前页面
             if (self.hasOwnProperty("termClosed")) {
-                if ( $("#unfocusinput").is(":focus")||$("#chinese").is(":focus") ){
-                    self.term.close();
-                    window.close();
-                }
+                self.term.close();
+                window.close();
             }
         }
     });
@@ -137,15 +135,12 @@
         //清除光标闪烁
         window.clearInterval(self.term._blink);
         self.termClosed = true;
+        document.title = "Terminal Disconnect";
+        $('<div class="modal-backdrop in" id="backdrop">').appendTo('body');
         //转移焦点到零时的输入框,主要是为了接管term对键盘的监听(终端已经logout的情况下,再点击Enter则关闭当前页面)
         $("<input type='text' id='unfocusinput' width='0px' height='0px' style='border:0;outline:none;position: absolute;top: -1000px;left: -1000px;'>").appendTo('body');
         document.getElementById("unfocusinput").focus();
-        $("#term").bind("click",function () {
-            document.getElementById("unfocusinput").focus();
-        });
-        $("#chinput").bind("click",function () {
-            window.close();
-        });
+        $(".terminal-cursor").remove();
     };
 
 }
