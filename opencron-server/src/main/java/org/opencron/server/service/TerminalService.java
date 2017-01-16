@@ -262,7 +262,8 @@ public class TerminalService {
 
         public void upload(String src,String dst,long fileSize) throws IOException, SftpException {
             ChannelSftp channelSftp = null;
-            try (FileInputStream file = new FileInputStream(src)) {
+            try {
+                FileInputStream file = new FileInputStream(src);
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
                 dst = dst.replaceAll("~/|~", "");
