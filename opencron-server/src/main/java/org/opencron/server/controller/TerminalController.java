@@ -35,11 +35,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import java.io.File;
 import java.util.List;
 
 import static org.opencron.server.service.TerminalService.*;
@@ -154,6 +157,27 @@ public class TerminalController {
             terminalClient.resize(cols,rows,width,height);
         }
     }
+
+    @RequestMapping("/upload")
+    public void upload(HttpSession httpSession,HttpServletResponse response, String token,@RequestParam(value = "file", required = false) MultipartFile[] file,String path) {
+        TerminalClient terminalClient = TerminalSession.get(token);
+        boolean success = true;
+        if (terminalClient!=null) {
+            for(MultipartFile ifile : file){
+                String tmpPath = httpSession.getServletContext().getRealPath("/") + "upload" + File.separator;
+                File tempFile = new File(tmpPath, ifile.getOriginalFilename());
+                try {
+                    ifile.transferTo(tempFile);
+                    terminalClient.upload(tempFile.getAbsolutePath(),path+"/"+ifile.getOriginalFilename(),ifile.getSize());
+                    tempFile.delete();
+                }catch (Exception e) {
+                    success = false;
+                }
+            }
+        }
+        WebUtils.writeJson(response,success?"true":"false");
+    }
+
 
     @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {

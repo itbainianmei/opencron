@@ -14,8 +14,9 @@ body{
 .term-logo {
     font-size: 30px;
     font-weight: 200;
-    margin-right: -15px;
+    margin-right: 0px;
     margin-top: -4px;
+    margin-left: 10px;
 }
 
 .navbar {

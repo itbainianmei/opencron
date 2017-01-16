@@ -23,9 +23,7 @@
 
 package org.opencron.server.service;
 
-import com.jcraft.jsch.ChannelShell;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 import org.opencron.common.utils.*;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.dao.QueryDao;
@@ -33,7 +31,7 @@ import org.opencron.server.domain.User;
 import org.opencron.server.job.Globals;
 import org.opencron.server.job.OpencronContext;
 import org.opencron.server.tag.PageBean;
-import org.slf4j.*;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +41,7 @@ import org.springframework.web.socket.WebSocketSession;
 import javax.crypto.BadPaddingException;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -181,8 +180,8 @@ public class TerminalService {
 
     public static class TerminalClient {
 
-        private String clientId;
-        private String httpSessionId;
+        private String clientId;//每次生成的唯一值token
+        private String httpSessionId;//打开该终端的SessionId
         private WebSocketSession webSocketSession;
         private JSch jSch;
         private ChannelShell channelShell ;
@@ -191,6 +190,7 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
         public static final int CHANNEL_TIMEOUT = 60000;
@@ -206,20 +206,20 @@ public class TerminalService {
         }
 
         public void openTerminal(int cols,int rows,int width,int height) throws Exception {
+            this.session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
+            this.session.setPassword(terminal.getPassword());
 
-            Session session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
-            session.setPassword(terminal.getPassword());
-
-            session.setConfig("StrictHostKeyChecking", "no");
-            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
-            session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
-            session.connect(SESSION_TIMEOUT);
+            this.session.setConfig("StrictHostKeyChecking", "no");
+            this.session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            this.session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
+            this.session.connect(SESSION_TIMEOUT);
             this.channelShell = (ChannelShell) session.openChannel("shell");
             this.channelShell.setPtyType("xterm",cols,rows,width,height);
             this.channelShell.connect();
             this.inputStream = this.channelShell.getInputStream();
             this.outputStream = this.channelShell.getOutputStream();
-            writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+
+            this.writer = new BufferedWriter(new OutputStreamWriter(this.outputStream, "UTF-8"));
 
             new Thread(new Runnable() {
                 @Override
@@ -227,7 +227,7 @@ public class TerminalService {
                     byte[] buffer = new byte[ 1024 ];
                     StringBuilder builder = new StringBuilder();
                     try {
-                        while (webSocketSession != null && webSocketSession.isOpen()) {
+                        while ( webSocketSession != null && webSocketSession.isOpen()) {
                             builder.setLength(0);
                             int bufferSize = inputStream.read(buffer);
                             if (bufferSize == -1) {
@@ -237,6 +237,7 @@ public class TerminalService {
                                 char chr = (char) (buffer[i] & 0xff);
                                 builder.append(chr);
                             }
+                            //取到linux远程机器输出的信息发送给前端
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
                             webSocketSession.sendMessage(new TextMessage(message));
                         }
@@ -252,10 +253,30 @@ public class TerminalService {
          * @param message
          * @throws IOException
          */
-        public void write(TextMessage message) throws IOException {
+        public void write(String message) throws IOException {
             if (writer != null) {
-                writer.write(message.getPayload());
+                writer.write(message);
                 writer.flush();
+            }
+        }
+
+        public void upload(String src,String dst,long fileSize) throws IOException, SftpException {
+            ChannelSftp channelSftp = null;
+            try (FileInputStream file = new FileInputStream(src)) {
+                channelSftp = (ChannelSftp) this.session.openChannel("sftp");
+                channelSftp.connect(CHANNEL_TIMEOUT);
+                dst = dst.replaceAll("~/|~", "");
+                channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //exit
+            if (channelSftp != null) {
+                channelSftp.exit();
+            }
+            //disconnect
+            if (channelSftp != null) {
+                channelSftp.disconnect();
             }
         }
 
@@ -309,10 +330,13 @@ public class TerminalService {
         public void setClientId(String clientId) {
             this.clientId = clientId;
         }
+
+
     }
 
     public static class TerminalContext implements Serializable {
 
+        //key-->token value--->Terminal
         public static Map<String, Terminal> terminalContext = new ConcurrentHashMap<String, Terminal>(0);
 
         public static Terminal get(String key) {
@@ -331,9 +355,9 @@ public class TerminalService {
         }
     }
 
-
     public static class TerminalSession implements Serializable {
 
+        //key--->WebSocketSession value--->TerminalClient
         public static Map<WebSocketSession, TerminalClient> terminalSession = new ConcurrentHashMap<WebSocketSession, TerminalClient>(0);
 
         public static TerminalClient get(WebSocketSession key) {
@@ -390,6 +414,122 @@ public class TerminalService {
             }
         }
 
+    }
+
+    public static class OpencronUploadMonitor  extends TimerTask implements SftpProgressMonitor {
+
+        private long progressInterval = 5 * 1000; // 默认间隔时间为5秒
+
+        private boolean isEnd = false; // 记录传输是否结束
+
+        private long transfered; // 记录已传输的数据总大小
+
+        private long fileSize; // 记录文件总大小
+
+        private Timer timer; // 定时器对象
+
+        private boolean isScheduled = false; // 记录是否已启动timer记时器
+
+        public OpencronUploadMonitor(long fileSize) {
+            this.fileSize = fileSize;
+        }
+
+        @Override
+        public void run() {
+            if (!isEnd()) { // 判断传输是否已结束
+                System.out.println("Transfering is in progress.");
+                long transfered = getTransfered();
+                if (transfered != fileSize) { // 判断当前已传输数据大小是否等于文件总大小
+                    System.out.println("Current transfered: " + transfered + " bytes");
+                    sendProgressMessage(transfered);
+                } else {
+                    System.out.println("File transfering is done.");
+                    setEnd(true); // 如果当前已传输数据大小等于文件总大小，说明已完成，设置end
+                }
+            } else {
+                System.out.println("Transfering done. Cancel timer.");
+                stop(); // 如果传输结束，停止timer记时器
+                return;
+            }
+        }
+
+        public void stop() {
+            System.out.println("Try to stop progress monitor.");
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+                timer = null;
+                isScheduled = false;
+            }
+            System.out.println("Progress monitor stoped.");
+        }
+
+        public void start() {
+            System.out.println("Try to start progress monitor.");
+            if (timer == null) {
+                timer = new Timer();
+            }
+            timer.schedule(this, 1000, progressInterval);
+            isScheduled = true;
+            System.out.println("Progress monitor started.");
+        }
+
+        /**
+         * 打印progress信息
+         * @param transfered
+         */
+        private void sendProgressMessage(long transfered) {
+            if (fileSize != 0) {
+                double d = ((double)transfered * 100)/(double)fileSize;
+                DecimalFormat df = new DecimalFormat( "#.##");
+                System.out.println("Sending progress message: " + df.format(d) + "%");
+            } else {
+                System.out.println("Sending progress message: " + transfered);
+            }
+        }
+
+        /**
+         * 实现了SftpProgressMonitor接口的count方法
+         */
+        public boolean count(long count) {
+            if (isEnd()) return false;
+            if (!isScheduled) {
+                start();
+            }
+            add(count);
+            return true;
+        }
+
+        /**
+         * 实现了SftpProgressMonitor接口的end方法
+         */
+        public void end() {
+            setEnd(true);
+            System.out.println("transfering end.");
+        }
+
+        private synchronized void add(long count) {
+            transfered = transfered + count;
+        }
+
+        private synchronized long getTransfered() {
+            return transfered;
+        }
+
+        public synchronized void setTransfered(long transfered) {
+            this.transfered = transfered;
+        }
+
+        private synchronized void setEnd(boolean isEnd) {
+            this.isEnd = isEnd;
+        }
+
+        private synchronized boolean isEnd() {
+            return isEnd;
+        }
+
+        public void init(int op, String src, String dest, long max) {
+        }
     }
 
 

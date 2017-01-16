@@ -65,6 +65,9 @@ public class Terminal implements Serializable{
     @JSONField(serialize=false)
     private String password;
 
+    @Transient
+    private String clientId;
+
     public Long getId() {
         return id;
     }
@@ -152,6 +155,14 @@ public class Terminal implements Serializable{
 
     public void setAuthorization(byte[] authorization) {
         this.authorization = authorization;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override
