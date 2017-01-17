@@ -242,7 +242,7 @@ public class TerminalService {
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
 
                             //获取pwd的结果输出
-                            if (cmdId != null && message.contains(cmdId)) {
+                            if ( cmdId != null && message.contains(cmdId) ) {
                                 //清除buffer里的内容..
                                 builder.setLength(0);
                                 if ( message.startsWith("echo") ) {
