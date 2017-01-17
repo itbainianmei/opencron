@@ -127,7 +127,7 @@
             resizeImage: false,
             previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
             initialCaption: "请选择要上传的文件",
-            maxFileSize:1073741824,
+            maxFileSize:104857600,//文件最大100M
             allowedFileExtensions : null
         });
     });
