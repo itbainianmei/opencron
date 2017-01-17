@@ -17,16 +17,15 @@
  * KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- *
  */
 
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
-import org.opencron.common.utils.*;
-import org.opencron.server.domain.Terminal;
+import org.opencron.common.utils.CommonUtils;
+import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
+import org.opencron.server.domain.Terminal;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.Globals;
 import org.opencron.server.job.OpencronContext;
@@ -88,19 +87,19 @@ public class TerminalService {
     private QueryDao queryDao;
 
     public boolean exists(Long userId, String host) throws Exception {
-        Terminal terminal = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE userId=? AND host=?",userId,host);
-        return terminal!=null;
+        Terminal terminal = queryDao.sqlUniqueQuery(Terminal.class, "SELECT * FROM T_TERMINAL WHERE userId=? AND host=?", userId, host);
+        return terminal != null;
     }
 
     public boolean saveOrUpdate(Terminal term) throws Exception {
-        Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class,"SELECT * FROM T_TERMINAL WHERE ID=?",term.getId());
-        if (dbTerm!=null) {
+        Terminal dbTerm = queryDao.sqlUniqueQuery(Terminal.class, "SELECT * FROM T_TERMINAL WHERE ID=?", term.getId());
+        if (dbTerm != null) {
             term.setId(dbTerm.getId());
         }
         try {
             queryDao.save(term);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -116,54 +115,54 @@ public class TerminalService {
             session.setConfig("StrictHostKeyChecking", "no");
             session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
             session.connect(TerminalClient.SESSION_TIMEOUT);
-            return  Terminal.AuthStatus.SUCCESS;
+            return Terminal.AuthStatus.SUCCESS;
         } catch (Exception e) {
             if (e.getMessage().toLowerCase().contains("userauth fail")) {
                 return Terminal.AuthStatus.PUBLIC_KEY_FAIL;
             } else if (e.getMessage().toLowerCase().contains("auth fail") || e.getMessage().toLowerCase().contains("auth cancel")) {
                 return Terminal.AuthStatus.AUTH_FAIL;
             } else if (e.getMessage().toLowerCase().contains("unknownhostexception")) {
-                logger.info("[opencron]:error: DNS Lookup Failed " );
+                logger.info("[opencron]:error: DNS Lookup Failed ");
                 return Terminal.AuthStatus.HOST_FAIL;
-            } else if(e instanceof BadPaddingException) {//RSA解码错误..密码错误...
+            } else if (e instanceof BadPaddingException) {//RSA解码错误..密码错误...
                 return Terminal.AuthStatus.AUTH_FAIL;
-            }else {
+            } else {
                 return Terminal.AuthStatus.GENERIC_FAIL;
             }
-        }finally {
-            if (session!=null) {
+        } finally {
+            if (session != null) {
                 session.disconnect();
             }
         }
     }
 
-    public PageBean<Terminal> getPageBeanByUser(PageBean pageBean,Long userId) {
+    public PageBean<Terminal> getPageBeanByUser(PageBean pageBean, Long userId) {
         String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ORDER By ";
-        if (pageBean.getOrder()==null) {
+        if (pageBean.getOrder() == null) {
             pageBean.setOrder(PageBean.ASC);
         }
-        if (pageBean.getOrderBy()==null) {
+        if (pageBean.getOrderBy() == null) {
             pageBean.setOrderBy("name");
         }
-        sql+=pageBean.getOrderBy()+" "+pageBean.getOrder();
-        return queryDao.getPageBySql(pageBean, Terminal.class, sql,userId);
+        sql += pageBean.getOrderBy() + " " + pageBean.getOrder();
+        return queryDao.getPageBySql(pageBean, Terminal.class, sql, userId);
     }
 
     public Terminal getById(Long id) {
-        return queryDao.get(Terminal.class,id);
+        return queryDao.get(Terminal.class, id);
     }
 
     public String delete(HttpSession session, Long id) {
         Terminal term = getById(id);
-        if (term==null) {
+        if (term == null) {
             return "error";
         }
-        User user = (User)session.getAttribute(Globals.LOGIN_USER);
+        User user = (User) session.getAttribute(Globals.LOGIN_USER);
 
-        if ( !Globals.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
+        if (!Globals.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
             return "error";
         }
-        queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?",term.getId()).executeUpdate();
+        queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?", term.getId()).executeUpdate();
         return "success";
     }
 
@@ -175,7 +174,7 @@ public class TerminalService {
 
     public List<Terminal> getListByUser(User user) {
         String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ";
-        return queryDao.sqlQuery(Terminal.class,sql,user.getUserId());
+        return queryDao.sqlQuery(Terminal.class, sql, user.getUserId());
     }
 
     public static class TerminalClient {
@@ -184,7 +183,7 @@ public class TerminalService {
         private String httpSessionId;//打开该终端的SessionId
         private WebSocketSession webSocketSession;
         private JSch jSch;
-        private ChannelShell channelShell ;
+        private ChannelShell channelShell;
         private Session session;
         private Terminal terminal;
         private InputStream inputStream;
@@ -199,7 +198,7 @@ public class TerminalService {
 
         private boolean closed = false;
 
-        public TerminalClient(WebSocketSession webSocketSession,String httpSessionId,String clientId,Terminal terminal){
+        public TerminalClient(WebSocketSession webSocketSession, String httpSessionId, String clientId, Terminal terminal) {
             this.webSocketSession = webSocketSession;
             this.httpSessionId = httpSessionId;
             this.terminal = terminal;
@@ -207,7 +206,7 @@ public class TerminalService {
             this.jSch = new JSch();
         }
 
-        public void openTerminal(int cols,int rows,int width,int height) throws Exception {
+        public void openTerminal(int cols, int rows, int width, int height) throws Exception {
             this.session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
             this.session.setPassword(terminal.getPassword());
 
@@ -216,7 +215,7 @@ public class TerminalService {
             this.session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
             this.session.connect(SESSION_TIMEOUT);
             this.channelShell = (ChannelShell) session.openChannel("shell");
-            this.channelShell.setPtyType("xterm",cols,rows,width,height);
+            this.channelShell.setPtyType("xterm", cols, rows, width, height);
             this.channelShell.connect();
             this.inputStream = this.channelShell.getInputStream();
             this.outputStream = this.channelShell.getOutputStream();
@@ -226,16 +225,16 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 * 4 ];
+                    byte[] buffer = new byte[1024];
                     StringBuilder builder = new StringBuilder();
                     try {
-                        while ( webSocketSession != null && webSocketSession.isOpen()) {
+                        while (webSocketSession != null && webSocketSession.isOpen()) {
                             builder.setLength(0);
-                            int bufferSize = inputStream.read(buffer);
-                            if (bufferSize == -1) {
+                            int size = inputStream.read(buffer);
+                            if (size == -1) {
                                 return;
                             }
-                            for (int i = 0; i < bufferSize; i++) {
+                            for (int i = 0; i < size; i++) {
                                 char chr = (char) (buffer[i] & 0xff);
                                 builder.append(chr);
                             }
@@ -243,11 +242,11 @@ public class TerminalService {
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
 
                             //获取pwd的结果输出,不能发送给前台
-                            if ( uuid!=null && message.contains(uuid) ) {
+                            if (uuid != null && message.contains(uuid)) {
                                 if (!message.startsWith("echo")) {
                                     pwd = message.split("#")[1];
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                    logger.info("[opencron] upload file target path:{}",pwd);
+                                    logger.info("[opencron] upload file target path:{}", pwd);
                                     uuid = null;
                                 }
                             } else {
@@ -274,21 +273,22 @@ public class TerminalService {
             }
         }
 
-        public void upload(String src,String dst,long fileSize) throws IOException, SftpException {
+        public void upload(String src, String dst, long fileSize) throws IOException, SftpException {
             ChannelSftp channelSftp = null;
             try {
                 FileInputStream file = new FileInputStream(src);
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
-                if (dst.startsWith("~") ){
+                if (dst.startsWith("~")) {
                     this.uuid = CommonUtils.uuid();
-                    write(String.format("echo %s#$(pwd)\r",this.uuid));
-                    //暂停几秒,等待获取pwd输出的结果.
-                    Thread.sleep(1000);
+                    while (pwd == null) {
+                        write(String.format("echo %s#$(pwd)\r", this.uuid));
+                        Thread.sleep(100);
+                    }
                 }
-                dst = dst.replaceAll("~/|~",pwd);
+                dst = dst.replaceAll("~/|~", pwd);
                 pwd = null;
-                channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
+                channelSftp.put(file, dst, new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -304,7 +304,7 @@ public class TerminalService {
 
 
         public void disconnect() throws IOException {
-            if (writer!=null) {
+            if (writer != null) {
                 writer.close();
                 writer = null;
             }
@@ -312,7 +312,7 @@ public class TerminalService {
                 session.disconnect();
                 session = null;
             }
-            if (jSch!=null) {
+            if (jSch != null) {
                 jSch = null;
             }
             closed = true;
@@ -342,8 +342,8 @@ public class TerminalService {
             this.httpSessionId = sessionId;
         }
 
-        public void resize(Integer cols, Integer rows,Integer width,Integer height) throws IOException {
-            channelShell.setPtySize(cols,rows,width,height);
+        public void resize(Integer cols, Integer rows, Integer width, Integer height) throws IOException {
+            channelShell.setPtySize(cols, rows, width, height);
         }
 
         public String getClientId() {
@@ -370,7 +370,7 @@ public class TerminalService {
             //该终端实例只能被的打开一次,之后就失效
             terminalContext.put(key, terminal);
             //保存打开的实例,用于复制终端实例
-            OpencronContext.put(key,terminal);
+            OpencronContext.put(key, terminal);
         }
 
         public static Terminal remove(String key) {
@@ -388,7 +388,7 @@ public class TerminalService {
         }
 
         public static TerminalClient get(String key) {
-            for (Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()) {
+            for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                 TerminalClient client = entry.getValue();
                 if (client.getClientId().equals(key)) {
                     return client;
@@ -406,7 +406,7 @@ public class TerminalService {
         }
 
         public static boolean isOpened(Terminal terminal) {
-            for(Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()){
+            for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                 if (entry.getValue().getTerminal().equals(terminal)) {
                     return true;
                 }
@@ -415,18 +415,18 @@ public class TerminalService {
         }
 
         public static WebSocketSession findSession(Terminal terminal) {
-            for(Map.Entry<WebSocketSession,TerminalClient> entry:terminalSession.entrySet()){
+            for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                 TerminalClient client = entry.getValue();
-                if(client.getTerminal().equals(terminal)){
+                if (client.getTerminal().equals(terminal)) {
                     return entry.getKey();
                 }
             }
             return null;
         }
 
-        public static void exit(User user,String httpSessionId) throws IOException {
+        public static void exit(User user, String httpSessionId) throws IOException {
             if (notEmpty(terminalSession)) {
-                for(Map.Entry<WebSocketSession, TerminalClient> entry: terminalSession.entrySet()){
+                for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                     TerminalClient terminalClient = entry.getValue();
                     if (terminalClient.getHttpSessionId().equals(httpSessionId) && terminalClient.getTerminal().getUser().equals(user)) {
                         terminalClient.disconnect();
@@ -439,7 +439,7 @@ public class TerminalService {
 
     }
 
-    public static class OpencronUploadMonitor  extends TimerTask implements SftpProgressMonitor {
+    public static class OpencronUploadMonitor extends TimerTask implements SftpProgressMonitor {
 
         private long progressInterval = 5 * 1000; // 默认间隔时间为5秒
 
@@ -503,8 +503,8 @@ public class TerminalService {
          */
         private void sendProgressMessage(long transfered) {
             if (fileSize != 0) {
-                double d = ((double)transfered * 100)/(double)fileSize;
-                DecimalFormat df = new DecimalFormat( "#.##");
+                double d = ((double) transfered * 100) / (double) fileSize;
+                DecimalFormat df = new DecimalFormat("#.##");
                 System.out.println("Sending progress message: " + df.format(d) + "%");
             } else {
                 System.out.println("Sending progress message: " + transfered);
