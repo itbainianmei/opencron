@@ -280,16 +280,19 @@ public class TerminalService {
                 FileInputStream file = new FileInputStream(src);
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
-                if (dst.startsWith("~")) {
+                //当前路径下,获取用户终端的当前位置
+                if (dst.startsWith("./")) {
                     //不出绝招不行啊....很神奇
                     this.cmdId = CommonUtils.uuid();
                     while (pwd == null) {
                         write(String.format("echo %s#$(pwd)\r", this.cmdId));
                         Thread.sleep(100);
                     }
+                    dst = dst.replaceFirst("\\./", pwd);
+                    pwd = null;
+                }else if(dst.startsWith("~")){
+                    dst = dst.replaceAll("~/|~", "");
                 }
-                dst = dst.replaceAll("~/|~", pwd);
-                pwd = null;
                 channelSftp.put(file, dst, new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();

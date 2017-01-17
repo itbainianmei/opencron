@@ -168,7 +168,11 @@ public class TerminalController {
                 File tempFile = new File(tmpPath, ifile.getOriginalFilename());
                 try {
                     ifile.transferTo(tempFile);
-                    path = CommonUtils.isEmpty(path)?"~":path;
+                    if (CommonUtils.isEmpty(path)) {
+                        path = ".";
+                    }else if(path.endsWith("/")) {
+                        path = path.substring(0,path.lastIndexOf("/"));
+                    }
                     terminalClient.upload(tempFile.getAbsolutePath(),path+"/"+ifile.getOriginalFilename(),ifile.getSize());
                     tempFile.delete();
                 }catch (Exception e) {

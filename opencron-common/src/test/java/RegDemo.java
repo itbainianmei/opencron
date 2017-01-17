@@ -19,23 +19,12 @@
  * under the License.
  */
 
-import org.opencron.common.utils.DigestUtils;
-import org.opencron.common.utils.Digests;
-
-import javax.xml.soap.SAAJResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by benjobs on 15/12/5.
  */
 public class RegDemo {
 
     public static void main(String[] args) {
-
-        String str = "3D81ADD95B39EBFD9E83BB6FD1391904";
-        String text = "opencron";
-        System.out.println(DigestUtils.md5Hex(text));
 
 
     }
