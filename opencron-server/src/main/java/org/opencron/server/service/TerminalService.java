@@ -248,6 +248,7 @@ public class TerminalService {
                                     pwd = message.split("#")[1];
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                     logger.info("[opencron] upload file target path:{}",pwd);
+                                    uuid = null;
                                 }
                             } else {
                                 //正常输出的数据,直接给前台web终端
@@ -280,11 +281,13 @@ public class TerminalService {
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
                 if (dst.startsWith("~") ){
-                    pwd();//获取当前的真是路径..
+                    this.uuid = CommonUtils.uuid();
+                    write(String.format("echo %s#$(pwd)\r",this.uuid));
                     //暂停几秒,等待获取pwd输出的结果.
                     Thread.sleep(1000);
                 }
                 dst = dst.replaceAll("~/|~",pwd);
+                pwd = null;
                 channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -299,11 +302,6 @@ public class TerminalService {
             }
         }
 
-        private void pwd() throws IOException {
-            //发送一个特殊的命令
-            this.uuid = CommonUtils.uuid();
-            write(String.format("echo %s#$(pwd)\r",this.uuid));
-        }
 
         public void disconnect() throws IOException {
             if (writer!=null) {
