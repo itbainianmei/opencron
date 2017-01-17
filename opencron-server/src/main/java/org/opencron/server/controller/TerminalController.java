@@ -161,7 +161,6 @@ public class TerminalController {
         if (terminalClient!=null) {
             terminalClient.resize(cols,rows,width,height);
         }
-
     }
 
     @RequestMapping("/upload")
