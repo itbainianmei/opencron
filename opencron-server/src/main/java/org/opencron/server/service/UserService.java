@@ -54,7 +54,7 @@ public class UserService {
     private UploadDao uploadDao;
 
     public PageBean queryUser(PageBean pageBean) {
-        String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId";
+        String sql = "SELECT U.*,R.roleName FROM T_USER AS U LEFT JOIN T_ROLE R ON U.roleId = R.roleId";
         queryDao.getPageBySql(pageBean, User.class, sql);
         return pageBean;
     }
@@ -87,7 +87,7 @@ public class UserService {
     }
 
     public User queryUserById(Long id) {
-        String sql = "SELECT u.*,r.roleName FROM T_USER u LEFT JOIN T_ROLE r ON u.roleId = r.roleId WHERE userId = ?";
+        String sql = "SELECT U.*,R.roleName FROM T_USER AS U LEFT JOIN T_ROLE R ON U.roleId = R.roleId WHERE userId = ?";
         return queryDao.sqlUniqueQuery(User.class, sql, id);
     }
 

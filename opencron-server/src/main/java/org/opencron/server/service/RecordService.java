@@ -49,33 +49,33 @@ public class RecordService {
     private UserService userService;
 
     public PageBean query(HttpSession session, PageBean<RecordVo> pageBean, RecordVo recordVo, String queryTime, boolean status) {
-        String sql = "SELECT r.recordId,r.jobId,r.command,r.success,r.startTime,r.status,r.redoCount,r.jobType,r.groupId,CASE WHEN r.status IN (1,3,5,6) THEN r.endTime WHEN r.status IN (0,2,4) THEN NOW() END AS endTime,r.execType,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r LEFT JOIN T_JOB t ON r.jobId = t.jobId "
-                + " LEFT JOIN T_AGENT d ON r.agentId = d.agentId LEFT JOIN T_USER AS u ON r.userId = u.userId AND CASE r.jobType WHEN 1 THEN r.flowNum=0 WHEN 0 THEN r.parentId IS NULL END WHERE r.parentId is NULL AND r.status IN " + (status ? "(1,3,4,5,6)" : "(0,2,4)");
+        String sql = "SELECT R.recordId,R.jobId,R.command,R.success,R.startTime,R.status,R.redoCount,R.jobType,R.groupId,CASE WHEN R.status IN (1,3,5,6) THEN R.endTime WHEN R.status IN (0,2,4) THEN NOW() END AS endTime,R.execType,T.jobName,T.agentId,D.name AS agentName,D.password,D.ip,T.cronExp,U.userName AS operateUname FROM T_RECORD R LEFT JOIN T_JOB T ON R.jobId = T.jobId "
+                + " LEFT JOIN T_AGENT D ON R.agentId = D.agentId LEFT JOIN T_USER AS U ON R.userId = U.userId AND CASE R.jobType WHEN 1 THEN R.flowNum=0 WHEN 0 THEN R.parentId IS NULL END WHERE R.parentId is NULL AND R.status IN " + (status ? "(1,3,4,5,6)" : "(0,2,4)");
         if (recordVo != null) {
             if (notEmpty(recordVo.getSuccess())) {
-                sql += " AND r.success = " + recordVo.getSuccess() + "";
+                sql += " AND R.success = " + recordVo.getSuccess() + "";
             }
             if (notEmpty(recordVo.getAgentId())) {
-                sql += " AND r.agentId = " + recordVo.getAgentId() + " ";
+                sql += " AND R.agentId = " + recordVo.getAgentId() + " ";
             }
             if (notEmpty(recordVo.getJobId())) {
-                sql += " AND r.jobId = " + recordVo.getJobId() + " ";
+                sql += " AND R.jobId = " + recordVo.getJobId() + " ";
             }
             if (notEmpty(queryTime)) {
-                sql += " AND r.startTime like '" + queryTime + "%' ";
+                sql += " AND R.startTime like '" + queryTime + "%' ";
             }
             if (notEmpty(recordVo.getExecType())) {
-                sql += " AND r.execType = " + recordVo.getExecType() + " ";
+                sql += " AND R.execType = " + recordVo.getExecType() + " ";
             }
             if (status) {
-                sql += " AND IFNULL(r.flowNum,0) = 0 ";
+                sql += " AND IFNULL(R.flowNum,0) = 0 ";
             }
             if (!Globals.isPermission(session)) {
                 User user = userService.getUserBySession(session);
-                sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
+                sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
             }
         }
-        sql += " ORDER BY r.startTime DESC";
+        sql += " ORDER BY R.startTime DESC";
         queryDao.getPageBySql(pageBean, RecordVo.class, sql);
 
         if (status) {
@@ -88,7 +88,7 @@ public class RecordService {
     private void queryChildrenAndRedo(PageBean<RecordVo> pageBean) {
         List<RecordVo> parentRecords = pageBean.getResult();
         for (RecordVo parentRecord : parentRecords) {
-            String sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE r.parentId = ? ORDER BY r.startTime ASC ";
+            String sql = "SELECT R.recordId,R.jobId,R.jobType,R.startTime,R.endTime,R.execType,R.status,R.redoCount,R.command,R.success,T.jobName,D.name AS agentName,D.password,D.ip,T.cronExp,U.userName AS operateUname FROM T_RECORD R INNER JOIN T_JOB T ON R.jobId = T.jobId LEFT JOIN T_AGENT D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE R.parentId = ? ORDER BY R.startTime ASC ";
             //单一任务有重跑记录的，查出后并把最后一条重跑记录的执行结果记作整个任务的成功、失败状态
             if (parentRecord.getJobType() == 0 && parentRecord.getRedoCount() > 0) {
                 List<RecordVo> records = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getRecordId());
@@ -103,13 +103,13 @@ public class RecordService {
                     parentRecord.setSuccess(Opencron.ResultStatus.FAILED.getStatus());
                     parentRecord.setChildRecord(records);
                 }
-                sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.groupId,t.jobName,t.lastChild,d.name as agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u on t.userId = u.userId WHERE r.parentId IS NULL AND r.groupId = ? AND r.flowNum > 0 ORDER BY r.flowNum ASC ";
+                sql = "SELECT R.recordId,R.jobId,R.jobType,R.startTime,R.endTime,R.execType,R.status,R.redoCount,R.command,R.success,R.groupId,T.jobName,T.lastChild,D.name as agentName,D.password,D.ip,T.cronExp,U.userName AS operateUname FROM T_RECORD R INNER JOIN T_JOB T ON R.jobId = T.jobId LEFT JOIN T_AGENT D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE R.parentId IS NULL AND R.groupId = ? AND R.flowNum > 0 ORDER BY R.flowNum ASC ";
                 List<RecordVo> childJobs = queryDao.sqlQuery(RecordVo.class, sql, parentRecord.getGroupId());
                 if (notEmpty(childJobs)) {
                     parentRecord.setChildJob(childJobs);
                     for (RecordVo childJob : parentRecord.getChildJob()) {
                         if (childJob.getRedoCount() > 0) {
-                            sql = "SELECT r.recordId,r.jobId,r.jobType,r.startTime,r.endTime,r.execType,r.status,r.redoCount,r.command,r.success,r.parentId,t.jobName,d.name AS agentName,d.password,d.ip,t.cronExp,u.userName AS operateUname FROM T_RECORD r INNER JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE r.parentId = ?  ORDER BY r.startTime ASC ";
+                            sql = "SELECT R.recordId,R.jobId,R.jobType,R.startTime,R.endTime,R.execType,R.status,R.redoCount,R.command,R.success,R.parentId,T.jobName,D.name AS agentName,D.password,D.ip,T.cronExp,U.userName AS operateUname FROM T_RECORD R INNER JOIN T_JOB T ON R.jobId = T.jobId LEFT JOIN T_AGENT D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE R.parentId = ?  ORDER BY R.startTime ASC ";
                             List<RecordVo> childRedo = queryDao.sqlQuery(RecordVo.class, sql, childJob.getRecordId());
                             childJob.setChildRecord(childRedo);
                         }
@@ -133,7 +133,7 @@ public class RecordService {
     }
 
     public RecordVo getDetailById(Long id) {
-        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT r.recordId,r.jobType,r.jobId,r.startTime,r.endTime,r.execType,r.returnCode,r.message,r.redoCount,r.command,r.success,t.jobName,t.agentId,d.name AS agentName,d.password,d.ip,t.cronExp,t.userId,u.userName AS operateUname FROM T_RECORD r LEFT JOIN T_JOB t ON r.jobId = t.jobId LEFT JOIN T_AGENT d ON r.agentId = d.agentId LEFT JOIN T_USER AS u ON r.userId = u.userId WHERE r.recordId = ?", id);
+        return queryDao.sqlUniqueQuery(RecordVo.class, "SELECT R.recordId,R.jobType,R.jobId,R.startTime,R.endTime,R.execType,R.returnCode,R.message,R.redoCount,R.command,R.success,T.jobName,T.agentId,D.name AS agentName,D.password,D.ip,T.cronExp,T.userId,U.userName AS operateUname FROM T_RECORD R LEFT JOIN T_JOB T ON R.jobId = T.jobId LEFT JOIN T_AGENT D ON R.agentId = D.agentId LEFT JOIN T_USER AS U ON R.userId = U.userId WHERE R.recordId = ?", id);
     }
 
 
@@ -150,33 +150,33 @@ public class RecordService {
      * @return
      */
     public List<Record> getReExecuteRecord() {
-        String sql = "SELECT r.*,d.ip,d.`name` AS agentName,d.password FROM T_RECORD r INNER JOIN T_AGENT d ON r.agentId = d.agentId WHERE r.success=0 AND r.jobType=0 AND r.status in(1,5) AND r.parentId IS NULL AND r.redo=1 AND r.redoCount<r.runCount ";
+        String sql = "SELECT R.*,D.ip,D.`name` AS agentName,D.password FROM T_RECORD R INNER JOIN T_AGENT D ON R.agentId = D.agentId WHERE R.success=0 AND R.jobType=0 AND R.status IN(1,5) AND R.parentId IS NULL AND R.redo=1 AND R.redoCount<R.runCount ";
         return queryDao.sqlQuery(Record.class, sql);
     }
 
     public Boolean isRunning(Long id) {
-        return queryDao.getCountBySql("SELECT COUNT(1) FROM T_RECORD r LEFT JOIN T_JOB t ON r.jobId = t.jobId  WHERE (r.jobId = ? OR t.flowId = ?) AND r.status in (0,2,4) ", id, id) > 0L;
+        return queryDao.getCountBySql("SELECT COUNT(1) FROM T_RECORD AS R LEFT JOIN T_JOB T ON R.jobId = T.jobId  WHERE (R.jobId = ? OR T.flowId = ?) AND R.status IN (0,2,4) ", id, id) > 0L;
     }
 
     public List<ChartVo> getRecord(String startTime, String endTime, HttpSession session) {
-        String sql = "SELECT DATE_FORMAT(r.startTime,'%Y-%m-%d') AS date, " +
-                " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
-                " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +
-                " sum(CASE r.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
-                " sum(CASE r.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
-                " sum(CASE r.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
-                " sum(CASE j.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
-                " sum(CASE j.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
-                " sum(CASE r.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+
-                " sum(CASE r.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
-                " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
-                " FROM T_RECORD r left join T_JOB j ON r.jobid=j.jobid "+
-                " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
+        String sql = "SELECT DATE_FORMAT(R.startTime,'%Y-%m-%d') AS date, " +
+                " sum(CASE R.success WHEN 0 THEN 1 ELSE 0 END) failure," +
+                " sum(CASE R.success WHEN 1 THEN 1 ELSE 0 END) success," +
+                " sum(CASE R.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
+                " sum(CASE R.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
+                " sum(CASE R.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
+                " sum(CASE R.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
+                " sum(CASE R.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
+                " sum(CASE R.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+
+                " sum(CASE R.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
+                " sum(CASE R.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
+                " FROM T_RECORD R LEFT JOIN T_JOB J ON R.jobid=J.jobid "+
+                " WHERE DATE_FORMAT(R.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
+            sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
         }
-        sql += " GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
+        sql += " GROUP BY DATE_FORMAT(R.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(R.startTime,'%Y-%m-%d') ASC";
         return queryDao.sqlQuery(ChartVo.class, sql);
     }
 
@@ -187,7 +187,7 @@ public class RecordService {
     }
 
     public List<Record> getRunningFlowJob(Long recordId) {
-        String sql = "SELECT r.* FROM T_RECORD r INNER JOIN (SELECT groupId FROM T_RECORD WHERE recordId=?) AS t WHERE r.groupId = t.groupId";
+        String sql = "SELECT R.* FROM T_RECORD AS R INNER JOIN (SELECT groupId FROM T_RECORD WHERE recordId=?) AS T WHERE R.groupId = T.groupId";
         return queryDao.sqlQuery(Record.class, sql, recordId);
     }
 
@@ -200,7 +200,7 @@ public class RecordService {
         }
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " AND userId = " + user.getUserId() + " AND agentId in ("+user.getAgentIds()+")";
+            sql += " AND userId = " + user.getUserId() + " AND agentid IN ("+user.getAgentIds()+")";
         }
         return queryDao.getCountBySql(sql,1,execType.getStatus());
     }

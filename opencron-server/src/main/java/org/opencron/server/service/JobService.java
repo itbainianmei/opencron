@@ -177,7 +177,7 @@ public class JobService {
 
     public JobVo getJobVoById(Long id) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.username AS operateUname " +
-                " FROM T_JOB AS t LEFT JOIN T_AGENT AS d ON t.agentId = d.agentId LEFT JOIN T_USER AS u ON t.userId = u.userId WHERE t.jobId =?";
+                " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE T.jobId =?";
         JobVo job = queryDao.sqlUniqueQuery(JobVo.class, sql, id);
         queryJobMore(Arrays.asList(job));
         return job;
@@ -195,8 +195,8 @@ public class JobService {
     }
 
     public List<JobVo> getJobByAgentId(Long agentId) {
-        String sql = "SELECT t.*,d.name AS agentName,d.port,d.ip,d.password,u.userName AS operateUname " +
-                " FROM T_JOB t LEFT JOIN T_USER u ON t.userId = u.userId LEFT JOIN T_AGENT d ON t.agentId = d.agentId WHERE t.agentId =?";
+        String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.userName AS operateUname " +
+                " FROM T_JOB T LEFT JOIN T_USER U ON T.userId = U.userId LEFT JOIN T_AGENT D ON T.agentId = D.agentId WHERE T.agentId =?";
         return queryDao.sqlQuery(JobVo.class, sql, agentId);
     }
 
