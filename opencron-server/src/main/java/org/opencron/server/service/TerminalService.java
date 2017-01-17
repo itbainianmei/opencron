@@ -189,7 +189,6 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
-        private String cmdId;
         private String pwd;
 
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
@@ -225,7 +224,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 * 4 ];
+                    byte[] buffer = new byte[ 1024 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -239,19 +238,19 @@ public class TerminalService {
                                 builder.append(chr);
                             }
                             //取到linux远程机器输出的信息发送给前端
-                            String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
-
-                            //获取pwd的结果输出
-                            if ( cmdId != null && message.contains(cmdId) ) {
-                                //清除buffer里的内容..
-                                builder.setLength(0);
-                                if ( message.startsWith("echo") ) {
+                            String message = builder.toString();
+                            message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
+                            //获取pwd的结果输出,不能发送给前台
+                            if ( message.contains(clientId) ) {
+                                if ( pwd != null) {
                                     continue;
                                 }
-                                pwd = message.split("#")[1];
-                                pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                logger.info("[opencron] upload file target path:{}", pwd);
-                                cmdId = null;
+                                if (!message.startsWith("echo")) {
+                                    pwd = message.split("#")[1];
+                                    pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
+                                    logger.info("[opencron] upload file target path:{}", pwd);
+                                }
+                                builder.setLength(0);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
@@ -284,14 +283,14 @@ public class TerminalService {
                 //当前路径下,获取用户终端的当前位置
                 if (dst.startsWith("./")) {
                     //不出绝招不行啊....很神奇
-                    this.cmdId = CommonUtils.uuid();
                     while (pwd == null) {
-                        write(String.format("echo %s#$(pwd)\r", this.cmdId));
+                        write(String.format("echo %s#$(pwd)\r", this.clientId));
+                        Thread.sleep(100);
                     }
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
                 }else if(dst.startsWith("~")){
-                    dst = dst.replaceFirst("~/", "");
+                    dst = dst.replaceAll("~/|~", "");
                 }
                 channelSftp.put(file, dst, new OpencronSftpMonitor(fileSize));
             } catch (Exception e) {
