@@ -220,7 +220,6 @@ public class JobService {
         job.setLastChild(false);
         job.setUpdateTime(new Date());
         job.setFlowNum(0);//顶层sort是0
-
         /**
          * 保存最顶层的父级任务
          */

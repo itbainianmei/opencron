@@ -127,6 +127,7 @@ public class JobController {
             job.setUserId( Globals.getUserIdBySession(session) );
             job.setUpdateTime(new Date());
             job.setLastChild(false);
+            job.setStatus(true);//Job有效
             job = jobService.addOrUpdate(job);
         } else { //流程任务
             Map<String, String[]> map = request.getParameterMap();
@@ -159,6 +160,7 @@ public class JobController {
                 chind.setComment((String) comment[i]);
                 chind.setTimeout(Integer.parseInt((String) timeout[i]));
                 chind.setRedo(Integer.parseInt((String) redo[i]));
+                chind.setStatus(true);
                 if (chind.getRedo() == 0) {
                     chind.setRunCount(null);
                 } else {
