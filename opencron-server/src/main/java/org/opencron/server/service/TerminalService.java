@@ -189,7 +189,7 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
-        private String uuid;
+        private String cmdId;
         private String pwd;
 
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
@@ -242,15 +242,14 @@ public class TerminalService {
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
 
                             //获取pwd的结果输出,不能发送给前台
-                            if (uuid != null && message.contains(uuid)) {
+                            if (cmdId != null && message.contains(cmdId)) {
                                 if (!message.startsWith("echo")) {
                                     pwd = message.split("#")[1];
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                     logger.info("[opencron] upload file target path:{}", pwd);
-                                    uuid = null;
+                                    cmdId = null;
                                 }
                             } else {
-                                //正常输出的数据,直接给前台web终端
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
                         }
@@ -280,9 +279,10 @@ public class TerminalService {
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
                 if (dst.startsWith("~")) {
-                    this.uuid = CommonUtils.uuid();
+                    //不出绝招不行啊....很神奇
+                    this.cmdId = CommonUtils.uuid();
                     while (pwd == null) {
-                        write(String.format("echo %s#$(pwd)\r", this.uuid));
+                        write(String.format("echo %s#$(pwd)\r", this.cmdId));
                         Thread.sleep(100);
                     }
                 }
