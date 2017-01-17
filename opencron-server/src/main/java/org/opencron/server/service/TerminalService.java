@@ -225,7 +225,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 ];
+                    byte[] buffer = new byte[ 1024 * 4 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -251,6 +251,7 @@ public class TerminalService {
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                     logger.info("[opencron] upload file target path:{}", pwd);
                                 }
+                                builder.setLength(0);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
@@ -286,7 +287,6 @@ public class TerminalService {
                     this.cmdId = CommonUtils.uuid();
                     while (pwd == null) {
                         write(String.format("echo %s#$(pwd)\r", this.cmdId));
-                        Thread.sleep(100);
                     }
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
