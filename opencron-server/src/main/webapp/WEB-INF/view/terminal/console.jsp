@@ -157,48 +157,5 @@
             window.close();
         });
     }
-
-
-
-
- /*   $("#uploadForm").submit(function(event) {
-        var formData = new FormData(this);
-        event.preventDefault();
-        var grid = $('[data-role="pdGrid"]');
-
-        $.ajax({
-            url : '${contextPath}/terminal/upload?token=${token}',
-            type : 'POST',
-            data : formData,
-            contentType : false,
-            processData : false,
-            dataType:"JSON",
-            success : function(data) {
-            if (data) {
-                grid.message({
-                    type : 'success',
-                    content : '上传成功'
-                });
-                grid.grid('refresh');
-            } else {
-                grid.message({
-                    type : 'error',
-                    content : data.result
-                });
-            }
-        },
-        error : function() {
-            grid.message({
-                type : 'error',
-                content : '上传失败'
-            });
-        }
-    });
-
-    });
-*/
-
-
-
 </script>
 </html>
