@@ -247,7 +247,7 @@ public class TerminalService {
                                 }
                                 pwd = message.split("#")[1];
                                 pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                logger.info("[opencron] upload file target path:{}", pwd);
+                                logger.info("[opencron] Sftp upload file target path:{}", pwd);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
@@ -476,14 +476,14 @@ public class TerminalService {
         }
 
         public void stop() {
-            logger.info("[opencron] Sftp stopping progress monitor.");
+            logger.info("[opencron] Sftp progress monitor Stopping...");
             if (timer != null) {
                 timer.cancel();
                 timer.purge();
                 timer = null;
                 isScheduled = false;
             }
-            logger.info("[opencron] Sftp progress monitor stoped.");
+            logger.info("[opencron] Sftp progress monitor Stoped.");
         }
 
         public void start() {

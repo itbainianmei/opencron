@@ -70,7 +70,7 @@ public class OpencronTask implements InitializingBean {
         //检测所有的agent...
         clearCache();
         //通知所有的agent,启动心跳检测...
-        //heartBeat();
+        heartBeat();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();
     }
