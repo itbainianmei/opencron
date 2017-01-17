@@ -291,9 +291,9 @@ public class TerminalService {
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
                 }else if(dst.startsWith("~")){
-                    dst = dst.replaceAll("~/|~", "");
+                    dst = dst.replaceFirst("~/", "");
                 }
-                channelSftp.put(file, dst, new OpencronUploadMonitor(fileSize));
+                channelSftp.put(file, dst, new OpencronSftpMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -444,7 +444,7 @@ public class TerminalService {
 
     }
 
-    public static class OpencronUploadMonitor extends TimerTask implements SftpProgressMonitor {
+    public static class OpencronSftpMonitor extends TimerTask implements SftpProgressMonitor {
 
         private long progressInterval = 5 * 1000; // 默认间隔时间为5秒
 
@@ -458,7 +458,7 @@ public class TerminalService {
 
         private boolean isScheduled = false; // 记录是否已启动timer记时器
 
-        public OpencronUploadMonitor(long fileSize) {
+        public OpencronSftpMonitor(long fileSize) {
             this.fileSize = fileSize;
         }
 
