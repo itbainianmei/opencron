@@ -241,17 +241,17 @@ public class TerminalService {
                             //取到linux远程机器输出的信息发送给前端
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
 
-                            //获取pwd的结果输出,不能发送给前台
+                            //获取pwd的结果输出
                             if (cmdId != null && message.contains(cmdId)) {
-                                if ( pwd != null) {
+                                //清除buffer里的内容..
+                                builder.setLength(0);
+                                if ( message.startsWith("echo") ) {
                                     continue;
                                 }
-                                if (!message.startsWith("echo")) {
-                                    pwd = message.split("#")[1];
-                                    pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                    logger.info("[opencron] upload file target path:{}", pwd);
-                                }
-                                builder.setLength(0);
+                                pwd = message.split("#")[1];
+                                pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
+                                logger.info("[opencron] upload file target path:{}", pwd);
+                                cmdId = null;
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
