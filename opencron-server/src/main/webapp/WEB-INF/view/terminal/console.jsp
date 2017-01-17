@@ -23,7 +23,7 @@
     <link href="${contextPath}/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
     <script src="${contextPath}/js/fileinput/js/fileinput.js" type="text/javascript"></script>
     <script src="${contextPath}/js/fileinput/js/locales/zh.js" type="text/javascript"></script>
-
+    <script src="${contextPath}/js/fileinput/themes/fa/theme.js" type="text/javascript" ></script>
 
     <!--term-->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
