@@ -184,6 +184,7 @@ public class TerminalController {
         WebUtils.writeJson(response,success?"true":"false");
     }
 
+
     @RequestMapping("/save")
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         Terminal.AuthStatus authStatus = termService.auth(term);
