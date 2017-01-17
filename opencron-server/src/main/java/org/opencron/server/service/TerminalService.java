@@ -243,11 +243,13 @@ public class TerminalService {
 
                             //获取pwd的结果输出,不能发送给前台
                             if (cmdId != null && message.contains(cmdId)) {
+                                if ( pwd != null) {
+                                    continue;
+                                }
                                 if (!message.startsWith("echo")) {
                                     pwd = message.split("#")[1];
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                     logger.info("[opencron] upload file target path:{}", pwd);
-                                    cmdId = null;
                                 }
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
