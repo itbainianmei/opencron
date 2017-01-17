@@ -165,8 +165,8 @@ public class RecordService {
                 " sum(CASE R.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
                 " sum(CASE R.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
                 " sum(CASE R.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
-                " sum(CASE R.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
-                " sum(CASE R.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
+                " sum(CASE J.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
+                " sum(CASE J.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
                 " sum(CASE R.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+
                 " sum(CASE R.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
                 " sum(CASE R.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+

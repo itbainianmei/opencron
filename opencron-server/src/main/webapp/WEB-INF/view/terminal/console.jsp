@@ -82,7 +82,7 @@
 <div id="term"></div>
 
 <div id="upload_push" class="modal fade" >
-    <div class="modal-dialog" style="width:740px;">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -94,7 +94,7 @@
                         <span class="input-group-addon">上传路径</span>
                         <input type="text" id="path" class="form-control col-lg-13" value="~">
                     </div>
-                    <input id="file" name="file" type="file" multiple>
+                    <input id="file" name="file" type="file">
                 </form>
             </div>
         </div><!-- /.modal-content -->
@@ -123,7 +123,6 @@
             showPreview : true,
             browseOnZoneClick:false,
             uploadUrl : '${contextPath}/terminal/upload?token=${token}&path='+$("#path").val(),
-            maxFileCount:1,
             removeLabel : "删除",
             showCaption: true, //是否显示标题,
             dropZoneEnabled:true,
@@ -131,24 +130,18 @@
             previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
             initialCaption: "请选择要上传的文件",
             allowedFileExtensions : null
-        })/*.on("filebatchselected", function(event, files) {
-            $(this).fileinput("upload");
-        }).on("fileuploaded", function(event, data,previewId, index) {
-            if (data.response) {
-                $(".totalProgress").removeClass('.progress-bar-success').addClass('.progress-bar-danger');
-            }
-        });*/
-
+        });
     });
 
     function upload() {
         $("#upload_push").modal('show');
+        $(".fileinput-remove-button").click();
     }
 
     //导入文件上传完成之后的事件
     $("#file").on("fileuploaded", function (event, data, previewId, index) {
         if (!data.response) {
-            alert("上传失败...");
+            toastr.error('文件格式类型不正确');
         }
     });
 
