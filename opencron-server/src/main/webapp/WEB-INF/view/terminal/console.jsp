@@ -90,7 +90,7 @@
                 <form enctype="multipart/form-data">
                     <div class="input-group" style="padding-bottom:12px">
                         <span class="input-group-addon">上传路径</span>
-                        <input type="text" id="path" class="form-control col-lg-13" value="~">
+                        <input type="text" id="path" class="form-control col-lg-13" placeholder="请输入文件上传路径,默认在当前终端所在的路径下">
                     </div>
                     <input id="file" name="file" type="file">
                 </form>

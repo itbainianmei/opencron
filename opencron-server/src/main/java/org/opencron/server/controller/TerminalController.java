@@ -174,6 +174,7 @@ public class TerminalController {
                 File tempFile = new File(tmpPath, ifile.getOriginalFilename());
                 try {
                     ifile.transferTo(tempFile);
+                    path = CommonUtils.isEmpty(path)?"~":path;
                     terminalClient.upload(tempFile.getAbsolutePath(),path+"/"+ifile.getOriginalFilename(),ifile.getSize());
                     tempFile.delete();
                 }catch (Exception e) {
