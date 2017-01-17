@@ -282,10 +282,9 @@ public class TerminalService {
                 if (dst.startsWith("~") ){
                     pwd();//获取当前的真是路径..
                     //暂停几秒,等待获取pwd输出的结果.
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                 }
                 dst = dst.replaceAll("~/|~",pwd);
-                this.uuid = null;
                 channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
