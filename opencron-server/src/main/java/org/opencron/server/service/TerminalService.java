@@ -241,12 +241,13 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
-                            //该命令很特殊,不是前端发送的,是后台发送的pwd命令,截取输出,不能发送给前台
+
+                            //获取pwd的结果输出,不能发送给前台
                             if ( uuid!=null && message.contains(uuid) ) {
                                 if (!message.startsWith("echo")) {
                                     pwd = message.split("#")[1];
                                     pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                    logger.info("[opercron]===========================>{}",pwd);
+                                    logger.info("[opencron] upload file target path:{}",pwd);
                                 }
                             } else {
                                 //正常输出的数据,直接给前台web终端
@@ -302,7 +303,7 @@ public class TerminalService {
         private void pwd() throws IOException {
             //发送一个特殊的命令
             this.uuid = CommonUtils.uuid();
-            write(String.format("echo %s#`pwd`\r",this.uuid));
+            write(String.format("echo %s#$(pwd)\r",this.uuid));
         }
 
         public void disconnect() throws IOException {
