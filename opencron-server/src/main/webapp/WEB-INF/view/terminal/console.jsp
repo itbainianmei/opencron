@@ -123,7 +123,7 @@
             showPreview : true,
             browseOnZoneClick:false,
             uploadUrl : '${contextPath}/terminal/upload?token=${token}&path='+$("#path").val(),
-            maxFileCount:2,
+            maxFileCount:1,
             removeLabel : "删除",
             showCaption: true, //是否显示标题,
             dropZoneEnabled:true,
@@ -131,14 +131,25 @@
             previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
             initialCaption: "请选择要上传的文件",
             allowedFileExtensions : null
-        }).on("filebatchselected", function(event, files) {
+        })/*.on("filebatchselected", function(event, files) {
             $(this).fileinput("upload");
         }).on("fileuploaded", function(event, data,previewId, index) {
             if (data.response) {
                 $(".totalProgress").removeClass('.progress-bar-success').addClass('.progress-bar-danger');
             }
-        });
+        });*/
 
+    });
+
+    function upload() {
+        $("#upload_push").modal('show');
+    }
+
+    //导入文件上传完成之后的事件
+    $("#file").on("fileuploaded", function (event, data, previewId, index) {
+        if (!data.response) {
+            alert("上传失败...");
+        }
     });
 
     function closeTerminal() {
@@ -154,18 +165,8 @@
         });
     }
 
-    function upload() {
-        $("#upload_push").modal('show');
-    }
 
-   /* //导入文件上传完成之后的事件
-    $("#file").on("fileuploaded", function (event, data, previewId, index) {
-        //$("#upload_push").modal("hide");
-        if (!data.response) {
-            return;
-        }
-    });
-*/
+
 
  /*   $("#uploadForm").submit(function(event) {
         var formData = new FormData(this);
