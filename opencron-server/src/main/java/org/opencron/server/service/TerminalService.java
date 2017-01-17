@@ -241,7 +241,7 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
-                            //该命令很特殊,不是前端发送的,是后台发送的pwd命令,抢取输出,不能发送给前台
+                            //该命令很特殊,不是前端发送的,是后台发送的pwd命令,截取输出,不能发送给前台
                             if ( uuid!=null && message.contains(uuid) ) {
                                 if (!message.startsWith("echo")) {
                                     pwd = message.split("#")[1];
@@ -283,6 +283,7 @@ public class TerminalService {
                     Thread.sleep(100);
                 }
                 dst = dst.replaceAll("~/|~",pwd);
+                this.uuid = null;
                 channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
