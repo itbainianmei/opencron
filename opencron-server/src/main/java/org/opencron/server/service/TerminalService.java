@@ -242,15 +242,12 @@ public class TerminalService {
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
                             if ( message.contains(clientId) ) {
-                                if ( pwd != null) {
+                                if ( pwd != null || message.startsWith("echo")) {
                                     continue;
                                 }
-                                if (!message.startsWith("echo")) {
-                                    pwd = message.split("#")[1];
-                                    pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
-                                    logger.info("[opencron] upload file target path:{}", pwd);
-                                }
-                                builder.setLength(0);
+                                pwd = message.split("#")[1];
+                                pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
+                                logger.info("[opencron] upload file target path:{}", pwd);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
