@@ -16,18 +16,16 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
     <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170116" >
-
+    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170117" >
 
     <!--fileinput-->
     <link href="${contextPath}/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
     <script src="${contextPath}/js/fileinput/js/fileinput.js" type="text/javascript"></script>
     <script src="${contextPath}/js/fileinput/js/locales/zh.js" type="text/javascript"></script>
-    <script src="${contextPath}/js/fileinput/themes/fa/theme.js" type="text/javascript" ></script>
 
     <!--term-->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170116"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170117"></script>
     <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
 
     <title>opencron Terminal</title>
@@ -129,6 +127,7 @@
             resizeImage: false,
             previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
             initialCaption: "请选择要上传的文件",
+            maxFileSize:1073741824,
             allowedFileExtensions : null
         });
     });
@@ -141,7 +140,7 @@
     //导入文件上传完成之后的事件
     $("#file").on("fileuploaded", function (event, data, previewId, index) {
         if (!data.response) {
-            toastr.error('文件格式类型不正确');
+            alert('文件格式类型不正确');
         }
     });
 
