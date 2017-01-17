@@ -105,7 +105,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-       var term = new OpencronTerm('${token}');
+       term = new OpencronTerm('${token}');
 
         //去掉a点击时的虚线框
         $(".container").find("a").each(function (i,a) {

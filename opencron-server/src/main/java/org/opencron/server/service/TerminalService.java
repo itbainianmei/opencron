@@ -190,6 +190,8 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+        private String uuid;
+        private String pwd;
 
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
@@ -224,7 +226,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 ];
+                    byte[] buffer = new byte[ 1024 * 4 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while ( webSocketSession != null && webSocketSession.isOpen()) {
@@ -239,7 +241,16 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = new String(builder.toString().getBytes(DigestUtils.getEncoding(builder.toString())), "UTF-8");
-                            webSocketSession.sendMessage(new TextMessage(message));
+                            //该命令很特殊,不是前端发送的,是后台发送的pwd命令,抢取输出,不能发送给前台
+                            if ( uuid!=null && message.contains(uuid) ) {
+                                if (!message.startsWith("echo")) {
+                                    pwd = message.split("#")[1];
+                                    pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
+                                }
+                            } else {
+                                //正常输出的数据,直接给前台web终端
+                                webSocketSession.sendMessage(new TextMessage(message));
+                            }
                         }
                     } catch (Exception e) {
                     }
@@ -266,7 +277,12 @@ public class TerminalService {
                 FileInputStream file = new FileInputStream(src);
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
-                dst = dst.replaceAll("~/|~", "");
+                if (dst.startsWith("~") ){
+                    pwd();//获取当前的真是路径..
+                    //暂停几秒,等待获取pwd输出的结果.
+                    Thread.sleep(100);
+                }
+                dst = dst.replaceAll("~/|~",pwd);
                 channelSftp.put(file,dst,new OpencronUploadMonitor(fileSize));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -279,6 +295,12 @@ public class TerminalService {
             if (channelSftp != null) {
                 channelSftp.disconnect();
             }
+        }
+
+        private void pwd() throws IOException {
+            //发送一个特殊的命令
+            this.uuid = CommonUtils.uuid();
+            write(String.format("echo %s#`pwd`\r",this.uuid));
         }
 
         public void disconnect() throws IOException {
