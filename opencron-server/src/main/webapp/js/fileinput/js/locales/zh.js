@@ -49,8 +49,8 @@
             'object': 'object'
         },
         msgUploadAborted: '该文件上传被中止',
-        msgUploadThreshold: 'Processing...',
-        msgUploadEmpty: 'No valid data available for upload.',
+        msgUploadThreshold: '上传中...',
+        msgUploadEmpty: ' 没有上传有效的数据 ',
         msgValidationError: '验证错误',
         msgLoading: '加载第 {index} 文件 共 {files} &hellip;',
         msgProgress: '加载第 {index} 文件 共 {files} - {name} - {percent}% 完成.',

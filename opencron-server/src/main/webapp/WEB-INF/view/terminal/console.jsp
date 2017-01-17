@@ -105,8 +105,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-       term = new OpencronTerm('${token}');
-
+        new OpencronTerm('${token}');
         //去掉a点击时的虚线框
         $(".container").find("a").each(function (i,a) {
             $(a).focus(function () {
@@ -120,21 +119,30 @@
             language: 'zh',
             showPreview : true,
             browseOnZoneClick:false,
-            uploadUrl : '${contextPath}/terminal/upload?token=${token}&path='+$("#path").val(),
+            uploadUrl : '${contextPath}/terminal/upload',
             removeLabel : "删除",
             showCaption: true, //是否显示标题,
             dropZoneEnabled:true,
+            dropZoneTitle:"拖拽文件到这里来上传...",
             resizeImage: false,
             previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
             initialCaption: "请选择要上传的文件",
             maxFileSize:104857600,//文件最大100M
-            allowedFileExtensions : null
+            allowedFileExtensions : null,
+            uploadExtraData: function(previewId, index) {
+                var obj = {};
+                obj.token = '${token}';
+                obj.path = $("#path").val();
+                console.log(obj);
+                return obj;
+            }
         });
     });
 
     function upload() {
         $("#upload_push").modal('show');
         $(".fileinput-remove-button").click();
+        $("#path").val('');
     }
 
     //导入文件上传完成之后的事件

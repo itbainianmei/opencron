@@ -248,6 +248,7 @@ public class TerminalService {
                                 pwd = message.split("#")[1];
                                 pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                 logger.info("[opencron] Sftp upload file target path:{}", pwd);
+                                builder.setLength(0);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
@@ -282,7 +283,7 @@ public class TerminalService {
                     //不出绝招不行啊....很神奇
                     while (pwd == null) {
                         write(String.format("echo %s#$(pwd)\r", this.clientId));
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     }
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
