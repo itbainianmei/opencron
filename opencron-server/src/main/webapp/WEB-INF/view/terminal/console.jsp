@@ -68,7 +68,7 @@
                 <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出</a></li>
 
                 <li style="padding-top: 9px;margin-left: 18px;">
-                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文输入</label>&nbsp;&nbsp;<input id="chinese" size="30" placeholder="发送中文请在这里输入" type="text">
+                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文输入</label>&nbsp;&nbsp;<input id="chinese" class="china-btn" size="30" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="chinput" style="margin-top: -3px;">发送</div>
                 </li>
                 <li style="float: right;margin-right: 10px;"><a href="https://github.com/wolfboys/opencron" target="_blank"><i aria-hidden="true" class="fa fa-github" style="font-size:35px;position:absolute;top:6px"></i></a></li>
