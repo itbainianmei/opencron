@@ -37,7 +37,7 @@
     <div class="container">
         <div>
             <ul class="nav navbar-nav">
-                <li><a class="term-logo" href="javascript:void(0)" title="" title="">Opencron</a></li>
+                <li><a class="term-logo" href="${pageContext}" target="_blank" title="">Opencron</a></li>
                <%-- <li class="dropdown">
                      <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="选择主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;选择主题<b class="caret"></b></a>
                      <ul class="dropdown-menu theme" >
