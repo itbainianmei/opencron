@@ -22,7 +22,6 @@
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
-import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
@@ -48,33 +47,32 @@ import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 
 /**
- *
  * @author <a href="mailto:benjobs@qq.com">benjobs@qq.com</a>
  * @name:CommonUtil
  * @version: 1.0.0
  * @company: org.opencron
  * @description: webconsole核心类
  * @date: 2016-05-25 10:03<br/><br/>
- *
+ * <p>
  * <b style="color:RED"></b><br/><br/>
  * 你快乐吗?<br/>
  * 风轻轻的问我<br/>
  * 曾经快乐过<br/>
  * 那时的湖面<br/>
  * 她踏着轻舟泛过<br/><br/>
- *
+ * <p>
  * 你忧伤吗?<br/>
  * 雨悄悄的问我<br/>
  * 一直忧伤着<br/>
  * 此时的四季<br/>
  * 全是她的柳絮飘落<br/><br/>
- *
+ * <p>
  * 你心痛吗?<br/>
  * 泪偷偷的问我<br/>
  * 心痛如刀割<br/>
  * 收到记忆的包裹<br/>
  * 都是她冰清玉洁还不曾雕琢<br/><br/>
- *
+ * <p>
  * <hr style="color:RED"/>
  */
 
@@ -224,7 +222,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 ];
+                    byte[] buffer = new byte[1024];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -241,8 +239,8 @@ public class TerminalService {
                             String message = builder.toString();
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
-                            if ( message.contains(clientId) ) {
-                                if ( pwd != null || message.startsWith("echo")) {
+                            if (message.contains(getCmdId())) {
+                                if (pwd != null || message.startsWith("echo")) {
                                     continue;
                                 }
                                 pwd = message.split("#")[1];
@@ -262,6 +260,7 @@ public class TerminalService {
 
         /**
          * 向ssh终端输入内容
+         *
          * @param message
          * @throws IOException
          */
@@ -282,12 +281,12 @@ public class TerminalService {
                 if (dst.startsWith("./")) {
                     //不出绝招不行啊....很神奇
                     while (pwd == null) {
-                        write(String.format("echo %s#$(pwd)\r", this.clientId));
+                        write(String.format("echo %s#$(pwd)\r", getCmdId()));
                         Thread.sleep(200);
                     }
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
-                }else if(dst.startsWith("~")){
+                } else if (dst.startsWith("~")) {
                     dst = dst.replaceAll("~/|~", "");
                 }
                 channelSftp.put(file, dst, new OpencronSftpMonitor(fileSize));
@@ -357,6 +356,9 @@ public class TerminalService {
         }
 
 
+        public String getCmdId() {
+            return this.clientId + this.httpSessionId;
+        }
     }
 
     public static class TerminalContext implements Serializable {
@@ -500,9 +502,9 @@ public class TerminalService {
             if (fileSize != 0) {
                 double d = ((double) transfered * 100) / (double) fileSize;
                 DecimalFormat df = new DecimalFormat("#.##");
-                logger.info("[opencron] Sftp Sending progress message: {} %",df.format(d));
+                logger.info("[opencron] Sftp Sending progress message: {} %", df.format(d));
             } else {
-                logger.info("[opencron] Sftp Sending progress message: ",transfered);
+                logger.info("[opencron] Sftp Sending progress message: ", transfered);
             }
         }
 
