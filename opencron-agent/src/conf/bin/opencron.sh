@@ -42,6 +42,21 @@
 #                   used
 # -----------------------------------------------------------------------------
 
+# opencron logo...
+echo -ne "\033[0;33m"
+cat<<EOT
+
+  ___  _ __   ___ _ __   ___ _ __ ___  _ __
+ / _ \| '_ \ / _ \ '_ \ / __| '__/ _ \| '_ \\
+| (_) | |_) |  __/ | | | (__| | | (_) | | | |
+ \___/| .__/ \___|_| |_|\___|_|  \___/|_| |_|
+      |_|
+
+
+EOT
+echo -ne "\033[m"
+
+
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false
 darwin=false
@@ -197,6 +212,9 @@ if [ $have_tty -eq 1 ]; then
     echo "Using OPENCRON_PID:    $OPENCRON_PID"
   fi
 fi
+
+
+
 
 case "$1" in
     start)
