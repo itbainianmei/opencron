@@ -129,11 +129,10 @@
             initialCaption: "请选择要上传的文件",
             maxFileSize:104857600,//文件最大100M
             allowedFileExtensions : null,
-            uploadExtraData: function(previewId, index) {
+            uploadExtraData: function() {
                 var obj = {};
                 obj.token = '${token}';
                 obj.path = $("#path").val();
-                console.log(obj);
                 return obj;
             }
         });
