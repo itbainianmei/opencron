@@ -144,7 +144,6 @@ public class ExecuteService implements Job {
      * 流程任务 按流程任务处理方式区分
      */
     private boolean executeFlowJob(JobVo job) {
-
         if (!checkJobPermission(job.getAgentId(),job.getUserId()))return false;
 
         final long groupId = System.nanoTime()+Math.abs(new Random().nextInt());//分配一个流程组Id

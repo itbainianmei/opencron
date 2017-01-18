@@ -95,8 +95,8 @@
                     <input id="file" name="file" type="file">
                 </form>
             </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+        </div>
+    </div>
 </div>
 
 
