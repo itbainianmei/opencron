@@ -124,7 +124,7 @@
 
         $.ajax({
             type: "POST",
-            url: "${contextPath}/record",
+            url: "${contextPath}/progress",
             dataType: "json",
             success: function (data) {
                 if (data != null) {
