@@ -154,6 +154,17 @@ public class HomeController {
         }
     }
 
+    @RequestMapping("/progress")
+    public void progress(HttpServletResponse response, HttpSession session) {
+        //成功失败折线图数据
+        List<ChartVo> voList = recordService.getRecord(null,null,session);
+        if (isEmpty(voList)) {
+            WebUtils.writeJson(response, "null");
+        } else {
+            WebUtils.writeJson(response, JSON.toJSONString(voList));
+        }
+    }
+
     @RequestMapping("/monitor")
     public void port(HttpServletResponse response, Long agentId) throws Exception {
         Agent agent = agentService.getAgent(agentId);

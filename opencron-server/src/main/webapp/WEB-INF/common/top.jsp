@@ -130,6 +130,39 @@
 				<div id="sidebar-calendar"></div>
 			</div>
 
+			<div class="s-widget m-b-25">
+				<h2 class="tile-title">
+					报告明细
+				</h2>
+				<div class="s-widget-body">
+					<div class="clearfix"></div>
+					<small>运行模式(自动/手动)</small>
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-primary" role="progressbar" id="progress_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+					</div><!-- progress -->
+
+					<small>作业类型(单一/流程）</small>
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-success" role="progressbar" id="progress_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+					</div><!-- progress -->
+
+					<small>规则类型(crontab/quartz)</small>
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-danger" role="progressbar"  id="progress_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+					</div><!-- progress -->
+
+					<small>重跑状态 (非重跑/重跑)</small>
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-warning" role="progressbar"  id="progress_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+					</div><!-- progress -->
+
+					<small>执行状态(成功/失败)</small>
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-success" role="progressbar" id="progress_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+					</div><!-- progress -->
+				</div>
+			</div>
+
 		</div>
 
 		<!-- Side Menu -->
