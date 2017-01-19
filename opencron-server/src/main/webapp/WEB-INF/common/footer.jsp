@@ -128,81 +128,35 @@
             dataType: "json",
             success: function (data) {
                 if (data != null) {
-                    //折线图
-                    var dataArea = [];
-                    var successSum = 0;
-                    var failureSum = 0;
-                    var killedSum = 0;
-                    var singleton = 0;
-                    var flow = 0;
-                    var crontab = 0;
-                    var quartz = 0;
-                    var rerun = 0;
-                    var auto = 0;
-                    var operator = 0;
-
-                    for (var i in data) {
-                        dataArea.push({
-                            date: data[i].date,
-                            success: data[i].success,
-                            failure: data[i].failure,
-                            killed: data[i].killed
-                        });
-                        successSum += parseInt(data[i].success);
-                        failureSum += parseInt(data[i].failure);
-                        killedSum += parseInt(data[i].killed);
-                        singleton += parseInt(data[i].singleton);
-                        flow += parseInt(data[i].flow);
-                        crontab += parseInt(data[i].crontab);
-                        quartz += parseInt(data[i].quartz);
-                        rerun += parseInt(data[i].rerun);
-                        auto += parseInt(data[i].auto);
-                        operator += parseInt(data[i].operator);
-                    }
-
-                    var progress_data = {
-                        "dataArea": dataArea,
-                        "success": successSum,
-                        "failure": failureSum,
-                        "killed": killedSum,
-                        "singleton": singleton,
-                        "flow": flow,
-                        "crontab": crontab,
-                        "quartz": quartz,
-                        "rerun": rerun,
-                        "auto": auto,
-                        "operator": operator
-                    };
-
-                    var job_type = parseFloat(progress_data.auto / (progress_data.auto + progress_data.operator)) * 100;
+                    var job_type = parseFloat(data.auto / (data.auto + data.operator)) * 100;
                     if (isNaN(job_type)) {
                         $("#progress_type").attr("aria-valuenow", 0).css("width", "0%");
                     } else {
                         $("#progress_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
                     }
 
-                    var job_category = parseFloat(progress_data.singleton / (progress_data.singleton + progress_data.flow)) * 100;
+                    var job_category = parseFloat(data.singleton / (data.singleton + data.flow)) * 100;
                     if (isNaN(job_category)) {
                         $("#progress_category").attr("aria-valuenow", 0).css("width", "0%");
                     } else {
                         $("#progress_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
                     }
 
-                    var job_model = parseFloat(progress_data.crontab / (progress_data.crontab + progress_data.quartz)) * 100;
+                    var job_model = parseFloat(data.crontab / (data.crontab + data.quartz)) * 100;
                     if (isNaN(job_model)) {
                         $("#progress_model").attr("aria-valuenow", 0).css("width", "0%");
                     } else {
                         $("#progress_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
                     }
 
-                    var job_rerun = parseFloat((progress_data.success + progress_data.failure + progress_data.killed - progress_data.rerun) / (progress_data.success + progress_data.failure + progress_data.killed)) * 100;
+                    var job_rerun = parseFloat((data.success + data.failure + data.killed - data.rerun) / (data.success + data.failure + data.killed)) * 100;
                     if (isNaN(job_rerun)) {
                         $("#progress_rerun").attr("aria-valuenow", 0).css("width", "0%");
                     } else {
                         $("#progress_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
                     }
 
-                    var job_status = parseFloat(progress_data.success / (progress_data.success + progress_data.failure + progress_data.killed)) * 100;
+                    var job_status = parseFloat(data.success / (data.success + data.failure + data.killed)) * 100;
                     if (isNaN(job_status)) {
                         $("#progress_status").attr("aria-valuenow", 0).css("width", "0%");
                     } else {
