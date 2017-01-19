@@ -64,7 +64,7 @@
 
         .report_detail {
             margin-top: 5px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
 
@@ -366,27 +366,37 @@
 
                    <span class="sublabel">运行模式(自动/手动)</span>
                    <div class="progress progress-sm report_detail">
-                       <div class="progress-bar progress-bar-primary" role="progressbar" id="job_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                       <a href="#" data-toggle="tooltip" class="tooltips progress-bar progress-bar-primary" role="progressbar" id="job_type">
+                           <span class="sr-only"></span>
+                       </a>
                    </div><!-- progress -->
 
                    <span class="sublabel">作业类型(单一/流程）</span>
                    <div class="progress progress-sm report_detail">
-                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                       <a href="#" data-toggle="tooltip" class="tooltips progress-bar progress-bar-success" role="progressbar" id="job_category" >
+                           <span class="sr-only"></span>
+                       </a>
                    </div><!-- progress -->
 
                    <span class="sublabel">规则类型(crontab/quartz)</span>
                    <div class="progress progress-sm report_detail">
-                       <div class="progress-bar progress-bar-danger" role="progressbar"  id="job_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                       <a href="#" data-toggle="tooltip" class="tooltips progress-bar progress-bar-danger" role="progressbar"  id="job_model" >
+                           <span class="sr-only"></span>
+                       </a>
                    </div><!-- progress -->
 
                    <span class="sublabel">重跑状态 (非重跑/重跑)</span>
                    <div class="progress progress-sm report_detail">
-                       <div class="progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                       <a href="#" data-toggle="tooltip" class="tooltips progress-bar progress-bar-warning" role="progressbar"  id="job_rerun"  >
+                           <span class="sr-only"></span>
+                       </a>
                    </div><!-- progress -->
 
                    <span class="sublabel">执行状态(成功/失败)</span>
                    <div class="progress progress-sm report_detail">
-                       <div class="progress-bar progress-bar-success" role="progressbar" id="job_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+                       <a href="#" data-toggle="tooltip" class="tooltips progress-bar progress-bar-success" role="progressbar" id="job_status" >
+                           <span class="sr-only"></span>
+                       </a>
                    </div><!-- progress -->
                </div>
                 <div class="col-xs-3 block-color" id="overview_pie_div" style="display: none">
@@ -514,12 +524,6 @@
                 <!-- CPU -->
                 <div class="tile" id="cpu">
                     <h2 class="tile-title"><i aria-hidden="true" class="fa fa-line-chart"></i>&nbsp;CPU使用率</h2>
-                    <%-- <p style="margin-left: 10px;margin-right: 10px;color: rgb(222,222,222)">
-                         &nbsp;&nbsp;&nbsp;&nbsp;CPU利用率分为<span class="labact">用户态</span>，<span class="labact">系统态</span>和<span class="labact">空闲态</span>
-                         分别表示CPU处于<span class="labact">用户态执行的时间</span>，<span class="labact">系统内核执行的时间</span>，和<span class="labact">空闲系统进程执行的时间</span>
-                         这里的CPU利用率是指：CPU执行非系统空闲进程的时间 / CPU总的执行时间<br>
-                         服务器的CPU利用率高,则表明服务器很繁忙。如果前台响应时间越来越大，而后台CPU利用率始终上不去，说明在某个地方有瓶颈了,系统需要调优
-                     </p>--%>
                     <div class="p-t-10 p-r-5 p-b-5">
                         <div class="div-havedata" style="height: 200px; padding: 0px; position: relative;" id="cpu-chart">
                             <div class="loader">

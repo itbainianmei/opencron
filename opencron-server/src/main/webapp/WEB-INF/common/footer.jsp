@@ -128,39 +128,41 @@
             dataType: "json",
             success: function (data) {
                 if (data != null) {
-                    var job_type = parseFloat(data.auto / (data.auto + data.operator)) * 100;
+                    var job_type = parseInt(parseFloat(data.auto / (data.auto + data.operator)) * 100);
                     if (isNaN(job_type)) {
-                        $("#progress_type").attr("aria-valuenow", 0).css("width", "0%");
+                        $("#progress_type").css("width", "0%");
                     } else {
-                        $("#progress_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+                        $("#progress_type").attr("data-original-title", job_type+"%").css("width", job_type + "%").next();
+
+                        $("#progress_type").attr("data-original-title", job_type+"%").css("width", job_type + "%");
                     }
 
-                    var job_category = parseFloat(data.singleton / (data.singleton + data.flow)) * 100;
+                    var job_category = parseInt(parseFloat(data.singleton / (data.singleton + data.flow)) * 100);
                     if (isNaN(job_category)) {
-                        $("#progress_category").attr("aria-valuenow", 0).css("width", "0%");
+                        $("#progress_category").attr("data-original-title", 0).css("width", "0%");
                     } else {
-                        $("#progress_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
+                        $("#progress_category").attr("data-original-title", job_category+"%").css("width", job_category + "%");
                     }
 
-                    var job_model = parseFloat(data.crontab / (data.crontab + data.quartz)) * 100;
+                    var job_model = parseInt(parseFloat(data.crontab / (data.crontab + data.quartz)) * 100);
                     if (isNaN(job_model)) {
-                        $("#progress_model").attr("aria-valuenow", 0).css("width", "0%");
+                        $("#progress_model").attr("data-original-title", 0).css("width", "0%");
                     } else {
-                        $("#progress_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
+                        $("#progress_model").attr("data-original-title", job_model+"%").css("width", job_model + "%");
                     }
 
-                    var job_rerun = parseFloat((data.success + data.failure + data.killed - data.rerun) / (data.success + data.failure + data.killed)) * 100;
+                    var job_rerun = parseInt(parseFloat((data.success + data.failure + data.killed - data.rerun) / (data.success + data.failure + data.killed)) * 100);
                     if (isNaN(job_rerun)) {
-                        $("#progress_rerun").attr("aria-valuenow", 0).css("width", "0%");
+                        $("#progress_rerun").attr("data-original-title", 0).css("width", "0%");
                     } else {
-                        $("#progress_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
+                        $("#progress_rerun").attr("data-original-title", job_rerun+"%").css("width", job_rerun + "%");
                     }
 
-                    var job_status = parseFloat(data.success / (data.success + data.failure + data.killed)) * 100;
+                    var job_status = parseInt(parseFloat(data.success / (data.success + data.failure + data.killed)) * 100);
                     if (isNaN(job_status)) {
-                        $("#progress_status").attr("aria-valuenow", 0).css("width", "0%");
+                        $("#progress_status").attr("data-original-title", 0).css("width", "0%");
                     } else {
-                        $("#progress_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
+                        $("#progress_status").attr("data-original-title", job_status+"%").css("width", job_status + "%");
                     }
                 }
             }

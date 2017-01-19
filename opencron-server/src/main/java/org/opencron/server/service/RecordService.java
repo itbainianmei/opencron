@@ -160,24 +160,24 @@ public class RecordService {
     }
 
     public List<ChartVo> getRecord(String startTime, String endTime, HttpSession session) {
-        String sql = "SELECT " +
-                " sum(CASE R.success WHEN 0 THEN 1 ELSE 0 END) failure," +
-                " sum(CASE R.success WHEN 1 THEN 1 ELSE 0 END) success," +
-                " sum(CASE R.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
-                " sum(CASE R.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
-                " sum(CASE R.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
-                " sum(CASE J.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
-                " sum(CASE J.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
-                " sum(CASE R.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+
-                " sum(CASE R.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
-                " sum(CASE R.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
-                " FROM T_RECORD R LEFT JOIN T_JOB J ON R.jobid=J.jobid " +
-            " WHERE DATE_FORMAT(R.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
+        String sql = "SELECT DATE_FORMAT(r.startTime,'%Y-%m-%d') AS date, " +
+                " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
+                " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +
+                " sum(CASE r.success WHEN 2 THEN 1 ELSE 0 END) killed, " +
+                " sum(CASE r.jobType WHEN 0 THEN 1 ELSE 0 END) singleton,"+
+                " sum(CASE r.jobType WHEN 1 THEN 1 ELSE 0 END) flow,"+
+                " sum(CASE j.cronType WHEN 0 THEN 1 ELSE 0 END) crontab,"+
+                " sum(CASE j.cronType WHEN 1 THEN 1 ELSE 0 END) quartz,"+
+                " sum(CASE r.execType WHEN 0 THEN 1 ELSE 0 END) auto,"+
+                " sum(CASE r.execType WHEN 1 THEN 1 ELSE 0 END) operator,"+
+                " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
+                " FROM T_RECORD r left join T_JOB j ON r.jobid=j.jobid "+
+                " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
         if (!Globals.isPermission(session)) {
             User user = userService.getUserBySession(session);
-            sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
+            sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
         }
-        sql += " GROUP BY DATE_FORMAT(R.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(R.startTime,'%Y-%m-%d') ASC";
+        sql += " GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
         return queryDao.sqlQuery(ChartVo.class, sql);
     }
 

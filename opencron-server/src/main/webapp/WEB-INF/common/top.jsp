@@ -134,33 +134,51 @@
 				<h2 class="tile-title">
 					报告明细
 				</h2>
+
 				<div class="s-widget-body">
-					<div class="clearfix"></div>
-					<small>运行模式(自动/手动)</small>
-					<div class="progress progress-sm">
-						<div class="progress-bar progress-bar-primary" role="progressbar" id="progress_type" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-					</div><!-- progress -->
-
-					<small>作业类型(单一/流程）</small>
-					<div class="progress progress-sm">
-						<div class="progress-bar progress-bar-success" role="progressbar" id="progress_category" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-					</div><!-- progress -->
-
-					<small>规则类型(crontab/quartz)</small>
-					<div class="progress progress-sm">
-						<div class="progress-bar progress-bar-danger" role="progressbar"  id="progress_model" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-					</div><!-- progress -->
-
-					<small>重跑状态 (非重跑/重跑)</small>
-					<div class="progress progress-sm">
-						<div class="progress-bar progress-bar-warning" role="progressbar"  id="progress_rerun"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-					</div><!-- progress -->
-
-					<small>执行状态(成功/失败)</small>
-					<div class="progress progress-sm">
-						<div class="progress-bar progress-bar-success" role="progressbar" id="progress_status" aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
-					</div><!-- progress -->
+					<div class="side-border">
+						<small>运行模式(自动/手动)</small>
+						<div class="progress progress-small">
+							<a href="#" data-toggle="tooltip" id="progress_type" class="progress-bar tooltips progress-bar-danger">
+								<span class="sr-only" id="progress_type_tip"></span>
+							</a>
+						</div>
+					</div>
+					<div class="side-border">
+						<small>作业类型(单一/流程)</small>
+						<div class="progress progress-small">
+							<a href="#" data-toggle="tooltip" id="progress_category" class="tooltips progress-bar progress-bar-info">
+								<span class="sr-only"></span>
+							</a>
+						</div>
+					</div>
+					<div class="side-border">
+						<small>规则类型(crontab/quartz)</small>
+						<div class="progress progress-small">
+							<a href="#" data-toggle="tooltip" id="progress_model" class="tooltips progress-bar progress-bar-warning">
+								<span class="sr-only"></span>
+							</a>
+						</div>
+					</div>
+					<div class="side-border">
+						<small>重跑状态(非重跑/重跑)</small>
+						<div class="progress progress-small">
+							<a href="#" data-toggle="tooltip" id="progress_rerun" class="tooltips progress-bar progress-bar-success">
+								<span class="sr-only"></span>
+							</a>
+						</div>
+					</div>
+					<div class="side-border">
+						<small>执行状态(成功/失败)</small>
+						<div class="progress progress-small">
+							<a href="#" data-toggle="tooltip" id="progress_status" class="tooltips progress-bar progress-bar-success">
+								<span class="sr-only"></span>
+							</a>
+						</div>
+					</div>
 				</div>
+			</div>
+
 			</div>
 
 		</div>

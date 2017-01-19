@@ -722,39 +722,39 @@ function OpencronChart() {
     //屏幕大于1280显示占比进度图
     if ($(window).width() >= 1280) {
 
-        var job_type = parseFloat(this.resizeChartData.auto / (this.resizeChartData.auto + this.resizeChartData.operator)) * 100;
+        var job_type = parseInt(parseFloat(this.resizeChartData.auto / (this.resizeChartData.auto + this.resizeChartData.operator)) * 100);
         if (isNaN(job_type)) {
-            $("#job_type").attr("aria-valuenow", 0).css("width", "0%");
+            $("#job_type").attr("data-original-title", 0).css("width", "0%");
         } else {
-            $("#job_type").attr("aria-valuenow", job_type).css("width", job_type + "%");
+            $("#job_type").attr("data-original-title", job_type+"%").css("width", job_type + "%");
         }
 
-        var job_category = parseFloat(this.resizeChartData.singleton / (this.resizeChartData.singleton + this.resizeChartData.flow)) * 100;
+        var job_category = parseInt(parseFloat(this.resizeChartData.singleton / (this.resizeChartData.singleton + this.resizeChartData.flow)) * 100);
         if (isNaN(job_category)) {
-            $("#job_category").attr("aria-valuenow", 0).css("width", "0%");
+            $("#job_category").attr("data-original-title", 0).css("width", "0%");
         } else {
-            $("#job_category").attr("aria-valuenow", job_category).css("width", job_category + "%");
+            $("#job_category").attr("data-original-title", job_category+"%").css("width", job_category + "%");
         }
 
-        var job_model = parseFloat(this.resizeChartData.crontab / (this.resizeChartData.crontab + this.resizeChartData.quartz)) * 100;
+        var job_model = parseInt(parseFloat(this.resizeChartData.crontab / (this.resizeChartData.crontab + this.resizeChartData.quartz)) * 100);
         if (isNaN(job_model)) {
-            $("#job_model").attr("aria-valuenow", 0).css("width", "0%");
+            $("#job_model").attr("data-original-title", 0).css("width", "0%");
         } else {
-            $("#job_model").attr("aria-valuenow", job_model).css("width", job_model + "%");
+            $("#job_model").attr("data-original-title", job_model+"%").css("width", job_model + "%");
         }
 
-        var job_rerun = parseFloat((this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed - this.resizeChartData.rerun) / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100;
+        var job_rerun = parseInt(parseFloat((this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed - this.resizeChartData.rerun) / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100);
         if (isNaN(job_rerun)) {
-            $("#job_rerun").attr("aria-valuenow", 0).css("width", "0%");
+            $("#job_rerun").attr("data-original-title", 0).css("width", "0%");
         } else {
-            $("#job_rerun").attr("aria-valuenow", job_rerun).css("width", job_rerun + "%");
+            $("#job_rerun").attr("data-original-title", job_rerun+"%").css("width", job_rerun + "%");
         }
 
-        var job_status = parseFloat(this.resizeChartData.success / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100;
+        var job_status = parseInt(parseFloat(this.resizeChartData.success / (this.resizeChartData.success + this.resizeChartData.failure + this.resizeChartData.killed)) * 100);
         if (isNaN(job_status)) {
-            $("#job_status").attr("aria-valuenow", 0).css("width", "0%");
+            $("#job_status").attr("data-original-title", 0).css("width", "0%");
         } else {
-            $("#job_status").attr("aria-valuenow", job_status).css("width", job_status + "%");
+            $("#job_status").attr("data-original-title", job_status+"%").css("width", job_status + "%");
         }
     }
 
