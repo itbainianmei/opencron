@@ -142,7 +142,7 @@
         $(".terminal-cursor").remove();
     };
 
-}
+};
 /*
 
 ;OpencronTerm.prototype.theme = function () {

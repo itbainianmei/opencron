@@ -189,6 +189,8 @@ public class TerminalService {
         private BufferedWriter writer;
         private String cmdId;
         private String pwd;
+        private String lastInput;
+        private StringBuffer inputBuffer = new StringBuffer();//记录了上次输入的命令
 
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
@@ -249,6 +251,9 @@ public class TerminalService {
                                 logger.info("[opencron] Sftp upload file target path:{}", pwd);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
+                                if (message.equals("logout") && lastInput.equals("exit")) {
+                                    disconnect();
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -266,6 +271,12 @@ public class TerminalService {
          */
         public void write(String message) throws IOException {
             if (writer != null) {
+                if (message.equals("\r")) {
+                    lastInput = inputBuffer.toString();
+                    inputBuffer.setLength(0);
+                }else {
+                    inputBuffer.append(message);
+                }
                 writer.write(message);
                 writer.flush();
             }
