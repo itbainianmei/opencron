@@ -228,7 +228,6 @@ public class TerminalService {
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
-                            builder.setLength(0);
                             int size = inputStream.read(buffer);
                             if (size == -1) {
                                 return;
@@ -239,8 +238,9 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = builder.toString();
-                            message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
+                            //取完立即清理...
                             builder.setLength(0);
+                            message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
                             if (message.contains(cmdId)) {
                                 if (pwd != null || message.startsWith("echo")) {
