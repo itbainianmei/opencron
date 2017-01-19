@@ -215,11 +215,10 @@ public class TerminalService {
             this.session.connect(SESSION_TIMEOUT);
             this.channelShell = (ChannelShell) session.openChannel("shell");
             this.channelShell.setPtyType("xterm", cols, rows, width, height);
-            this.channelShell.connect();
             this.inputStream = this.channelShell.getInputStream();
             this.outputStream = this.channelShell.getOutputStream();
-
             this.writer = new BufferedWriter(new OutputStreamWriter(this.outputStream, "UTF-8"));
+            this.channelShell.connect();
 
             new Thread(new Runnable() {
                 @Override
@@ -238,7 +237,6 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = builder.toString();
-                            //取完立即清理...
                             builder.setLength(0);
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
