@@ -56,11 +56,6 @@
     <script type="text/javascript" src="${contextPath}/js/morris.min.js"></script>
     <!-- All JS functions -->
     <script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}"></script>
-
-    <!--flot-->
-    <script type="text/javascript" src="${contextPath}/js/flot/jquery.flot.min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/flot/jquery.flot.resize.min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/flot/jquery.flot.spline.min.js"></script>
     <script type="text/javascript" src="${contextPath}/js/testdevice.js"></script>
 
     <!-- MD5 -->
