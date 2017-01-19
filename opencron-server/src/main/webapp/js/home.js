@@ -617,34 +617,34 @@ function OpencronChart() {
     switch (self.screen) {
         case 1:
             var shtml = '<tr>' +
-                '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-                '<td class="noborder" title="持续时长">TIME</td>' +
-                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '<td class="noborder" style="width: 25%" title="CPU使用占比">CPU</td>' +
+                '<td class="noborder" style="width: 25%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" style="width: 25%" title="持续时长">TIME</td>' +
+                '<td class="noborder" style="width: 25%" title="所执行的命令">COMMAND</td>' +
                 '</tr>';
             $("#topbody").html(shtml+text);
             break;
         case 2:
             var mhtml = '<tr>' +
-                '<td class="noborder" title="进程ID">PID</td>' +
-                '<td class="noborder" title="进程所属的用户">USER</td>' +
+                '<td class="noborder" style="width: 10%" title="进程ID">PID</td>' +
+                '<td class="noborder" style="width: 20%" title="进程所属的用户">USER</td>' +
                 '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-                '<td class="noborder" title="持续时长">TIME</td>' +
-                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '<td class="noborder" style="width: 15%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" style="width: 15%" title="持续时长">TIME</td>' +
+                '<td class="noborder" style="width: 20%" title="所执行的命令">COMMAND</td>' +
                 '</tr>';
             $("#topbody").html(mhtml+text);
             break
         case 3:
             var lhtml = '<tr>' +
-                '<td class="noborder" title="进程ID">PID</td>' +
-                '<td class="noborder" title="进程所属的用户">USER</td>' +
-                '<td class="noborder" title="虚拟内存">VIRI</td>' +
-                '<td class="noborder" title="常驻内存">RES</td>' +
-                '<td class="noborder" style="width: 20%" title="CPU使用占比">CPU</td>' +
-                '<td class="noborder" style="width: 20%" title="内存使用占比">MEM</td>' +
-                '<td class="noborder" title="持续时长">TIME</td>' +
-                '<td class="noborder" title="所执行的命令">COMMAND</td>' +
+                '<td class="noborder" style="width: 10%" title="进程ID">PID</td>' +
+                '<td class="noborder" style="width: 10%" title="进程所属的用户">USER</td>' +
+                '<td class="noborder" style="width: 10%" title="虚拟内存">VIRI</td>' +
+                '<td class="noborder" style="width: 10%" title="常驻内存">RES</td>' +
+                '<td class="noborder" style="width: 15%" title="CPU使用占比">CPU</td>' +
+                '<td class="noborder" style="width: 15%" title="内存使用占比">MEM</td>' +
+                '<td class="noborder" style="width: 13%" title="持续时长">TIME</td>' +
+                '<td class="noborder" style="width: 17%" title="所执行的命令">COMMAND</td>' +
                 '</tr>';
             $("#topbody").html(lhtml+text);
             break
