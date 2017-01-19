@@ -240,6 +240,7 @@ public class TerminalService {
                             //取到linux远程机器输出的信息发送给前端
                             String message = builder.toString();
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
+                            builder.setLength(0);
                             //获取pwd的结果输出,不能发送给前台
                             if (message.contains(cmdId)) {
                                 if (pwd != null || message.startsWith("echo")) {
@@ -248,7 +249,6 @@ public class TerminalService {
                                 pwd = message.split("#")[1];
                                 pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
                                 logger.info("[opencron] Sftp upload file target path:{}", pwd);
-                                builder.setLength(0);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
