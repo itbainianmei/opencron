@@ -777,5 +777,7 @@ function OpencronChart() {
         smooth: false,
         resize: true
     });
+
+
 }
 

@@ -173,24 +173,25 @@
             }
 
             $(window).resize(function () {
-                if (typeof(windowSize) =="undefined" ) {
-                    windowSize = {
-                        width:$(window).width(),
-                        height:$(window).height()
+                window.setTimeout(function () {
+                    if (typeof(windowSize) =="undefined" ) {
+                        windowSize = {
+                            width:$(window).width(),
+                            height:$(window).height()
+                        }
+                        opencronChart.resize();
+                        $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
                     }
-                    opencronChart.resize();
-                    $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
-                }
-
-                if($(window).width()!=windowSize.width||$(window).height()!=windowSize.height) {
-                    windowSize = {
-                        width:$(window).width(),
-                        height:$(window).height()
+                    if($(window).width()!=windowSize.width||$(window).height()!=windowSize.height) {
+                         windowSize = {
+                             width:$(window).width(),
+                             height:$(window).height()
+                         }
+                         opencronChart.resize();
+                        $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
                     }
-                    opencronChart.resize();
-                    $("#cpu-chart").find("div").first().css("width","100%").find("canvas").first().css("width","100%");
-                }
-            },1000);
+                },500)
+            });
 
             $(".count").mouseover(function () {
                 $(this).css({"background-color":"rgba(0,0,0,0.55)"});
