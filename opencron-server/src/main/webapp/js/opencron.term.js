@@ -4,6 +4,7 @@
     this.term = null;
     this.termNode = null;
     this.args = arguments;
+    this.sendLine = "";//发送的一行命令
     this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
     this.open();
 }
@@ -26,7 +27,7 @@
 }
 
 ;OpencronTerm.prototype.size = function () {
-    var cols = Math.floor($(window).innerWidth() / 7.2261);
+    var cols = Math.floor($(window).innerWidth() / 7.2261);//基于fontSize=12的cols参考值
     var span = $("<span>");
     $('body').append(span);
     var array = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m','1','2','3','4','5','6','7','8','9','0'];
@@ -65,7 +66,13 @@
     self.term.open(self.termNode.empty()[0]);
     self.display = self.size();
     self.term.on('data', function(data) {
-        self.socket.send(data);
+        if (self.disconnect){
+            self.socket.close();
+        }else {
+            self.sendData = data;
+            self.sendLine += data;
+            self.socket.send(data);
+        }
     });
 
     //给发送按钮绑定事件
@@ -86,8 +93,6 @@
     $(document).keypress(function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
         if ( keyCode == 13 ){
-            console.log(self.termClosed)
-
             //在中文输入框里点击Enter按钮触发发送事件.
             if (self.hasOwnProperty("chfocus") && self.chfocus ) {
                 $("#chinput").click();
@@ -127,6 +132,14 @@
 
     self.socket.onmessage = function(event) {
         self.term.write(event.data);
+        if (self.sendData == "\r") {
+            if (event.data == "\r\nlogout\r\n" ){
+                if (self.sendLine == "exit\r"){
+                    self.disconnect = true;
+                }
+            }
+            self.sendLine = "";
+        }
     };
 
     self.socket.onclose = function() {
