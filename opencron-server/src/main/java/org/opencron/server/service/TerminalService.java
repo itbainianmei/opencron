@@ -225,7 +225,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[1024];
+                    byte[] buffer = new byte[ 1024*4 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -242,7 +242,6 @@ public class TerminalService {
                             builder.setLength(0);
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
-
                             if (message.contains(cmdId)) {
                                 if (pwd != null || message.startsWith("echo")) {
                                     continue;
