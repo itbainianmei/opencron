@@ -95,6 +95,7 @@
         });
 
         $.ajax({
+            headers:{"_csrf":self.csrf},
             type:"POST",
             url: "${contextPath}/notice/uncount",
             dataType: "html",
@@ -123,6 +124,7 @@
         });
 
         $.ajax({
+            headers:{"_csrf":self.csrf},
             type: "POST",
             url: "${contextPath}/progress",
             dataType: "json",

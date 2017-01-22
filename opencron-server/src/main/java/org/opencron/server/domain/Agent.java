@@ -66,9 +66,6 @@ public class Agent implements Serializable {
     private Integer taskCount;
 
     @Transient
-    private String csrf;
-
-    @Transient
     private List<User> users = new ArrayList<User>();
 
     public String getIp() {
@@ -189,14 +186,6 @@ public class Agent implements Serializable {
 
     public void setProxy(Integer proxy) {
         this.proxy = proxy;
-    }
-
-    public String getCsrf() {
-        return csrf;
-    }
-
-    public void setCsrf(String csrf) {
-        this.csrf = csrf;
     }
 
     @Override
