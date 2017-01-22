@@ -127,7 +127,7 @@ public final class SchedulerService {
         }
     }
 
-    public void startCrontab() {
+    public void initCrontab() {
         if (this.crontabScheduler == null) {
             this.crontabScheduler = new it.sauronsoftware.cron4j.Scheduler();
             crontabScheduler.addTaskCollector(opencronCollector);

@@ -62,7 +62,7 @@ public class OpencronTask implements InitializingBean {
     private SchedulerService schedulerService;
 
     @Autowired
-    private OpencronMonitor opencronHeartBeat;
+    private OpencronMonitor opencronMonitor;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -70,15 +70,15 @@ public class OpencronTask implements InitializingBean {
         //检测所有的agent...
         clearCache();
         //通知所有的agent,启动心跳检测...
-        startMonitor();
+        //startMonitor();
         schedulerService.initQuartz(executeService);
-        schedulerService.startCrontab();
+        schedulerService.initCrontab();
     }
 
 
     public void startMonitor() {
         logger.info("[opencron]:checking Agent connection...");
-        opencronHeartBeat.start();
+        opencronMonitor.start();
         List<Agent> agents = agentService.getAll();
         for (final Agent agent : agents) {
             executeService.ping(agent);
