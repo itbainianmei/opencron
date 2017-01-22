@@ -44,8 +44,13 @@ public final class OpencronTools {
 
     public static void logined(HttpSession httpSession,User user){
         session = httpSession;
+        session.setAttribute(HTTP_SESSION_ID,session.getId());
         session.setAttribute(LOGIN_USER,user);
         session.setAttribute(LOGIN_USER_ID,user.getUserId());
+    }
+
+    public static String getHttpSessionId(){
+        return session.getId();
     }
 
     public static User getUser(){
@@ -60,6 +65,7 @@ public final class OpencronTools {
         session.removeAttribute(LOGIN_USER);
         session.removeAttribute(LOGIN_USER_ID);
         session.removeAttribute(PERMISSION);
+        session.removeAttribute(HTTP_SESSION_ID);
         session.removeAttribute(SSH_SESSION_ID);
         session.removeAttribute(CSRF_NAME);
         TerminalService.TerminalSession.exit(session.getId());
@@ -87,6 +93,13 @@ public final class OpencronTools {
         return csrf;
     }
 
+    public static String getSshSessionId() {
+        return (String) session.getAttribute(SSH_SESSION_ID);
+    }
+
+    public static void setSshSessionId(String sshSessionId) {
+        session.setAttribute(SSH_SESSION_ID,sshSessionId);
+    }
 
     public static class CACHE {
 

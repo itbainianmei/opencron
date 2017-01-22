@@ -69,7 +69,7 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
+            OpencronTools.setSshSessionId(token);
             WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&_csrf="+OpencronTools.getCSRF()));
         }else {
             //重新输入密码进行认证...
@@ -89,7 +89,7 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
+            OpencronTools.setSshSessionId(token);
             return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
         }else {
             //重新输入密码进行认证...

@@ -22,6 +22,7 @@
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
+import org.opencron.common.job.Opencron;
 import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
@@ -195,11 +196,11 @@ public class TerminalService {
 
         private boolean closed = false;
 
-        public TerminalClient(WebSocketSession webSocketSession, String httpSessionId, String clientId, Terminal terminal) {
+        public TerminalClient(WebSocketSession webSocketSession,Terminal terminal) {
             this.webSocketSession = webSocketSession;
             this.terminal = terminal;
-            this.httpSessionId = httpSessionId;
-            this.clientId = clientId;
+            this.httpSessionId = OpencronTools.getHttpSessionId();
+            this.clientId = OpencronTools.getSshSessionId();
             this.cmdId = this.clientId + this.httpSessionId;
             this.jSch = new JSch();
         }

@@ -105,7 +105,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-        new OpencronTerm('${token}','${_csrf}');
+        new OpencronTerm('${token}','','${_csrf}');
         //去掉a点击时的虚线框
         $(".container").find("a").each(function (i,a) {
             $(a).focus(function () {

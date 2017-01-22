@@ -21,14 +21,12 @@
 
 package org.opencron.server.websocket;
 
-import org.opencron.server.job.OpencronTools;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 
@@ -38,13 +36,10 @@ public class TerminalHandShaker extends HttpSessionHandshakeInterceptor {
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         if (request instanceof ServletServerHttpRequest) {
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            HttpSession session = servletRequest.getServletRequest().getSession(false);
             attributes.put("cols",servletRequest.getServletRequest().getParameter("cols"));
             attributes.put("rows",servletRequest.getServletRequest().getParameter("rows"));
             attributes.put("width",servletRequest.getServletRequest().getParameter("width"));
             attributes.put("height",servletRequest.getServletRequest().getParameter("height"));
-            attributes.put(OpencronTools.HTTP_SESSION_ID,session.getId());
-            attributes.put(OpencronTools.SSH_SESSION_ID,session.getAttribute(OpencronTools.SSH_SESSION_ID));
         }
         return super.beforeHandshake(request,response,wsHandler,attributes);
     }

@@ -43,12 +43,10 @@ public class TerminalHandler extends TextWebSocketHandler {
 	@Autowired
 	private TerminalService terminalService;
 
-	private String sshSessionId;
-
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
-		sshSessionId = (String) session.getAttributes().get(OpencronTools.SSH_SESSION_ID);
+		String sshSessionId = OpencronTools.getSshSessionId();
 		if (sshSessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sshSessionId);
 			if (terminal!=null) {
@@ -111,10 +109,9 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
-		String httpSessionId = (String) session.getAttributes().get(OpencronTools.HTTP_SESSION_ID);
 		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
-			this.terminalClient = new TerminalClient(session,httpSessionId,sshSessionId,terminal);
+			this.terminalClient = new TerminalClient(session,terminal);
 			TerminalSession.put(session,this.terminalClient);
 		}
 		return this.terminalClient;
