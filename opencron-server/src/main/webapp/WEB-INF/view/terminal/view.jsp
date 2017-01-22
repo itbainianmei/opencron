@@ -50,7 +50,7 @@
                     } else if (json.status == "genericfail") {
                         alert("连接失败请重试");
                     } else if (json.status == "success") {
-                        var url = '${contextPath}' + json.url + "&_csrf=${_csrf}";
+                        var url = '${contextPath}' + json.url;
                         swal({
                             title: "",
                             text: "登陆成功,您确定要打开终端吗？",

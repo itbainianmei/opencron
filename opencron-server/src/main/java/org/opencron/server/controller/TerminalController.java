@@ -70,7 +70,7 @@ public class TerminalController {
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
             session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
-            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
+            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&_csrf="+OpencronTools.getCSRF()));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStatus.status,"null"));
@@ -93,7 +93,7 @@ public class TerminalController {
             return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
         }else {
             //重新输入密码进行认证...
-            return "redirect:/terminal/open?id="+terminal.getId()+"&csrf="+ OpencronTools.getCSRF();
+            return "redirect:/terminal/open?id="+terminal.getId()+"&_csrf="+ OpencronTools.getCSRF();
         }
 
     }
