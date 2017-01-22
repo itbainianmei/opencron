@@ -107,7 +107,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            var opencronChart = new OpencronChart('${contextPath}');
+            var opencronChart = new OpencronChart('${contextPath}','${_csrf}');
 
             //跨时段查询任务运行比例
             opencronChart.query();
