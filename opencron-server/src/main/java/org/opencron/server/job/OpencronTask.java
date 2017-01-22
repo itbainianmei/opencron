@@ -70,13 +70,13 @@ public class OpencronTask implements InitializingBean {
         //检测所有的agent...
         clearCache();
         //通知所有的agent,启动心跳检测...
-        heartBeat();
+        startMonitor();
         schedulerService.initQuartz(executeService);
         schedulerService.startCrontab();
     }
 
 
-    public void heartBeat() {
+    public void startMonitor() {
         logger.info("[opencron]:checking Agent connection...");
         opencronHeartBeat.start();
         List<Agent> agents = agentService.getAll();
