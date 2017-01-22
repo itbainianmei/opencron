@@ -70,7 +70,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (referer != null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
             response.sendRedirect("/");
             logger.info("[opencron]Bad request,redirect to login page");
-            OpencronTools.clearSession(session);
+            OpencronTools.invalidSession();
             return false;
         }
 
@@ -79,7 +79,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             logger.info(request.getRequestURL().toString());
             //跳到登陆页面
             response.sendRedirect("/");
-            OpencronTools.clearSession(session);
+            OpencronTools.invalidSession();
             logger.info("[opencron]session is null,redirect to login page");
             return false;
         }
@@ -99,7 +99,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             if (!verifyCSRF(request)) {
                 response.sendRedirect("/");
                 logger.info("[opencron]Bad request,redirect to login page");
-                OpencronTools.clearSession(session);
+                OpencronTools.invalidSession();
                 return false;
             }
         }
@@ -113,7 +113,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (CommonUtils.isEmpty(requstCSRF)) {
             return false;
         }
-        String sessionCSRF = OpencronTools.getCSRF(request.getSession(false));
+        String sessionCSRF = OpencronTools.getCSRF();
         if (CommonUtils.isEmpty(sessionCSRF)) {
             return false;
         }

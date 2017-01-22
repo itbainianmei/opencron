@@ -116,7 +116,7 @@ public class UserService {
     }
 
     public User getUserBySession(HttpSession session){
-        return this.getUserById(OpencronTools.getUserIdBySession(session));
+        return this.getUserById(OpencronTools.getUserId());
     }
 
 

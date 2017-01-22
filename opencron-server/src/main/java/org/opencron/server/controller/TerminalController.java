@@ -90,10 +90,10 @@ public class TerminalController {
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
             session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
         }else {
             //重新输入密码进行认证...
-            return "redirect:/terminal/open?id="+terminal.getId()+"&csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?id="+terminal.getId()+"&csrf="+ OpencronTools.getCSRF();
         }
 
     }
@@ -105,15 +105,15 @@ public class TerminalController {
     }
 
     @RequestMapping("/exists")
-    public void exists(HttpServletResponse response,HttpSession session,  Terminal terminal) throws Exception {
-        User user = OpencronTools.getUserBySession(session);
+    public void exists(HttpServletResponse response,Terminal terminal) throws Exception {
+        User user = OpencronTools.getUser();
         boolean exists = termService.exists( user.getUserId(),terminal.getHost());
         WebUtils.writeHtml(response,exists?"true":"false");
     }
 
     @RequestMapping("/view")
-    public String view(HttpSession session,PageBean pageBean,Model model ) throws Exception {
-        pageBean = termService.getPageBeanByUser(pageBean, OpencronTools.getUserIdBySession(session));
+    public String view(PageBean pageBean,Model model ) throws Exception {
+        pageBean = termService.getPageBeanByUser(pageBean, OpencronTools.getUserId());
         model.addAttribute("pageBean",pageBean);
         return "/terminal/view";
     }
@@ -144,7 +144,7 @@ public class TerminalController {
             token = CommonUtils.uuid();
             TerminalContext.put(token,terminal);
             session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
         }
         return "/terminal/error";
     }

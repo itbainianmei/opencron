@@ -85,7 +85,7 @@ public class UserController {
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
         if (!OpencronTools.isPermission(session)
-                && !OpencronTools.getUserIdBySession(session).equals(id)){
+                && !OpencronTools.getUserId().equals(id)){
             return "redirect:/user/detail";
         }
         model.addAttribute("u", userService.queryUserById(id));

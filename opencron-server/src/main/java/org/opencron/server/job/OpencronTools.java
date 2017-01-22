@@ -24,6 +24,8 @@ public final class OpencronTools {
 
     public static final String LOGIN_USER = "opencron_user";
 
+    public static final String LOGIN_USER_ID = "opencron_user_id";
+
     public static final String PERMISSION = "permission";
 
     public static final String SSH_SESSION_ID = "ssh_session_id";
@@ -34,20 +36,29 @@ public final class OpencronTools {
 
     public static final String LOGIN_MSG = "loginMsg";
 
+    private static HttpSession session = null;
+
     public static boolean isPermission(HttpSession session){
         return (Boolean) session.getAttribute(PERMISSION);
     }
 
-    public static User getUserBySession(HttpSession session){
+    public static void logined(HttpSession httpSession,User user){
+        session = httpSession;
+        session.setAttribute(LOGIN_USER,user);
+        session.setAttribute(LOGIN_USER_ID,user.getUserId());
+    }
+
+    public static User getUser(){
         return (User)session.getAttribute(OpencronTools.LOGIN_USER);
     }
 
-    public static Long getUserIdBySession(HttpSession session){
-        return getUserBySession(session).getUserId();
+    public static Long getUserId(){
+        return (Long) session.getAttribute(LOGIN_USER_ID);
     }
 
-    public static void clearSession(HttpSession session) throws Exception {
+    public static void invalidSession() throws Exception {
         session.removeAttribute(LOGIN_USER);
+        session.removeAttribute(LOGIN_USER_ID);
         session.removeAttribute(PERMISSION);
         session.removeAttribute(SSH_SESSION_ID);
         session.removeAttribute(CSRF_NAME);
@@ -56,7 +67,7 @@ public final class OpencronTools {
         session.invalidate();
     }
 
-    public static String getCSRF(HttpSession session) {
+    public static String getCSRF() {
         String token;
         synchronized (session) {
             token = (String) session.getAttribute(CSRF_NAME);

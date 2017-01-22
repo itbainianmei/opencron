@@ -124,7 +124,7 @@ public class JobController {
 
         //单任务
         if ( Opencron.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
-            job.setUserId( OpencronTools.getUserIdBySession(session) );
+            job.setUserId( OpencronTools.getUserId() );
             job.setUpdateTime(new Date());
             job.setLastChild(false);
             job.setStatus(true);//Job有效
@@ -175,7 +175,7 @@ public class JobController {
             }
 
             if (job.getUserId() == null) {
-                job.setUserId( OpencronTools.getUserIdBySession(session));
+                job.setUserId( OpencronTools.getUserId());
             }
 
             jobService.saveFlowJob(job, chindren);
@@ -249,7 +249,7 @@ public class JobController {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         if (!jobService.checkJobOwner(job.getUserId(),session)) return;
         //手动执行
-        Long userId = OpencronTools.getUserIdBySession(session);
+        Long userId = OpencronTools.getUserId();
         job.setUserId(userId);
         job.setExecType(ExecType.OPERATOR.getStatus());
         job.setAgent(agentService.getAgent(job.getAgentId()));
@@ -267,9 +267,9 @@ public class JobController {
     }
 
     @RequestMapping("/batchexec")
-    public void batchExec(HttpSession session, String command, String agentIds) {
+    public void batchExec(String command, String agentIds) {
         if (notEmpty(agentIds) && notEmpty(command)){
-            Long userId = OpencronTools.getUserIdBySession(session);
+            Long userId = OpencronTools.getUserId();
             try {
                 this.executeService.batchExecuteJob(userId,command,agentIds);
             } catch (Exception e) {

@@ -86,7 +86,7 @@ public class HomeService {
                 }
                 SingleLoginListener.addUserSession(httpSession);
             }
-            httpSession.setAttribute(OpencronTools.LOGIN_USER, user);
+            OpencronTools.logined(httpSession,user);
             return 200;
         } else {
             return 500;
@@ -102,7 +102,7 @@ public class HomeService {
             sql += " AND L.sendTime LIKE '" + sendTime + "%' ";
         }
         if (!OpencronTools.isPermission(session)) {
-            sql += " AND L.receiverId = " + OpencronTools.getUserIdBySession(session);
+            sql += " AND L.receiverId = " + OpencronTools.getUserId();
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(pageBean, LogVo.class, sql);
@@ -112,7 +112,7 @@ public class HomeService {
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!OpencronTools.isPermission(session)) {
-            sql += " and L.receiverId = " + OpencronTools.getUserIdBySession(session);
+            sql += " and L.receiverId = " + OpencronTools.getUserId();
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
@@ -121,7 +121,7 @@ public class HomeService {
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT COUNT(1) FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!OpencronTools.isPermission(session)) {
-            sql += " and L.receiverId = " + OpencronTools.getUserIdBySession(session);
+            sql += " and L.receiverId = " + OpencronTools.getUserId();
         }
         return queryDao.getCountBySql(sql);
     }

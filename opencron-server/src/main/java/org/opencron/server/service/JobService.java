@@ -276,7 +276,7 @@ public class JobService {
     }
 
     public boolean checkJobOwner(Long userId, HttpSession session) {
-        return OpencronTools.isPermission(session) || userId.equals(OpencronTools.getUserIdBySession(session));
+        return OpencronTools.isPermission(session) || userId.equals(OpencronTools.getUserId());
     }
 
 }
