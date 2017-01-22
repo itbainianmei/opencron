@@ -76,8 +76,7 @@ public class SingleLoginListener implements HttpSessionListener {
         Map<Long, String> map = new HashMap<Long, String>();
         for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
             String sessionId = entry.getKey();
-            HttpSession session = entry.getValue();
-            User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
+            User user =  OpencronTools.getUser();
             if (user != null) {
                 map.put(user.getUserId(), sessionId);
             }
@@ -120,13 +119,10 @@ public class SingleLoginListener implements HttpSessionListener {
     }
 
     public synchronized static boolean logined(User user) {
-        for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
-            HttpSession session = entry.getValue();
-            User sessionuser = (User) session.getAttribute(OpencronTools.LOGIN_USER);
-            if (sessionuser != null) {
-                if (sessionuser.getUserId().equals(user.getUserId())){
-                    return true;
-                }
+        User sessionuser = OpencronTools.getUser();
+        if (sessionuser != null) {
+            if (sessionuser.getUserId().equals(user.getUserId())){
+                return true;
             }
         }
         return false;

@@ -154,7 +154,7 @@ public class TerminalService {
         if (term == null) {
             return "error";
         }
-        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
+        User user = OpencronTools.getUser();
 
         if (!OpencronTools.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
             return "error";

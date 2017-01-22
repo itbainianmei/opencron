@@ -74,7 +74,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
+        User user = OpencronTools.getUser();
         if (user == null) {
             logger.info(request.getRequestURL().toString());
             //跳到登陆页面

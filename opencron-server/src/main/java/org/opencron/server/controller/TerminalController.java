@@ -58,7 +58,7 @@ public class TerminalController {
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
-        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
+        User user = OpencronTools.getUser();
 
         String json = "{status:'%s',url:'%s'}";
 
@@ -80,7 +80,7 @@ public class TerminalController {
 
     @RequestMapping("/ssh2")
     public String ssh2(HttpSession session,Terminal terminal) throws Exception {
-        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
+        User user = OpencronTools.getUser();
 
         terminal = termService.getById(terminal.getId());
         Terminal.AuthStatus authStatus = termService.auth(terminal);
@@ -185,10 +185,10 @@ public class TerminalController {
 
 
     @RequestMapping("/save")
-    public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
+    public void save(HttpServletResponse response, Terminal term) throws Exception {
         Terminal.AuthStatus authStatus = termService.auth(term);
         if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
-            User user = (User)session.getAttribute(OpencronTools.LOGIN_USER);
+            User user = OpencronTools.getUser();
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
         }

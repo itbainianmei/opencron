@@ -194,7 +194,7 @@ public class HomeController {
             return;
         }
         if (status == 200) {
-            User user = (User) httpSession.getAttribute(OpencronTools.LOGIN_USER);
+            User user = OpencronTools.getUser();
 
             //提示用户更改默认密码
             byte[] salt = Encodes.decodeHex(user.getSalt());
@@ -226,7 +226,6 @@ public class HomeController {
 
     @RequestMapping("/logout")
     public String logout(HttpSession httpSession) throws IOException {
-        User user = (User) httpSession.getAttribute(OpencronTools.LOGIN_USER);
         //用户退出后当前用户的所有终端全部退出.
         TerminalSession.exit(httpSession.getId());
         httpSession.removeAttribute(OpencronTools.LOGIN_USER);
