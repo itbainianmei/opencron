@@ -7,7 +7,6 @@ import org.opencron.server.service.TerminalService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.UUID;
 
 public final class OpencronTools {
 
