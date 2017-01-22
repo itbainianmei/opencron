@@ -95,7 +95,7 @@
         });
 
         $.ajax({
-            headers:{"_csrf":self.csrf},
+            headers:{"_csrf":"${_csrf}"},
             type:"POST",
             url: "${contextPath}/notice/uncount",
             dataType: "html",
@@ -104,6 +104,7 @@
                     $(".n-count").text(data);
                     $("#msg-icon").show();
                     $.ajax({
+                        headers:{"_csrf":"${_csrf}"},
                         type:"POST",
                         url: "${contextPath}/notice/unread",
                         dataType: "html",
@@ -116,7 +117,7 @@
                     $(".n-count").remove();
                     $("#toggle_message").css({"padding":"10px 0px 0"});
                     $("#msg-icon").click(function () {
-                        window.location.href="${contextPath}/notice/view";
+                        window.location.href="${contextPath}/notice/view?_csrf=${_csrf}";
                     })
                     $("#msg-icon").show();
                 }
@@ -124,7 +125,7 @@
         });
 
         $.ajax({
-            headers:{"_csrf":self.csrf},
+            headers:{"_csrf":"${_csrf}"},
             type: "POST",
             url: "${contextPath}/progress",
             dataType: "json",

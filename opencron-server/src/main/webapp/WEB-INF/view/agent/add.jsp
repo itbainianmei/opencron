@@ -311,7 +311,7 @@
     <div class="block-area" id="basic">
         <div class="tile p-15">
             <form  class="form-horizontal" role="form"  id="agent" action="${contextPath}/agent/add" method="post"></br>
-                <input type="hidden" name="csrf" value="${_csrf}">
+                <input type="hidden" name="_csrf" value="${_csrf}">
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执行器名：</label>
                     <div class="col-md-10">

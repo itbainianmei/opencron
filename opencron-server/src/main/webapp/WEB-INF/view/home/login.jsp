@@ -21,7 +21,7 @@
     <script type="text/javascript">
 
         <c:if test="${!empty opencron_user}">
-            window.location.href="${contextPath}/home";
+            window.location.href="${contextPath}/home?_csrf=${_csrf}";
         </c:if>
 
         $(document).ready(function(){

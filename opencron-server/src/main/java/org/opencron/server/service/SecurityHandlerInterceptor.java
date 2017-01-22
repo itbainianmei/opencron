@@ -62,12 +62,12 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         request.setAttribute("contextPath", WebUtils.getWebUrlPath(request));
 
         //登陆
-        if (requestURI.contains("/login")) {
+        if (requestURI.contains("/login")||requestURI.contains("/upload")) {
             return super.preHandle(request, response, handler);
         }
 
         String referer = request.getHeader("referer");
-        if (referer == null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
+        if (referer != null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
             response.sendRedirect("/");
             logger.info("[opencron]Bad request,redirect to login page");
             OpencronTools.clearSession(session);

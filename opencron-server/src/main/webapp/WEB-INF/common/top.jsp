@@ -14,7 +14,7 @@
 <div id="mask" class="mask"></div>
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
-	<a id="log1" href="${contextPath}/home" class="logo pull-left"><div style="float: left; width: 165px; margin-top: 5px; margin-left: 14px">
+	<a id="log1" href="${contextPath}/home?_csrf=${_csrf}" class="logo pull-left"><div style="float: left; width: 165px; margin-top: 5px; margin-left: 14px">
 		<img src="${contextPath}/img/opencron.png">
 	</div>
 	</a>
@@ -42,6 +42,7 @@
 		<div class="modal-dialog modal-md">
 			<div class="modal-content">
 				<form class="avatar-form" name="picform" action="${contextPath}/headpic/upload" enctype="multipart/form-data" method="post">
+                    <input type="hidden" name="_csrf" value="${_csrf}">
 					<input name="userId" type="hidden" value="${opencron_user.userId}">
 					<div class="modal-header">
 						<button class="close" data-dismiss="modal" type="button">&times;</button>
@@ -119,9 +120,9 @@
 				</a>
 				<h4 class="m-0">${opencron_user.userName}</h4>
 				<ul class="dropdown-menu profile-menu">
-					<li><a href="${contextPath}/user/detail?userId=${opencron_user.userId}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="${contextPath}/notice/view">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
-					<li><a href="${contextPath}/logout">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/user/detail?userId=${opencron_user.userId}&_csrf=${_csrf}">个人信息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/notice/view?_csrf=${_csrf}">通知&nbsp;&&nbsp;消息</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
+					<li><a href="${contextPath}/logout?_csrf=${_csrf}">退出登录</a> <i class="icon left">&#61903;</i><i class="icon right">&#61815;</i></li>
 				</ul>
 			</div>
 
@@ -186,12 +187,12 @@
 		<!-- Side Menu -->
 		<ul class="list-unstyled side-menu">
 			<li class="<c:if test="${fn:contains(uri,'/home')}">active</c:if>">
-				<a href="${contextPath}/home">
+				<a href="${contextPath}/home?_csrf=${_csrf}">
 					<i aria-hidden="true" class="fa fa-tachometer"></i><span class="menu-item">作业报告</span>
 				</a>
 			</li>
 			<li class="<c:if test="${fn:contains(uri,'/agent')}">active</c:if>">
-				<a  href="${contextPath}/agent/view">
+				<a  href="${contextPath}/agent/view?_csrf=${_csrf}">
 					<i aria-hidden="true" class="fa fa-desktop"></i><span class="menu-item">执行器管理</span>
 				</a>
 			</li>
@@ -201,10 +202,10 @@
 				</a>
 				<ul class="list-unstyled menu-item">
 					<li <c:if test="${fn:contains(uri,'/job/view')}">class="active"</c:if>>
-						<a href="${contextPath}/job/view" class="<c:if test="${fn:contains(uri,'/job/view')}">active</c:if>">作业列表</a>
+						<a href="${contextPath}/job/view?_csrf=${_csrf}" class="<c:if test="${fn:contains(uri,'/job/view')}">active</c:if>">作业列表</a>
 					</li>
 					<li <c:if test="${fn:contains(uri,'/exec')}">class="active"</c:if>>
-						<a href="${contextPath}/job/goexec" class="<c:if test="${fn:contains(uri,'/exec')}">active</c:if>">现场执行</a>
+						<a href="${contextPath}/job/goexec?_csrf=${_csrf}" class="<c:if test="${fn:contains(uri,'/exec')}">active</c:if>">现场执行</a>
 					</li>
 				</ul>
 			</li>
@@ -215,28 +216,28 @@
 				</a>
 				<ul class="list-unstyled menu-item">
 					<li <c:if test="${fn:contains(uri,'/running')}">class="active"</c:if>>
-						<a href="${contextPath}/record/running" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
+						<a href="${contextPath}/record/running?_csrf=${_csrf}" class="<c:if test="${fn:contains(uri,'running')}">active</c:if>">正在运行</a>
 					</li>
 					<li <c:if test="${fn:contains(uri,'/done')}">class="active"</c:if>>
-						<a href="${contextPath}/record/done" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
+						<a href="${contextPath}/record/done?_csrf=${_csrf}" class="<c:if test="${fn:contains(uri,'done')}">active</c:if>">已完成</a>
 					</li>
 				</ul>
 			</li>
 
 			<li class="<c:if test="${fn:contains(uri,'/terminal')}">active</c:if>">
-				<a href="${contextPath}/terminal/view">
+				<a href="${contextPath}/terminal/view?_csrf=${_csrf}">
 					<i aria-hidden="true" class="fa fa-terminal"></i><span class="menu-item">WEB终端</span>
 				</a>
 			</li>
 
 			<c:if test="${permission eq true}">
 				<li <c:if test="${fn:contains(uri,'/user')}">class="active"</c:if>>
-					<a href="${contextPath}/user/view">
+					<a href="${contextPath}/user/view?_csrf=${_csrf}">
 						<i class="fa fa-user" aria-hidden="true"></i></i><span class="menu-item">用户管理</span>
 					</a>
 				</li>
 				<li <c:if test="${fn:contains(uri,'/config')}">class="active"</c:if>>
-					<a href="${contextPath}/config/view">
+					<a href="${contextPath}/config/view?_csrf=${_csrf}">
 						<i aria-hidden="true" class="fa fa-cog"></i><span class="menu-item">系统设置</span>
 					</a>
 				</li>
