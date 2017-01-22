@@ -62,7 +62,7 @@ public class OpencronTask implements InitializingBean {
     private SchedulerService schedulerService;
 
     @Autowired
-    private OpencronHeartBeat opencronHeartBeat;
+    private OpencronMonitor opencronHeartBeat;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -110,8 +110,8 @@ public class OpencronTask implements InitializingBean {
     }
 
     private void clearCache() {
-        OpencronContext.remove(OpencronTools.CACHED_AGENT_ID);
-        OpencronContext.remove(OpencronTools.CACHED_CRONTAB_JOB);
+        OpencronTools.CACHE.remove(OpencronTools.CACHED_AGENT_ID);
+        OpencronTools.CACHE.remove(OpencronTools.CACHED_CRONTAB_JOB);
     }
 
 

@@ -28,7 +28,6 @@ import java.util.List;
 import org.opencron.common.utils.CommonUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.OpencronContext;
 import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -67,15 +66,15 @@ public class AgentService {
     }
 
     public List<Agent> getAll() {
-        List<Agent> agents = OpencronContext.get(OpencronTools.CACHED_AGENT_ID,List.class);
+        List<Agent> agents = OpencronTools.CACHE.get(OpencronTools.CACHED_AGENT_ID,List.class);
         if (CommonUtils.isEmpty(agents)) {
             flushAgent();
         }
-       return OpencronContext.get(OpencronTools.CACHED_AGENT_ID,List.class);
+       return OpencronTools.CACHE.get(OpencronTools.CACHED_AGENT_ID,List.class);
     }
 
     private void flushAgent(){
-        OpencronContext.put(OpencronTools.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
+        OpencronTools.CACHE.put(OpencronTools.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){

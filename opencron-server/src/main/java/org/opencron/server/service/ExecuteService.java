@@ -31,7 +31,7 @@ import org.opencron.server.domain.Record;
 import org.opencron.server.domain.Agent;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronCaller;
-import org.opencron.server.job.OpencronHeartBeat;
+import org.opencron.server.job.OpencronMonitor;
 import org.opencron.server.vo.JobVo;
 import com.mysql.jdbc.PacketTooBigException;
 import org.quartz.Job;
@@ -511,7 +511,7 @@ public class ExecuteService implements Job {
     public boolean ping(Agent agent) {
         boolean ping = false;
         try {
-            ping = opencronCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverPort", OpencronHeartBeat.port+""),agent).isSuccess();
+            ping = opencronCaller.call(Request.request(agent.getIp(), agent.getPort(), Action.PING, agent.getPassword()).putParam("serverPort", OpencronMonitor.port+""),agent).isSuccess();
         } catch (Exception e) {
             logger.error("[opencron]ping failed,host:{},port:{}", agent.getIp(), agent.getPort());
         } finally {

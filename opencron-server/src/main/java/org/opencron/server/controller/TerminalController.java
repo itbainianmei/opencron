@@ -27,7 +27,6 @@ import org.opencron.common.utils.WebUtils;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.job.OpencronTools;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.OpencronContext;
 import org.opencron.server.service.TerminalService;
 
 import org.opencron.server.tag.PageBean;
@@ -140,7 +139,7 @@ public class TerminalController {
 
     @RequestMapping("/reopen")
     public String reopen(HttpSession session,String token ) throws Exception {
-        Terminal terminal = (Terminal) OpencronContext.get(token);
+        Terminal terminal = (Terminal) OpencronTools.CACHE.get(token);
         if (terminal!=null) {
             token = CommonUtils.uuid();
             TerminalContext.put(token,terminal);

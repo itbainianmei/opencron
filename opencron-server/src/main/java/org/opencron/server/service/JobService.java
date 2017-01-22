@@ -32,7 +32,6 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Job;
 import org.opencron.server.domain.User;
 import org.opencron.server.domain.Agent;
-import org.opencron.server.job.OpencronContext;
 import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 
@@ -115,7 +114,7 @@ public class JobService {
     }
 
     private void flushOpencron(){
-        OpencronContext.put(OpencronTools.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
+        OpencronTools.CACHE.put(OpencronTools.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
     }
 
     public PageBean<JobVo> getJobVos(HttpSession session, PageBean pageBean, JobVo job) {

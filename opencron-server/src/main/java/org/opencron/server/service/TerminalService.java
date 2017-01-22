@@ -27,7 +27,6 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronTools;
-import org.opencron.server.job.OpencronContext;
 import org.opencron.server.tag.PageBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -370,7 +369,7 @@ public class TerminalService {
             //该终端实例只能被的打开一次,之后就失效
             terminalContext.put(key, terminal);
             //保存打开的实例,用于复制终端实例
-            OpencronContext.put(key, terminal);
+            OpencronTools.CACHE.put(key, terminal);
         }
 
         public static Terminal remove(String key) {

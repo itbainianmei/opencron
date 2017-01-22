@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 @Component
-public class OpencronHeartBeat {
+public class OpencronMonitor {
 
     public static int port;
 
@@ -99,7 +99,7 @@ public class OpencronHeartBeat {
                             continue;
                         }
                     }
-                    if (System.currentTimeMillis() - lastAliveTime > OpencronHeartBeat.this.keepAliveDelay) {
+                    if (System.currentTimeMillis() - lastAliveTime > OpencronMonitor.this.keepAliveDelay) {
                         if (CommonUtils.isEmpty(agent.getFailTime()) || new Date().getTime() - agent.getFailTime().getTime() >= configService.getSysConfig().getSpaceTime() * 60 * 1000) {
                             noticeService.notice(agent);
                             //记录本次任务失败的时间
@@ -139,7 +139,7 @@ public class OpencronHeartBeat {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                OpencronHeartBeat.this.stop();
+                OpencronMonitor.this.stop();
             }
         }
     }
