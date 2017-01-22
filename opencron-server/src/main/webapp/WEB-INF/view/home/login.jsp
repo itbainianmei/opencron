@@ -378,7 +378,7 @@
                             }else {
                                 loginCookie.clean(username);
                             }
-                            window.location.href = "${contextPath}"+data.url+"?_csrf=${_csrf}";
+                            window.location.href = "${contextPath}"+data.url";
                         }else {
                             $("#error_msg").html('<font color="red">请修改初始密码</font>');
                             $("#pwdform")[0].reset();

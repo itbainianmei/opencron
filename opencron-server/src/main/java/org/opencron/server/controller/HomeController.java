@@ -216,9 +216,9 @@ public class HomeController {
             }
 
             //init csrf...
-            OpencronTools.getCSRF(request.getSession(false));
+            String csrf = OpencronTools.getCSRF(request.getSession(false));
 
-            WebUtils.writeJson(response, String.format(format, "success", "url", "/home"));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?_csrf="+csrf));
             return;
         }
     }

@@ -61,16 +61,15 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
         request.setAttribute("contextPath", WebUtils.getWebUrlPath(request));
 
-        //登陆|上传
-        if (requestURI.contains("/login")||requestURI.contains("/upload")) {
+        //登陆
+        if (requestURI.contains("/login")) {
             return super.preHandle(request, response, handler);
         }
-
 
         String referer = request.getHeader("referer");
         if (referer == null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
             response.sendRedirect("/");
-            logger.info("Bad requset,redirect to login page");
+            logger.info("Bad request,redirect to login page");
             OpencronTools.clearSession(session);
             return false;
         }
@@ -99,7 +98,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             if (!verifyCSRF(request)) {
                 response.sendRedirect("/");
-                logger.info("Bad requset,redirect to login page");
+                logger.info("Bad request,redirect to login page");
                 OpencronTools.clearSession(session);
                 return false;
             }

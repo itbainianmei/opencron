@@ -1,6 +1,7 @@
 package org.opencron.server.job;
 
 
+import org.opencron.common.utils.CommonUtils;
 import org.opencron.server.domain.User;
 import org.opencron.server.service.TerminalService;
 
@@ -53,7 +54,7 @@ public final class OpencronTools {
         synchronized (session) {
             token = (String) session.getAttribute(CSRF_NAME);
             if (null == token) {
-                token = UUID.randomUUID().toString();
+                token = CommonUtils.uuid();
                 session.setAttribute(CSRF_NAME, token);
             }
         }
