@@ -102,7 +102,7 @@ public class JobService {
             sql +=" AND flowNum=0";
         }
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " AND userId = " + user.getUserId() + " AND agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Job.class,sql,jobType.getCode());
@@ -137,7 +137,7 @@ public class JobService {
                 sql += " AND T.redo=" + job.getRedo();
             }
             if (!OpencronTools.isPermission(session)) {
-                User user = userService.getUserBySession(session);
+                User user = OpencronTools.getUser();
                 sql += " AND T.userId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
             }
         }

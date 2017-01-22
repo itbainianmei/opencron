@@ -115,9 +115,5 @@ public class UserService {
         return (queryDao.getCountBySql(sql, name)) > 0L ? "no" : "yes";
     }
 
-    public User getUserBySession(HttpSession session){
-        return this.getUserById(OpencronTools.getUserId());
-    }
-
 
 }

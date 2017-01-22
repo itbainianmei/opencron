@@ -70,7 +70,7 @@ public class OpencronTask implements InitializingBean {
         //检测所有的agent...
         clearCache();
         //通知所有的agent,启动心跳检测...
-        startMonitor();
+        //startMonitor();
         schedulerService.initQuartz(executeService);
         schedulerService.initCrontab();
     }
@@ -85,7 +85,7 @@ public class OpencronTask implements InitializingBean {
         }
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     public void reExecuteJob() {
         logger.info("[opencron] reExecuteIob running...");
         final List<Record> records = recordService.getReExecuteRecord();

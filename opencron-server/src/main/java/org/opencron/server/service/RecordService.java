@@ -71,7 +71,7 @@ public class RecordService {
                 sql += " AND IFNULL(R.flowNum,0) = 0 ";
             }
             if (!OpencronTools.isPermission(session)) {
-                User user = userService.getUserBySession(session);
+                User user = OpencronTools.getUser();
                 sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
             }
         }
@@ -173,7 +173,7 @@ public class RecordService {
                 " FROM T_RECORD r left join T_JOB j ON r.jobid=j.jobid "+
                 " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
         }
         sql += " GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
@@ -195,7 +195,7 @@ public class RecordService {
                 " FROM T_RECORD R LEFT JOIN T_JOB J ON R.jobid=J.jobid WHERE 1=1 ";
 
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlUniqueQuery(ChartVo.class, sql);
@@ -220,7 +220,7 @@ public class RecordService {
             sql = "SELECT COUNT(1) FROM T_RECORD WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " AND userId = " + user.getUserId() + " AND agentid IN ("+user.getAgentIds()+")";
         }
         return queryDao.getCountBySql(sql,1,execType.getStatus());

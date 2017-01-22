@@ -79,7 +79,7 @@ public class TerminalController {
     }
 
     @RequestMapping("/ssh2")
-    public String ssh2(HttpSession session,Terminal terminal) throws Exception {
+    public String ssh2(Terminal terminal) throws Exception {
         User user = OpencronTools.getUser();
 
         terminal = termService.getById(terminal.getId());

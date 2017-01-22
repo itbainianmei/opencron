@@ -80,7 +80,7 @@ public class AgentService {
     public List<Agent> getAgentByStatus(int status, HttpSession session){
         String sql = "SELECT * FROM T_AGENT WHERE status=?";
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " AND agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql,status);
@@ -89,7 +89,7 @@ public class AgentService {
     public PageBean getAgent(HttpSession session, PageBean pageBean) {
         String sql = "SELECT * FROM T_AGENT";
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         queryDao.getPageBySql(pageBean, Agent.class, sql);
@@ -194,7 +194,7 @@ public class AgentService {
     public List<Agent> getAgentsBySession(HttpSession session) {
         String sql = "SELECT * FROM T_AGENT ";
         if (!OpencronTools.isPermission(session)) {
-            User user = userService.getUserBySession(session);
+            User user = OpencronTools.getUser();
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);
