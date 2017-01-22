@@ -153,6 +153,7 @@
             }
 
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
@@ -162,6 +163,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
+                                headers:{"_csrf":"${_csrf}"},
                                 type:"POST",
                                 url:"${contextPath}/verify/exp",
                                 data:{
@@ -247,6 +249,7 @@
                     return false;
                 }
                 $.ajax({
+                    headers:{"_csrf":"${_csrf}"},
                     type:"POST",
                     url:"${contextPath}/job/checkname",
                     data:{
@@ -286,6 +289,7 @@
                     return false;
                 }
                 $.ajax({
+                    headers:{"_csrf":"${_csrf}"},
                     type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
@@ -375,6 +379,7 @@
              * 同一个执行器下只能有一个任务名
              */
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
@@ -536,7 +541,7 @@
     <div class="block-area" id="basic">
         <div class="tile p-15 textured">
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"></br>
-
+                <input type="hidden" name="_csrf" value="${_csrf}">
                 <div class="form-group">
                     <label for="agentId" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器：</label>
                     <div class="col-md-10">

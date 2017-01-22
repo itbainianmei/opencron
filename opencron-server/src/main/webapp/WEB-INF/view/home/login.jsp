@@ -378,7 +378,7 @@
                             }else {
                                 loginCookie.clean(username);
                             }
-                            window.location.href = "${contextPath}"+data.url;
+                            window.location.href = "${contextPath}"+data.url+"?_csrf=${_csrf}";
                         }else {
                             $("#error_msg").html('<font color="red">请修改初始密码</font>');
                             $("#pwdform")[0].reset();
@@ -431,6 +431,7 @@
                 return false;
             }
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/user/editpwd",
                 data:{

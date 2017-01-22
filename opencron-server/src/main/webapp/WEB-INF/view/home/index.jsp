@@ -231,7 +231,7 @@
         <!-- cards -->
         <div class="row cards">
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/agent/view'">
+                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/agent/view?_csrf=${_csrf}'">
                     <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" aria-hidden="true" class="fa fa-desktop"></i></span>
@@ -257,7 +257,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/job/view'">
+                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/job/view?_csrf=${_csrf}'">
                     <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 1px;" aria-hidden="true" class="fa fa-tasks"></i></span>
@@ -284,7 +284,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/record/done?success=1'">
+                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/record/done?success=1&_csrf=${_csrf}'">
                     <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 0px;" class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>
@@ -310,7 +310,7 @@
             </div>
 
             <div class="card-container col-lg-3 col-sm-6 col-sm-12">
-                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/record/done?success=0'">
+                <div class="card hover" onclick="javascript:window.location.href='${contextPath}/record/done?success=0&_csrf=${_csrf}'">
                     <div class="front count">
                         <div class="media">
                             <span class="pull-left"><i style="font-size: 60px;margin-top: -3px;" class="fa fa-thumbs-o-down" aria-hidden="true"></i></span>

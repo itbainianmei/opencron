@@ -26,7 +26,7 @@ import org.opencron.common.utils.PropertyPlaceholder;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Log;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.common.utils.Digests;
 import org.opencron.common.utils.Encodes;
 import org.opencron.server.tag.PageBean;
@@ -67,9 +67,9 @@ public class HomeService {
 
         if (saltPassword.equals(user.getPassword())) {
             if (user.getRoleId() == 999L) {
-                httpSession.setAttribute(Globals.PERMISSION, true);
+                httpSession.setAttribute(OpencronTools.PERMISSION, true);
             } else {
-                httpSession.setAttribute(Globals.PERMISSION, false);
+                httpSession.setAttribute(OpencronTools.PERMISSION, false);
             }
 
             if( ! PropertyPlaceholder.getBoolean("opencron.multilogin") ){
@@ -82,11 +82,11 @@ public class HomeService {
                     //拿到已经登录的session,将其踢下线
                     SingleLoginListener.removeUserSession(user.getUserId());
                     //已经登录的用户开启的终端全部关闭...
-                    TerminalService.TerminalSession.exit(user,session.getId());
+                    TerminalService.TerminalSession.exit(session.getId());
                 }
                 SingleLoginListener.addUserSession(httpSession);
             }
-            httpSession.setAttribute(Globals.LOGIN_USER, user);
+            httpSession.setAttribute(OpencronTools.LOGIN_USER, user);
             return 200;
         } else {
             return 500;
@@ -101,8 +101,8 @@ public class HomeService {
         if (notEmpty(sendTime)) {
             sql += " AND L.sendTime LIKE '" + sendTime + "%' ";
         }
-        if (!Globals.isPermission(session)) {
-            sql += " AND L.receiverId = " + Globals.getUserIdBySession(session);
+        if (!OpencronTools.isPermission(session)) {
+            sql += " AND L.receiverId = " + OpencronTools.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(pageBean, LogVo.class, sql);
@@ -111,8 +111,8 @@ public class HomeService {
 
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM T_LOG L WHERE isRead=0 AND type=2 ";
-        if (!Globals.isPermission(session)) {
-            sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
+        if (!OpencronTools.isPermission(session)) {
+            sql += " and L.receiverId = " + OpencronTools.getUserIdBySession(session);
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
@@ -120,8 +120,8 @@ public class HomeService {
 
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT COUNT(1) FROM T_LOG L WHERE isRead=0 AND type=2 ";
-        if (!Globals.isPermission(session)) {
-            sql += " and L.receiverId = " + Globals.getUserIdBySession(session);
+        if (!OpencronTools.isPermission(session)) {
+            sql += " and L.receiverId = " + OpencronTools.getUserIdBySession(session);
         }
         return queryDao.getCountBySql(sql);
     }

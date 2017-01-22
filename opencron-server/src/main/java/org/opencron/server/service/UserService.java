@@ -27,7 +27,7 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.dao.UploadDao;
 import org.opencron.server.domain.Role;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 import org.opencron.common.utils.Digests;
 import org.opencron.common.utils.Encodes;
@@ -116,7 +116,7 @@ public class UserService {
     }
 
     public User getUserBySession(HttpSession session){
-        return this.getUserById(Globals.getUserIdBySession(session));
+        return this.getUserById(OpencronTools.getUserIdBySession(session));
     }
 
 

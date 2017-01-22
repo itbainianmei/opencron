@@ -65,6 +65,7 @@
                     $("#checkJobName").html("<font color='red'>" + '<i class="glyphicon glyphicon-remove-sign"></i>&nbsp;请填写作业名称' + "</font>");
                     return false;}
                 $.ajax({
+                    headers:{"_csrf":"${_csrf}"},
                     type:"POST",
                     url:"${contextPath}/job/checkname",
                     data:{
@@ -106,6 +107,7 @@
                     return false;
                 }
                 $.ajax({
+                    headers:{"_csrf":"${_csrf}"},
                     type:"POST",
                     url:"${contextPath}/verify/exp",
                     data:{
@@ -249,6 +251,7 @@
             }
 
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
@@ -260,6 +263,7 @@
                     if (data == "yes"){
                         if (execType == 0 && cronExp){
                             $.ajax({
+                                headers:{"_csrf":"${_csrf}"},
                                 type:"POST",
                                 url:"${contextPath}/verify/exp",
                                 data:{
@@ -346,6 +350,7 @@
             }
 
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/job/checkname",
                 data:{
@@ -470,6 +475,7 @@
     <div class="block-area" id="basic">
         <div class="tile p-15">
             <form class="form-horizontal" role="form" id="job" action="${contextPath}/job/save" method="post"><br>
+                <input type="hidden" name="_csrf" value="${_csrf}">
                 <input type="hidden" id="jobId" name="jobId" value="${job.jobId}">
                 <input type="hidden" name="userId" value="${job.userId}">
                 <input type="hidden" id="agentId" name="agentId" class="input-self" value="${job.agentId}">

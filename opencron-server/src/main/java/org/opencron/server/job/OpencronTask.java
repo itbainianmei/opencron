@@ -110,8 +110,8 @@ public class OpencronTask implements InitializingBean {
     }
 
     private void clearCache() {
-        OpencronContext.remove(Globals.CACHED_AGENT_ID);
-        OpencronContext.remove(Globals.CACHED_CRONTAB_JOB);
+        OpencronContext.remove(OpencronTools.CACHED_AGENT_ID);
+        OpencronContext.remove(OpencronTools.CACHED_CRONTAB_JOB);
     }
 
 

@@ -29,7 +29,7 @@ import org.opencron.common.utils.CommonUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronContext;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.opencron.common.job.Opencron;
@@ -67,20 +67,20 @@ public class AgentService {
     }
 
     public List<Agent> getAll() {
-        List<Agent> agents = OpencronContext.get(Globals.CACHED_AGENT_ID,List.class);
+        List<Agent> agents = OpencronContext.get(OpencronTools.CACHED_AGENT_ID,List.class);
         if (CommonUtils.isEmpty(agents)) {
             flushAgent();
         }
-       return OpencronContext.get(Globals.CACHED_AGENT_ID,List.class);
+       return OpencronContext.get(OpencronTools.CACHED_AGENT_ID,List.class);
     }
 
     private void flushAgent(){
-        OpencronContext.put(Globals.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
+        OpencronContext.put(OpencronTools.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
     public List<Agent> getAgentByStatus(int status, HttpSession session){
         String sql = "SELECT * FROM T_AGENT WHERE status=?";
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND agentId in ("+user.getAgentIds()+")";
         }
@@ -89,7 +89,7 @@ public class AgentService {
 
     public PageBean getAgent(HttpSession session, PageBean pageBean) {
         String sql = "SELECT * FROM T_AGENT";
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
@@ -194,7 +194,7 @@ public class AgentService {
 
     public List<Agent> getAgentsBySession(HttpSession session) {
         String sql = "SELECT * FROM T_AGENT ";
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }

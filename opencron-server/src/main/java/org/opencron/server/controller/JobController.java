@@ -27,7 +27,7 @@ import com.alibaba.fastjson.JSON;
 import org.opencron.common.job.Opencron;
 import org.opencron.common.job.Opencron.ExecType;
 import org.opencron.server.domain.Job;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.service.*;
 import org.opencron.server.tag.PageBean;
 import org.opencron.common.utils.CommonUtils;
@@ -124,7 +124,7 @@ public class JobController {
 
         //单任务
         if ( Opencron.JobType.SINGLETON.getCode().equals(job.getJobType()) ) {
-            job.setUserId( Globals.getUserIdBySession(session) );
+            job.setUserId( OpencronTools.getUserIdBySession(session) );
             job.setUpdateTime(new Date());
             job.setLastChild(false);
             job.setStatus(true);//Job有效
@@ -175,7 +175,7 @@ public class JobController {
             }
 
             if (job.getUserId() == null) {
-                job.setUserId( Globals.getUserIdBySession(session));
+                job.setUserId( OpencronTools.getUserIdBySession(session));
             }
 
             jobService.saveFlowJob(job, chindren);
@@ -249,7 +249,7 @@ public class JobController {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
         if (!jobService.checkJobOwner(job.getUserId(),session)) return;
         //手动执行
-        Long userId = Globals.getUserIdBySession(session);
+        Long userId = OpencronTools.getUserIdBySession(session);
         job.setUserId(userId);
         job.setExecType(ExecType.OPERATOR.getStatus());
         job.setAgent(agentService.getAgent(job.getAgentId()));
@@ -269,7 +269,7 @@ public class JobController {
     @RequestMapping("/batchexec")
     public void batchExec(HttpSession session, String command, String agentIds) {
         if (notEmpty(agentIds) && notEmpty(command)){
-            Long userId = Globals.getUserIdBySession(session);
+            Long userId = OpencronTools.getUserIdBySession(session);
             try {
                 this.executeService.batchExecuteJob(userId,command,agentIds);
             } catch (Exception e) {

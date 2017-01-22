@@ -87,7 +87,7 @@
     <div class="block-area" id="basic">
 
         <div class="tile p-15">
-            <form class="form-horizontal" role="form"  id="config" action="${contextPath}/config/edit" method="post"><br>
+            <form class="form-horizontal" role="form"  id="config" action="${contextPath}/config/edit?_csrf=${_csrf}" method="post"><br>
 
                 <div class="form-group">
                     <label for="senderEmail" class="col-lab control-label"><i class="glyphicon glyphicon-envelope"></i>&nbsp;&nbsp;发件邮箱：</label>

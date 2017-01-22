@@ -22,10 +22,9 @@
 
 package org.opencron.server.service;
 
-import org.opencron.common.utils.CommonUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Record;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.common.job.Opencron;
 import org.opencron.server.domain.User;
 import org.opencron.server.tag.PageBean;
@@ -71,7 +70,7 @@ public class RecordService {
             if (status) {
                 sql += " AND IFNULL(R.flowNum,0) = 0 ";
             }
-            if (!Globals.isPermission(session)) {
+            if (!OpencronTools.isPermission(session)) {
                 User user = userService.getUserBySession(session);
                 sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
             }
@@ -173,7 +172,7 @@ public class RecordService {
                 " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM T_RECORD r left join T_JOB j ON r.jobid=j.jobid "+
                 " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
         }
@@ -195,7 +194,7 @@ public class RecordService {
                 " sum(CASE R.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM T_RECORD R LEFT JOIN T_JOB J ON R.jobid=J.jobid WHERE 1=1 ";
 
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
         }
@@ -220,7 +219,7 @@ public class RecordService {
         }else {
             sql = "SELECT COUNT(1) FROM T_RECORD WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND userId = " + user.getUserId() + " AND agentid IN ("+user.getAgentIds()+")";
         }

@@ -22,7 +22,7 @@
 package org.opencron.server.controller;
 
 import com.alibaba.fastjson.JSON;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.service.AgentService;
 import org.opencron.server.tag.PageBean;
 import org.opencron.common.utils.WebUtils;
@@ -84,8 +84,8 @@ public class UserController {
 
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
-        if (!Globals.isPermission(session)
-                && !Globals.getUserIdBySession(session).equals(id)){
+        if (!OpencronTools.isPermission(session)
+                && !OpencronTools.getUserIdBySession(session).equals(id)){
             return "redirect:/user/detail";
         }
         model.addAttribute("u", userService.queryUserById(id));
@@ -97,7 +97,7 @@ public class UserController {
     @RequestMapping("/edit")
     public String edit(HttpSession session, User user) throws SchedulerException {
         User user1 = userService.getUserById(user.getUserId());
-        if (notEmpty(user.getRoleId()) && Globals.isPermission(session)) {
+        if (notEmpty(user.getRoleId()) && OpencronTools.isPermission(session)) {
             user1.setRoleId(user.getRoleId());
         }
         user1.setAgentIds(user.getAgentIds());

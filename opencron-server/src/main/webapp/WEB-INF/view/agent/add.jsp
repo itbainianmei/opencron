@@ -67,6 +67,7 @@
         }
 
         $.ajax({
+            headers:{"_csrf":"${_csrf}"},
             type:"POST",
             url:"${contextPath}/agent/checkhost",
             data:{
@@ -76,6 +77,7 @@
 
                 if (data == "yes"){
                     $.ajax({
+                        headers:{"_csrf":"${_csrf}"},
                         type:"POST",
                         url:"${contextPath}/agent/checkname",
                         data:{
@@ -84,6 +86,7 @@
                         success:function(data){
                             if (data == "yes"){
                                 $.ajax({
+                                    headers:{"_csrf":"${_csrf}"},
                                     type:"POST",
                                     url:"${contextPath}/verify/ping",
                                     data:{
@@ -162,6 +165,7 @@
 
         $("#pingResult").html("<img src='${contextPath}/img/icon-loader.gif'> <font color='#2fa4e7'>检测中...</font>");
         $.ajax({
+            headers:{"_csrf":"${_csrf}"},
             type:"POST",
             url:"${contextPath}/verify/ping",
             data:{
@@ -201,6 +205,7 @@
                     return false;
                 }else {
                     $.ajax({
+                        headers:{"_csrf":"${_csrf}"},
                         type:"POST",
                         url:"${contextPath}/agent/checkhost",
                         data:{
@@ -230,6 +235,7 @@
                 return false;
             }
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/agent/checkname",
                 data:{
@@ -305,6 +311,7 @@
     <div class="block-area" id="basic">
         <div class="tile p-15">
             <form  class="form-horizontal" role="form"  id="agent" action="${contextPath}/agent/add" method="post"></br>
+                <input type="hidden" name="csrf" value="${_csrf}">
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-leaf"></i>&nbsp;&nbsp;执行器名：</label>
                     <div class="col-md-10">

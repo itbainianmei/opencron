@@ -33,7 +33,7 @@ import org.opencron.server.domain.Job;
 import org.opencron.server.domain.User;
 import org.opencron.server.domain.Agent;
 import org.opencron.server.job.OpencronContext;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 
 import static org.opencron.common.job.Opencron.*;
@@ -102,7 +102,7 @@ public class JobService {
         if (JobType.FLOW.equals(jobType)) {
             sql +=" AND flowNum=0";
         }
-        if (!Globals.isPermission(session)) {
+        if (!OpencronTools.isPermission(session)) {
             User user = userService.getUserBySession(session);
             sql += " AND userId = " + user.getUserId() + " AND agentId IN ("+user.getAgentIds()+")";
         }
@@ -115,7 +115,7 @@ public class JobService {
     }
 
     private void flushOpencron(){
-        OpencronContext.put(Globals.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
+        OpencronContext.put(OpencronTools.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
     }
 
     public PageBean<JobVo> getJobVos(HttpSession session, PageBean pageBean, JobVo job) {
@@ -137,7 +137,7 @@ public class JobService {
             if (notEmpty(job.getRedo())) {
                 sql += " AND T.redo=" + job.getRedo();
             }
-            if (!Globals.isPermission(session)) {
+            if (!OpencronTools.isPermission(session)) {
                 User user = userService.getUserBySession(session);
                 sql += " AND T.userId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
             }
@@ -277,7 +277,7 @@ public class JobService {
     }
 
     public boolean checkJobOwner(Long userId, HttpSession session) {
-        return Globals.isPermission(session) || userId.equals(Globals.getUserIdBySession(session));
+        return OpencronTools.isPermission(session) || userId.equals(OpencronTools.getUserIdBySession(session));
     }
 
 }

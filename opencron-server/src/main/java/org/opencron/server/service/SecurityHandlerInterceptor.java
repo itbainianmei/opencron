@@ -23,12 +23,14 @@
 package org.opencron.server.service;
 
 
+import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.WebUtils;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,16 +66,27 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+
+        String referer = request.getHeader("referer");
+        if (referer == null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
+            response.sendRedirect("/");
+            logger.info("Bad requset,redirect to login page");
+            OpencronTools.clearSession(session);
+            return false;
+        }
+
+        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
         if (user == null) {
             logger.info(request.getRequestURL().toString());
             //跳到登陆页面
             response.sendRedirect("/");
+            OpencronTools.clearSession(session);
             logger.info("session is null,redirect to login page");
             return false;
         }
+
         //普通管理员不可访问的资源
-        if (!Globals.isPermission(session) &&
+        if (!OpencronTools.isPermission(session) &&
                 (requestURI.contains("/config/")
                         || requestURI.contains("/user/view")
                         || requestURI.contains("/user/add")
@@ -82,7 +95,29 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             logger.info("illegal or limited access");
             return false;
         }
+
+        if (handler instanceof HandlerMethod) {
+            if (!verifyCSRF(request)) {
+                response.sendRedirect("/");
+                logger.info("Bad requset,redirect to login page");
+                OpencronTools.clearSession(session);
+                return false;
+            }
+        }
+
         return super.preHandle(request, response, handler);
     }
 
+    private boolean verifyCSRF(HttpServletRequest request) {
+
+        String requstCSRF = OpencronTools.getCSRF(request);
+        if (CommonUtils.isEmpty(requstCSRF)) {
+            return false;
+        }
+        String sessionCSRF = OpencronTools.getCSRF(request.getSession(false));
+        if (CommonUtils.isEmpty(sessionCSRF)) {
+            return false;
+        }
+        return requstCSRF.equals(sessionCSRF);
+    }
 }

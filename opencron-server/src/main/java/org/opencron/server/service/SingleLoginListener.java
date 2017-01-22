@@ -24,7 +24,7 @@
 package org.opencron.server.service;
 
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +77,7 @@ public class SingleLoginListener implements HttpSessionListener {
         for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
             String sessionId = entry.getKey();
             HttpSession session = entry.getValue();
-            User user = (User) session.getAttribute(Globals.LOGIN_USER);
+            User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
             if (user != null) {
                 map.put(user.getUserId(), sessionId);
             }
@@ -94,7 +94,7 @@ public class SingleLoginListener implements HttpSessionListener {
             String sessionId = userSessionMap.get(userId);
             HttpSession httpSession = singleLoginSessionMap.get(sessionId);
             if (!httpSession.isNew()) {
-                httpSession.removeAttribute(Globals.LOGIN_USER);
+                httpSession.removeAttribute(OpencronTools.LOGIN_USER);
                 //httpSession.invalidate();
             }
             singleLoginSessionMap.remove(sessionId);
@@ -122,7 +122,7 @@ public class SingleLoginListener implements HttpSessionListener {
     public synchronized static boolean logined(User user) {
         for(Map.Entry<String,HttpSession> entry: singleLoginSessionMap.entrySet()){
             HttpSession session = entry.getValue();
-            User sessionuser = (User) session.getAttribute(Globals.LOGIN_USER);
+            User sessionuser = (User) session.getAttribute(OpencronTools.LOGIN_USER);
             if (sessionuser != null) {
                 if (sessionuser.getUserId().equals(user.getUserId())){
                     return true;

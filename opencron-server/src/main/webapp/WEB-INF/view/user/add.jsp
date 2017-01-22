@@ -66,6 +66,7 @@
             }
             $("#password").val(calcMD5(password));
             $.ajax({
+                headers:{"_csrf":"${_csrf}"},
                 type:"POST",
                 url:"${contextPath}/user/checkname",
                 data:{
@@ -95,6 +96,7 @@
                     return false;
                 }
                 $.ajax({
+                    headers:{"_csrf":"${_csrf}"},
                     type:"POST",
                     url:"${contextPath}/user/checkname",
                     data:{
@@ -223,6 +225,7 @@
     <div class="block-area" id="basic">
         <div class="tile p-15">
             <form class="form-horizontal" role="form" id="user" action="${contextPath}/user/add" method="post"><br>
+                <input type="hidden" name="_csrf" value="${_csrf}">
                 <div class="form-group">
                     <label for="name" class="col-lab control-label"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</label>
                     <div class="col-md-10">

@@ -25,7 +25,7 @@ package org.opencron.server.websocket;
 import java.io.IOException;
 
 import org.opencron.server.domain.Terminal;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import static org.opencron.server.service.TerminalService.*;
 
 import org.opencron.server.service.TerminalService;
@@ -48,7 +48,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		super.afterConnectionEstablished(session);
-		sshSessionId = (String) session.getAttributes().get(Globals.SSH_SESSION_ID);
+		sshSessionId = (String) session.getAttributes().get(OpencronTools.SSH_SESSION_ID);
 		if (sshSessionId != null) {
 			final Terminal terminal = TerminalContext.remove(sshSessionId);
 			if (terminal!=null) {
@@ -111,7 +111,7 @@ public class TerminalHandler extends TextWebSocketHandler {
 	}
 
 	private TerminalClient getClient(WebSocketSession session, Terminal terminal){
-		String httpSessionId = (String) session.getAttributes().get(Globals.HTTP_SESSION_ID);
+		String httpSessionId = (String) session.getAttributes().get(OpencronTools.HTTP_SESSION_ID);
 		this.terminalClient =  TerminalSession.get(session);
 		if (this.terminalClient==null && terminal!=null) {
 			this.terminalClient = new TerminalClient(session,httpSessionId,sshSessionId,terminal);

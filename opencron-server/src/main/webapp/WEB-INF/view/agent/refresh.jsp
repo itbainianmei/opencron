@@ -27,7 +27,7 @@
         <td>
             <center>
                 <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
-                    <a href="${contextPath}/job/addpage?id=${w.agentId}" title="新任务">
+                    <a href="${contextPath}/job/addpage?id=${w.agentId}&_csrf=${_csrf}" title="新任务">
                         <i aria-hidden="true" class="fa fa-plus-square-o"></i>
                     </a>&nbsp;&nbsp;
                     <c:if test="${permission eq true}">
@@ -38,7 +38,7 @@
                             <i aria-hidden="true" class="fa fa-lock"></i>
                         </a>&nbsp;&nbsp;
                     </c:if>
-                    <a href="${contextPath}/agent/detail?id=${w.agentId}" title="查看详情">
+                    <a href="${contextPath}/agent/detail?id=${w.agentId}&_csrf=${_csrf}" title="查看详情">
                         <i aria-hidden="true" class="fa fa-eye"></i>
                     </a>
                 </div>

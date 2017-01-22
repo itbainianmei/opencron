@@ -28,7 +28,7 @@ import org.opencron.common.utils.*;
 import org.opencron.server.domain.Agent;
 import org.opencron.server.domain.Job;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.service.*;
 import org.opencron.server.tag.PageBean;
 import org.opencron.server.vo.ChartVo;
@@ -130,7 +130,6 @@ public class HomeController {
         model.addAttribute("failedOperRecord", failedOperRecord);
         model.addAttribute("failedRecord", failedAutoRecord + failedOperRecord);
 
-
         model.addAttribute("startTime", DateUtils.getCurrDayPrevDay(7));
         model.addAttribute("endTime", DateUtils.formatSimpleDate(new Date()));
 
@@ -195,7 +194,7 @@ public class HomeController {
             return;
         }
         if (status == 200) {
-            User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
+            User user = (User) httpSession.getAttribute(OpencronTools.LOGIN_USER);
 
             //提示用户更改默认密码
             byte[] salt = Encodes.decodeHex(user.getSalt());
@@ -215,6 +214,10 @@ public class HomeController {
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
                 user.setHeaderPath(WebUtils.getWebUrlPath(request) + "/upload/" + name);
             }
+
+            //init csrf...
+            OpencronTools.getCSRF(request.getSession(false));
+
             WebUtils.writeJson(response, String.format(format, "success", "url", "/home"));
             return;
         }
@@ -223,11 +226,11 @@ public class HomeController {
 
     @RequestMapping("/logout")
     public String logout(HttpSession httpSession) throws IOException {
-        User user = (User) httpSession.getAttribute(Globals.LOGIN_USER);
+        User user = (User) httpSession.getAttribute(OpencronTools.LOGIN_USER);
         //用户退出后当前用户的所有终端全部退出.
-        TerminalSession.exit(user,httpSession.getId());
-        httpSession.removeAttribute(Globals.LOGIN_USER);
-        httpSession.removeAttribute("loginMsg");
+        TerminalSession.exit(httpSession.getId());
+        httpSession.removeAttribute(OpencronTools.LOGIN_USER);
+        httpSession.removeAttribute(OpencronTools.LOGIN_MSG);
         return "redirect:/";
     }
 
@@ -295,7 +298,7 @@ public class HomeController {
             String imgPath = contextPath + "/upload/" + picName + "?" + System.currentTimeMillis();
             user.setHeaderPath(imgPath);
             user.setHeaderpic(null);
-            httpSession.setAttribute(Globals.LOGIN_USER, user);
+            httpSession.setAttribute(OpencronTools.LOGIN_USER, user);
 
             WebUtils.writeJson(response, String.format(successFormat, imgPath));
             logger.info(" upload file successful @ " + picName);

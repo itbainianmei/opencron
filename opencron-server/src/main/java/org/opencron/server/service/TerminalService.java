@@ -22,13 +22,11 @@
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
-import org.opencron.common.utils.CommandUtils;
-import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.job.OpencronContext;
 import org.opencron.server.tag.PageBean;
 import org.slf4j.Logger;
@@ -157,9 +155,9 @@ public class TerminalService {
         if (term == null) {
             return "error";
         }
-        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
 
-        if (!Globals.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
+        if (!OpencronTools.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
             return "error";
         }
         queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?", term.getId()).executeUpdate();
@@ -426,11 +424,11 @@ public class TerminalService {
             return null;
         }
 
-        public static void exit(User user, String httpSessionId) throws IOException {
+        public static void exit(String httpSessionId) throws IOException {
             if (notEmpty(terminalSession)) {
                 for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                     TerminalClient terminalClient = entry.getValue();
-                    if (terminalClient.getHttpSessionId().equals(httpSessionId) && terminalClient.getTerminal().getUser().equals(user)) {
+                    if (terminalClient.getHttpSessionId().equals(httpSessionId)) {
                         terminalClient.disconnect();
                         terminalClient.getWebSocketSession().sendMessage(new TextMessage("Sorry! Session was invalidated, so opencron Terminal changed to closed. "));
                         terminalClient.getWebSocketSession().close();
@@ -438,7 +436,6 @@ public class TerminalService {
                 }
             }
         }
-
     }
 
     public static class OpencronSftpMonitor extends TimerTask implements SftpProgressMonitor {

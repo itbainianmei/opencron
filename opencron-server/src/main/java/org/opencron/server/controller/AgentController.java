@@ -72,7 +72,7 @@ public class AgentController {
 
 
     @RequestMapping("/addpage")
-    public String addPage(Model model) {
+    public String addPage(HttpSession session, Model model) {
         List<Agent> agentList = agentService.getAgentByConnType(Opencron.ConnType.CONN);
         model.addAttribute("connAgents",agentList);
         return "/agent/add";
@@ -98,7 +98,7 @@ public class AgentController {
     }
 
     @RequestMapping("/editpage")
-    public void editPage(HttpServletResponse response, Long id) {
+    public void editPage(HttpServletResponse response,HttpSession session, Long id) {
         Agent agent = agentService.getAgent(id);
         WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
@@ -125,13 +125,13 @@ public class AgentController {
     }
 
     @RequestMapping("/pwdpage")
-    public void pwdPage(HttpServletResponse response, Long id) {
+    public void pwdPage(HttpServletResponse response,HttpSession session, Long id) {
         Agent agent = agentService.getAgent(id);
         WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
 
     @RequestMapping("/editpwd")
-    public void editPwd(HttpServletResponse response, Long id, String pwd0, String pwd1, String pwd2) {
+    public void editPwd(HttpServletResponse response,Long id, String pwd0, String pwd1, String pwd2) {
         String result = agentService.editPwd(id, pwd0, pwd1, pwd2);
         WebUtils.writeHtml(response, result);
     }

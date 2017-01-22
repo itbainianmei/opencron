@@ -25,7 +25,7 @@ import com.alibaba.fastjson.JSON;
 import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.WebUtils;
 import org.opencron.server.domain.Terminal;
-import org.opencron.server.job.Globals;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronContext;
 import org.opencron.server.service.TerminalService;
@@ -59,7 +59,7 @@ public class TerminalController {
 
     @RequestMapping("/ssh")
     public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
-        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
 
         String json = "{status:'%s',url:'%s'}";
 
@@ -70,7 +70,7 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            session.setAttribute(Globals.SSH_SESSION_ID,token);
+            session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
             WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token));
         }else {
             //重新输入密码进行认证...
@@ -81,7 +81,7 @@ public class TerminalController {
 
     @RequestMapping("/ssh2")
     public String ssh2(HttpSession session,Terminal terminal) throws Exception {
-        User user = (User) session.getAttribute(Globals.LOGIN_USER);
+        User user = (User) session.getAttribute(OpencronTools.LOGIN_USER);
 
         terminal = termService.getById(terminal.getId());
         Terminal.AuthStatus authStatus = termService.auth(terminal);
@@ -90,11 +90,11 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            session.setAttribute(Globals.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token;
+            session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
         }else {
             //重新输入密码进行认证...
-            return "redirect:/terminal/open?id="+terminal.getId();
+            return "redirect:/terminal/open?id="+terminal.getId()+"&csrf="+ OpencronTools.getCSRF(session);
         }
 
     }
@@ -107,14 +107,14 @@ public class TerminalController {
 
     @RequestMapping("/exists")
     public void exists(HttpServletResponse response,HttpSession session,  Terminal terminal) throws Exception {
-        User user = Globals.getUserBySession(session);
+        User user = OpencronTools.getUserBySession(session);
         boolean exists = termService.exists( user.getUserId(),terminal.getHost());
         WebUtils.writeHtml(response,exists?"true":"false");
     }
 
     @RequestMapping("/view")
     public String view(HttpSession session,PageBean pageBean,Model model ) throws Exception {
-        pageBean = termService.getPageBeanByUser(pageBean,Globals.getUserIdBySession(session));
+        pageBean = termService.getPageBeanByUser(pageBean, OpencronTools.getUserIdBySession(session));
         model.addAttribute("pageBean",pageBean);
         return "/terminal/view";
     }
@@ -144,8 +144,8 @@ public class TerminalController {
         if (terminal!=null) {
             token = CommonUtils.uuid();
             TerminalContext.put(token,terminal);
-            session.setAttribute(Globals.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token;
+            session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
         }
         return "/terminal/error";
     }
@@ -189,7 +189,7 @@ public class TerminalController {
     public void save(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
         Terminal.AuthStatus authStatus = termService.auth(term);
         if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
-            User user = (User)session.getAttribute(Globals.LOGIN_USER);
+            User user = (User)session.getAttribute(OpencronTools.LOGIN_USER);
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
         }
