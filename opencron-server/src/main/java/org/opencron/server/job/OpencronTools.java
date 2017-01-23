@@ -1,10 +1,7 @@
 package org.opencron.server.job;
 
 
-import org.opencron.common.utils.CommonUtils;
-import org.opencron.common.utils.IOUtils;
-import org.opencron.common.utils.PropertyPlaceholder;
-import org.opencron.common.utils.RSAUtils;
+import org.opencron.common.utils.*;
 import org.opencron.server.domain.User;
 import org.opencron.server.service.TerminalService;
 import org.slf4j.Logger;
@@ -36,17 +33,20 @@ public final class OpencronTools {
 
     public static final String LOGIN_MSG = "loginMsg";
 
+    public static final String CONTEXT_PATH_NAME = "contextPath";
+
     private static HttpSession session = null;
 
     public static boolean isPermission(HttpSession session){
         return (Boolean) session.getAttribute(PERMISSION);
     }
 
-    public static void logined(HttpSession httpSession,User user){
-        session = httpSession;
+    public static void logined(HttpServletRequest request,User user){
+        session = request.getSession();
         session.setAttribute(HTTP_SESSION_ID,session.getId());
         session.setAttribute(LOGIN_USER,user);
         session.setAttribute(LOGIN_USER_ID,user.getUserId());
+        session.setAttribute(CONTEXT_PATH_NAME, WebUtils.getWebUrlPath(request));
     }
 
     public static String getHttpSessionId(){
@@ -70,6 +70,7 @@ public final class OpencronTools {
         session.removeAttribute(CSRF_NAME);
         TerminalService.TerminalSession.exit(session.getId());
         session.removeAttribute(LOGIN_MSG);
+        session.removeAttribute(CONTEXT_PATH_NAME);
         session.invalidate();
     }
 

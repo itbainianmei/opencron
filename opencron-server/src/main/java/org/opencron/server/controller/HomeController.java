@@ -187,7 +187,7 @@ public class HomeController {
     public void login(HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
 
         //用户信息验证
-        int status = homeService.checkLogin(httpSession, username, password);
+        int status = homeService.checkLogin(request, username, password);
 
         if (status == 500) {
             WebUtils.writeJson(response, "{\"msg\":\"用户名密码错误\"}");

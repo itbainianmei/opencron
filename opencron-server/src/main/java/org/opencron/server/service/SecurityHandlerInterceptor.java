@@ -59,8 +59,6 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        request.setAttribute("contextPath", WebUtils.getWebUrlPath(request));
-
         //登陆
         if (requestURI.contains("/login")||requestURI.contains("/upload")) {
             return super.preHandle(request, response, handler);

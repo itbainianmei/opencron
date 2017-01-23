@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
@@ -51,13 +52,13 @@ public class HomeService {
     @Autowired
     private QueryDao queryDao;
 
-    public int checkLogin(HttpSession httpSession, String username, String password) throws IOException {
+    public int checkLogin(HttpServletRequest request, String username, String password) throws IOException {
         //将session置为无效
        /* if (!httpSession.isNew()) {
             httpSession.invalidate();
             httpSession.removeAttribute(Globals.LOGIN_USER);
         }*/
-
+        HttpSession httpSession = request.getSession();
         User user = queryDao.hqlUniqueQuery("FROM User WHERE userName = ?", username);
         if (user == null) return 500;
 
@@ -86,7 +87,7 @@ public class HomeService {
                 }
                 SingleLoginListener.addUserSession(httpSession);
             }
-            OpencronTools.logined(httpSession,user);
+            OpencronTools.logined(request,user);
             return 200;
         } else {
             return 500;

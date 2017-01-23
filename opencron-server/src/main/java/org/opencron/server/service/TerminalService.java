@@ -338,20 +338,12 @@ public class TerminalService {
             return httpSessionId;
         }
 
-        public void setHttpSessionId(String sessionId) {
-            this.httpSessionId = sessionId;
-        }
-
         public void resize(Integer cols, Integer rows, Integer width, Integer height) throws IOException {
             channelShell.setPtySize(cols, rows, width, height);
         }
 
         public String getClientId() {
             return clientId;
-        }
-
-        public void setClientId(String clientId) {
-            this.clientId = clientId;
         }
 
     }
