@@ -22,7 +22,6 @@
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
-import org.opencron.common.job.Opencron;
 import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
