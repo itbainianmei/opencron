@@ -26,6 +26,8 @@ public class RegDemo {
 
     public static void main(String[] args) {
 
+        String str = "fdsafdsafdsafdsafd\r\n[fsa]fsdafdsa21";
+        System.out.println(str.replaceAll("\r\n.",""));
 
     }
 }

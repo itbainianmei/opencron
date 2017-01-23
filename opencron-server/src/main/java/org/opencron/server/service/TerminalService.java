@@ -205,7 +205,7 @@ public class TerminalService {
             this.jSch = new JSch();
         }
 
-        public void openTerminal(int cols, int rows, int width, int height) throws Exception {
+        public void openTerminal(final int cols, int rows, int width, int height) throws Exception {
             this.session = jSch.getSession(terminal.getUserName(), terminal.getHost(), terminal.getPort());
             this.session.setPassword(terminal.getPassword());
 
@@ -223,10 +223,11 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024*4 ];
+                    byte[] buffer = new byte[ 1024 * 4 ];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
+                            builder.setLength(0);
                             int size = inputStream.read(buffer);
                             if (size == -1) {
                                 return;
@@ -237,15 +238,13 @@ public class TerminalService {
                             }
                             //取到linux远程机器输出的信息发送给前端
                             String message = builder.toString();
-                            builder.setLength(0);
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
                             if (message.contains(cmdId)) {
-                                if (pwd != null || message.startsWith("echo")) {
+                                if (pwd != null || message.contains("echo")) {
                                     continue;
                                 }
-                                pwd = message.split("#")[1];
-                                pwd = pwd.substring(0, pwd.indexOf("\r\n")) + "/";
+                                pwd = message.replace(cmdId,"").replaceAll("\r\n.*","") + "/";
                                 logger.info("[opencron] Sftp upload file target path:{}", pwd);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
@@ -275,13 +274,14 @@ public class TerminalService {
             ChannelSftp channelSftp = null;
             try {
                 FileInputStream file = new FileInputStream(src);
+
                 channelSftp = (ChannelSftp) this.session.openChannel("sftp");
                 channelSftp.connect(CHANNEL_TIMEOUT);
                 //当前路径下,获取用户终端的当前位置
                 if (dst.startsWith("./")) {
                     //不出绝招不行啊....很神奇
                     while (pwd == null) {
-                        write(String.format("echo %s#$(pwd)\r", this.cmdId));
+                        write(String.format("echo %s$(pwd)\r", this.cmdId));
                         Thread.sleep(200);
                     }
                     dst = dst.replaceFirst("\\./", pwd);
