@@ -57,7 +57,7 @@ public class TerminalController {
     private TerminalService termService;
 
     @RequestMapping("/ssh")
-    public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
+    public void ssh(HttpServletResponse response, Terminal terminal) throws Exception {
         User user = OpencronTools.getUser();
 
         String json = "{status:'%s',url:'%s'}";

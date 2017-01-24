@@ -98,7 +98,7 @@ public class AgentController {
     }
 
     @RequestMapping("/editpage")
-    public void editPage(HttpServletResponse response,HttpSession session, Long id) {
+    public void editPage(HttpServletResponse response,Long id) {
         Agent agent = agentService.getAgent(id);
         WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
@@ -125,7 +125,7 @@ public class AgentController {
     }
 
     @RequestMapping("/pwdpage")
-    public void pwdPage(HttpServletResponse response,HttpSession session, Long id) {
+    public void pwdPage(HttpServletResponse response,Long id) {
         Agent agent = agentService.getAgent(id);
         WebUtils.writeJson(response, JSON.toJSONString(agent));
     }
