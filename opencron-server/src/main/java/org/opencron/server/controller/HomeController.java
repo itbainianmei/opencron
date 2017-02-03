@@ -234,7 +234,7 @@ public class HomeController {
     }
 
     @RequestMapping("/headpic/upload")
-    public void upload(@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam Long userId, @RequestParam Map data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
+    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,Long userId,Map data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
 
         String extensionName = null;
         if (file != null) {

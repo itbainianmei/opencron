@@ -186,8 +186,9 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
-        private String cmdId;
         private String pwd;
+        private boolean sendTempCmd = false;
+        private String sendTempCmdId;
 
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
@@ -200,7 +201,7 @@ public class TerminalService {
             this.terminal = terminal;
             this.httpSessionId = OpencronTools.getHttpSessionId();
             this.clientId = OpencronTools.getSshSessionId();
-            this.cmdId = this.clientId + this.httpSessionId;
+            this.sendTempCmdId = this.clientId + this.httpSessionId;
             this.jSch = new JSch();
         }
 
@@ -239,12 +240,14 @@ public class TerminalService {
                             String message = builder.toString();
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
-                            if (message.contains(cmdId)) {
-                                if (pwd != null || message.contains("echo")) {
-                                    continue;
+                            if ( sendTempCmd ) {
+                                if( message.contains(sendTempCmdId) ){
+                                    if (pwd != null || message.contains("echo")) {
+                                        continue;
+                                    }
+                                    pwd = message.replace(sendTempCmdId,"").replaceAll("\r\n.*","") + "/";
+                                    logger.info("[opencron] Sftp upload file target path:{}", pwd);
                                 }
-                                pwd = message.replace(cmdId,"").replaceAll("\r\n.*","") + "/";
-                                logger.info("[opencron] Sftp upload file target path:{}", pwd);
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
                             }
@@ -280,9 +283,11 @@ public class TerminalService {
                 if (dst.startsWith("./")) {
                     //不出绝招不行啊....很神奇
                     while (pwd == null) {
-                        write(String.format("echo %s$(pwd)\r", this.cmdId));
+                        sendTempCmd = true;
+                        write(String.format("echo %s$(pwd)\r", this.sendTempCmdId));
                         Thread.sleep(200);
                     }
+                    sendTempCmd = false;
                     dst = dst.replaceFirst("\\./", pwd);
                     pwd = null;
                 } else if (dst.startsWith("~")) {

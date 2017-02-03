@@ -41,7 +41,7 @@ import javax.servlet.http.HttpSessionListener;
  */
 public class SingleLoginListener implements HttpSessionListener {
 
-    // key为sessionId，value为HttpSession，使用static，定义静态变量，使之程序运行时，一直存在内存中。
+    // key为sessionId，value为HttpSession
     private static Map<String, HttpSession> singleLoginSessionMap = new ConcurrentHashMap<String, HttpSession>(500);
 
     /**

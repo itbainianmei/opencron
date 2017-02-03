@@ -2504,6 +2504,14 @@ a.list-group-item.active > .badge,
     margin-top: -5px;
 }
 
+.card-container .progress-list .details .title {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
 .progress-bar-white {
     background-color: rgba(255,255,255,0.65);
 }
@@ -2513,5 +2521,17 @@ a.list-group-item.active > .badge,
     background-color: rgba(255,255,255,0.2);
 }
 
+.bg-transparent-black-1 {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    color: white;
+}
 
-
+.progress-list .status {
+    background-color: #f2f2f2;
+    border-radius: 2px;
+    color: white;
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 500;
+    padding: 4px;
+}

@@ -72,7 +72,7 @@ public class AgentController {
 
 
     @RequestMapping("/addpage")
-    public String addPage(HttpSession session, Model model) {
+    public String addPage(Model model) {
         List<Agent> agentList = agentService.getAgentByConnType(Opencron.ConnType.CONN);
         model.addAttribute("connAgents",agentList);
         return "/agent/add";
