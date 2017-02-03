@@ -30,7 +30,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         for (int i=0;i<objects.length;i++) {
             if (objects[i] instanceof Map) {
                 if ((argsCount&1) == 1) {
-                    throw new RuntimeException("参数错误,第["+(i+1)+"]个参数类型是Map类型,导致第["+i+"]个参数无法匹配对应的value.请检查！");
+                    throw new IllegalArgumentException("arguments error,index of " +i+1+ " key can't be Map");
                 }
                 this.put((Map)objects[i]);
             } else {
@@ -40,7 +40,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         }
         //不是成对的参数
         if ((argsSkipMap.size()&1)==1){
-            throw new RuntimeException("参数不合法..参数个数去除Map类型的参数外必须为偶数个！");
+            throw new RuntimeException("arguments error.. The number of arguments to remove the Map type arguments must be an even number!");
         }
 
         for (int j=0;j<argsSkipMap.size()/2;j++){
