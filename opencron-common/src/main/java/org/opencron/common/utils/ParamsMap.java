@@ -88,7 +88,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         return !this.isEmpty();
     }
 
-    public ParamsMap insertBefore(K key, V val,int insertIndex,Comparator<K> comparator) {
+    public ParamsMap putBefore(K key, V val,int insertIndex,Comparator<K> comparator) {
         //1,2,3
         if (insertIndex<=0||insertIndex>this.map.size()){
             throw new IndexOutOfBoundsException();
@@ -111,7 +111,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         return this;
     }
 
-    public ParamsMap insertAfter(K key, V val,int insertIndex,Comparator<K> comparator){
+    public ParamsMap putAfter(K key, V val,int insertIndex,Comparator<K> comparator){
         if (insertIndex<=0||insertIndex>this.map.size()){
             throw new IndexOutOfBoundsException();
         }
@@ -134,7 +134,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         return this;
     }
 
-    public ParamsMap insertBefore(Map<K,V> tarMap,int insertIndex,Comparator<K> comparator){
+    public ParamsMap putBefore(Map<K,V> tarMap,int insertIndex,Comparator<K> comparator){
         if (insertIndex<=0||insertIndex>this.map.size()){
             throw new IndexOutOfBoundsException();
         }
@@ -159,7 +159,7 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
         return this;
     }
 
-    public ParamsMap insertAfter(Map<K,V> tarMap,int insertIndex,Comparator<K> comparator){
+    public ParamsMap putAfter(Map<K,V> tarMap,int insertIndex,Comparator<K> comparator){
         if (insertIndex<=0||insertIndex>this.map.size()){
             throw new IndexOutOfBoundsException();
         }
@@ -238,7 +238,8 @@ public class ParamsMap<K,V> extends HashMap<K,V> implements Map<K,V> {
     }
 	
 	public static void main(String[] args){
-        ParamsMap<Integer,Object> map = ParamsMap.instance().put("A","B","2","d",4,"55",new Date());
+	    ParamsMap paramsMap = new ParamsMap();
+        ParamsMap<Integer,Object> map = paramsMap.put("A","B","2","d",4,"55",new Date(),"ff");
         map.fill(1,"ddd").fill("2","fdafds").fill(444,666);
         for(Map.Entry<Integer,Object> entry:map.entrySet()){
             System.out.println(entry.getKey()+"_____"+entry.getValue()+"____"+entry.getValue().getClass());

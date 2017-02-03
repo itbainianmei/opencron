@@ -23,6 +23,7 @@ package org.opencron.server.job;
 
 import com.alibaba.fastjson.JSON;
 import org.opencron.common.utils.CommonUtils;
+import org.opencron.common.utils.ParamsMap;
 import org.opencron.server.domain.Agent;
 import org.opencron.server.service.AgentService;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -59,11 +60,14 @@ public class OpencronCaller {
 
         //代理...
         if (agent.getProxy() == Opencron.ConnType.PROXY.getType()) {
-            Map<String,String> proxyParams = new HashMap<String, String>(0);
-            proxyParams.put("proxyHost",request.getHostName());
-            proxyParams.put("proxyPort",request.getPort()+"");
-            proxyParams.put("proxyAction",request.getAction().name());
-            proxyParams.put("proxyPassword",request.getPassword());
+            ParamsMap proxyParams = new ParamsMap();
+            proxyParams.put(
+                    "proxyHost",request.getHostName(),
+                    "proxyPort",request.getPort(),
+                    "proxyAction",request.getAction().name(),
+                    "proxyPassword",request.getPassword()
+            );
+
             if (CommonUtils.notEmpty(request.getParams())) {
                 proxyParams.put("proxyParams", JSON.toJSONString(request.getParams()));
             }
