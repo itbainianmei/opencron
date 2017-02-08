@@ -242,7 +242,7 @@ public class TerminalService {
                             //获取pwd的结果输出,不能发送给前台
                             if ( sendTempCmd ) {
                                 if( message.contains(sendTempCmdId) ){
-                                    if (pwd != null || message.contains("echo")) {
+                                    if ( pwd != null || message.contains("echo")) {
                                         continue;
                                     }
                                     pwd = message.replace(sendTempCmdId,"").replaceAll("\r\n.*","") + "/";
