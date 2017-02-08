@@ -200,8 +200,6 @@ public class AgentProcessor implements Opencron.Iface {
 
         File shellFile = CommandUtils.createShellFile(command, pid);
 
-        Integer exitValue;
-
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         final Response response = Response.response(request);
@@ -211,6 +209,8 @@ public class AgentProcessor implements Opencron.Iface {
         final Timer timer = new Timer();
 
         DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+
+        Integer exitValue;
 
         try {
             CommandLine commandLine = CommandLine.parse("/bin/bash +x " + shellFile.getAbsolutePath());
