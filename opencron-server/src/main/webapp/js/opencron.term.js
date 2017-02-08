@@ -1,5 +1,4 @@
 ;function OpencronTerm() {
-    'use strict';
     this.socket = null;
     this.term = null;
     this.termNode = null;
@@ -50,7 +49,6 @@
 }
 
 ;OpencronTerm.prototype.open = function () {
-    'use strict';
     var self = this;
 
     self.termNode = $("#term");
@@ -136,6 +134,8 @@
             if (event.data == "\r\nlogout\r\n" ){
                 if (self.sendLine == "exit\r"){
                     self.disconnect = true;
+                }else if(self.sendLine.sub){
+
                 }
             }
             self.sendLine = "";

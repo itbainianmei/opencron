@@ -180,7 +180,7 @@ public class TerminalController {
                 }
             }
         }
-        WebUtils.writeJson(response,success?"true":"false");
+        WebUtils.writeJson(response,String.format("{\"success\":\"%s\"}",success?"true":"false"));
     }
 
 

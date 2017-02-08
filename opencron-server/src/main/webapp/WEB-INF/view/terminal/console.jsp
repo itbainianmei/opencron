@@ -20,8 +20,8 @@
 
     <!--fileinput-->
     <link href="${contextPath}/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
-    <script src="${contextPath}/js/fileinput/js/fileinput.js" type="text/javascript"></script>
-    <script src="${contextPath}/js/fileinput/js/locales/zh.js" type="text/javascript"></script>
+    <script type="text/javascript" src="${contextPath}/js/fileinput/js/fileinput.js" ></script>
+    <script type="text/javascript" src="${contextPath}/js/fileinput/js/locales/zh.js"></script>
 
     <!--term-->
     <script type="text/javascript" src="${contextPath}/js/term.js"></script>
@@ -93,6 +93,7 @@
                         <input type="text" id="path" class="form-control col-lg-13" placeholder="请输入文件上传路径,默认在当前终端所在的路径下">
                     </div>
                     <input id="file" name="file" type="file">
+                    <div id="errorBlock" class="help-block"></div>
                 </form>
             </div>
         </div>
@@ -100,7 +101,6 @@
 </div>
 
 
-</body>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -129,14 +129,36 @@
             initialCaption: "请选择要上传的文件",
             maxFileSize:104857600,//文件最大100M
             allowedFileExtensions : null,
+            elErrorContainer: '#errorBlock',
             uploadExtraData: function() {
                 var obj = {};
                 obj.token = '${token}';
                 obj.path = $("#path").val();
                 return obj;
             }
+        }).on("fileuploaded", function(event, data) {
+            alert(data.response.success)
+            if (data.response.success == "false") {
+               window.setTimeout(function () {
+                   $("#upload_push").find(".progress-bar-success").addClass("progress-bar-danger").removeClass("progress-bar-success");
+                   $(".file-actions").find(".glyphicon-ok-sign").addClass("text-danger glyphicon-remove-sign").removeClass("glyphicon-ok-sign text-success");
+                   var uperrorhtml = '<span class="close kv-error-close" onclick="colseUpError()">×</span><ul><li><b>上传失败: (可能有以下原因)</b></li>' +
+                       '<li><b>1): </b>文件大小太大,上传失败</li>' +
+                       '<li><b>2): </b>上传路径是当前路径,且控制台正在实时输出日志(无法获取当前路径)</li>' +
+                       '</ul>';
+                   $(".file-error-message").css({"margin":"8px 0px"});
+                    $("#errorBlock").html(uperrorhtml).show();
+               },300);
+            }
         });
+
+
+
     });
+
+    function colseUpError() {
+        $("#errorBlock").empty().hide();
+    }
 
     function upload() {
         $("#upload_push").modal('show');
@@ -145,7 +167,7 @@
     }
 
     //导入文件上传完成之后的事件
-    $("#file").on("fileuploaded", function (event, data, previewId, index) {
+    $("#file").on("fileuploaded", function (event, data) {
         if (!data.response) {
             alert('文件格式类型不正确');
         }
@@ -164,4 +186,6 @@
         });
     }
 </script>
+
+</body>
 </html>

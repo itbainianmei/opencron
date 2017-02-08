@@ -2535,3 +2535,63 @@ a.list-group-item.active > .badge,
     font-weight: 500;
     padding: 4px;
 }
+
+.table-sortable > thead {
+    -moz-user-select: none;
+}
+.table-sortable > thead > tr > th {
+    position: relative;
+}
+.table-sortable > thead > tr > th.sortable {
+    cursor: pointer;
+    transition: all 0.2s linear 0s;
+}
+.table-sortable > thead > tr > th.sortable:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+.table-sortable > thead > tr > th.sortable::before {
+    -moz-osx-font-smoothing: grayscale;
+    content: "";
+    float: right;
+    font-family: "FontAwesome";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-asc::before {
+    content: "";
+    margin-top: 0;
+}
+.table-sortable > thead > tr > th.sortable.sort-desc::before{
+    content: "";
+    margin-top: 5px;
+}
+.table-sortable > thead > tr > th.sortable.sort-numeric.sort-asc::before{
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-numeric.sort-desc::before {
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-alpha.sort-asc::before{
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-alpha.sort-desc::before{
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-amount.sort-asc::before{
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sortable.sort-amount.sort-desc::before{
+    content: "";
+    margin-top: 3px;
+}
+.table-sortable > thead > tr > th.sort-asc{
+    background-color: rgba(0, 0, 0, 0.1);
+}

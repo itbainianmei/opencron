@@ -72,15 +72,22 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        User user = OpencronTools.getUser();
-        if (user == null) {
-            logger.info(request.getRequestURL().toString());
-            //跳到登陆页面
+        try {
+            User user = OpencronTools.getUser();
+            if (user == null) {
+                logger.info(request.getRequestURL().toString());
+                //跳到登陆页面
+                response.sendRedirect("/");
+                OpencronTools.invalidSession();
+                logger.info("[opencron]session is null,redirect to login page");
+                return false;
+            }
+        }catch (IllegalStateException e) {
+            logger.info("[opencron]Session already invalidated,redirect to login page");
             response.sendRedirect("/");
-            OpencronTools.invalidSession();
-            logger.info("[opencron]session is null,redirect to login page");
             return false;
         }
+
 
         //普通管理员不可访问的资源
         if (!OpencronTools.isPermission(session) &&

@@ -242,7 +242,7 @@ public class TerminalService {
                             //获取pwd的结果输出,不能发送给前台
                             if ( sendTempCmd ) {
                                 if( message.contains(sendTempCmdId) ){
-                                    if ( pwd != null || message.contains("echo")) {
+                                    if (  pwd != null || message.contains("echo")) {
                                         continue;
                                     }
                                     pwd = message.replace(sendTempCmdId,"").replaceAll("\r\n.*","") + "/";
@@ -272,31 +272,29 @@ public class TerminalService {
             }
         }
 
-        public void upload(String src, String dst, long fileSize) throws IOException, SftpException {
+        public void upload(String src, String dst, long fileSize) throws Exception {
             ChannelSftp channelSftp = null;
-            try {
-                FileInputStream file = new FileInputStream(src);
+            FileInputStream file = new FileInputStream(src);
 
-                channelSftp = (ChannelSftp) this.session.openChannel("sftp");
-                channelSftp.connect(CHANNEL_TIMEOUT);
-                //当前路径下,获取用户终端的当前位置
-                if (dst.startsWith("./")) {
-                    //不出绝招不行啊....很神奇
-                    while (pwd == null) {
-                        sendTempCmd = true;
-                        write(String.format("echo %s$(pwd)\r", this.sendTempCmdId));
-                        Thread.sleep(200);
-                    }
-                    sendTempCmd = false;
-                    dst = dst.replaceFirst("\\./", pwd);
-                    pwd = null;
-                } else if (dst.startsWith("~")) {
-                    dst = dst.replaceAll("~/|~", "");
+            channelSftp = (ChannelSftp) this.session.openChannel("sftp");
+            channelSftp.connect(CHANNEL_TIMEOUT);
+            //当前路径下,获取用户终端的当前位置
+            if (dst.startsWith("./")) {
+                //不出绝招不行啊....很神奇
+                sendTempCmd = true;
+                write(String.format("echo %s$(pwd)\r", this.sendTempCmdId));
+                //等待回去到返回的路径...
+                Thread.sleep(100);
+                sendTempCmd = false;
+                if (pwd == null) {
+                    throw new RuntimeException("[opencron] Sftp upload file target path error!");
                 }
-                channelSftp.put(file, dst, new OpencronSftpMonitor(fileSize));
-            } catch (Exception e) {
-                e.printStackTrace();
+                dst = dst.replaceFirst("\\./", pwd);
+                pwd = null;
+            } else if (dst.startsWith("~")) {
+                dst = dst.replaceAll("~/|~", "");
             }
+            channelSftp.put(file, dst, new OpencronSftpMonitor(fileSize));
             //exit
             if (channelSftp != null) {
                 channelSftp.exit();

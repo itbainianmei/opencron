@@ -38,7 +38,11 @@ public final class OpencronTools {
     private static HttpSession session = null;
 
     public static boolean isPermission(HttpSession session){
-        return (Boolean) session.getAttribute(PERMISSION);
+        Object obj = session.getAttribute(PERMISSION);
+        if (obj==null) {
+            return false;
+        }
+        return (Boolean) obj;
     }
 
     public static void logined(HttpServletRequest request,User user){
