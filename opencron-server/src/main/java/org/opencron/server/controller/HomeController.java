@@ -234,7 +234,7 @@ public class HomeController {
     }
 
     @RequestMapping("/headpic/upload")
-    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,Long userId,Map data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
+    public void upload(@RequestParam(value = "file", required = false) MultipartFile file,Long userId, String data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
 
         String extensionName = null;
         if (file != null) {
@@ -245,7 +245,7 @@ public class HomeController {
         String successFormat = "{\"result\":\"%s\",\"state\":200}";
         String errorFormat = "{\"message\":\"%s\",\"state\":500}";
 
-        Cropper cropper = JSON.parseObject((String) data.get("data"), Cropper.class);
+        Cropper cropper = JSON.parseObject(data, Cropper.class);
 
         //检查后缀
         if (!".BMP,.JPG,.JPEG,.PNG,.GIF".contains(extensionName.toUpperCase())) {
