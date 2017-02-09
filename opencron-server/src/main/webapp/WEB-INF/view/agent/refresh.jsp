@@ -16,13 +16,13 @@
                 <span class="label label-success">&nbsp;&nbsp;成&nbsp;功&nbsp;&nbsp;</span>
             </c:if>
         </td>
-        <td id="connType_${w.agentId}">
-            <c:if test="${w.proxy eq 0}">直连</c:if>
-            <c:if test="${w.proxy eq 1}">代理</c:if>
-        </td>
         <td id="warning_${w.agentId}">
             <c:if test="${w.warning eq false}"><span class="label label-default" style="color: red;font-weight:bold">&nbsp;&nbsp;否&nbsp;&nbsp;</span>  </c:if>
             <c:if test="${w.warning eq true}"><span class="label label-warning" style="color: white;font-weight:bold">&nbsp;&nbsp;是&nbsp;&nbsp;</span> </c:if>
+        </td>
+        <td id="connType_${w.agentId}">
+            <c:if test="${w.proxy eq 0}">直连</c:if>
+            <c:if test="${w.proxy eq 1}">代理</c:if>
         </td>
         <td>
             <center>

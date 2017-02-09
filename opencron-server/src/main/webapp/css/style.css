@@ -81,7 +81,7 @@ body, button, input, textarea, select, .btn {
 }
 
 body, a, input, .help-block {
-    color: #fff;
+    color: rgba(232, 232, 242, 0.95);
     text-shadow: 0 0 3px rgba(255,255,255,0.4);
 }
 

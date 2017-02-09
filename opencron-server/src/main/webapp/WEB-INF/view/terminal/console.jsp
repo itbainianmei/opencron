@@ -38,7 +38,7 @@
         <div>
             <ul class="nav navbar-nav">
                 <li><a class="term-logo" href="${contextPath}" target="_blank" title="">Opencron</a></li>
-               <%-- <li class="dropdown">
+                <li class="dropdown">
                      <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="选择主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;选择主题<b class="caret"></b></a>
                      <ul class="dropdown-menu theme" >
                          <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
@@ -46,7 +46,7 @@
                          <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
                          <li><a theme="blue" href="javascript:void(0)"><span class="circle" style="background-color:blue"></span>&nbsp;蓝色</a></li>
                      </ul>
-                 </li>--%>
+                 </li>
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="常用操作"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;操作<b class="caret"></b></a>
                     <ul class="dropdown-menu theme" >
@@ -137,8 +137,9 @@
                 return obj;
             }
         }).on("fileuploaded", function(event, data) {
-            alert(data.response.success)
-            if (data.response.success == "false") {
+            if (!data.response) {
+                alert('文件格式类型不正确');
+            }else if (data.response.success == "false") {
                window.setTimeout(function () {
                    $("#upload_push").find(".progress-bar-success").addClass("progress-bar-danger").removeClass("progress-bar-success");
                    $(".file-actions").find(".glyphicon-ok-sign").addClass("text-danger glyphicon-remove-sign").removeClass("glyphicon-ok-sign text-success");
@@ -152,8 +153,6 @@
             }
         });
 
-
-
     });
 
     function colseUpError() {
@@ -165,13 +164,6 @@
         $(".fileinput-remove-button").click();
         $("#path").val('');
     }
-
-    //导入文件上传完成之后的事件
-    $("#file").on("fileuploaded", function (event, data) {
-        if (!data.response) {
-            alert('文件格式类型不正确');
-        }
-    });
 
     function closeTerminal() {
         swal({

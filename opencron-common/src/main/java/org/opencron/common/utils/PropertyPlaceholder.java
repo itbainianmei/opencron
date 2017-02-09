@@ -68,7 +68,11 @@ public class PropertyPlaceholder extends PropertyPlaceholderConfigurer {
     }
 
     public static Boolean getBoolean(String name) {
-        return CommonUtils.toBoolean(get(name));
+        String result = get(name);
+        if (result==null) {
+            return false;
+        }
+        return CommonUtils.toBoolean(result);
     }
     public static Map<String, String> getProperties() {
         return properties;

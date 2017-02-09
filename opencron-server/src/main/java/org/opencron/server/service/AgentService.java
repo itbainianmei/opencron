@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.opencron.common.utils.CommonUtils;
 import org.opencron.server.dao.QueryDao;
+import org.opencron.server.domain.Terminal;
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
@@ -92,6 +93,13 @@ public class AgentService {
             User user = OpencronTools.getUser();
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
+        if (pageBean.getOrder() == null) {
+            pageBean.setOrder(PageBean.ASC);
+        }
+        if (pageBean.getOrderBy() == null) {
+            pageBean.setOrderBy("name");
+        }
+        sql += " ORDER By "+ pageBean.getOrderBy() + " " + pageBean.getOrder();
         queryDao.getPageBySql(pageBean, Agent.class, sql);
         return pageBean;
     }
