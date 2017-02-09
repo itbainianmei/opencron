@@ -88,7 +88,6 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-
         //普通管理员不可访问的资源
         if (!OpencronTools.isPermission(session) &&
                 (requestURI.contains("/config/")

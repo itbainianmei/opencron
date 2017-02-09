@@ -35,7 +35,7 @@ public final class OpencronTools {
 
     public static final String CONTEXT_PATH_NAME = "contextPath";
 
-    private static HttpSession session = null;
+    public static HttpSession session = null;
 
     public static boolean isPermission(HttpSession session){
         Object obj = session.getAttribute(PERMISSION);
