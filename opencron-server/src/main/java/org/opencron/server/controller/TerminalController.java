@@ -57,8 +57,8 @@ public class TerminalController {
     private TerminalService termService;
 
     @RequestMapping("/ssh")
-    public void ssh(HttpServletResponse response, Terminal terminal) throws Exception {
-        User user = OpencronTools.getUser();
+    public void ssh(HttpSession session,HttpServletResponse response, Terminal terminal) throws Exception {
+        User user = OpencronTools.getUser(session);
 
         String json = "{status:'%s',url:'%s'}";
 
@@ -69,8 +69,8 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            OpencronTools.setSshSessionId(token);
-            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&_csrf="+OpencronTools.getCSRF()));
+            OpencronTools.setSshSessionId(session,token);
+            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&_csrf="+OpencronTools.getCSRF(session)));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStatus.status,"null"));
@@ -79,8 +79,8 @@ public class TerminalController {
     }
 
     @RequestMapping("/ssh2")
-    public String ssh2(Terminal terminal) throws Exception {
-        User user = OpencronTools.getUser();
+    public String ssh2(HttpSession session,Terminal terminal) throws Exception {
+        User user = OpencronTools.getUser(session);
 
         terminal = termService.getById(terminal.getId());
         Terminal.AuthStatus authStatus = termService.auth(terminal);
@@ -89,11 +89,11 @@ public class TerminalController {
             String token = CommonUtils.uuid();
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
-            OpencronTools.setSshSessionId(token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
+            OpencronTools.setSshSessionId(session,token);
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
         }else {
             //重新输入密码进行认证...
-            return "redirect:/terminal/open?id="+terminal.getId()+"&_csrf="+ OpencronTools.getCSRF();
+            return "redirect:/terminal/open?id="+terminal.getId()+"&_csrf="+ OpencronTools.getCSRF(session);
         }
 
     }
@@ -105,15 +105,15 @@ public class TerminalController {
     }
 
     @RequestMapping("/exists")
-    public void exists(HttpServletResponse response,Terminal terminal) throws Exception {
-        User user = OpencronTools.getUser();
+    public void exists(HttpSession session,HttpServletResponse response,Terminal terminal) throws Exception {
+        User user = OpencronTools.getUser(session);
         boolean exists = termService.exists( user.getUserId(),terminal.getHost());
         WebUtils.writeHtml(response,exists?"true":"false");
     }
 
     @RequestMapping("/view")
-    public String view(PageBean pageBean,Model model ) throws Exception {
-        pageBean = termService.getPageBeanByUser(pageBean, OpencronTools.getUserId());
+    public String view(HttpSession session,PageBean pageBean,Model model ) throws Exception {
+        pageBean = termService.getPageBeanByUser(pageBean, OpencronTools.getUserId(session));
         model.addAttribute("pageBean",pageBean);
         return "/terminal/view";
     }
@@ -144,7 +144,7 @@ public class TerminalController {
             token = CommonUtils.uuid();
             TerminalContext.put(token,terminal);
             session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF();
+            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
         }
         return "/terminal/error";
     }
@@ -185,10 +185,10 @@ public class TerminalController {
 
 
     @RequestMapping("/save")
-    public void save(HttpServletResponse response, Terminal term) throws Exception {
+    public void save(HttpSession session,HttpServletResponse response, Terminal term) throws Exception {
         Terminal.AuthStatus authStatus = termService.auth(term);
         if (authStatus.equals(Terminal.AuthStatus.SUCCESS)) {
-            User user = OpencronTools.getUser();
+            User user = OpencronTools.getUser(session);
             term.setUserId(user.getUserId());
             termService.saveOrUpdate(term);
         }
@@ -197,8 +197,8 @@ public class TerminalController {
 
 
     @RequestMapping("/del")
-    public void del(HttpServletResponse response, Terminal term) throws Exception {
-        String message = termService.delete(term.getId());
+    public void del(HttpSession session,HttpServletResponse response, Terminal term) throws Exception {
+        String message = termService.delete(session,term.getId());
         WebUtils.writeHtml(response,message);
     }
 

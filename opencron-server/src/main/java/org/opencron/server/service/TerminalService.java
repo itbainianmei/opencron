@@ -36,12 +36,15 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.crypto.BadPaddingException;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.opencron.common.utils.CommonUtils.notEmpty;
+import static org.opencron.server.job.OpencronTools.HTTP_SESSION_ID;
+import static org.opencron.server.job.OpencronTools.SSH_SESSION_ID;
 
 
 /**
@@ -148,14 +151,14 @@ public class TerminalService {
         return queryDao.get(Terminal.class, id);
     }
 
-    public String delete(Long id) {
+    public String delete(HttpSession session,Long id) {
         Terminal term = getById(id);
         if (term == null) {
             return "error";
         }
-        User user = OpencronTools.getUser();
+        User user = OpencronTools.getUser(session);
 
-        if (!OpencronTools.isPermission() && !user.getUserId().equals(term.getUserId())) {
+        if (!OpencronTools.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
             return "error";
         }
         queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?", term.getId()).executeUpdate();
@@ -198,8 +201,8 @@ public class TerminalService {
         public TerminalClient(WebSocketSession webSocketSession,Terminal terminal) {
             this.webSocketSession = webSocketSession;
             this.terminal = terminal;
-            this.httpSessionId = OpencronTools.getHttpSessionId();
-            this.clientId = OpencronTools.getSshSessionId();
+            this.httpSessionId = (String) webSocketSession.getAttributes().get(HTTP_SESSION_ID);;
+            this.clientId = (String) webSocketSession.getAttributes().get(SSH_SESSION_ID);
             this.sendTempCmdId = this.clientId + this.httpSessionId;
             this.jSch = new JSch();
         }

@@ -49,9 +49,6 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
         HttpSession session = request.getSession();
 
-        //将session保存到threadlocal
-        OpencronTools.HttpSessionHolder.set(session);
-
         String requestURI = request.getContextPath() + request.getServletPath();
 
         //静态资源,页面
@@ -72,17 +69,17 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (referer != null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
             response.sendRedirect("/");
             logger.info("[opencron]Bad request,redirect to login page");
-            OpencronTools.invalidSession();
+            OpencronTools.invalidSession(session);
             return false;
         }
 
         try {
-            User user = OpencronTools.getUser();
+            User user = OpencronTools.getUser(session);
             if (user == null) {
                 logger.info(request.getRequestURL().toString());
                 //跳到登陆页面
                 response.sendRedirect("/");
-                OpencronTools.invalidSession();
+                OpencronTools.invalidSession(session);
                 logger.info("[opencron]session is null,redirect to login page");
                 return false;
             }
@@ -93,7 +90,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         //普通管理员不可访问的资源
-        if (!OpencronTools.isPermission() &&
+        if (!OpencronTools.isPermission(session) &&
                 (requestURI.contains("/config/")
                         || requestURI.contains("/user/view")
                         || requestURI.contains("/user/add")
@@ -107,7 +104,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             if (!verifyCSRF(request)) {
                 response.sendRedirect("/");
                 logger.info("[opencron]Bad request,redirect to login page");
-                OpencronTools.invalidSession();
+                OpencronTools.invalidSession(session);
                 return false;
             }
         }
@@ -121,7 +118,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (CommonUtils.isEmpty(requstCSRF)) {
             return false;
         }
-        String sessionCSRF = OpencronTools.getCSRF();
+        String sessionCSRF = OpencronTools.getCSRF(request.getSession());
         if (CommonUtils.isEmpty(sessionCSRF)) {
             return false;
         }

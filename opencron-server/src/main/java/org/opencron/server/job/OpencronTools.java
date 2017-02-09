@@ -35,8 +35,8 @@ public final class OpencronTools {
 
     public static final String CONTEXT_PATH_NAME = "contextPath";
 
-    public static boolean isPermission(){
-        Object obj = HttpSessionHolder.get().getAttribute(PERMISSION);
+    public static boolean isPermission(HttpSession session){
+        Object obj = session.getAttribute(PERMISSION);
         if (obj==null) {
             return false;
         }
@@ -51,20 +51,15 @@ public final class OpencronTools {
         session.setAttribute(CONTEXT_PATH_NAME, WebUtils.getWebUrlPath(request));
     }
 
-    public static String getHttpSessionId(){
-        return HttpSessionHolder.get().getId();
+    public static User getUser(HttpSession session){
+        return (User)session.getAttribute(OpencronTools.LOGIN_USER);
     }
 
-    public static User getUser(){
-        return (User)HttpSessionHolder.get().getAttribute(OpencronTools.LOGIN_USER);
+    public static Long getUserId(HttpSession session){
+        return (Long) session.getAttribute(LOGIN_USER_ID);
     }
 
-    public static Long getUserId(){
-        return (Long) HttpSessionHolder.get().getAttribute(LOGIN_USER_ID);
-    }
-
-    public static void invalidSession() throws Exception {
-        HttpSession session = HttpSessionHolder.get();
+    public static void invalidSession(HttpSession session) throws Exception {
         session.removeAttribute(LOGIN_USER);
         session.removeAttribute(LOGIN_USER_ID);
         session.removeAttribute(PERMISSION);
@@ -75,12 +70,10 @@ public final class OpencronTools {
         session.removeAttribute(LOGIN_MSG);
         session.removeAttribute(CONTEXT_PATH_NAME);
         session.invalidate();
-        HttpSessionHolder.remove();
     }
 
-    public static String getCSRF() {
+    public static String getCSRF(HttpSession session) {
         String token;
-        HttpSession session = HttpSessionHolder.get();
         synchronized (session) {
             token = (String) session.getAttribute(CSRF_NAME);
             if (null == token) {
@@ -99,12 +92,12 @@ public final class OpencronTools {
         return csrf;
     }
 
-    public static String getSshSessionId() {
-        return (String) HttpSessionHolder.get().getAttribute(SSH_SESSION_ID);
+    public static String getSshSessionId(HttpSession session) {
+        return (String) session.getAttribute(SSH_SESSION_ID);
     }
 
-    public static void setSshSessionId(String sshSessionId) {
-        HttpSessionHolder.get().setAttribute(SSH_SESSION_ID,sshSessionId);
+    public static void setSshSessionId(HttpSession session, String sshSessionId) {
+        session.setAttribute(SSH_SESSION_ID,sshSessionId);
     }
 
     public static class CACHE {
@@ -219,26 +212,6 @@ public final class OpencronTools {
             PUBLIC, PRIVATE
         }
 
-    }
-
-    public static class HttpSessionHolder {
-
-        public static ThreadLocal<HttpSession> local = new ThreadLocal<HttpSession>();
-
-        public static void set(HttpSession session) {
-            HttpSession httpSession = local.get();
-            if (httpSession==null) {
-                local.set(session);
-            }
-        }
-
-        public static HttpSession get() {
-            return local.get();
-        }
-
-        public static void remove() {
-            local.remove();
-        }
     }
 
 }

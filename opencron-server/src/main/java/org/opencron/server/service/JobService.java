@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+
 import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 @Service
@@ -94,13 +96,13 @@ public class JobService {
         }
     }
 
-    public List<Job> getJobsByJobType(JobType jobType){
+    public List<Job> getJobsByJobType(HttpSession session,JobType jobType){
         String sql = "SELECT * FROM T_JOB WHERE status=1 AND jobType=?";
         if (JobType.FLOW.equals(jobType)) {
             sql +=" AND flowNum=0";
         }
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " AND userId = " + user.getUserId() + " AND agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Job.class,sql,jobType.getCode());
@@ -115,7 +117,7 @@ public class JobService {
         OpencronTools.CACHE.put(OpencronTools.CACHED_CRONTAB_JOB,getJobVo(Opencron.ExecType.AUTO, Opencron.CronType.CRONTAB));
     }
 
-    public PageBean<JobVo> getJobVos(PageBean pageBean, JobVo job) {
+    public PageBean<JobVo> getJobVos(HttpSession session,PageBean pageBean, JobVo job) {
         String sql = "SELECT T.*,D.name AS agentName,D.port,D.ip,D.password,U.userName AS operateUname " +
                 " FROM T_JOB AS T LEFT JOIN T_AGENT AS D ON T.agentId = D.agentId LEFT JOIN T_USER AS U ON T.userId = U.userId WHERE IFNULL(flowNum,0)=0 AND T.status=1 ";
         if (job != null) {
@@ -134,8 +136,8 @@ public class JobService {
             if (notEmpty(job.getRedo())) {
                 sql += " AND T.redo=" + job.getRedo();
             }
-            if (!OpencronTools.isPermission()) {
-                User user = OpencronTools.getUser();
+            if (!OpencronTools.isPermission(session)) {
+                User user = OpencronTools.getUser(session);
                 sql += " AND T.userId = " + user.getUserId() + " AND T.agentId IN ("+user.getAgentIds()+")";
             }
         }
@@ -273,8 +275,8 @@ public class JobService {
         }
     }
 
-    public boolean checkJobOwner(Long userId) {
-        return OpencronTools.isPermission() || userId.equals(OpencronTools.getUserId());
+    public boolean checkJobOwner(HttpSession session,Long userId) {
+        return OpencronTools.isPermission(session) || userId.equals(OpencronTools.getUserId(session));
     }
 
 }

@@ -38,6 +38,8 @@ import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
+
 import static org.opencron.common.utils.CommonUtils.isEmpty;
 import static org.opencron.common.utils.CommonUtils.notEmpty;
 
@@ -75,19 +77,19 @@ public class AgentService {
         OpencronTools.CACHE.put(OpencronTools.CACHED_AGENT_ID,queryDao.getAll(Agent.class));
     }
 
-    public List<Agent> getAgentByStatus(int status){
+    public List<Agent> getOwnerAgentByStatus(HttpSession session,int status){
         String sql = "SELECT * FROM T_AGENT WHERE status=?";
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " AND agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql,status);
     }
 
-    public PageBean getAgent(PageBean pageBean) {
+    public PageBean getOwnerAgent(HttpSession session,PageBean pageBean) {
         String sql = "SELECT * FROM T_AGENT";
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         if (pageBean.getOrder() == null) {
@@ -196,10 +198,10 @@ public class AgentService {
     }
 
 
-    public List<Agent> getAgentsBySession() {
+    public List<Agent> getOwnerAgents(HttpSession session) {
         String sql = "SELECT * FROM T_AGENT ";
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " WHERE agentId IN ("+user.getAgentIds()+")";
         }
         return queryDao.sqlQuery(Agent.class,sql);

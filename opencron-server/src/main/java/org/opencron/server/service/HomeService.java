@@ -95,7 +95,7 @@ public class HomeService {
         }
     }
 
-    public PageBean<LogVo> getLog(PageBean pageBean, Long agentId, String sendTime) {
+    public PageBean<LogVo> getLog(HttpSession session,PageBean pageBean, Long agentId, String sendTime) {
         String sql = "SELECT L.*,W.name AS agentName FROM T_LOG L LEFT JOIN T_AGENT W ON L.agentId = W.agentId WHERE 1=1 ";
         if (notEmpty(agentId)) {
             sql += " AND L.agentId = " + agentId;
@@ -103,27 +103,27 @@ public class HomeService {
         if (notEmpty(sendTime)) {
             sql += " AND L.sendTime LIKE '" + sendTime + "%' ";
         }
-        if (!OpencronTools.isPermission()) {
-            sql += " AND L.receiverId = " + OpencronTools.getUserId();
+        if (!OpencronTools.isPermission(session)) {
+            sql += " AND L.receiverId = " + OpencronTools.getUserId(session);
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(pageBean, LogVo.class, sql);
         return pageBean;
     }
 
-    public List<LogVo> getUnReadMessage() {
+    public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM T_LOG L WHERE isRead=0 AND type=2 ";
-        if (!OpencronTools.isPermission()) {
-            sql += " and L.receiverId = " + OpencronTools.getUserId();
+        if (!OpencronTools.isPermission(session)) {
+            sql += " and L.receiverId = " + OpencronTools.getUserId(session);
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
     }
 
-    public Long getUnReadCount() {
+    public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT COUNT(1) FROM T_LOG L WHERE isRead=0 AND type=2 ";
-        if (!OpencronTools.isPermission()) {
-            sql += " and L.receiverId = " + OpencronTools.getUserId();
+        if (!OpencronTools.isPermission(session)) {
+            sql += " and L.receiverId = " + OpencronTools.getUserId(session);
         }
         return queryDao.getCountBySql(sql);
     }

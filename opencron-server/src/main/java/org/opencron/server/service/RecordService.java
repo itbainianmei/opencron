@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 import static org.opencron.common.utils.CommonUtils.notEmpty;
@@ -44,7 +45,7 @@ public class RecordService {
     @Autowired
     private QueryDao queryDao;
 
-    public PageBean query(PageBean<RecordVo> pageBean, RecordVo recordVo, String queryTime, boolean status) {
+    public PageBean query(HttpSession session,PageBean<RecordVo> pageBean, RecordVo recordVo, String queryTime, boolean status) {
         String sql = "SELECT R.recordId,R.jobId,R.command,R.success,R.startTime,R.status,R.redoCount,R.jobType,R.groupId,CASE WHEN R.status IN (1,3,5,6) THEN R.endTime WHEN R.status IN (0,2,4) THEN NOW() END AS endTime,R.execType,T.jobName,T.agentId,D.name AS agentName,D.password,D.ip,T.cronExp,U.userName AS operateUname FROM T_RECORD R LEFT JOIN T_JOB T ON R.jobId = T.jobId "
                 + " LEFT JOIN T_AGENT D ON R.agentId = D.agentId LEFT JOIN T_USER AS U ON R.userId = U.userId AND CASE R.jobType WHEN 1 THEN R.flowNum=0 WHEN 0 THEN R.parentId IS NULL END WHERE R.parentId is NULL AND R.status IN " + (status ? "(1,3,4,5,6)" : "(0,2,4)");
         if (recordVo != null) {
@@ -66,8 +67,8 @@ public class RecordService {
             if (status) {
                 sql += " AND IFNULL(R.flowNum,0) = 0 ";
             }
-            if (!OpencronTools.isPermission()) {
-                User user = OpencronTools.getUser();
+            if (!OpencronTools.isPermission(session)) {
+                User user = OpencronTools.getUser(session);
                 sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
             }
         }
@@ -154,7 +155,7 @@ public class RecordService {
         return queryDao.getCountBySql("SELECT COUNT(1) FROM T_RECORD AS R LEFT JOIN T_JOB T ON R.jobId = T.jobId  WHERE (R.jobId = ? OR T.flowId = ?) AND R.status IN (0,2,4) ", id, id) > 0L;
     }
 
-    public List<ChartVo> getRecord(String startTime, String endTime) {
+    public List<ChartVo> getRecord(HttpSession session,String startTime, String endTime) {
         String sql = "SELECT DATE_FORMAT(r.startTime,'%Y-%m-%d') AS date, " +
                 " sum(CASE r.success WHEN 0 THEN 1 ELSE 0 END) failure," +
                 " sum(CASE r.success WHEN 1 THEN 1 ELSE 0 END) success," +
@@ -168,15 +169,15 @@ public class RecordService {
                 " sum(CASE r.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM T_RECORD r left join T_JOB j ON r.jobid=j.jobid "+
                 " WHERE DATE_FORMAT(r.startTime,'%Y-%m-%d') BETWEEN '" + startTime + "' AND '" + endTime + "'";
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " AND r.userId = " + user.getUserId() + " AND r.agentId in ("+user.getAgentIds()+")";
         }
         sql += " GROUP BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ORDER BY DATE_FORMAT(r.startTime,'%Y-%m-%d') ASC";
         return queryDao.sqlQuery(ChartVo.class, sql);
     }
 
-    public ChartVo getAsProgress() {
+    public ChartVo getAsProgress(HttpSession session) {
         String sql = "SELECT " +
                 " sum(CASE R.success WHEN 0 THEN 1 ELSE 0 END) failure," +
                 " sum(CASE R.success WHEN 1 THEN 1 ELSE 0 END) success," +
@@ -190,8 +191,8 @@ public class RecordService {
                 " sum(CASE R.redoCount>0 WHEN 1 THEN 1 ELSE 0 END) rerun"+
                 " FROM T_RECORD R LEFT JOIN T_JOB J ON R.jobid=J.jobid WHERE 1=1 ";
 
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " AND R.userId = " + user.getUserId() + " AND R.agentId in ("+user.getAgentIds()+")";
         }
         return queryDao.sqlUniqueQuery(ChartVo.class, sql);
@@ -208,15 +209,15 @@ public class RecordService {
         return queryDao.sqlQuery(Record.class, sql, recordId);
     }
 
-    public Long getRecords(int status, Opencron.ExecType execType) {
+    public Long getRecords(HttpSession session,int status, Opencron.ExecType execType) {
         String sql;
         if(status==1) {
             sql = "SELECT COUNT(1) FROM T_RECORD WHERE success=? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }else {
             sql = "SELECT COUNT(1) FROM T_RECORD WHERE success<>? AND execType=? AND (FLOWNUM IS NULL OR flowNum=1)";
         }
-        if (!OpencronTools.isPermission()) {
-            User user = OpencronTools.getUser();
+        if (!OpencronTools.isPermission(session)) {
+            User user = OpencronTools.getUser(session);
             sql += " AND userId = " + user.getUserId() + " AND agentid IN ("+user.getAgentIds()+")";
         }
         return queryDao.getCountBySql(sql,1,execType.getStatus());
