@@ -275,10 +275,8 @@ public class TerminalService {
         }
 
         public void upload(String src, String dst, long fileSize) throws Exception {
-            ChannelSftp channelSftp = null;
             FileInputStream file = new FileInputStream(src);
-
-            channelSftp = (ChannelSftp) this.session.openChannel("sftp");
+            ChannelSftp channelSftp = (ChannelSftp) this.session.openChannel("sftp");
             channelSftp.connect(CHANNEL_TIMEOUT);
             //当前路径下,获取用户终端的当前位置
             if (dst.startsWith("./")) {
