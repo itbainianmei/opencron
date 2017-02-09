@@ -51,7 +51,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static org.opencron.common.utils.CommonUtils.isEmpty;
 import static org.opencron.common.utils.CommonUtils.notEmpty;
@@ -88,13 +87,13 @@ public class HomeController {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping("/home")
-    public String index(HttpSession session, Model model) {
+    public String index(Model model) {
 
         /**
          * agent...
          */
-        List<Agent> success = agentService.getAgentByStatus(1, session);
-        List<Agent> failed = agentService.getAgentByStatus(0, session);
+        List<Agent> success = agentService.getAgentByStatus(1);
+        List<Agent> failed = agentService.getAgentByStatus(0);
         model.addAttribute("success", success.size());
         model.addAttribute("failed", failed.size());
 
@@ -104,8 +103,8 @@ public class HomeController {
         /**
          * job
          */
-        List<Job> singleton = jobService.getJobsByJobType(Opencron.JobType.SINGLETON, session);
-        List<Job> flow = jobService.getJobsByJobType(Opencron.JobType.FLOW, session);
+        List<Job> singleton = jobService.getJobsByJobType(Opencron.JobType.SINGLETON);
+        List<Job> flow = jobService.getJobsByJobType(Opencron.JobType.FLOW);
 
         model.addAttribute("singleton", singleton.size());
         model.addAttribute("flow", flow.size());
@@ -114,8 +113,8 @@ public class HomeController {
         /**
          * 成功作业,自动执行
          */
-        Long successAutoRecord = recordService.getRecords(1, Opencron.ExecType.AUTO, session);
-        Long successOperRecord = recordService.getRecords(1, Opencron.ExecType.OPERATOR, session);
+        Long successAutoRecord = recordService.getRecords(1, Opencron.ExecType.AUTO);
+        Long successOperRecord = recordService.getRecords(1, Opencron.ExecType.OPERATOR);
 
         model.addAttribute("successAutoRecord", successAutoRecord);
         model.addAttribute("successOperRecord", successOperRecord);
@@ -124,8 +123,8 @@ public class HomeController {
         /**
          * 失败作业
          */
-        Long failedAutoRecord = recordService.getRecords(0, Opencron.ExecType.AUTO, session);
-        Long failedOperRecord = recordService.getRecords(0, Opencron.ExecType.OPERATOR, session);
+        Long failedAutoRecord = recordService.getRecords(0, Opencron.ExecType.AUTO);
+        Long failedOperRecord = recordService.getRecords(0, Opencron.ExecType.OPERATOR);
         model.addAttribute("failedAutoRecord", failedAutoRecord);
         model.addAttribute("failedOperRecord", failedOperRecord);
         model.addAttribute("failedRecord", failedAutoRecord + failedOperRecord);
@@ -137,7 +136,7 @@ public class HomeController {
     }
 
     @RequestMapping("/record")
-    public void record(HttpServletResponse response, HttpSession session, String startTime, String endTime) {
+    public void record(HttpServletResponse response, String startTime, String endTime) {
         if (isEmpty(startTime)) {
             startTime = DateUtils.getCurrDayPrevDay(7);
         }
@@ -145,7 +144,7 @@ public class HomeController {
             endTime = DateUtils.formatSimpleDate(new Date());
         }
         //成功失败折线图数据
-        List<ChartVo> voList = recordService.getRecord(startTime, endTime, session);
+        List<ChartVo> voList = recordService.getRecord(startTime, endTime);
         if (isEmpty(voList)) {
             WebUtils.writeJson(response, "null");
         } else {
@@ -154,9 +153,9 @@ public class HomeController {
     }
 
     @RequestMapping("/progress")
-    public void progress(HttpServletResponse response, HttpSession session) {
+    public void progress(HttpServletResponse response) {
         //成功失败折线图数据
-        ChartVo chartVo = recordService.getAsProgress(session);
+        ChartVo chartVo = recordService.getAsProgress();
         if (isEmpty(chartVo)) {
             WebUtils.writeJson(response, "null");
         } else {
@@ -309,35 +308,33 @@ public class HomeController {
 
 
     @RequestMapping("/notice/view")
-    public String log(HttpSession session, Model model, PageBean pageBean, Long agentId, String sendTime) {
-        model.addAttribute("agents", agentService.getAgentsBySession(session));
+    public String log(Model model, PageBean pageBean, Long agentId, String sendTime) {
+        model.addAttribute("agents", agentService.getAgentsBySession());
         if (notEmpty(agentId)) {
             model.addAttribute("agentId", agentId);
         }
         if (notEmpty(sendTime)) {
             model.addAttribute("sendTime", sendTime);
         }
-        homeService.getLog(session, pageBean, agentId, sendTime);
+        homeService.getLog(pageBean, agentId, sendTime);
         return "notice/view";
     }
 
 
     @RequestMapping("/notice/uncount")
-    public void uncount(HttpSession session, HttpServletResponse response) {
-        Long count = homeService.getUnReadCount(session);
+    public void uncount(HttpServletResponse response) {
+        Long count = homeService.getUnReadCount();
         WebUtils.writeHtml(response, count.toString());
     }
 
     /**
      * 未读取的站类信
-     *
-     * @param session
      * @param model
      * @return
      */
     @RequestMapping("/notice/unread")
-    public String nuread(HttpSession session, Model model) {
-        model.addAttribute("message", homeService.getUnReadMessage(session));
+    public String nuread(Model model) {
+        model.addAttribute("message", homeService.getUnReadMessage());
         return "notice/info";
     }
 

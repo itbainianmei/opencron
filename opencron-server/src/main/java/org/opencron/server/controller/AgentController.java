@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.alibaba.fastjson.JSON;
 import org.opencron.common.job.Opencron;
@@ -48,8 +47,8 @@ public class AgentController {
     private AgentService agentService;
 
     @RequestMapping("/view")
-    public String queryAllAgent(HttpServletRequest request, HttpSession session, Model model, PageBean pageBean) {
-        agentService.getAgent(session, pageBean);
+    public String queryAllAgent(HttpServletRequest request, Model model, PageBean pageBean) {
+        agentService.getAgent(pageBean);
         if (request.getParameter("refresh") != null) {
             return "/agent/refresh";
         }

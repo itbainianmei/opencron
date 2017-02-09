@@ -36,7 +36,6 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.crypto.BadPaddingException;
-import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -149,14 +148,14 @@ public class TerminalService {
         return queryDao.get(Terminal.class, id);
     }
 
-    public String delete(HttpSession session, Long id) {
+    public String delete(Long id) {
         Terminal term = getById(id);
         if (term == null) {
             return "error";
         }
         User user = OpencronTools.getUser();
 
-        if (!OpencronTools.isPermission(session) && !user.getUserId().equals(term.getUserId())) {
+        if (!OpencronTools.isPermission() && !user.getUserId().equals(term.getUserId())) {
             return "error";
         }
         queryDao.createSQLQuery("DELETE FROM T_TERMINAL WHERE id=?", term.getId()).executeUpdate();

@@ -48,6 +48,10 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession();
+
+        //将session保存到threadlocal
+        OpencronTools.HttpSessionHolder.set(session);
+
         String requestURI = request.getContextPath() + request.getServletPath();
 
         //静态资源,页面
@@ -89,7 +93,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         //普通管理员不可访问的资源
-        if (!OpencronTools.isPermission(session) &&
+        if (!OpencronTools.isPermission() &&
                 (requestURI.contains("/config/")
                         || requestURI.contains("/user/view")
                         || requestURI.contains("/user/add")

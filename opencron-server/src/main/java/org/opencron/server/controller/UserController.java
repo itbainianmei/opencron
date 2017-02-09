@@ -36,7 +36,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.List;
 
@@ -83,8 +82,8 @@ public class UserController {
     }
 
     @RequestMapping("/editpage")
-    public String editPage(HttpSession session,Model model, Long id) {
-        if (!OpencronTools.isPermission(session)
+    public String editPage(Model model, Long id) {
+        if (!OpencronTools.isPermission()
                 && !OpencronTools.getUserId().equals(id)){
             return "redirect:/user/detail";
         }
@@ -95,9 +94,9 @@ public class UserController {
     }
 
     @RequestMapping("/edit")
-    public String edit(HttpSession session, User user) throws SchedulerException {
+    public String edit( User user) throws SchedulerException {
         User user1 = userService.getUserById(user.getUserId());
-        if (notEmpty(user.getRoleId()) && OpencronTools.isPermission(session)) {
+        if (notEmpty(user.getRoleId()) && OpencronTools.isPermission()) {
             user1.setRoleId(user.getRoleId());
         }
         user1.setAgentIds(user.getAgentIds());

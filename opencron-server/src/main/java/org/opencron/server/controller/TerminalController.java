@@ -197,8 +197,8 @@ public class TerminalController {
 
 
     @RequestMapping("/del")
-    public void del(HttpSession session, HttpServletResponse response, Terminal term) throws Exception {
-        String message = termService.delete(session,term.getId());
+    public void del(HttpServletResponse response, Terminal term) throws Exception {
+        String message = termService.delete(term.getId());
         WebUtils.writeHtml(response,message);
     }
 

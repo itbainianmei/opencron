@@ -43,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 @Controller
@@ -66,9 +65,9 @@ public class JobController {
     private SchedulerService schedulerService;
 
     @RequestMapping("/view")
-    public String view(HttpServletRequest request, HttpSession session, PageBean pageBean, JobVo job, Model model) {
+    public String view(HttpServletRequest request,PageBean pageBean, JobVo job, Model model) {
 
-        model.addAttribute("agents", agentService.getAgentsBySession(session));
+        model.addAttribute("agents", agentService.getAgentsBySession());
 
         model.addAttribute("jobs", jobService.getAll());
         if (notEmpty(job.getAgentId())) {
@@ -86,7 +85,7 @@ public class JobController {
         if (notEmpty(job.getRedo())) {
             model.addAttribute("redo", job.getRedo());
         }
-        jobService.getJobVos(session, pageBean, job);
+        jobService.getJobVos(pageBean, job);
         if (request.getParameter("refresh") != null) {
             return "/job/refresh";
         }
@@ -100,22 +99,22 @@ public class JobController {
     }
 
     @RequestMapping("/addpage")
-    public String addpage(HttpSession session, Model model, Long id) {
+    public String addpage(Model model, Long id) {
         if (notEmpty(id)) {
             Agent agent = agentService.getAgent(id);
             model.addAttribute("agent", agent);
         }
-        List<Agent> agents = agentService.getAgentsBySession(session);
+        List<Agent> agents = agentService.getAgentsBySession();
         model.addAttribute("agents", agents);
         return "/job/add";
     }
 
     @RequestMapping(value = "/save")
-    public String save(HttpSession session, Job job, HttpServletRequest request) throws SchedulerException {
+    public String save(Job job, HttpServletRequest request) throws SchedulerException {
 
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
-            if (!jobService.checkJobOwner(job1.getUserId(),session)) return "redirect:/job/view";
+            if (!jobService.checkJobOwner(job1.getUserId())) return "redirect:/job/view";
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
@@ -187,27 +186,27 @@ public class JobController {
     }
 
     @RequestMapping("/editsingle")
-    public void editSingleJob(HttpServletResponse response,HttpSession session, Long id) {
+    public void editSingleJob(HttpServletResponse response, Long id) {
         JobVo job = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(job.getUserId(),session))return;
+        if (!jobService.checkJobOwner(job.getUserId()))return;
         WebUtils.writeJson(response, JSON.toJSONString(job));
     }
 
     @RequestMapping("/editflow")
-    public String editFlowJob(HttpSession session,Model model, Long id) {
+    public String editFlowJob(Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(job.getUserId(),session))return "redirect:/job/view";
+        if (!jobService.checkJobOwner(job.getUserId()))return "redirect:/job/view";
         model.addAttribute("job", job);
-        List<Agent> agents = agentService.getAgentsBySession(session);
+        List<Agent> agents = agentService.getAgentsBySession();
         model.addAttribute("agents", agents);
         return "/job/edit";
     }
 
 
     @RequestMapping("/edit")
-    public void edit(HttpServletResponse response,HttpSession session, Job job) throws SchedulerException {
+    public void edit(HttpServletResponse response,Job job) throws SchedulerException {
         Job jober = jobService.getJob(job.getJobId());
-        if (!jobService.checkJobOwner(jober.getUserId(),session)) return;
+        if (!jobService.checkJobOwner(jober.getUserId())) return;
         jober.setExecType(job.getExecType());
         jober.setCronType(job.getCronType());
         jober.setCronExp(job.getCronExp());
@@ -229,9 +228,9 @@ public class JobController {
     }
 
     @RequestMapping("/editcmd")
-    public void editCmd(HttpServletResponse response,HttpSession session,Long jobId, String command) throws SchedulerException {
+    public void editCmd(HttpServletResponse response,Long jobId, String command) throws SchedulerException {
         Job jober = jobService.getJob(jobId);
-        if (!jobService.checkJobOwner(jober.getUserId(),session)) return;
+        if (!jobService.checkJobOwner(jober.getUserId())) return;
         jober.setCommand(command);
         jober.setUpdateTime(new Date());
         jobService.addOrUpdate(jober);
@@ -245,9 +244,9 @@ public class JobController {
     }
 
     @RequestMapping("/execute")
-    public void remoteExecute(HttpSession session, Long id) {
+    public void remoteExecute(Long id) {
         JobVo job = jobService.getJobVoById(id);//找到要执行的任务
-        if (!jobService.checkJobOwner(job.getUserId(),session)) return;
+        if (!jobService.checkJobOwner(job.getUserId())) return;
         //手动执行
         Long userId = OpencronTools.getUserId();
         job.setUserId(userId);
@@ -261,8 +260,8 @@ public class JobController {
     }
 
     @RequestMapping("/goexec")
-    public String goExec(HttpSession session, Model model) {
-        model.addAttribute("agents", agentService.getAgentsBySession(session));
+    public String goExec(Model model) {
+        model.addAttribute("agents", agentService.getAgentsBySession());
         return "/job/exec";
     }
 
@@ -279,9 +278,9 @@ public class JobController {
     }
 
     @RequestMapping("/detail")
-    public String showDetail(Model model,HttpSession session, Long id) {
+    public String showDetail(Model model,Long id) {
         JobVo jobVo = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(jobVo.getUserId(),session)) return "redirect:/job/view";
+        if (!jobService.checkJobOwner(jobVo.getUserId())) return "redirect:/job/view";
         model.addAttribute("job", jobVo);
         return "/job/detail";
     }
