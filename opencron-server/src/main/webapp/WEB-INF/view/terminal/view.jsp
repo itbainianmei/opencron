@@ -376,35 +376,63 @@
             </c:if>
         </div>
 
-        <table class="table tile textured table-sortable">
+        <table class="table tile textured table-custom table-sortable">
             <thead>
             <tr>
-                <th  class="sortable sort-numeric" style="cursor: pointer" onclick="sortPage('name')" title="点击排序">实例名称
-                    <c:choose>
-                        <c:when test="${pageBean.orderBy eq 'name'}">
-                            <c:if test="${pageBean.order eq 'asc'}">
-                                <i class="glyphicon glyphicon-sort-by-attributes" style="font-size: 10px;"></i>
-                            </c:if>
-                            <c:if test="${pageBean.order eq 'desc'}">
-                                <i class="glyphicon glyphicon-sort-by-attributes-alt" style="font-size: 10px;"></i>
-                            </c:if>
-                        </c:when>
-                    </c:choose>
-                </th>
-                <th class="sortable sort-numeric" style="cursor: pointer" onclick="sortPage('host')" title="点击排序">主机地址
-                    <c:choose>
-                        <c:when test="${pageBean.orderBy eq 'host'}">
-                            <c:if test="${pageBean.order eq 'asc'}">
-                                <i class="glyphicon glyphicon-sort-by-attributes" style="font-size: 10px;"></i>
-                            </c:if>
-                            <c:if test="${pageBean.order eq 'desc'}">
-                                <i class="glyphicon glyphicon-sort-by-attributes-alt"  style="font-size: 10px;"></i>
-                            </c:if>
-                        </c:when>
-                    </c:choose>
-                </th>
-                <th>SSH端口</th>
-                <th>最后登陆</th>
+                <c:choose>
+                    <c:when test="${pageBean.orderBy eq 'name'}">
+                        <c:if test="${pageBean.order eq 'asc'}">
+                            <th  class="sortable sort-alpha sort-asc" style="cursor: pointer" onclick="sortPage('name')" title="点击排序">实例名称</th>
+                        </c:if>
+                        <c:if test="${pageBean.order eq 'desc'}">
+                            <th  class="sortable sort-alpha sort-desc" style="cursor: pointer" onclick="sortPage('name')" title="点击排序">实例名称</th>
+                        </c:if>
+                    </c:when>
+                    <c:when test="${pageBean.orderBy ne 'name'}">
+                        <th  class="sortable sort-alpha" style="cursor: pointer" onclick="sortPage('name')" title="点击排序">实例名称</th>
+                    </c:when>
+                </c:choose>
+
+               <c:choose>
+                   <c:when test="${pageBean.orderBy eq 'host'}">
+                       <c:if test="${pageBean.order eq 'asc'}">
+                           <th  class="sortable sort-numeric sort-asc" style="cursor: pointer" onclick="sortPage('host')" title="点击排序">实例名称</th>
+                       </c:if>
+                       <c:if test="${pageBean.order eq 'desc'}">
+                           <th  class="sortable sort-numeric sort-desc" style="cursor: pointer" onclick="sortPage('host')" title="点击排序">实例名称</th>
+                       </c:if>
+                   </c:when>
+                   <c:when test="${pageBean.orderBy ne 'host'}">
+                       <th  class="sortable sort-numeric" style="cursor: pointer" onclick="sortPage('host')" title="点击排序">实例名称</th>
+                   </c:when>
+               </c:choose>
+
+               <c:choose>
+                   <c:when test="${pageBean.orderBy eq 'port'}">
+                       <c:if test="${pageBean.order eq 'asc'}">
+                           <th  class="sortable sort-numeric sort-asc" style="cursor: pointer" onclick="sortPage('port')" title="点击排序">SSH端口</th>
+                       </c:if>
+                       <c:if test="${pageBean.order eq 'desc'}">
+                           <th  class="sortable sort-numeric sort-desc" style="cursor: pointer" onclick="sortPage('port')" title="点击排序">SSH端口</th>
+                       </c:if>
+                   </c:when>
+                   <c:when test="${pageBean.orderBy ne 'port'}">
+                       <th  class="sortable sort-numeric" style="cursor: pointer" onclick="sortPage('port')" title="点击排序">SSH端口</th>
+                   </c:when>
+               </c:choose>
+               <c:choose>
+                   <c:when test="${pageBean.orderBy eq 'logintime'}">
+                       <c:if test="${pageBean.order eq 'asc'}">
+                           <th  class="sortable sort-numeric sort-asc" style="cursor: pointer" onclick="sortPage('logintime')" title="点击排序">最后登陆</th>
+                       </c:if>
+                       <c:if test="${pageBean.order eq 'desc'}">
+                           <th  class="sortable sort-numeric sort-desc" style="cursor: pointer" onclick="sortPage('logintime')" title="点击排序">最后登陆</th>
+                       </c:if>
+                   </c:when>
+                   <c:when test="${pageBean.orderBy ne 'logintime'}">
+                       <th  class="sortable sort-numeric" style="cursor: pointer" onclick="sortPage('logintime')" title="点击排序">最后登陆</th>
+                   </c:when>
+               </c:choose>
                 <th>
                     <center>操作</center>
                 </th>

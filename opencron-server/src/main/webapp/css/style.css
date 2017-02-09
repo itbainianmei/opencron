@@ -2083,6 +2083,10 @@ a.list-group-item.active > .badge,
     .table {
         border-radius: 2px;
     }
+
+    .table > thead > tr > th {
+        color: rgba(225,205,205,0.9);
+    }
 }
 
 @media (min-width: 780px) {
@@ -2547,8 +2551,9 @@ a.list-group-item.active > .badge,
     transition: all 0.2s linear 0s;
 }
 .table-sortable > thead > tr > th.sortable:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    color:rgba(255,255,255,0.95) ;
 }
+
 .table-sortable > thead > tr > th.sortable::before {
     -moz-osx-font-smoothing: grayscale;
     content: "";
@@ -2568,6 +2573,7 @@ a.list-group-item.active > .badge,
     content: "";
     margin-top: 5px;
 }
+
 .table-sortable > thead > tr > th.sortable.sort-numeric.sort-asc::before{
     content: "";
     margin-top: 3px;
@@ -2592,6 +2598,28 @@ a.list-group-item.active > .badge,
     content: "";
     margin-top: 3px;
 }
-.table-sortable > thead > tr > th.sort-asc{
-    background-color: rgba(0, 0, 0, 0.1);
+
+.table-custom > thead > tr > th::after {
+    background-color: rgba(113, 113, 113, 0.5);
+    border-radius: 4px;
+    content: "";
+    display: block;
+    height: 4px;
+    transition: all 0.2s linear 0s;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 3px;
+}
+
+.table-custom > thead > tr > th:hover::after {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.table-custom > thead > tr > th.sort-desc,.table-custom > thead > tr > th.sort-asc{
+    color: rgba(255, 255, 255, 0.8);
+}
+
+
+.table-custom > thead > tr > th.sort-desc::after,.table-custom > thead > tr > th.sort-asc::after {
+    background-color: rgba(255, 255, 255, 0.6);
 }

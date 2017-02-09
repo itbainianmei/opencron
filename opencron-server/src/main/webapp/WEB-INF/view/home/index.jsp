@@ -238,7 +238,7 @@
                             <div class="media-body">
                                 <small>执行器</small>
                                 <div class="clearfix"></div>
-                                <h2 data-animation-duration="1500" data-value="${fn:length(agents)}" class="media-heading animate-number">0</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${fn:length(agents)}</h2>
                             </div>
                         </div>
 
@@ -264,7 +264,7 @@
                             <span class="pull-left"><i style="font-size: 60px;margin-top: 1px;" aria-hidden="true" class="fa fa-tasks"></i></span>
                             <div class="media-body">
                                 <small>作业数</small>
-                                <h2 data-animation-duration="1500" data-value="${job}" class="media-heading animate-number">0</h2>
+                                <h2 data-animation-duration="1500" data-value="0" class="media-heading animate-number">${job}</h2>
                             </div>
                         </div>
 
