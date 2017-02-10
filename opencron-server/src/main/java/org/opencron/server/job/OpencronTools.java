@@ -35,6 +35,8 @@ public final class OpencronTools {
 
     public static final String CONTEXT_PATH_NAME = "contextPath";
 
+    private static Logger logger = LoggerFactory.getLogger(OpencronTools.class);
+
     public static boolean isPermission(HttpSession session){
         Object obj = session.getAttribute(PERMISSION);
         if (obj==null) {
@@ -52,7 +54,7 @@ public final class OpencronTools {
     }
 
     public static User getUser(HttpSession session){
-        return (User)session.getAttribute(OpencronTools.LOGIN_USER);
+        return (User)session.getAttribute(LOGIN_USER);
     }
 
     public static Long getUserId(HttpSession session){
@@ -123,8 +125,6 @@ public final class OpencronTools {
     }
 
     public static class Auth {
-
-        private static Logger logger = LoggerFactory.getLogger(OpencronTools.class);
         public static String publicKey = null;
         public static String privateKey = null;
         private static final String charset = "UTF-8";

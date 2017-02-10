@@ -214,8 +214,10 @@ public class HomeController {
                 user.setHeaderPath(WebUtils.getWebUrlPath(request) + "/upload/" + name);
             }
 
-            //init csrf...
+            //登陆成功了则生成csrf...
             String csrf = OpencronTools.getCSRF(session);
+
+            logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
             WebUtils.writeJson(response, String.format(format, "success", "url", "/home?_csrf="+csrf));
             return;
