@@ -25,12 +25,6 @@
             font-weight: bold;
         }
 
-        .side-border small {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         .pie-title {
             color: rgba(235, 235, 235, 0.85);
             font-size: 12px;
@@ -64,7 +58,7 @@
 
         .report_detail {
             margin-top: 5px;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
 
 

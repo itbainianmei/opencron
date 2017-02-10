@@ -632,9 +632,14 @@ hr {
 }
 
 .side-tile-title{
-    background: rgba(0,0,0,0.35);
+    background: rgba(0, 0, 0, 0.2) none repeat scroll 0 0;
     width: 100%;
     font-size: 12px;
+}
+
+.tile-title-color{
+    color:rgb(255,255,255);
+    font-size: 14px;
 }
 
 .tile-config {
@@ -722,6 +727,11 @@ hr {
 .progress-sm{
     height: 5px;
 }
+
+.side-border > .progress {
+    border-radius: 0px;
+}
+
 
 .bg-transparent-black-1 {
     margin-left: 5px;
@@ -945,10 +955,19 @@ hr {
 }
 
 .side-border{
-    margin-bottom: 10px;
+    margin-top: 4px;
+    margin-bottom: 8px;
     font-size: 12px;
     font-weight: lighter;
 }
+
+
+.side-border small {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 11px;
+    font-weight: 300;
+}
+
 .percent:after {
     content: '%';
 }
@@ -2476,7 +2495,7 @@ a.list-group-item.active > .badge,
     backface-visibility: hidden;
     background-color: rgba(0, 0, 0, 0.40);
     border-radius: 2px;
-    height: 135px;
+    height: 138px;
     left: 0;
     padding: 10px;
     position: relative;
@@ -2499,9 +2518,9 @@ a.list-group-item.active > .badge,
 }
 
 .card-container .card .front .media .media-body small {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 13px;
-    font-weight: 300;
+    color: rgba(255, 255, 255, 0.90);
+    font-size: 14px;
+    font-weight: 400;
     text-transform: uppercase;
 }
 .card-container .card .front .media .media-body h2 {
@@ -2516,8 +2535,15 @@ a.list-group-item.active > .badge,
 
 .card-container .progress-list .details .title {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 11px;
-    font-weight: 400;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+.sublabel{
+    font-weight: 300;
+    font-size: 12px;
     line-height: normal;
     text-transform: uppercase;
 }
@@ -2541,7 +2567,7 @@ a.list-group-item.active > .badge,
     border-radius: 2px;
     color: white;
     display: inline-block;
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 500;
     padding: 4px;
 }

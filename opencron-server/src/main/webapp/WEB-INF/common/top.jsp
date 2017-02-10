@@ -132,7 +132,7 @@
 			</div>
 
 			<div class="s-widget m-b-25">
-				<h2 class="tile-title side-tile-title">
+				<h2 class="tile-title side-tile-title tile-title-color">
 					报告明细
 				</h2>
 
