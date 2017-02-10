@@ -260,7 +260,7 @@ public class HomeController extends BaseController {
     public void upload(@RequestParam(value = "file", required = false) MultipartFile file,Long userId, String data, HttpServletRequest request, HttpSession httpSession, HttpServletResponse response) throws Exception {
 
         String extensionName = null;
-        if (file != null) {
+        if (file != null)  {
             extensionName = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
             extensionName = extensionName.replaceAll("\\?\\d+$", "");
         }
