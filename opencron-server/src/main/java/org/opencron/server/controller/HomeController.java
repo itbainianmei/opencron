@@ -222,26 +222,26 @@ public class HomeController extends BaseController {
             String successUrl = "/home?csrf="+csrf;
 
             if(notEmpty(forword)){
-                String refererUrl = request.getHeader("Referer");
-                String forwordUrl =  org.apache.commons.lang3.StringUtils.substringAfter(refererUrl, "?forword=");
-                //普通管理员不可访问的资源
-                if (!OpencronTools.isPermission(session)) {
-                    if (forwordUrl.contains("/config/")
-                                || forwordUrl.contains("/user/view")
-                                || forwordUrl.contains("/user/add")
-                                || forwordUrl.contains("/agent/add")
-                                || forwordUrl.contains("/agent/edit")) {
+                if ( !forword.contains("/home") ) {
+                    forword = forword.replaceAll("\\?$","");
+                    //普通管理员不可访问的资源
+                    if (!OpencronTools.isPermission(session)) {
+                        if (forword.contains("/config/")
+                                || forword.contains("/user/view")
+                                || forword.contains("/user/add")
+                                || forword.contains("/agent/add")
+                                || forword.contains("/agent/edit")) {
 
-                        successUrl = "/home?csrf="+csrf;
-                    }else {
-                        successUrl = forwordUrl+"&csrf="+csrf;
+                            successUrl = "/home?csrf=" + csrf;
+                        } else {
+                            successUrl = forword + "&csrf=" + csrf;
+                        }
+                    } else {
+                        successUrl = forword + "&csrf=" + csrf;
                     }
-                }else {
-                    successUrl = forwordUrl+"&csrf="+csrf;
                 }
             }
             WebUtils.writeJson(response, String.format(format, "success", "url", successUrl));
-
             return;
         }
     }
