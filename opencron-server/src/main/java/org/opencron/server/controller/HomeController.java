@@ -183,7 +183,7 @@ public class HomeController extends BaseController {
     }
 
     @RequestMapping("/login")
-    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password, String forword) throws Exception {
+    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
 
         //用户信息验证
         int status = homeService.checkLogin(request, username, password);
@@ -216,32 +216,8 @@ public class HomeController extends BaseController {
 
             //登陆成功了则生成csrf...
             String csrf = OpencronTools.getCSRF(session);
-
             logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
-
-            String successUrl = "/home?csrf="+csrf;
-
-            if(notEmpty(forword)){
-                if ( !forword.contains("/home") ) {
-                    forword = forword.replaceAll("\\?$","");
-                    //普通管理员不可访问的资源
-                    if (!OpencronTools.isPermission(session)) {
-                        if (forword.contains("/config/")
-                                || forword.contains("/user/view")
-                                || forword.contains("/user/add")
-                                || forword.contains("/agent/add")
-                                || forword.contains("/agent/edit")) {
-
-                            successUrl = "/home?csrf=" + csrf;
-                        } else {
-                            successUrl = forword + "&csrf=" + csrf;
-                        }
-                    } else {
-                        successUrl = forword + "&csrf=" + csrf;
-                    }
-                }
-            }
-            WebUtils.writeJson(response, String.format(format, "success", "url", successUrl));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
             return;
         }
     }
