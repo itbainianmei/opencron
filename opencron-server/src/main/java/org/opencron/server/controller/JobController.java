@@ -113,7 +113,6 @@ public class JobController extends BaseController {
 
     @RequestMapping(value = "/save")
     public String save(HttpSession session,Job job, HttpServletRequest request) throws SchedulerException {
-
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
             if (!jobService.checkJobOwner(session,job1.getUserId())) return "redirect:/job/view";
