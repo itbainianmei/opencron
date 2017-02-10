@@ -81,7 +81,7 @@ body, button, input, textarea, select, .btn {
 }
 
 body, a, input, .help-block {
-    color: rgba(232, 232, 242, 0.95);
+    color: rgba(245, 245, 255, 0.95);
     text-shadow: 0 0 3px rgba(255,255,255,0.4);
 }
 
@@ -629,6 +629,12 @@ hr {
     margin: 0;
     padding: 7px 10px 7px;
     color:rgba(255,255,255,0.80);
+}
+
+.side-tile-title{
+    background: rgba(0,0,0,0.35);
+    width: 100%;
+    font-size: 12px;
 }
 
 .tile-config {
