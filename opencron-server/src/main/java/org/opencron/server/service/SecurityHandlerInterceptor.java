@@ -79,8 +79,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
                 logger.info(request.getRequestURL().toString());
                 //跳到登陆页面
                 response.sendRedirect("/");
-                OpencronTools.invalidSession(session);
-                logger.info("[opencron]session is null,redirect to login page");
+                logger.info("[opencron]User not login,redirect to login page");
                 return false;
             }
         }catch (IllegalStateException e) {
