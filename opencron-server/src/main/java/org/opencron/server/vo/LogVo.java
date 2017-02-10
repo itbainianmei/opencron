@@ -34,7 +34,7 @@ public class LogVo implements Serializable {
 
     private Long agentId;
 
-    private Long receiverId;
+    private Long userId;
 
     private Integer type;
 
@@ -56,12 +56,12 @@ public class LogVo implements Serializable {
         this.logId = logId;
     }
 
-    public Long getReceiverId() {
-        return receiverId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Integer getType() {

@@ -51,7 +51,6 @@ public abstract class BaseController {
         }
 
         @Override
-
         public void setAsText(String text) {
             if (text == null) {
                 setValue(null);
@@ -65,7 +64,6 @@ public abstract class BaseController {
         }
 
         @Override
-
         public String getAsText() {
             Object value = getValue();
             return value != null ? value.toString() : "";

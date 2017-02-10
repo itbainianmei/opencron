@@ -104,7 +104,7 @@ public class HomeService {
             sql += " AND L.sendTime LIKE '" + sendTime + "%' ";
         }
         if (!OpencronTools.isPermission(session)) {
-            sql += " AND L.receiverId = " + OpencronTools.getUserId(session);
+            sql += " AND L.userId = " + OpencronTools.getUserId(session);
         }
         sql += " ORDER BY L.sendTime DESC";
         queryDao.getPageBySql(pageBean, LogVo.class, sql);
@@ -114,7 +114,7 @@ public class HomeService {
     public List<LogVo> getUnReadMessage(HttpSession session) {
         String sql = "SELECT * FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!OpencronTools.isPermission(session)) {
-            sql += " and L.receiverId = " + OpencronTools.getUserId(session);
+            sql += " and L.userId = " + OpencronTools.getUserId(session);
         }
         sql += " ORDER BY L.sendTime DESC LIMIT 5";
         return queryDao.sqlQuery(LogVo.class,sql);
@@ -123,7 +123,7 @@ public class HomeService {
     public Long getUnReadCount(HttpSession session) {
         String sql = "SELECT COUNT(1) FROM T_LOG L WHERE isRead=0 AND type=2 ";
         if (!OpencronTools.isPermission(session)) {
-            sql += " and L.receiverId = " + OpencronTools.getUserId(session);
+            sql += " and L.userId = " + OpencronTools.getUserId(session);
         }
         return queryDao.getCountBySql(sql);
     }
