@@ -16,7 +16,7 @@ import java.util.Map;
  */
 
 @Component
-public class ExceptionHandler implements HandlerExceptionResolver {
+public class ExceptionHandler extends BaseController implements HandlerExceptionResolver {
 
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse response, Object handler, Exception exception) {

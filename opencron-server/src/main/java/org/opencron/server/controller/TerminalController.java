@@ -51,7 +51,7 @@ import static org.opencron.server.service.TerminalService.*;
  */
 @Controller
 @RequestMapping("/terminal")
-public class TerminalController {
+public class TerminalController extends BaseController {
 
     @Autowired
     private TerminalService termService;

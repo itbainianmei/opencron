@@ -49,7 +49,7 @@ import static org.opencron.common.utils.CommonUtils.notEmpty;
 
 @Controller
 @RequestMapping("/job")
-public class JobController {
+public class JobController extends BaseController {
 
     @Autowired
     private ExecuteService executeService;

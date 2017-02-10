@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("config")
-public class ConfigController {
+public class ConfigController extends BaseController {
 
     @Autowired
     private ConfigService configService;

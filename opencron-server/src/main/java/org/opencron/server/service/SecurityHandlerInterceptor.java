@@ -76,18 +76,24 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
+        String param = request.getQueryString();
+        if(CommonUtils.notEmpty(param)){
+            param ="?"+param;
+        }else{
+            param = "";
+        }
+
         try {
             User user = OpencronTools.getUser(session);
             if (user == null) {
-                logger.info(request.getRequestURL().toString());
                 //跳到登陆页面
-                response.sendRedirect("/");
+                response.sendRedirect("/?forword="+requestURI+param);
                 logger.info("[opencron]User not login,redirect to login page");
                 return false;
             }
         }catch (IllegalStateException e) {
             logger.info("[opencron]Session already invalidated,redirect to login page");
-            response.sendRedirect("/");
+            response.sendRedirect("/?forword="+requestURI+param);
             return false;
         }
 

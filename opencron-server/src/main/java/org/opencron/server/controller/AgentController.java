@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/agent")
-public class AgentController {
+public class AgentController extends BaseController {
 
     @Autowired
     private AgentService agentService;

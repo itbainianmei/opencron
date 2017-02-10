@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/verify")
-public class VerifyController {
+public class VerifyController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
