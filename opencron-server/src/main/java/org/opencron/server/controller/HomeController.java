@@ -183,7 +183,7 @@ public class HomeController extends BaseController {
     }
 
     @RequestMapping("/login")
-    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password, String forword) throws Exception {
+    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
 
         //用户信息验证
         int status = homeService.checkLogin(request, username, password);
@@ -219,29 +219,7 @@ public class HomeController extends BaseController {
 
             logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
-            String successUrl = "/home?csrf="+csrf;
-
-            if(notEmpty(forword)){
-                String refererUrl = request.getHeader("Referer");
-                String forwordUrl =  org.apache.commons.lang3.StringUtils.substringAfter(refererUrl, "?forword=");
-                //普通管理员不可访问的资源
-                if (!OpencronTools.isPermission(session)) {
-                    if (forwordUrl.contains("/config/")
-                                || forwordUrl.contains("/user/view")
-                                || forwordUrl.contains("/user/add")
-                                || forwordUrl.contains("/agent/add")
-                                || forwordUrl.contains("/agent/edit")) {
-
-                        successUrl = "/home?csrf="+csrf;
-
-                    }else {
-                        successUrl = forwordUrl+"&csrf="+csrf;
-                    }
-                }else {
-                    successUrl = forwordUrl+"&csrf="+csrf;
-                }
-            }
-            WebUtils.writeJson(response, String.format(format, "success", "url", successUrl));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
             return;
         }
     }

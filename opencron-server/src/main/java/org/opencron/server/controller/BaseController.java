@@ -21,6 +21,7 @@
 
 package org.opencron.server.controller;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
@@ -36,6 +37,13 @@ public abstract class BaseController {
         binder.registerCustomEditor(String.class, new StringEscapeEditor());
     }
 
+    public String unescape(String text){
+        if (text==null) return null;
+        text = StringEscapeUtils.unescapeJavaScript(text);
+        text = StringEscapeUtils.unescapeHtml(text);
+        return text;
+    }
+
     public class StringEscapeEditor extends PropertyEditorSupport {
 
         public StringEscapeEditor() {
@@ -43,19 +51,17 @@ public abstract class BaseController {
         }
 
         @Override
+
         public void setAsText(String text) {
             if (text == null) {
                 setValue(null);
             } else {
                 String value = text;
-                value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-                value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-                value = value.replaceAll("'", "& #39;");
-                value = value.replaceAll("eval\\((.*)\\)", "");
-                value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
-                value = value.replaceAll("script", "");
+                value = StringEscapeUtils.escapeHtml(value);
+                value = StringEscapeUtils.escapeJavaScript(value);
                 setValue(value);
             }
+
         }
 
         @Override

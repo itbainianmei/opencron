@@ -113,6 +113,8 @@ public class JobController extends BaseController {
 
     @RequestMapping(value = "/save")
     public String save(HttpSession session,Job job, HttpServletRequest request) throws SchedulerException {
+        job.setCommand(unescape(job.getCommand()));
+        job.setCronExp(unescape(job.getCronExp()));
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
             if (!jobService.checkJobOwner(session,job1.getUserId())) return "redirect:/job/view";
@@ -155,7 +157,10 @@ public class JobController extends BaseController {
                 chind.setRunModel(job.getRunModel());
                 chind.setJobName((String) jobName[i]);
                 chind.setAgentId(Long.parseLong((String) agentId[i]));
-                chind.setCommand((String) command[i]);
+
+                String cmd = unescape((String) command[i]);
+                chind.setCommand(cmd);
+
                 chind.setCronExp(job.getCronExp());
                 chind.setComment((String) comment[i]);
                 chind.setTimeout(Integer.parseInt((String) timeout[i]));
@@ -210,8 +215,8 @@ public class JobController extends BaseController {
         if (!jobService.checkJobOwner(session,jober.getUserId())) return;
         jober.setExecType(job.getExecType());
         jober.setCronType(job.getCronType());
-        jober.setCronExp(job.getCronExp());
-        jober.setCommand(job.getCommand());
+        jober.setCronExp(unescape(job.getCronExp()));
+        jober.setCommand(unescape(job.getCommand()));
         jober.setJobName(job.getJobName());
         jober.setRedo(job.getRedo());
         jober.setRunCount(job.getRunCount());
@@ -230,6 +235,7 @@ public class JobController extends BaseController {
 
     @RequestMapping("/editcmd")
     public void editCmd(HttpSession session,HttpServletResponse response,Long jobId, String command) throws SchedulerException {
+        command = unescape(command);
         Job jober = jobService.getJob(jobId);
         if (!jobService.checkJobOwner(session,jober.getUserId())) return;
         jober.setCommand(command);
@@ -269,6 +275,7 @@ public class JobController extends BaseController {
     @RequestMapping("/batchexec")
     public void batchExec(HttpSession session, String command, String agentIds) {
         if (notEmpty(agentIds) && notEmpty(command)){
+            command = unescape(command);
             Long userId = OpencronTools.getUserId(session);
             try {
                 this.executeService.batchExecuteJob(userId,command,agentIds);

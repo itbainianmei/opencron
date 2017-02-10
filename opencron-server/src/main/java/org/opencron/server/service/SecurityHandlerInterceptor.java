@@ -23,6 +23,7 @@
 package org.opencron.server.service;
 
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.WebUtils;
 import org.opencron.server.domain.User;
@@ -76,24 +77,17 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        String param = request.getQueryString();
-        if(CommonUtils.notEmpty(param)){
-            param ="?"+param;
-        }else{
-            param = "";
-        }
-
         try {
             User user = OpencronTools.getUser(session);
             if (user == null) {
                 //跳到登陆页面
-                response.sendRedirect("/?forword="+requestURI+param);
                 logger.info("[opencron]User not login,redirect to login page");
+                response.sendRedirect("/");
                 return false;
             }
         }catch (IllegalStateException e) {
             logger.info("[opencron]Session already invalidated,redirect to login page");
-            response.sendRedirect("/?forword="+requestURI+param);
+            response.sendRedirect("/");
             return false;
         }
 
@@ -158,20 +152,11 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             }
             return cleanXSS(value);
         }
-        public String getHeader(String name) {
-            String value = super.getHeader(name);
-            if (value == null)
-                return null;
-            return cleanXSS(value);
-        }
+
         private String cleanXSS(String value) {
-            //You'll need to remove the spaces from the html entities below
-            value = value.replaceAll("<", "& lt;").replaceAll(">", "& gt;");
-            value = value.replaceAll("\\(", "& #40;").replaceAll("\\)", "& #41;");
-            value = value.replaceAll("'", "& #39;");
-            value = value.replaceAll("eval\\((.*)\\)", "");
-            value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
-            value = value.replaceAll("script", "");
+            if (value==null) return null;
+            value = StringEscapeUtils.escapeHtml(value);
+            value = StringEscapeUtils.escapeJavaScript(value);
             return value;
         }
     }
