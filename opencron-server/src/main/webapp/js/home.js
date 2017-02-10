@@ -38,7 +38,7 @@ function OpencronChart() {
 ;OpencronChart.prototype.query = function () {
     var self = this;
     $.ajax({
-        headers:{"_csrf":self.csrf},
+        headers:{"csrf":self.csrf},
         type: "POST",
         url: self.path + "/record",
         data: {
@@ -139,7 +139,7 @@ function OpencronChart() {
     }
 
     $.ajax({
-        headers:{"_csrf":self.csrf},
+        headers:{"csrf":self.csrf},
         type: "POST",
         url: self.path + "/monitor",
         data: "agentId=" + $("#agentId").val(),

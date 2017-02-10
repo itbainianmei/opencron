@@ -34,7 +34,7 @@
                 <td><i class="glyphicon glyphicon-tasks"></i>&nbsp;任务名称</td>
                 <td>
                     <c:if test="${empty record.jobName}">batchJob</c:if>
-                    <c:if test="${!empty record.jobName}"><a href="${contextPath}/job/detail?id=${record.jobId}&_csrf=${_csrf}">${record.jobName}</a></c:if>
+                    <c:if test="${!empty record.jobName}"><a href="${contextPath}/job/detail?id=${record.jobId}&csrf=${csrf}">${record.jobName}</a></c:if>
                 </td>
                 <td><i class="glyphicon glyphicon-th-large"></i>&nbsp;执行命令</td>
                 <td>${record.command}</td>
@@ -42,11 +42,11 @@
 
             <tr>
                 <td><i class="glyphicon glyphicon-leaf"></i>&nbsp;执&nbsp;&nbsp;行&nbsp;&nbsp;器</td>
-                <td><a href="${contextPath}/agent/detail?id=${record.agentId}&_csrf=${_csrf}">${record.agentName}</a></td>
+                <td><a href="${contextPath}/agent/detail?id=${record.agentId}&csrf=${csrf}">${record.agentName}</a></td>
 
                 <td><i class="glyphicon glyphicon-user"></i>&nbsp;作&nbsp;&nbsp;业&nbsp;&nbsp;人</td>
                 <td>
-                    <c:if test="${permission eq true}"><a href="${contextPath}/user/detail?userId=${record.userId}&_csrf=${_csrf}">${record.operateUname}</a></c:if>
+                    <c:if test="${permission eq true}"><a href="${contextPath}/user/detail?userId=${record.userId}&csrf=${csrf}">${record.operateUname}</a></c:if>
                     <c:if test="${permission eq false}">${record.operateUname}</c:if></td>
             </tr>
             <tr>

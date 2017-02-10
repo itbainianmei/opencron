@@ -39,7 +39,7 @@
                     if ("" != ids){
                         ids = ids.substring(0,ids.length-1);
                         $.ajax({
-                            headers:{"_csrf":"${_csrf}"},
+                            headers:{"csrf":"${csrf}"},
                             type:"POST",
                             url:"${contextPath}/job/batchexec",
                             data:{

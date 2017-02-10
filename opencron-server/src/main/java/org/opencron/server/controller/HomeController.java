@@ -219,7 +219,7 @@ public class HomeController {
 
             logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
-            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?_csrf="+csrf));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
             return;
         }
     }

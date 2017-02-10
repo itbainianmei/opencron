@@ -21,7 +21,7 @@
     <script type="text/javascript">
 
         <c:if test="${!empty opencron_user}">
-            window.location.href="${contextPath}/home?_csrf=${_csrf}";
+            window.location.href="${contextPath}/home?csrf=${csrf}";
         </c:if>
 
         $(document).ready(function(){
@@ -431,7 +431,7 @@
                 return false;
             }
             $.ajax({
-                headers:{"_csrf":"${_csrf}"},
+                headers:{"csrf":"${csrf}"},
                 type:"POST",
                 url:"${contextPath}/user/editpwd",
                 data:{

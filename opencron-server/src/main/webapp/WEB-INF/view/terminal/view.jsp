@@ -23,13 +23,13 @@
         $(document).ready(function () {
             $("#size").change(function () {
                 var pageSize = $("#size").val();
-                window.location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize="+pageSize+"&orderBy=${pageBean.orderBy}&order=${pageBean.order}&_csrf=${_csrf}";
+                window.location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize="+pageSize+"&orderBy=${pageBean.orderBy}&order=${pageBean.order}&csrf=${csrf}";
             });
         })
 
         function ssh(id, type) {
             $.ajax({
-                headers:{"_csrf":"${_csrf}"},
+                headers:{"csrf":"${csrf}"},
                 type: "POST",
                 url: "${contextPath}/terminal/ssh",
                 data: "id=" + id,
@@ -81,7 +81,7 @@
                             //更改最后登录日期
                             window.setTimeout(function(){
                                 $.ajax({
-                                    headers:{"_csrf":"${_csrf}"},
+                                    headers:{"csrf":"${csrf}"},
                                     type: "POST",
                                     url: "${contextPath}/terminal/detail",
                                     data: "id="+id,
@@ -116,7 +116,7 @@
                 $("#sshbtn").text("登陆");
             }
             $.ajax({
-                headers:{"_csrf":"${_csrf}"},
+                headers:{"csrf":"${csrf}"},
                 type: "POST",
                 url: "${contextPath}/terminal/detail",
                 data: "id="+id,
@@ -144,7 +144,7 @@
                 confirmButtonText: "删除"
             },function () {
                 $.ajax({
-                    headers:{"_csrf":"${_csrf}"},
+                    headers:{"csrf":"${csrf}"},
                     type: "POST",
                     url: "${contextPath}/terminal/del",
                     data: "id="+id,
@@ -241,7 +241,7 @@
 
             if (action == "add") {
                 $.ajax({
-                    headers:{"_csrf":"${_csrf}"},
+                    headers:{"csrf":"${csrf}"},
                     type: "POST",
                     url: "${contextPath}/terminal/exists",
                     data: {
@@ -251,7 +251,7 @@
                     success: function (status) {
                         if(status=="false"){
                             $.ajax({
-                                headers:{"_csrf":"${_csrf}"},
+                                headers:{"csrf":"${csrf}"},
                                 type: "POST",
                                 url: "${contextPath}/terminal/save",
                                 data: {
@@ -280,7 +280,7 @@
                 });
             }else {
                 $.ajax({
-                    headers:{"_csrf":"${_csrf}"},
+                    headers:{"csrf":"${csrf}"},
                     type: "POST",
                     url: "${contextPath}/terminal/save",
                     data: {
@@ -328,7 +328,7 @@
         }
 
         function sortPage(field) {
-            location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize=${pageBean.pageSize}&orderBy="+field+"&order="+("${pageBean.order}"=="asc"?"desc":"asc")+"&_csrf=${_csrf}";
+            location.href="${contextPath}/terminal/view?pageNo=${pageBean.pageNo}&pageSize=${pageBean.pageSize}&orderBy="+field+"&order="+("${pageBean.order}"=="asc"?"desc":"asc")+"&csrf=${csrf}";
         }
 
     </script>
@@ -467,7 +467,7 @@
             </tbody>
         </table>
 
-        <cron:pager href="${contextPath}/terminal/view?_csrf=${_csrf}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
+        <cron:pager href="${contextPath}/terminal/view?csrf=${csrf}" id="${pageBean.pageNo}" size="${pageBean.pageSize}" total="${pageBean.totalCount}"/>
 
     </div>
 

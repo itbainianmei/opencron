@@ -70,7 +70,7 @@ public class TerminalController {
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
             OpencronTools.setSshSessionId(session,token);
-            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&_csrf="+OpencronTools.getCSRF(session)));
+            WebUtils.writeJson(response, String.format(json,"success","/terminal/open?token="+token+"&csrf="+OpencronTools.getCSRF(session)));
         }else {
             //重新输入密码进行认证...
             WebUtils.writeJson(response, String.format(json,authStatus.status,"null"));
@@ -90,10 +90,10 @@ public class TerminalController {
             terminal.setUser(user);
             TerminalContext.put(token,terminal);
             OpencronTools.setSshSessionId(session,token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?token="+token+"&csrf="+ OpencronTools.getCSRF(session);
         }else {
             //重新输入密码进行认证...
-            return "redirect:/terminal/open?id="+terminal.getId()+"&_csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?id="+terminal.getId()+"&csrf="+ OpencronTools.getCSRF(session);
         }
 
     }
@@ -144,7 +144,7 @@ public class TerminalController {
             token = CommonUtils.uuid();
             TerminalContext.put(token,terminal);
             session.setAttribute(OpencronTools.SSH_SESSION_ID,token);
-            return "redirect:/terminal/open?token="+token+"&_csrf="+ OpencronTools.getCSRF(session);
+            return "redirect:/terminal/open?token="+token+"&csrf="+ OpencronTools.getCSRF(session);
         }
         return "/terminal/error";
     }

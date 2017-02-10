@@ -17,7 +17,7 @@
                self.display = currSize;
                self.term.resize(self.display.cols,self.display.rows);
                $.ajax({
-                   url: '/terminal/resize?token=' + self.args[0] + "&_csrf=" + self.args[1] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
+                   url: '/terminal/resize?token=' + self.args[0] + "&csrf=" + self.args[1] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
                    cache: false
                });
            }

@@ -12,7 +12,7 @@
 
         function editPwd(id){
             $.ajax({
-                headers:{"_csrf":"${_csrf}"},
+                headers:{"csrf":"${csrf}"},
                 type:"POST",
                 url:"${contextPath}/user/pwdpage",
                 data:{"id":id},
@@ -68,7 +68,7 @@
                 return false;
             }
             $.ajax({
-                headers:{"_csrf":"${_csrf}"},
+                headers:{"csrf":"${csrf}"},
                 type:"POST",
                 url:"${contextPath}/user/editpwd",
                 data:{
@@ -103,7 +103,7 @@
         $(document).ready(function(){
             $("#size").change(function(){
                 var pageSize = $("#size").val();
-                window.location.href = "${contextPath}/user/view?pageSize="+pageSize+"&_csrf=${_csrf}";
+                window.location.href = "${contextPath}/user/view?pageSize="+pageSize+"&csrf=${csrf}";
             });
 
             $("#pwd1").change(function(){
@@ -167,7 +167,7 @@
                 <td class="item"><i class="glyphicon glyphicon-user"></i>&nbsp;用&nbsp;&nbsp;户&nbsp;&nbsp;名：</td>
                 <td>${u.userName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <a href="#" onclick="editPwd('${u.userId}')" title="修改密码"><i class="glyphicon glyphicon-lock"></i></a>&nbsp;&nbsp;
-                    <a href="${contextPath}/user/editpage?id=${u.userId}&_csrf=${_csrf}" title="编辑资料"><i class="glyphicon glyphicon-pencil"></i></a></td>
+                    <a href="${contextPath}/user/editpage?id=${u.userId}&csrf=${csrf}" title="编辑资料"><i class="glyphicon glyphicon-pencil"></i></a></td>
             </tr>
 
             <tr>

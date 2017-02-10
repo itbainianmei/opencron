@@ -50,7 +50,7 @@ public final class OpencronTools {
 
     public static final String HTTP_SESSION_ID = "http_session_id";
 
-    public static final String CSRF_NAME = "_csrf";
+    public static final String CSRF_NAME = "csrf";
 
     public static final String LOGIN_MSG = "loginMsg";
 
