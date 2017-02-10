@@ -71,8 +71,8 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
         String referer = request.getHeader("referer");
         if (referer != null && !referer.startsWith(WebUtils.getWebUrlPath(request))) {
-            response.sendRedirect("/");
             logger.info("[opencron]Bad request,redirect to login page");
+            response.sendRedirect("/");
             OpencronTools.invalidSession(session);
             return false;
         }
@@ -81,8 +81,9 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             User user = OpencronTools.getUser(session);
             if (user == null) {
                 //跳到登陆页面
-                logger.info("[opencron]User not login,redirect to login page");
                 response.sendRedirect("/");
+                logger.info("[opencron]User not login,redirect to login page");
+                OpencronTools.invalidSession(session);
                 return false;
             }
         }catch (IllegalStateException e) {

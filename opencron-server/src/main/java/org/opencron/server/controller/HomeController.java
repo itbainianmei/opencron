@@ -183,7 +183,7 @@ public class HomeController extends BaseController {
     }
 
     @RequestMapping("/login")
-    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password) throws Exception {
+    public void login(HttpSession session,HttpServletRequest request, HttpServletResponse response, HttpSession httpSession, @RequestParam String username, @RequestParam String password, String forword) throws Exception {
 
         //用户信息验证
         int status = homeService.checkLogin(request, username, password);
@@ -220,6 +220,7 @@ public class HomeController extends BaseController {
             logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
             WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
+
             return;
         }
     }
