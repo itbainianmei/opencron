@@ -219,7 +219,28 @@ public class HomeController extends BaseController {
 
             logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
-            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
+            String successUrl = "/home?csrf="+csrf;
+
+            if(notEmpty(forword)){
+                String refererUrl = request.getHeader("Referer");
+                String forwordUrl =  org.apache.commons.lang3.StringUtils.substringAfter(refererUrl, "?forword=");
+                //普通管理员不可访问的资源
+                if (!OpencronTools.isPermission(session)) {
+                    if (forwordUrl.contains("/config/")
+                                || forwordUrl.contains("/user/view")
+                                || forwordUrl.contains("/user/add")
+                                || forwordUrl.contains("/agent/add")
+                                || forwordUrl.contains("/agent/edit")) {
+
+                        successUrl = "/home?csrf="+csrf;
+                    }else {
+                        successUrl = forwordUrl+"&csrf="+csrf;
+                    }
+                }else {
+                    successUrl = forwordUrl+"&csrf="+csrf;
+                }
+            }
+            WebUtils.writeJson(response, String.format(format, "success", "url", successUrl));
 
             return;
         }

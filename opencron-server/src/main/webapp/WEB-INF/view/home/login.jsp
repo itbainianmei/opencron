@@ -361,7 +361,7 @@
                 sendpwd = calcMD5($("#password").val());
             }
 
-            var data = {username:username,password:sendpwd};
+            var data = {username:username,password:sendpwd,forword:location.search};
 
             $.ajax({
                 type: "POST",
