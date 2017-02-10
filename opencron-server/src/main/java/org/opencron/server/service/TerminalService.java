@@ -283,7 +283,7 @@ public class TerminalService {
                 //不出绝招不行啊....很神奇
                 sendTempCmd = true;
                 write(String.format("echo %s$(pwd)\r", this.sendTempCmdId));
-                //等待回去到返回的路径...
+                //等待获取返回的路径...
                 Thread.sleep(100);
                 sendTempCmd = false;
                 if (pwd == null) {
