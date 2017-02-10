@@ -39,7 +39,7 @@
             <ul class="nav navbar-nav">
                 <li><a class="term-logo" href="${contextPath}" target="_blank" title="">Opencron</a></li>
                 <li class="dropdown">
-                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="选择主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;选择主题<b class="caret"></b></a>
+                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;主题<b class="caret"></b></a>
                      <ul class="dropdown-menu theme" >
                          <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
                          <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
