@@ -103,9 +103,9 @@ public class ExceptionHandlerInterceptor implements Filter,ApplicationContextAwa
 					msg = exception;
 				}
 				status = 500;
+				request.setAttribute("error",msg);
 			}
 			logger.error("URL:"+requestURL+" STATUS:"+status+"  msg:"+msg);
-
 		}finally{
 			 if(status==404){
 				 msg = statusres.getHttpMsg()+"该请求资源不存在！";
@@ -113,13 +113,13 @@ public class ExceptionHandlerInterceptor implements Filter,ApplicationContextAwa
 				  * 发送错误信息给系统管理员
 				  * noticeService.notice(404,msg);
 				  */
-				 return;
+				 res.sendRedirect("/error/404.jsp");
 			 }else if(status==500){
 				 /**
 				  * 发送错误信息给系统管理员
 				  * noticeService.notice(500,msg);
 				  */
-				return;
+				 res.sendRedirect("/error/500.jsp");
 			 }else if(status==520){
 				 res.sendRedirect("/error/invalid.jsp");
 			 }
