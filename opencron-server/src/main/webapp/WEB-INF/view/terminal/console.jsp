@@ -50,7 +50,7 @@
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="常用操作"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;操作<b class="caret"></b></a>
                     <ul class="dropdown-menu theme" >
-                        <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="复制会话">&nbsp;复制会话</a></li>
+                        <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="克隆会话">&nbsp;克隆会话</a></li>
                         <li><a href="javascript:theme()" title="设置主题">&nbsp;设置主题</a></li>
                         <li><a href="javascript:upload()" title="上传文件">&nbsp;上传文件</a></li>
                     </ul>
