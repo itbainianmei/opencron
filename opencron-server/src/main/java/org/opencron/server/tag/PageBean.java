@@ -151,14 +151,6 @@ public class PageBean<T> implements Serializable {
      *            可选值为desc或asc,多个排序字段时用','分隔.
      */
     public void setOrder(final String order) {
-        // 检查order字符串的合法值
-        String[] orders = StringUtils.split(StringUtils.lowerCase(order), ',');
-        for (String orderStr : orders) {
-            if (!StringUtils.equals(DESC, orderStr)
-                    && !StringUtils.equals(ASC, orderStr))
-                throw new IllegalArgumentException("排序方向" + orderStr + "不是合法值");
-        }
-
         this.order = StringUtils.lowerCase(order);
     }
 
