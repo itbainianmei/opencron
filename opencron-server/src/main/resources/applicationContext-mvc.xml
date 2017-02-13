@@ -49,14 +49,6 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
-   <!-- <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            &lt;!&ndash; 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 &ndash;&gt;
-            <bean class="org.opencron.server.service.CSRFInterceptor"/>
-        </mvc:interceptor>
-    </mvc:interceptors>-->
-
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
@@ -74,5 +66,9 @@
         </property>
         <property name="resolveLazily" value="true"/>
     </bean>
+
+    <!-- 全局异常配置 -->
+    <bean id="exceptionHandler" class="org.opencron.server.service.ExceptionHandler" />
+
 
 </beans>

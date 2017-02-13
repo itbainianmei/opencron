@@ -49,8 +49,8 @@
             top: 0;
             left: 0;
             background: #000;
-            opacity: 0.8;
-            filter: alpha(opacity=80);
+            opacity: 0.2;
+            filter: alpha(opacity=20);
         }
 
         .b {
@@ -99,20 +99,19 @@
         }
     </style>
     <script type="text/javascript">
-        var num=6;
-        function redirect(){
+        var num = 6;
+        window.setInterval(function () {
             num--;
             document.getElementById("num").innerHTML=num;
             if(num<0){
                 document.getElementById("num").innerHTML=0;
                 location.href="${contextPath}";
             }
-        }
-        setInterval("redirect()", 1000);
+        }, 1000);
     </script>
 </head>
 
-<body onLoad="redirect();">
+<body>
 <div class="whole">
     <img src="${contextPath}/img/back.jpg" />
     <div class="mask"></div>
@@ -120,7 +119,7 @@
 <div class="b">
     <img src="${contextPath}/img/404.png" class="center"/>
     <p>
-        亲爱的:您查找的页面未找到<br>
+        亲爱的!您查找的页面未找到<br>
         可能输入的网址错误或此页面不存在<br>
         <span id="num"></span>秒后自动跳转到主页
     </p>
