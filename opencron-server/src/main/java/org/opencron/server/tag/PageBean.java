@@ -141,7 +141,7 @@ public class PageBean<T> implements Serializable {
      * 获得排序方向.
      */
     public String getOrder() {
-        return order;
+        return order == null?ASC:order.equals(ASC)?ASC:DESC;
     }
 
     /**
@@ -246,21 +246,18 @@ public class PageBean<T> implements Serializable {
             return pageNo;
     }
 
-    public void verifyOrder(String defultOrderBy, String...orderBys) {
+    public void verifyOrderBy(String defultOrderBy, String...orderBys) {
         if (this.getOrderBy() == null) {
             this.setOrderBy(defultOrderBy);
-            this.setOrder( this.getOrder()==null?PageBean.ASC:this.getOrder().equals(PageBean.ASC)?PageBean.ASC:PageBean.DESC);
         }else {
             String orderBy = this.getOrderBy();
             for(String field:orderBys){
                 if (orderBy.equals(field)) {
                     this.setOrderBy(orderBy);
-                    this.setOrder( this.getOrder()==null?PageBean.ASC:this.getOrder().equals(PageBean.ASC)?PageBean.ASC:PageBean.DESC);
                     return;
                 }
             }
             this.setOrderBy(defultOrderBy);
-            this.setOrder(PageBean.ASC);
         }
     }
 
