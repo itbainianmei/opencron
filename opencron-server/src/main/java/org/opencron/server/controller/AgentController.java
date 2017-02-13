@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import com.alibaba.fastjson.JSON;
 import org.opencron.common.job.Opencron;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.opencron.common.utils.WebUtils;
@@ -79,7 +80,7 @@ public class AgentController extends BaseController {
     }
 
     @RequestMapping("/add")
-    public String add(Agent agent) {
+    public String add(HttpSession session, Agent agent) {
         if (!agent.getWarning()) {
             agent.setMobiles(null);
             agent.setEmailAddress(null);
@@ -94,7 +95,7 @@ public class AgentController extends BaseController {
         agent.setStatus(true);
         agent.setUpdateTime(new Date());
         agentService.addOrUpdate(agent);
-        return "redirect:/agent/view";
+        return "redirect:/agent/view?csrf="+ OpencronTools.getCSRF(session);
     }
 
     @RequestMapping("/editpage")

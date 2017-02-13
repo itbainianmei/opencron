@@ -77,16 +77,16 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping("add")
-    public String add(User user) {
+    public String add(HttpSession session, User user) {
         userService.addUser(user);
-        return "redirect:/user/view";
+        return "redirect:/user/view?csrf=" + OpencronTools.getCSRF(session);
     }
 
     @RequestMapping("/editpage")
     public String editPage(HttpSession session,Model model, Long id) {
         if (!OpencronTools.isPermission(session)
                 && !OpencronTools.getUserId(session).equals(id)){
-            return "redirect:/user/detail";
+            return "redirect:/user/detail?csrf="+ OpencronTools.getCSRF(session);
         }
         model.addAttribute("u", userService.queryUserById(id));
         model.addAttribute("role", userService.getRoleGroup());
@@ -107,7 +107,7 @@ public class UserController extends BaseController {
         user1.setQq(user.getQq());
         user1.setModifyTime(new Date());
         userService.updateUser(user1);
-        return "redirect:/user/view";
+        return "redirect:/user/view?csrf="+ OpencronTools.getCSRF(session);
     }
 
     @RequestMapping("/pwdpage")

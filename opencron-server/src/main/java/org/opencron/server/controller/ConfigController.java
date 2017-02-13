@@ -22,12 +22,15 @@
 package org.opencron.server.controller;
 
 import org.opencron.server.domain.Config;
+import org.opencron.server.job.OpencronTools;
 import org.opencron.server.service.ConfigService;
 import org.opencron.server.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by ChenHui on 2016/2/17.
@@ -55,10 +58,10 @@ public class ConfigController extends BaseController {
     }
 
     @RequestMapping("/edit")
-    public String edit(Config config) {
+    public String edit(HttpSession session, Config config) {
         config.setConfigId(configService.getSysConfig().getConfigId());
         configService.update(config);
-        return "redirect:/config/view";
+        return "redirect:/config/view?csrf="+ OpencronTools.getCSRF(session);
     }
 
     @RequestMapping("/clear")

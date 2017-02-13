@@ -229,7 +229,7 @@ public class HomeController extends BaseController {
         TerminalSession.exit(httpSession.getId());
         httpSession.removeAttribute(OpencronTools.LOGIN_USER);
         httpSession.removeAttribute(OpencronTools.LOGIN_MSG);
-        return "redirect:/";
+        return "redirect:/?csrf="+ OpencronTools.getCSRF(httpSession);
     }
 
     @RequestMapping("/headpic/upload")

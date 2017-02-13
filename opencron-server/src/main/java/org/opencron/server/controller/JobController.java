@@ -117,7 +117,7 @@ public class JobController extends BaseController {
         job.setCronExp(unescape(job.getCronExp()));
         if (job.getJobId()!=null) {
             Job job1 = jobService.getJob(job.getJobId());
-            if (!jobService.checkJobOwner(session,job1.getUserId())) return "redirect:/job/view";
+            if (!jobService.checkJobOwner(session,job1.getUserId())) return "redirect:/job/view?csrf="+ OpencronTools.getCSRF(session);
             /**
              * 将数据库中持久化的作业和当前修改的合并,当前修改的属性覆盖持久化的属性...
              */
@@ -176,7 +176,7 @@ public class JobController extends BaseController {
 
             //流程任务必须有子任务,没有的话不保存
             if (CommonUtils.isEmpty(chindren)) {
-                return "redirect:/job/view";
+                return "redirect:/job/view?csrf="+ OpencronTools.getCSRF(session);
             }
 
             if (job.getUserId() == null) {
@@ -188,7 +188,7 @@ public class JobController extends BaseController {
 
         schedulerService.syncJobTigger(job.getJobId(),executeService);
 
-        return "redirect:/job/view";
+        return "redirect:/job/view?csrf="+ OpencronTools.getCSRF(session);
     }
 
     @RequestMapping("/editsingle")
@@ -201,7 +201,7 @@ public class JobController extends BaseController {
     @RequestMapping("/editflow")
     public String editFlowJob(HttpSession session,Model model, Long id) {
         JobVo job = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(session,job.getUserId()))return "redirect:/job/view";
+        if (!jobService.checkJobOwner(session,job.getUserId()))return "redirect:/job/view?csrf="+ OpencronTools.getCSRF(session);
         model.addAttribute("job", job);
         List<Agent> agents = agentService.getOwnerAgents(session);
         model.addAttribute("agents", agents);
@@ -288,7 +288,7 @@ public class JobController extends BaseController {
     @RequestMapping("/detail")
     public String showDetail(HttpSession session,Model model,Long id) {
         JobVo jobVo = jobService.getJobVoById(id);
-        if (!jobService.checkJobOwner(session,jobVo.getUserId())) return "redirect:/job/view";
+        if (!jobService.checkJobOwner(session,jobVo.getUserId())) return "redirect:/job/view?csrf="+ OpencronTools.getCSRF(session);
         model.addAttribute("job", jobVo);
         return "/job/detail";
     }
