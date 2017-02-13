@@ -170,8 +170,11 @@ public class TerminalController extends BaseController {
                     ifile.transferTo(tempFile);
                     if (CommonUtils.isEmpty(path)) {
                         path = ".";
-                    }else if(path.endsWith("/")) {
-                        path = path.substring(0,path.lastIndexOf("/"));
+                    }else {
+                        path = unescape(path);
+                        if (path.endsWith("/")) {
+                            path = path.substring(0, path.lastIndexOf("/"));
+                        }
                     }
                     terminalClient.upload(tempFile.getAbsolutePath(),path+"/"+ifile.getOriginalFilename(),ifile.getSize());
                     tempFile.delete();

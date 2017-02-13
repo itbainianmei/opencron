@@ -19,6 +19,10 @@
  * under the License.
  */
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by benjobs on 15/12/5.
  */
@@ -26,8 +30,11 @@ public class RegDemo {
 
     public static void main(String[] args) {
 
-        String str = "fdsafdsafdsafdsafd\r\n[fsa]fsdafdsa21";
-        System.out.println(str.replaceAll("\r\n.",""));
+
+        String str = "id=1213&csrf=0c9a2fbd97c64534aa2c368ddd66becf?";
+
+        String xx1 = str.replaceAll("\\?$","");
+        System.out.println(xx1);
 
     }
 }
