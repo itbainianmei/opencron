@@ -7,26 +7,26 @@
 <head>
     <!--base-->
     <link rel="shortcut icon" href="${contextPath}/img/terminal.png" />
-    <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" >
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" >
-    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' >
-    <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/jquery.min.js?resId=${resourceId}"></script> <!-- jQuery Library -->
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome.css?resId=${resourceId}" >
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css?resId=${resourceId}" >
+    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css?resId=${resourceId}' >
+    <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js?resId=${resourceId}"></script>
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" >
-    <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
-    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?id=20170117" >
+    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css?resId=${resourceId}" >
+    <script type="text/javascript" src="${contextPath}/js/bootstrap.js?resId=${resourceId}"></script>
+    <link rel="stylesheet" href="${contextPath}/css/opencron.term.css?resId=${resourceId}" >
 
     <!--fileinput-->
     <link href="${contextPath}/js/fileinput/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="${contextPath}/js/fileinput/js/fileinput.js" ></script>
-    <script type="text/javascript" src="${contextPath}/js/fileinput/js/locales/zh.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/fileinput/js/fileinput.js?resId=${resourceId}" ></script>
+    <script type="text/javascript" src="${contextPath}/js/fileinput/js/locales/zh.js?resId=${resourceId}"></script>
 
     <!--term-->
-    <script type="text/javascript" src="${contextPath}/js/term.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?id=20170117"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/term.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.term.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.js?resId=${resourceId}"></script>
 
     <title>opencron Terminal</title>
 </head>

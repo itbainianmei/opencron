@@ -14,65 +14,65 @@
     <meta name="author" content="author:benjobs,wechat:wolfboys,Created by languang(http://u.languang.com) @ 2016" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css" />
-    <link rel="stylesheet" href="${contextPath}/css/animate.min.css" />
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome.css" />
-    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css" />
-    <link rel="stylesheet" href="${contextPath}/css/form.css" />
-    <link rel="stylesheet" href="${contextPath}/css/jquery.mmenu.all.css" media="all" />
+    <link rel="stylesheet" href="${contextPath}/css/bootstrap.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/animate.min.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/form.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/jquery.mmenu.all.css?resId=${resourceId}" media="all" />
 
-    <link rel="stylesheet" href="${contextPath}/css/calendar.css" />
-    <link rel="stylesheet" href="${contextPath}/css/style.css" />
-    <link rel="stylesheet" href="${contextPath}/css/icons.css" />
-    <link rel="stylesheet" href="${contextPath}/css/generics.css" />
-    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css' />
-    <link rel="stylesheet" href='${contextPath}/css/opencron.css' />
-    <link rel="stylesheet" href='${contextPath}/css/loading.css' />
-    <link rel="stylesheet" href='${contextPath}/css/morris.css' />
-    <link rel="stylesheet" href='${contextPath}/css/prettify.min.css' />
-    <link rel="shortcut icon" href="${contextPath}/img/favicon.ico" />
-    <link rel="stylesheet" href="${contextPath}/css/glyphicons.css" />
+    <link rel="stylesheet" href="${contextPath}/css/calendar.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/style.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/icons.css?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/generics.css?resId=${resourceId}" />
+    <link rel="stylesheet" href='${contextPath}/css/sweetalert.css?resId=${resourceId}' />
+    <link rel="stylesheet" href='${contextPath}/css/opencron.css?resId=${resourceId}' />
+    <link rel="stylesheet" href='${contextPath}/css/loading.css?resId=${resourceId}' />
+    <link rel="stylesheet" href='${contextPath}/css/morris.css?resId=${resourceId}' />
+    <link rel="stylesheet" href='${contextPath}/css/prettify.min.css?resId=${resourceId}' />
+    <link rel="shortcut icon" href="${contextPath}/img/favicon.ico?resId=${resourceId}" />
+    <link rel="stylesheet" href="${contextPath}/css/glyphicons.css?resId=${resourceId}" />
 
     <!-- Javascript Libraries -->
     <!-- jQuery -->
-    <script type="text/javascript" src="${contextPath}/js/jquery.min.js"></script> <!-- jQuery Library -->
-    <script type="text/javascript" src="${contextPath}/js/jquery-ui.min.js"></script> <!-- jQuery UI -->
-    <script type="text/javascript" src="${contextPath}/js/jquery.easing.1.3.js"></script> <!-- jQuery Easing - Requirred for Lightbox + Pie Charts-->
+    <script type="text/javascript" src="${contextPath}/js/jquery.min.js?resId=${resourceId}"></script> <!-- jQuery Library -->
+    <script type="text/javascript" src="${contextPath}/js/jquery-ui.min.js?resId=${resourceId}"></script> <!-- jQuery UI -->
+    <script type="text/javascript" src="${contextPath}/js/jquery.easing.1.3.js?resId=${resourceId}"></script> <!-- jQuery Easing - Requirred for Lightbox + Pie Charts-->
 
     <!-- Bootstrap -->
-    <script type="text/javascript" src="${contextPath}/js/bootstrap.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/easypiechart.js"></script> <!-- EasyPieChart - Animated Pie Charts -->
+    <script type="text/javascript" src="${contextPath}/js/bootstrap.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/easypiechart.js?resId=${resourceId}"></script> <!-- EasyPieChart - Animated Pie Charts -->
 
     <!--  Form Related -->
-    <script type="text/javascript" src="${contextPath}/js/icheck.js"></script> <!-- Custom Checkbox + Radio -->
-    <script type="text/javascript" src="${contextPath}/js/select.min.js"></script> <!-- Custom Select -->
+    <script type="text/javascript" src="${contextPath}/js/icheck.js?resId=${resourceId}"></script> <!-- Custom Checkbox + Radio -->
+    <script type="text/javascript" src="${contextPath}/js/select.min.js?resId=${resourceId}"></script> <!-- Custom Select -->
 
     <!-- UX -->
-    <script type="text/javascript" src="${contextPath}/js/scroll.min.js"></script> <!-- Custom Scrollbar -->
+    <script type="text/javascript" src="${contextPath}/js/scroll.min.js?resId=${resourceId}"></script> <!-- Custom Scrollbar -->
 
     <!-- Other -->
-    <script type="text/javascript" src="${contextPath}/js/calendar.min.js"></script> <!-- Calendar -->
-    <script type="text/javascript" src="${contextPath}/js/raphael.2.1.2-min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/prettify.min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/morris.min.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/calendar.min.js?resId=${resourceId}"></script> <!-- Calendar -->
+    <script type="text/javascript" src="${contextPath}/js/raphael.2.1.2-min.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/prettify.min.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/morris.min.js?resId=${resourceId}"></script>
     <!-- All JS functions -->
-    <script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}"></script>
-    <script type="text/javascript" src="${contextPath}/js/testdevice.js"></script>
+    <script id="themeFunctions" src="${contextPath}/js/functions.js?${contextPath}&resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/testdevice.js?resId=${resourceId}"></script>
 
     <!-- MD5 -->
-    <script type="text/javascript" src="${contextPath}/js/md5.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/html5/html5shiv/html5shiv.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/gauge.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/My97DatePicker/WdatePicker.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js"></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.js"></script>
+    <script type="text/javascript" src="${contextPath}/js/md5.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/html5/html5shiv/html5shiv.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/gauge.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/jquery.cookie.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/My97DatePicker/WdatePicker.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/sweetalert.min.js?resId=${resourceId}"></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.js?resId=${resourceId}"></script>
 
     <!--upfile-->
-    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.main.css" type="text/css" />
-    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.css" type="text/css" />
-    <script type="text/javascript" src="${contextPath}/js/cropper/cropper.js" ></script>
-    <script type="text/javascript" src="${contextPath}/js/opencron.cropper.js" ></script>
+    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.main.css?resId=${resourceId}" type="text/css" />
+    <link rel="stylesheet" href="${contextPath}/js/cropper/cropper.css?resId=${resourceId}" type="text/css" />
+    <script type="text/javascript" src="${contextPath}/js/cropper/cropper.js?resId=${resourceId}" ></script>
+    <script type="text/javascript" src="${contextPath}/js/opencron.cropper.js?resId=${resourceId}" ></script>
 
 
 

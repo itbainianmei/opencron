@@ -7,14 +7,14 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
-    <script src="${contextPath}/js/echarts.min.js"></script>
-    <script src="${contextPath}/js/highcharts/js/highcharts.js"></script>
-    <script src="${contextPath}/js/highcharts/js/highcharts-more.js"></script>
-    <script src="${contextPath}/js/highcharts/js/highcharts-3d.js"></script>
-    <script src="${contextPath}/js/highcharts/js/modules/exporting.js"></script>
-    <script src="${contextPath}/js/socket/socket.io.js"></script>
-    <script src="${contextPath}/js/socket/websocket.js"></script>
-    <script src="${contextPath}/js/home.js"></script>
+    <script src="${contextPath}/js/echarts.min.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/highcharts/js/highcharts.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/highcharts/js/highcharts-more.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/highcharts/js/highcharts-3d.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/highcharts/js/modules/exporting.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/socket/socket.io.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/socket/websocket.js?resId=${resourceId}"></script>
+    <script src="${contextPath}/js/home.js?resId=${resourceId}"></script>
 
     <style type="text/css">
 

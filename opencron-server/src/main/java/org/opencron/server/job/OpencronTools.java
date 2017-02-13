@@ -56,6 +56,8 @@ public final class OpencronTools {
 
     public static final String CONTEXT_PATH_NAME = "contextPath";
 
+    private static String resourceId;
+
     private static Logger logger = LoggerFactory.getLogger(OpencronTools.class);
 
     public static boolean isPermission(HttpSession session){
@@ -121,6 +123,13 @@ public final class OpencronTools {
 
     public static void setSshSessionId(HttpSession session, String sshSessionId) {
         session.setAttribute(SSH_SESSION_ID,sshSessionId);
+    }
+
+    public static String getResourceId() {
+        if (resourceId == null) {
+            resourceId = CommonUtils.uuid();
+        }
+        return resourceId;
     }
 
     public static class CACHE {

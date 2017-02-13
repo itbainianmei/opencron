@@ -8,8 +8,8 @@
 <head>
     <jsp:include page="/WEB-INF/common/resource.jsp"/>
 
-    <link href='${contextPath}/css/jquery.mCustomScrollbar.css' rel='stylesheet'>
-    <script src="${contextPath}/js/jquery.mCustomScrollbar.min.js"></script>
+    <link href='${contextPath}/css/jquery.mCustomScrollbar.css?resId=${resourceId}' rel='stylesheet'>
+    <script src="${contextPath}/js/jquery.mCustomScrollbar.min.js?resId=${resourceId}"></script>
 
     <script type="text/javascript">
         var flag = false;

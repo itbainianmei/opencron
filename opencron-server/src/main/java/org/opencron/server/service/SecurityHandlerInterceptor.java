@@ -55,6 +55,12 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
         String requestURI = request.getContextPath() + request.getServletPath();
 
+        //
+        // 考虑到以后升级可能会改css或者js,用户重新升级部署后肯能有缓存,导致项目失败,
+        // 特此加上防止用户端有缓存的Id来防止资源缓存,每次项目启动会生成一个随机码添加到所有的资源引用后
+        //
+        session.setAttribute("resourceId",OpencronTools.getResourceId());
+
         //静态资源,页面
         if ( requestURI.contains("/css/")
                 || requestURI.contains("/fonts/")

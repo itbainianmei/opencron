@@ -3,7 +3,7 @@ $(document).ready(function(){
 	Template Settings
     -----------------------------------------------------------*/
 	var fusrc = document.getElementById('themeFunctions').src;
-	var contextPath=fusrc.substr(fusrc.indexOf("?")+1);
+	var contextPath=fusrc.substring(fusrc.indexOf("?")+1,fusrc.indexOf("&"));
     var settings =  '<a id="settings" href="#changeSkin" data-toggle="modal">' +
 			'<i aria-hidden="true" class="fa fa-gear"></i> 主题更换' +
 		    '</a>' +   
