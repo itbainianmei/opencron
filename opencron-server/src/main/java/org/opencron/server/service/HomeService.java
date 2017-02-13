@@ -53,11 +53,7 @@ public class HomeService {
     private QueryDao queryDao;
 
     public int checkLogin(HttpServletRequest request, String username, String password) throws IOException {
-        //将session置为无效
-       /* if (!httpSession.isNew()) {
-            httpSession.invalidate();
-            httpSession.removeAttribute(Globals.LOGIN_USER);
-        }*/
+
         HttpSession httpSession = request.getSession();
         User user = queryDao.hqlUniqueQuery("FROM User WHERE userName = ?", username);
         if (user == null) return 500;

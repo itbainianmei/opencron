@@ -60,6 +60,8 @@ public class ConfigController extends BaseController {
     @RequestMapping("/edit")
     public String edit(HttpSession session, Config config) {
         config.setConfigId(configService.getSysConfig().getConfigId());
+        config.setTemplate(unescape(config.getTemplate()));
+        config.setSendUrl(unescape(config.getSendUrl()));
         configService.update(config);
         return "redirect:/config/view?csrf="+ OpencronTools.getCSRF(session);
     }
