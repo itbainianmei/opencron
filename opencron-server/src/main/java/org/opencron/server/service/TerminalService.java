@@ -137,12 +137,7 @@ public class TerminalService {
 
     public PageBean<Terminal> getPageBeanByUser(PageBean pageBean, Long userId) {
         String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ORDER By ";
-        if (pageBean.getOrder() == null) {
-            pageBean.setOrder(PageBean.ASC);
-        }
-        if (pageBean.getOrderBy() == null) {
-            pageBean.setOrderBy("name");
-        }
+        pageBean.verifyOrder("name","name","host","port","logintime");
         sql += pageBean.getOrderBy() + " " + pageBean.getOrder();
         return queryDao.getPageBySql(pageBean, Terminal.class, sql, userId);
     }
