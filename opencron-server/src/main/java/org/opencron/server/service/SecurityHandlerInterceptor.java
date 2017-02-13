@@ -34,10 +34,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
+import java.io.IOException;
 
 /**
  * 登陆权限拦截器
@@ -166,4 +164,6 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
             return value;
         }
     }
+
+
 }
