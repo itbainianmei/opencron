@@ -38,8 +38,8 @@ public class PageBean<T> implements Serializable {
     public static final String DESC = "desc";
 
     // -- 分页参数 --//
-    protected int pageNo = 1;
-    protected int pageSize = 15;
+    protected Serializable pageNo = 1;
+    protected Serializable pageSize = 15;
     protected String orderBy = null;
     protected String order = null;
     protected boolean autoCount = true;
@@ -77,16 +77,15 @@ public class PageBean<T> implements Serializable {
      * 获得当前页的页号,序号从1开始,默认为1.
      */
     public int getPageNo() {
-        return pageNo;
+        return CommonUtils.toInt(pageNo,1);
     }
 
     /**
      * 设置当前页的页号,序号从1开始,低于1时自动调整为1.
      */
-    public void setPageNo(final int pageNo) {
+    public void setPageNo(final Serializable pageNo) {
         this.pageNo = pageNo;
-
-        if (pageNo < 1) {
+        if (CommonUtils.toInt(pageNo,1) < 1) {
             this.pageNo = 1;
         }
     }
@@ -95,16 +94,16 @@ public class PageBean<T> implements Serializable {
      * 获得每页的记录数量,默认为15.
      */
     public int getPageSize() {
-        return pageSize;
+        return CommonUtils.toInt(this.pageSize,15);
     }
 
     /**
      * 设置每页的记录数量,低于1时自动调整为1.
      */
-    public void setPageSize(final int pageSize) {
+    public void setPageSize(final Serializable pageSize) {
         this.pageSize = pageSize;
 
-        if (pageSize < 1) {
+        if (CommonUtils.toInt(pageSize,15) < 1) {
             this.pageSize = 1;
         }
     }
@@ -113,7 +112,7 @@ public class PageBean<T> implements Serializable {
      * 根据pageNo和pageSize计算当前页第一条记录在总结果集中的位置,序号从1开始.
      */
     public int getFirst() {
-        return ((pageNo - 1) * pageSize) + 1;
+        return ((CommonUtils.toInt(pageNo,1) - 1) * CommonUtils.toInt(pageSize,15)) + 1;
     }
 
     /**
@@ -205,8 +204,8 @@ public class PageBean<T> implements Serializable {
         if (totalCount < 0)
             return -1;
 
-        long count = totalCount / pageSize;
-        if (totalCount % pageSize > 0) {
+        long count = totalCount / CommonUtils.toInt(pageSize);
+        if (totalCount % CommonUtils.toInt(pageSize) > 0) {
             count++;
         }
         return count;
@@ -216,7 +215,7 @@ public class PageBean<T> implements Serializable {
      * 是否还有下一页.
      */
     public boolean hasNext() {
-        return (pageNo + 1 <= getTotalPages());
+        return (CommonUtils.toInt(pageNo) + 1 <= getTotalPages());
     }
 
     /**
@@ -224,16 +223,16 @@ public class PageBean<T> implements Serializable {
      */
     public int getNextPage() {
         if (hasNext())
-            return pageNo + 1;
+            return CommonUtils.toInt(pageNo) + 1;
         else
-            return pageNo;
+            return CommonUtils.toInt(pageNo);
     }
 
     /**
      * 是否还有上一页.
      */
     public boolean hasPre() {
-        return (pageNo - 1 >= 1);
+        return (CommonUtils.toInt(pageNo) - 1 >= 1);
     }
 
     /**
@@ -241,9 +240,9 @@ public class PageBean<T> implements Serializable {
      */
     public int getPrePage() {
         if (hasPre())
-            return pageNo - 1;
+            return CommonUtils.toInt(pageNo) - 1;
         else
-            return pageNo;
+            return CommonUtils.toInt(pageNo);
     }
 
     public void verifyOrderBy(String defultOrderBy, String...orderBys) {
