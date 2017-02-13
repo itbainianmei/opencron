@@ -8,7 +8,7 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" href="${contextPath}/img/favicon.ico?resId=${resourceId}" />
     <title>Opencron 404</title>
-    <style>
+    <style style="text/css">
         * {
             margin: 0;
             padding: 0;
@@ -49,8 +49,8 @@
             top: 0;
             left: 0;
             background: #000;
-            opacity: 0.2;
-            filter: alpha(opacity=20);
+            opacity: 0.3;
+            filter: alpha(opacity=30);
         }
 
         .b {
@@ -99,14 +99,14 @@
         }
     </style>
     <script type="text/javascript">
-        var num = 6;
+        var num = 4;
         window.setInterval(function () {
-            num--;
             document.getElementById("num").innerHTML=num;
-            if(num<0){
+            if(num==0){
                 document.getElementById("num").innerHTML=0;
                 location.href="${contextPath}";
             }
+            num--;
         }, 1000);
     </script>
 </head>
@@ -119,9 +119,9 @@
 <div class="b">
     <img src="${contextPath}/img/404.png" class="center"/>
     <p>
-        亲爱的!您查找的页面未找到<br>
+        亲爱哒,您查找的页面未找到<br>
         可能输入的网址错误或此页面不存在<br>
-        <span id="num"></span>秒后自动跳转到主页
+        <span id="num">5</span>秒后自动跳转到主页
     </p>
 </div>
 
