@@ -49,8 +49,8 @@
             top: 0;
             left: 0;
             background: #000;
-            opacity: 0.6;
-            filter: alpha(opacity=60);
+            opacity: 0.8;
+            filter: alpha(opacity=80);
         }
 
         .b {

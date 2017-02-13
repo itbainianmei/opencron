@@ -25,9 +25,6 @@ package org.opencron.server.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.opencron.common.exception.InvalidException;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -38,16 +35,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 
-public class ExceptionHandlerInterceptor implements Filter,ApplicationContextAware {
+public class ExceptionHandlerInterceptor implements Filter {
 
 	private static final Logger logger = Logger.getLogger(ExceptionHandlerInterceptor.class);
 
 	private NoticeService noticeService;
-
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.noticeService = applicationContext.getBean(NoticeService.class);
-	}
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
