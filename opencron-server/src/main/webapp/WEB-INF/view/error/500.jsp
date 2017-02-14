@@ -41,6 +41,10 @@
             $(".error_image").click(function () {
                 $("#error").show();
             });
+
+            $(".fa-wechat").click(function () {
+                alert("请添加微信[wolfboys]反馈您的问题");
+            });
         })
     </script>
 </head>
