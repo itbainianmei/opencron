@@ -1,3 +1,24 @@
+/**
+ * Copyright 2016 benjobs
+ * <p>
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.opencron.server.service;
 
 import java.io.ByteArrayOutputStream;
@@ -74,9 +95,9 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 			 chain.doFilter(request, statusResponse);
 			 status = statusResponse. getStatus();
 		} catch (Exception e) {//获取异常错误信息
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			e.printStackTrace(new PrintStream(baos));  
-			String exception = baos.toString();
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			e.printStackTrace(new PrintStream(byteArrayOutputStream));
+			String exception = byteArrayOutputStream.toString();
 			String error;
 			if (exception.indexOf("Caused by:") > -1) {
 				error = StringUtils.substringAfter(exception, "Caused by:");
@@ -98,6 +119,7 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 	}
 
 	static class StatusExposingServletResponse extends HttpServletResponseWrapper {
+
 		private int httpStatus;
 
 		public StatusExposingServletResponse(HttpServletResponse response) {
