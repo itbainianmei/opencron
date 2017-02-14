@@ -47,7 +47,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
 
     public boolean preHandle(HttpServletRequest request,HttpServletResponse response, Object handler) throws Exception {
 
-        request = new XssHttpServletRequestWrapper(request);
+        request = new XssHttpServletRequest(request);
 
         HttpSession session = request.getSession();
 
@@ -132,9 +132,9 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
     }
 
 
-    class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
+    class XssHttpServletRequest extends HttpServletRequestWrapper {
 
-        public XssHttpServletRequestWrapper(HttpServletRequest servletRequest) {
+        public XssHttpServletRequest(HttpServletRequest servletRequest) {
             super(servletRequest);
         }
         public String[] getParameterValues(String parameter) {
