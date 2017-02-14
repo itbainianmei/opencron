@@ -13,7 +13,6 @@
             float: left;
             margin-right: -50px;
             margin-left: 30px;
-            cursor: pointer;
         }
         .error_content{
             font-size: 25px;
@@ -35,13 +34,6 @@
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#error_close").click(function () {
-                $("#error").hide();
-            });
-            $(".error_image").click(function () {
-                $("#error").show();
-            });
-
             $(".fa-wechat").click(function () {
                 swal({
                     title: "",
@@ -85,7 +77,6 @@
             <div class="listview narrow">
                 <div class="media">
                     <i class="fa fa-eye"></i>&nbsp;<a href="#">错误详情</a>
-                    <span class="drawer-close" id="error_close">&times;</span>
                 </div>
                 <div class="media text-left whiter l-100">
                     <pre id="pre" style="font-size:11px;color:#FFF;border: none;background: none;white-space: pre-wrap;word-wrap: break-word;">${error}</pre>
