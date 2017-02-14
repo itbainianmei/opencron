@@ -24,6 +24,8 @@ package org.opencron.server.service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -36,8 +38,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opencron.common.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -48,6 +52,10 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 
 	@Override
 	public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception ex) {
+		if (ex instanceof MaxUploadSizeExceededException) {
+			WebUtils.writeJson(httpServletResponse,"长传的文件大小超过"+((MaxUploadSizeExceededException)ex).getMaxUploadSize() + "字节限制,上传失败!");
+			return null;
+		}
 		ModelAndView view = new ModelAndView();
 		view.getModel().put("error",ex.getMessage());
 		logger.error("[opencron]error:{}",ex.getLocalizedMessage());
@@ -98,15 +106,9 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(byteArrayOutputStream));
 			String exception = byteArrayOutputStream.toString();
-			String error;
-			if (exception.indexOf("Caused by:") > -1) {
-				error = StringUtils.substringAfter(exception, "Caused by:");
-			} else {
-				error = exception;
-			}
 			status = 500;
-			req.getSession().setAttribute("error",error);
-			logger.error("URL:"+requestURL+" STATUS:"+status+"  error:"+error);
+			req.getSession().setAttribute("error",exception);
+			logger.error("URL:"+requestURL+" STATUS:"+status+"  error:"+exception);
 		}finally{
 			 if(status==404){
 				 return;

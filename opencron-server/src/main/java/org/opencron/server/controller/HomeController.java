@@ -89,6 +89,7 @@ public class HomeController extends BaseController {
     @RequestMapping("/home")
     public String index(HttpSession session,Model model) {
 
+        int i = 9/0;
         /**
          * agent...
          */

@@ -54,8 +54,7 @@
             text-align: center;
             height: 400px;
             position: absolute;
-            top: 50%;
-            margin-top: -230px
+            top: 25%;
         }
 
         .a a {
@@ -78,9 +77,9 @@
 
         p {
             color: #fff;
-            margin-top: 40px;
-            font-size: 28px;
-            font-weight: 300
+            margin-top: 60px;
+            font-size: 30px;
+            font-weight: lighter;
         }
 
         #num {
@@ -150,14 +149,15 @@
         }
     </style>
     <script type="text/javascript">
-        var num = 4;
+        var num = 5;
         window.setInterval(function () {
+            --num;
             document.getElementById("num").innerHTML=num;
             if(num==0){
                 document.getElementById("num").innerHTML=0;
                 location.href="${contextPath}";
             }
-            num--;
+
         }, 1000);
     </script>
 </head>
@@ -172,8 +172,8 @@
         <p><span>4</span><span>0</span><span>4</span></p>
     </div>
     <p>
-        亲爱哒,您查找的页面未找到(´･ω･`)<br>
-        <span id="num">5</span>秒后自动跳转到主页
+        亲爱哒,您要查看的页面未找到(´･ω･`)<br>
+        <span id="num">5</span>秒后自动跳转到主页...
     </p>
 </div>
 

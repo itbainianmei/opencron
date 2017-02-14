@@ -10,7 +10,7 @@
 	request.setAttribute("uri",request.getRequestURI());
 %>
 
-<body id="skin-cloth">
+<body id="skin-blur-ocean">
 <div id="mask" class="mask"></div>
 <header id="header">
 	<a href="" id="menu-toggle" style="background-image: none"><i class="icon">&#61773;</i></a>
