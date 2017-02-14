@@ -57,7 +57,12 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 			return null;
 		}
 		ModelAndView view = new ModelAndView();
-		view.getModel().put("error",ex.getMessage());
+
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ex.printStackTrace(new PrintStream(byteArrayOutputStream));
+		String exception = byteArrayOutputStream.toString();
+
+		view.getModel().put("error","URL:"+ WebUtils.getWebUrlPath(httpServletRequest)+httpServletRequest.getRequestURI()+"\r\n\r\nERROR:"+exception);
 		logger.error("[opencron]error:{}",ex.getLocalizedMessage());
 		view.setViewName("/error/500");
 		return view;
@@ -107,7 +112,7 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 			e.printStackTrace(new PrintStream(byteArrayOutputStream));
 			String exception = byteArrayOutputStream.toString();
 			status = 500;
-			req.getSession().setAttribute("error",exception);
+			req.getSession().setAttribute("error","URL:"+requestURL+"\r\n STATUS:"+status+"\n  error:"+exception);
 			logger.error("URL:"+requestURL+" STATUS:"+status+"  error:"+exception);
 		}finally{
 			 if(status==404){
