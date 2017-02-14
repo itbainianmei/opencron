@@ -112,7 +112,6 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 			e.printStackTrace(new PrintStream(byteArrayOutputStream));
 			String exception = byteArrayOutputStream.toString();
 			status = 500;
-			req.getSession().setAttribute("error","URL:"+requestURL+"\r\n STATUS:"+status+"\n  error:"+exception);
 			logger.error("URL:"+requestURL+" STATUS:"+status+"  error:"+exception);
 		}finally{
 			 if(status==404){
