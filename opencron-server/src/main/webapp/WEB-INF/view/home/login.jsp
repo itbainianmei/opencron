@@ -468,7 +468,7 @@
     </script>
 
 </head>
-<body id="skin-cloth">
+<body id="skin-blur-ocean">
 
 <section id="login">
     <header>
