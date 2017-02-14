@@ -43,7 +43,14 @@
             });
 
             $(".fa-wechat").click(function () {
-                alert("请添加微信[wolfboys]反馈您的问题");
+                swal({
+                    title: "",
+                    text: "请添加微信[wolfboys]反馈您的问题",
+                    type: "warning",
+                    showCancelButton: false,
+                    closeOnConfirm: false,
+                    confirmButtonText: "好的"
+                });
             });
         })
     </script>

@@ -88,8 +88,6 @@ public class HomeController extends BaseController {
 
     @RequestMapping("/home")
     public String index(HttpSession session,Model model) {
-
-       Integer.parseInt("fdasfds");
         /**
          * agent...
          */
