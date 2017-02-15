@@ -224,11 +224,8 @@ public class HomeController extends BaseController {
 
 
     @RequestMapping("/logout")
-    public String logout(HttpSession httpSession) throws IOException {
-        //用户退出后当前用户的所有终端全部退出.
-        TerminalSession.exit(httpSession.getId());
-        httpSession.removeAttribute(OpencronTools.LOGIN_USER);
-        httpSession.removeAttribute(OpencronTools.LOGIN_MSG);
+    public String logout(HttpSession httpSession) throws Exception {
+        OpencronTools.invalidSession(httpSession);
         return "redirect:/";
     }
 
