@@ -117,10 +117,6 @@ public final class OpencronTools {
         return csrf;
     }
 
-    public static String getSshSessionId(HttpSession session) {
-        return (String) session.getAttribute(SSH_SESSION_ID);
-    }
-
     public static void setSshSessionId(HttpSession session, String sshSessionId) {
         session.setAttribute(SSH_SESSION_ID,sshSessionId);
     }
