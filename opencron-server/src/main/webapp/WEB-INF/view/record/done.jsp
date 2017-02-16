@@ -232,8 +232,8 @@
                     <option value="">全部</option>
                     <option value="1" ${success eq 1 ? 'selected' : ''}>成功</option>
                     <option value="0" ${success eq 0 ? 'selected' : ''}>失败</option>
-                    <option value="0" ${success eq 2 ? 'selected' : ''}>被杀</option>
-                    <option value="0" ${success eq 3 ? 'selected' : ''}>超时</option>
+                    <option value="2" ${success eq 2 ? 'selected' : ''}>被杀</option>
+                    <option value="3" ${success eq 3 ? 'selected' : ''}>超时</option>
                 </select>
                 &nbsp;&nbsp;&nbsp;
                 <label for="execType">执行方式：</label>
