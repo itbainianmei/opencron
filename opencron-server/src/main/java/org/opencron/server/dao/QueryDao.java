@@ -26,9 +26,6 @@ import org.opencron.server.tag.PageBean;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Created by benjobs on 15/10/18.
  */

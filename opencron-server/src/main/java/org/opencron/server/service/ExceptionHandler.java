@@ -22,18 +22,10 @@
 package org.opencron.server.service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.opencron.common.utils.WebUtils;
 import org.slf4j.Logger;
@@ -43,7 +35,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 
-public class ExceptionHandler implements Filter,HandlerExceptionResolver {
+public class ExceptionHandler implements HandlerExceptionResolver {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
@@ -65,90 +57,4 @@ public class ExceptionHandler implements Filter,HandlerExceptionResolver {
 		return view;
 	}
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {}
-
-	@Override
-	public void destroy() { }
-
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse res = (HttpServletResponse) response;
-		
-		String requestURL = req.getRequestURL().toString();  
-        String requestName = requestURL.substring(requestURL.lastIndexOf("/")+1);  
-        requestName = requestName.toLowerCase();
-        
-        //过滤静态资源
-        if(requestName.matches(".*\\.js$") 
-        		|| requestName.matches(".*\\.css$") 
-        		|| requestName.matches(".*\\.swf$")
-        		|| requestName.matches(".*\\.jpg$")
-        		|| requestName.matches(".*\\.png$")
-        		|| requestName.matches(".*\\.jpeg$")
-        		|| requestName.matches(".*\\.html$")
-        		|| requestName.matches(".*\\.htm$")
-        		|| requestName.matches(".*\\.xml$")
-        		|| requestName.matches(".*\\.txt$")
-        		|| requestName.matches(".*\\.ico$")
-        		){  
-            chain.doFilter(req, res);  
-            return;  
-        }  
-		
-		StatusExposingServletResponse statusResponse = new StatusExposingServletResponse((HttpServletResponse)response);
-		int status = 0;
-
-		try {
-			 chain.doFilter(request, statusResponse);
-			 status = statusResponse. getStatus();
-		} catch (Exception e) {//获取异常错误信息
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			e.printStackTrace(new PrintStream(byteArrayOutputStream));
-			String exception = byteArrayOutputStream.toString();
-			status = 500;
-			logger.error("URL:"+requestURL+" STATUS:"+status+"  error:"+exception);
-		}finally{
-			 if(status==404){
-				 return;
-			 }else if(status==500){
-				return;
-			 }else if(status==520){
-				 res.sendRedirect("/error/invalid.jsp");
-			 }
-		}
-	}
-
-	static class StatusExposingServletResponse extends HttpServletResponseWrapper {
-
-		private int httpStatus;
-
-		public StatusExposingServletResponse(HttpServletResponse response) {
-			super(response);
-		}
-
-		@Override
-		public void sendError(int sc) throws IOException {
-			httpStatus = sc;
-			super.sendError(sc);
-		}
-
-		@Override
-		public void sendError(int sc, String msg) throws IOException {
-			httpStatus = sc;
-			super.sendError(sc, msg);
-		}
-
-		@Override
-		public void setStatus(int sc) {
-			httpStatus = sc;
-			super.setStatus(sc);
-		}
-
-		public int getStatus() {
-			return httpStatus;
-		}
-	}
 }
