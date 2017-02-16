@@ -48,13 +48,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import static org.opencron.common.utils.CommonUtils.isEmpty;
 import static org.opencron.common.utils.CommonUtils.notEmpty;
-import static org.opencron.server.service.TerminalService.TerminalSession;
 
 /**
  * Created by ChenHui on 2016/2/17.
