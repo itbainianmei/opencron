@@ -38,20 +38,10 @@
         <div>
             <ul class="nav navbar-nav">
                 <li><a class="term-logo" href="${contextPath}" target="_blank" title="">Opencron</a></li>
-                <li class="dropdown">
-                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;主题<b class="caret"></b></a>
-                     <ul class="dropdown-menu theme" >
-                         <li><a theme="default" href="javascript:void(0)"><span class="circle" style="background-color:#cccccc"></span>&nbsp;默认</a></li>
-                         <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
-                         <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
-                         <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
-                         <li><a theme="white" href="javascript:void(0)"><span class="circle" style="background-color:rgb(235,235,235)"></span>&nbsp;白色</a></li>
-                         <li><a theme="gray" href="javascript:void(0)"><span class="circle" style="background-color:gray"></span>&nbsp;灰色</a></li>
-                     </ul>
-                 </li>
+
                 <li class="dropdown">
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="常用操作"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;操作<b class="caret"></b></a>
-                    <ul class="dropdown-menu theme" >
+                    <ul class="dropdown-menu" >
                         <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="克隆会话">&nbsp;克隆会话</a></li>
                         <li><a href="javascript:upload()" title="上传文件">&nbsp;上传文件</a></li>
                     </ul>
@@ -63,6 +53,18 @@
                         <c:forEach var="t" items="${terms}">
                             <li><a href="${contextPath}/terminal/ssh2?id=${t.id}&csrf=${csrf}" target="_blank">${t.name}(${t.host})</a></li>
                         </c:forEach>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;主题<b class="caret"></b></a>
+                    <ul class="dropdown-menu theme" >
+                        <li><a theme="default" href="javascript:void(0)"><span class="circle" style="background-color:#cccccc"></span>&nbsp;默认</a></li>
+                        <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
+                        <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
+                        <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
+                        <li><a theme="white" href="javascript:void(0)"><span class="circle" style="background-color:rgb(235,235,235)"></span>&nbsp;白色</a></li>
+                        <li><a theme="gray" href="javascript:void(0)"><span class="circle" style="background-color:gray"></span>&nbsp;灰色</a></li>
                     </ul>
                 </li>
 
