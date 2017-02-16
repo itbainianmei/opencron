@@ -433,7 +433,7 @@ case "$1" in
       ;;
 
     *)
-      echo "Unknown command: \`$1'"
+      echo "Unknown command: $1"
       echo "Usage: $PROGRAM ( commands ... )"
       echo "commands:"
       echo "  start             Start opencron"
