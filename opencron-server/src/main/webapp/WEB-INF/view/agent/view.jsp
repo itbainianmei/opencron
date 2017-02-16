@@ -156,7 +156,6 @@
                             $("#agent_" + obj.agentId).attr("selected", true);
                         } else {
                             hideProxy();
-
                         }
 
                         $("#warning1").next().attr("onclick", "showContact()");
@@ -179,11 +178,10 @@
                         }
                         $("#mobiles").val(obj.mobiles);
                         $("#email").val(obj.emailAddress);
+                        $("#comment").val(obj.comment);
                         $("#agentModal").modal("show");
                         return;
                     }
-
-
                 },
                 error: function () {
                     alert("网络繁忙请刷新页面重试!");
@@ -762,6 +760,14 @@
                                 <input type="text" class="form-control " id="email"/>&nbsp;
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label for="comment" class="col-lab control-label" title="次执行器描述信息">描述信息：</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control " id="comment"/>&nbsp;
+                            </div>
+                        </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
