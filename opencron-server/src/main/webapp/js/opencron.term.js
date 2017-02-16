@@ -216,12 +216,10 @@
         url: '/terminal/theme?token=' + self.args[0] + "&csrf=" + self.args[1] + '&theme=' + arguments[0]||"default" ,
         cache: false
     });
-
     self.term.open(self.termNode.empty()[0]);
-    self.term.write("change theme successful!...");
+    self.term.write("change theme successful.Thank you for using opencron terminal.");
     self.socket.send("\r");
     self.event();
-
 };
 
 
@@ -261,4 +259,35 @@
         default:
             break
     }
+
+    /**
+     * 别动,很神奇....非读熟源码是写不出下面的代码的.
+     */
+    $("#term-style").remove();
+    var style = document.getElementById('term-style');
+    if (style) return;
+
+    var head = document.getElementsByTagName('head')[0];
+    if (!head) return;
+
+    var style = document.createElement('style');
+    style.id = 'term-style';
+    // textContent doesn't work well with IE for <style> elements.
+    style.innerHTML = ''
+        + '.terminal {\n'
+        + '  float: left;\n'
+        + '  font-family: Courier, monospace;\n'
+        + '  font-size: '+self.term.fontSize+'px;\n'
+        + '  line-height: '+self.term.lineHeight+'px;\n'
+        + '  color: ' + self.term.colors[256] + ';\n'
+        + '  background: ' + self.term.colors[257] + ';\n'
+        + '  padding: 5px;\n'
+        + '}\n'
+        + '\n'
+        + '.terminal-cursor {\n'
+        + '  color: ' + self.term.colors[256] + ';\n'
+        + '  background: ' + self.term.colors[257] + ';\n'
+        + '}\n';
+    head.insertBefore(style, head.firstChild);
+
 }

@@ -45,7 +45,7 @@
                          <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
                          <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
                          <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
-                         <li><a theme="white" href="javascript:void(0)"><span class="circle" style="background-color:white"></span>&nbsp;白色</a></li>
+                         <li><a theme="white" href="javascript:void(0)"><span class="circle" style="background-color:rgb(235,235,235)"></span>&nbsp;白色</a></li>
                          <li><a theme="gray" href="javascript:void(0)"><span class="circle" style="background-color:gray"></span>&nbsp;灰色</a></li>
                      </ul>
                  </li>
@@ -53,7 +53,6 @@
                     <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="常用操作"><i aria-hidden="true" class="fa fa-server"></i>&nbsp;操作<b class="caret"></b></a>
                     <ul class="dropdown-menu theme" >
                         <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="克隆会话">&nbsp;克隆会话</a></li>
-                        <li><a href="javascript:theme()" title="设置主题">&nbsp;设置主题</a></li>
                         <li><a href="javascript:upload()" title="上传文件">&nbsp;上传文件</a></li>
                     </ul>
                 </li>
@@ -70,7 +69,7 @@
                 <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出</a></li>
 
                 <li style="padding-top: 9px;margin-left: 18px;">
-                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文输入</label>&nbsp;&nbsp;<input id="chinese" class="china-btn" size="30" placeholder="发送中文请在这里输入" type="text">
+                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文</label>&nbsp;&nbsp;<input id="chinese" class="china-btn" size="30" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="chinput" style="margin-top: -3px;">发送</div>
                 </li>
                 <li style="float: right;margin-right: 10px;"><a href="https://github.com/wolfboys/opencron" target="_blank"><i aria-hidden="true" class="fa fa-github" style="font-size:35px;position:absolute;top:6px"></i></a></li>
