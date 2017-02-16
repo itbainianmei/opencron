@@ -70,7 +70,7 @@
 
                 <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出</a></li>
 
-                <li style="padding-top: 12px;margin-left: 18px;">
+                <li style="padding-top: 11px;margin-left: 18px;">
                     <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文</label>&nbsp;&nbsp;<input id="chinese" class="china-btn" size="30" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="chinput">发送</div>
                 </li>
