@@ -11,13 +11,6 @@ body{
     color: #7A7A7A;
 }
 
-.term-logo {
-    font-size: 30px;
-    font-weight: 200;
-    margin-right: 0px;
-    margin-top: -4px;
-    margin-left: 10px;
-}
 
 .navbar {
     position: absolute;
@@ -27,6 +20,7 @@ body{
     width:100%;
     left: 0px;
     min-height: 45px;
+    font-size: 15px;
 }
 
 .container{
@@ -40,7 +34,7 @@ body{
 }
 
 .navbar-nav > li > a{
-    line-height: 15px;
+    padding: 15px;
 }
 
 .dropdown-menu{
@@ -49,6 +43,14 @@ body{
 
 .dropdown-menu > li > a {
     color: #7A7A7A;
+}
+
+.term-logo {
+    font-size: 30px;
+    font-weight: 200;
+    margin-right: 0px;
+    margin-left: 10px;
+    margin-top: -3px;
 }
 
 .fa{
