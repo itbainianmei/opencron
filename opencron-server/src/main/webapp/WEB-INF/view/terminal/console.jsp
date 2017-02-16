@@ -41,10 +41,12 @@
                 <li class="dropdown">
                      <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" title="主题"><i aria-hidden="true" class="fa fa-gear"></i>&nbsp;主题<b class="caret"></b></a>
                      <ul class="dropdown-menu theme" >
-                         <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
-                         <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
+                         <li><a theme="default" href="javascript:void(0)"><span class="circle" style="background-color:#cccccc"></span>&nbsp;默认</a></li>
                          <li><a theme="black" href="javascript:void(0)"><span class="circle" style="background-color:black"></span>&nbsp;黑色</a></li>
-                         <li><a theme="blue" href="javascript:void(0)"><span class="circle" style="background-color:blue"></span>&nbsp;蓝色</a></li>
+                         <li><a theme="green" href="javascript:void(0)"><span class="circle" style="background-color:green"></span>&nbsp;绿色</a></li>
+                         <li><a theme="yellow" href="javascript:void(0)"><span class="circle" style="background-color:yellow"></span>&nbsp;黄色</a></li>
+                         <li><a theme="white" href="javascript:void(0)"><span class="circle" style="background-color:white"></span>&nbsp;白色</a></li>
+                         <li><a theme="gray" href="javascript:void(0)"><span class="circle" style="background-color:gray"></span>&nbsp;灰色</a></li>
                      </ul>
                  </li>
                 <li class="dropdown">
@@ -101,15 +103,20 @@
 </div>
 
 
-
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-        new OpencronTerm('${token}','${csrf}');
+        var opencronTerm =  new OpencronTerm('${token}','${csrf}','${theme}');
         //去掉a点击时的虚线框
         $(".container").find("a").each(function (i,a) {
             $(a).focus(function () {
                 this.blur();
+            });
+        });
+
+        $(".theme").find("a").each(function (i,a) {
+            $(a).click(function () {
+                opencronTerm.theme($(this).attr("theme"));
             });
         });
 

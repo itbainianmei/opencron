@@ -171,6 +171,11 @@ public class TerminalService {
         return queryDao.sqlQuery(Terminal.class, sql, user.getUserId());
     }
 
+    public void theme(Terminal terminal,String theme) throws Exception {
+        terminal.setTheme(theme);
+        saveOrUpdate(terminal);
+    }
+
     public static class TerminalClient {
 
         private String clientId;//每次生成的唯一值token

@@ -130,6 +130,7 @@ public class TerminalController extends BaseController {
         if (terminal!=null) {
             request.setAttribute("name",terminal.getName()+"("+terminal.getHost()+")");
             request.setAttribute("token",token);
+            request.setAttribute("theme",terminal.getTheme());
             List<Terminal> terminas = termService.getListByUser(terminal.getUser());
             request.setAttribute("terms",terminas);
             return "/terminal/console";
@@ -154,6 +155,15 @@ public class TerminalController extends BaseController {
         TerminalClient terminalClient = TerminalSession.get(token);
         if (terminalClient!=null) {
             terminalClient.resize(cols,rows,width,height);
+        }
+        WebUtils.writeHtml(response,"");
+    }
+
+    @RequestMapping("/theme")
+    public void theme(HttpServletResponse response, String token,String theme) throws Exception {
+        TerminalClient terminalClient = TerminalSession.get(token);
+        if (terminalClient!=null) {
+            termService.theme(terminalClient.getTerminal(),theme);
         }
         WebUtils.writeHtml(response,"");
     }

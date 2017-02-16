@@ -46,6 +46,7 @@ public class Terminal implements Serializable{
     private String host;
     private int port;
     private String userName;
+    private String theme;
 
     @Lob
     @Column(columnDefinition = "BLOB")
@@ -163,6 +164,14 @@ public class Terminal implements Serializable{
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     @Override

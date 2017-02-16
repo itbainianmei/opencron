@@ -79,6 +79,25 @@
             "#eeeeec"
         ]
     });
+    self.changeColor(self.args[2]);
+    var size = this.size();
+    var url = this.contextPath+'/terminal.ws';
+    var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
+
+    if ('WebSocket' in window) {
+        self.socket = new WebSocket(url+params);
+    } else if ('MozWebSocket' in window) {
+        self.socket = new MozWebSocket(url+params);
+    } else {
+        url = "http://"+window.location.host+"/terminal.js";
+        self.socket= SockJS(url+params);
+    }
+    self.event();
+};
+
+
+;OpencronTerm.prototype.event = function () {
+    var self = this;
     self.term.open(self.termNode.empty()[0]);
     self.display = self.size();
     self.term.on('data', function(data) {
@@ -123,20 +142,6 @@
 
     self.resize();
 
-    var size = this.size();
-
-    var url = this.contextPath+'/terminal.ws';
-    var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
-
-    if ('WebSocket' in window) {
-        self.socket = new WebSocket(url+params);
-    } else if ('MozWebSocket' in window) {
-        self.socket = new MozWebSocket(url+params);
-    } else {
-        url = "http://"+window.location.host+"/terminal.js";
-        self.socket= SockJS(url+params);
-    }
-
     self.socket.onerror = function() {
         self.term.write("Sorry! opencron terminal connect error!please try again.\n");
         window.clearInterval(self.term._blink);
@@ -172,36 +177,88 @@
         document.getElementById("unfocusinput").focus();
         $(".terminal-cursor").remove();
     };
-
 };
-/*
 
 ;OpencronTerm.prototype.theme = function () {
+    var self = this;
     'use strict';
-    var yellow  = {
+    self.term = null;
+    self.termNode = $("#term");
+    self.term = new Terminal({
+        cols: self.size().cols,
+        rows: self.size().rows,
+        useStyle: true,
+        screenKeys: true,
+        cursorBlink: false,
+        convertEol: true,
         colors: [
-            '#000000',
-            '#cd0000',
-            '#00cd00',
-            '#cdcd00',
-            '#0000ee',
-            '#cd00cd',
-            '#00cdcd',
-            '#e5e5e5',
-            '#7f7f7f',
-            '#ff0000',
-            '#00ff00',
-            '#ffff00',
-            '#5c5cff',
-            '#ff00ff',
-            '#00ffff',
-            '#ffffff'
-        ],
-        color256:'#FFFFFF',
-        color257:'#000000'
+            "#2e3436",
+            "#cc0000",
+            "#4e9a06",
+            "#c4a000",
+            "#3465a4",
+            "#75507b",
+            "#06989a",
+            "#d3d7cf",
+            "#555753",
+            "#ef2929",
+            "#8ae234",
+            "#fce94f",
+            "#729fcf",
+            "#ad7fa8",
+            "#34e2e2",
+            "#eeeeec"
+        ]
+    });
+    self.changeColor(arguments[0]);
+    //同步到后台服务器
+    $.ajax({
+        url: '/terminal/theme?token=' + self.args[0] + "&csrf=" + self.args[1] + '&theme=' + arguments[0]||"default" ,
+        cache: false
+    });
+
+    self.term.open(self.termNode.empty()[0]);
+    self.term.write("change theme successful!...");
+    self.socket.send("\r");
+    self.event();
+
+};
+
+
+;OpencronTerm.prototype.changeColor = function () {
+    var self = this;
+    switch ( arguments[0]||"default" ){
+        case "yellow":
+            self.term.colors[256] = '#FFFFDD';
+            self.term.colors[257] = '#000000';
+            $('body').css("background-color","#FFFFDD");
+            $(".terminal").css("border","5px solid #FFFFDD");
+            break;
+        case "green":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#00FF00';
+            $('body').css("background-color","#000000");
+            $(".terminal").css("border","5px solid #000000");
+            break;
+        case "black":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#FFFFFF';
+            $('body').css("background-color","#000000");
+            $(".terminal").css("border","5px solid #000000");
+            break;
+        case "gray":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#AAAAAA';
+            $('body').css("background-color","#000000");
+            $(".terminal").css("border","5px solid #000000");
+            break;
+        case "white":
+            self.term.colors[256] = '#FFFFFF';
+            self.term.colors[257] = '#000000';
+            $('body').css("background-color","#FFFFFF");
+            $(".terminal").css("border","5px solid #FFFFFF");
+            break;
+        default:
+            break
     }
-    this.term.colors = yellow.colors;
-    this.term.colors[256] = yellow.color256;
-    this.term.colors[257] = yellow.color257;
 }
-*/
