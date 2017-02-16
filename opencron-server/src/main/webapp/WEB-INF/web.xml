@@ -28,7 +28,7 @@
     </listener>
 
     <listener>
-        <listener-class>org.opencron.server.service.SingleLoginListener</listener-class>
+        <listener-class>org.opencron.server.handler.SingleLoginListener</listener-class>
     </listener>
 
     <filter>

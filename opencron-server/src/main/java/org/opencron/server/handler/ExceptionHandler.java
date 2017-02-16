@@ -19,7 +19,7 @@
  * under the License.
  */
 
-package org.opencron.server.service;
+package org.opencron.server.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

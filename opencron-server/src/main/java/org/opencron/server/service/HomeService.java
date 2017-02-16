@@ -26,6 +26,7 @@ import org.opencron.common.utils.PropertyPlaceholder;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Log;
 import org.opencron.server.domain.User;
+import org.opencron.server.handler.SingleLoginListener;
 import org.opencron.server.job.OpencronTools;
 import org.opencron.common.utils.Digests;
 import org.opencron.common.utils.Encodes;

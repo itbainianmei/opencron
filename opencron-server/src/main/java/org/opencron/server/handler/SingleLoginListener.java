@@ -21,7 +21,7 @@
  *
  */
 
-package org.opencron.server.service;
+package org.opencron.server.handler;
 
 import org.opencron.server.domain.User;
 import org.opencron.server.job.OpencronTools;

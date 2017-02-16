@@ -20,7 +20,7 @@
  */
 
 
-package org.opencron.server.service;
+package org.opencron.server.handler;
 
 
 import org.apache.commons.lang.StringEscapeUtils;

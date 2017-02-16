@@ -45,7 +45,7 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**" />
-            <bean class="org.opencron.server.service.SecurityHandlerInterceptor" />
+            <bean class="org.opencron.server.handler.SecurityHandlerInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>
 
@@ -68,7 +68,7 @@
     </bean>
 
     <!-- 全局异常配置 -->
-    <bean id="exceptionHandler" class="org.opencron.server.service.ExceptionHandler" />
+    <bean id="exceptionHandler" class="org.opencron.server.handler.ExceptionHandler" />
 
 
 </beans>
