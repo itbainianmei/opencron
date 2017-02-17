@@ -176,23 +176,18 @@
 };
 
 ;OpencronTerm.prototype.theme = function () {
-    var self = this;
     'use strict';
-    self.setColor(arguments[0]);
+    this.setColor(arguments[0]);
     $(".terminal").css({
-        "background-color":self.term.colors[256],
-        "color":self.term.colors[257]
+        "background-color":this.term.colors[256],
+        "color":this.term.colors[257]
     });
     /**
      * 别动,很神奇....非读熟源码是写不出下面的代码的.
      */
     $("#term-style").remove();
     var style = document.getElementById('term-style');
-    if (style) return;
-
     var head = document.getElementsByTagName('head')[0];
-    if (!head) return;
-
     var style = document.createElement('style');
     style.id = 'term-style';
     // textContent doesn't work well with IE for <style> elements.
@@ -200,53 +195,52 @@
         + '.terminal {\n'
         + '  float: left;\n'
         + '  font-family: Courier, monospace;\n'
-        + '  font-size: '+self.term.fontSize+'px;\n'
-        + '  line-height: '+self.term.lineHeight+'px;\n'
-        + '  color: ' + self.term.colors[256] + ';\n'
-        + '  background: ' + self.term.colors[257] + ';\n'
+        + '  font-size: '+this.term.fontSize+'px;\n'
+        + '  line-height: '+this.term.lineHeight+'px;\n'
+        + '  color: ' + this.term.colors[256] + ';\n'
+        + '  background: ' + this.term.colors[257] + ';\n'
         + '  padding: 5px;\n'
         + '}\n'
         + '\n'
         + '.terminal-cursor {\n'
-        + '  color: ' + self.term.colors[256] + ';\n'
-        + '  background: ' + self.term.colors[257] + ';\n'
+        + '  color: ' + this.term.colors[256] + ';\n'
+        + '  background: ' + this.term.colors[257] + ';\n'
         + '}\n';
     head.insertBefore(style, head.firstChild);
 
     //同步到后台服务器
     $.ajax({
-        url: '/terminal/theme?token=' + self.args[0] + "&csrf=" + self.args[1] + '&theme=' + arguments[0]||"default" ,
+        url: '/terminal/theme?token=' + this.args[0] + "&csrf=" + this.args[1] + '&theme=' + arguments[0]||"default" ,
         cache: false
     });
 };
 
 ;OpencronTerm.prototype.setColor = function () {
-    var self = this;
     switch ( arguments[0]||"default" ){
         case "yellow":
-            self.term.colors[256] = '#FFFFDD';
-            self.term.colors[257] = '#000000';
+            this.term.colors[256] = '#FFFFDD';
+            this.term.colors[257] = '#000000';
             break;
         case "green":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#00FF00';
+            this.term.colors[256] = '#000000';
+            this.term.colors[257] = '#00FF00';
             break;
         case "black":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#FFFFFF';
+            this.term.colors[256] = '#000000';
+            this.term.colors[257] = '#FFFFFF';
             break;
         case "gray":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#AAAAAA';
+            this.term.colors[256] = '#000000';
+            this.term.colors[257] = '#AAAAAA';
             break;
         case "white":
-            self.term.colors[256] = '#FFFFFF';
-            self.term.colors[257] = '#000000';
+            this.term.colors[256] = '#FFFFFF';
+            this.term.colors[257] = '#000000';
             break;
         default:
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#cccccc';
-            break
+            this.term.colors[256] = '#000000';
+            this.term.colors[257] = '#cccccc';
+            break;
     }
-    $('body').css("background-color",self.term.colors[256]);
+    $('body').css("background-color",this.term.colors[256]);
 }
