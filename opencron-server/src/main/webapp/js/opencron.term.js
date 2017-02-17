@@ -92,12 +92,7 @@
         url = "http://"+window.location.host+"/terminal.js";
         self.socket= SockJS(url+params);
     }
-    self.event();
-};
 
-
-;OpencronTerm.prototype.event = function () {
-    var self = this;
     self.term.open(self.termNode.empty()[0]);
     self.display = self.size();
     self.term.on('data', function(data) {
@@ -177,6 +172,7 @@
         document.getElementById("unfocusinput").focus();
         $(".terminal-cursor").remove();
     };
+
 };
 
 ;OpencronTerm.prototype.theme = function () {
