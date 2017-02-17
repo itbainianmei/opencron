@@ -177,7 +177,11 @@
 
 ;OpencronTerm.prototype.theme = function () {
     'use strict';
+    if (this.themeName == arguments[0]){
+        return;
+    }
     this.setColor(arguments[0]);
+
     $(".terminal").css({
         "background-color":this.term.colors[256],
         "color":this.term.colors[257]
@@ -210,13 +214,14 @@
 
     //同步到后台服务器
     $.ajax({
-        url: '/terminal/theme?token=' + this.args[0] + "&csrf=" + this.args[1] + '&theme=' + arguments[0]||"default" ,
+        url: '/terminal/theme?token=' + this.args[0] + "&csrf=" + this.args[1] + '&theme=' + this.themeName ,
         cache: false
     });
 };
 
 ;OpencronTerm.prototype.setColor = function () {
-    switch ( arguments[0]||"default" ){
+    this.themeName = arguments[0]||"default";
+    switch ( this.themeName ) {
         case "yellow":
             this.term.colors[256] = '#FFFFDD';
             this.term.colors[257] = '#000000';
@@ -243,4 +248,5 @@
             break;
     }
     $('body').css("background-color",this.term.colors[256]);
+
 }
