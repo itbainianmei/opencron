@@ -188,10 +188,17 @@ public class TerminalService {
         private InputStream inputStream;
         private OutputStream outputStream;
         private BufferedWriter writer;
+
+        //获取路径相关变量
         private String pwd;
         private boolean sendTempCmd = false;
         private String sendTempCmdId;
 
+        //控制命令(exit)终端退出相关变量
+        private boolean sendEnter;
+        private String sendData;
+
+        //连接时长相关变量
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
         public static final int SESSION_TIMEOUT = 60000;
         public static final int CHANNEL_TIMEOUT = 60000;
@@ -252,6 +259,14 @@ public class TerminalService {
                                 }
                             } else {
                                 webSocketSession.sendMessage(new TextMessage(message));
+                                if ( sendEnter ){
+                                    if ( message.replaceAll("\r\n","").equals("logout") ) {
+                                        if ( sendData.equals("exit") ) {
+                                            closed = true;
+                                        }
+                                    }
+                                    sendData="";
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -268,6 +283,17 @@ public class TerminalService {
          * @throws IOException
          */
         public void write(String message) throws IOException {
+            if (message.equals("\r")) {
+                if (closed) {
+                    disconnect();
+                }else {
+                    sendEnter = true;
+                }
+            }else {
+                sendEnter =false;
+                sendData+=message;
+            }
+
             if (writer != null) {
                 writer.write(message);
                 writer.flush();
@@ -305,7 +331,6 @@ public class TerminalService {
             }
         }
 
-
         public void disconnect() throws IOException {
             if (writer != null) {
                 writer.close();
@@ -319,6 +344,10 @@ public class TerminalService {
                 jSch = null;
             }
             closed = true;
+        }
+
+        public void resize(Integer cols, Integer rows, Integer width, Integer height) throws IOException {
+            channelShell.setPtySize(cols, rows, width, height);
         }
 
         public Terminal getTerminal() {
@@ -339,10 +368,6 @@ public class TerminalService {
 
         public String getHttpSessionId() {
             return httpSessionId;
-        }
-
-        public void resize(Integer cols, Integer rows, Integer width, Integer height) throws IOException {
-            channelShell.setPtySize(cols, rows, width, height);
         }
 
         public String getClientId() {
