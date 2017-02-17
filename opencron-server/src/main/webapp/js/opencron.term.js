@@ -3,38 +3,38 @@
     this.term = null;
     this.termNode = null;
     this.args = arguments;
-    this.sendLine = "";//发送的一行命令
-    this.contextPath = (window.location.protocol === "https:"?"wss://":"ws://")+window.location.host;
+    this.contextPath = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;
     this.open();
 }
 
 ;OpencronTerm.prototype.resize = function () {
     var self = this;
-   $(window).resize(function () {
-       window.setTimeout(function () {
-           var currSize = self.size();
-           if (self.display.cols != currSize.cols || self.display.rows != currSize.rows) {
-               self.display = currSize;
-               self.term.resize(self.display.cols,self.display.rows);
-               $.ajax({
-                   url: '/terminal/resize?token=' + self.args[0] + "&csrf=" + self.args[1] + '&cols=' + self.display.cols + '&rows=' + self.display.rows+"&width="+self.display.width+"&height="+self.display.height,
-                   cache: false
-               });
-           }
-       },1000);
-   });
+    $(window).resize(function () {
+        window.setTimeout(function () {
+            var currSize = self.size();
+            if (self.display.cols != currSize.cols || self.display.rows != currSize.rows) {
+                self.display = currSize;
+                self.term.resize(self.display.cols, self.display.rows);
+                $.ajax({
+                    url: '/terminal/resize?token=' + self.args[0] + "&csrf=" + self.args[1] + '&cols=' + self.display.cols + '&rows=' + self.display.rows + "&width=" + self.display.width + "&height=" + self.display.height,
+                    cache: false
+                });
+            }
+        }, 1000);
+    });
 }
 
-;OpencronTerm.prototype.size = function () {
+;
+OpencronTerm.prototype.size = function () {
     var cols = Math.floor($(window).innerWidth() / 7.2261);//基于fontSize=12的cols参考值
     var span = $("<span>");
     $('body').append(span);
-    var array = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m','1','2','3','4','5','6','7','8','9','0'];
+    var array = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
     var i = 0;
-    while (true){
-        span.text( span.text()+ (i <array.length?array[i]:array[i % (array.length-1)]) );
-        if( $(window).width() < span.width() ){
-            cols = i-1;
+    while (true) {
+        span.text(span.text() + (i < array.length ? array[i] : array[i % (array.length - 1)]));
+        if ($(window).width() < span.width()) {
+            cols = i - 1;
             break;
         }
         ++i;
@@ -42,15 +42,15 @@
     span.remove();
     return {
         width: $(window).innerWidth(),
-        height: $(window).innerHeight()-$("#navigation").outerHeight(),
+        height: $(window).innerHeight() - $("#navigation").outerHeight(),
         cols: cols,
-        rows: Math.floor( ($(window).innerHeight()-$("#navigation").outerHeight()- 4 )/ 16)
+        rows: Math.floor(($(window).innerHeight() - $("#navigation").outerHeight() - 4 ) / 16)
     };
 }
 
-;OpencronTerm.prototype.open = function () {
+;
+OpencronTerm.prototype.open = function () {
     var self = this;
-
     self.termNode = $("#term");
     self.term = new Terminal({
         termName: "xterm",
@@ -81,34 +81,38 @@
     });
     self.setColor(self.args[2]);
     var size = this.size();
-    var url = this.contextPath+'/terminal.ws';
-    var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
+    var url = this.contextPath + '/terminal.ws';
+    var params = "?cols=" + size.cols + "&rows=" + size.rows + "&width=" + size.width + "&height=" + size.height;
 
     if ('WebSocket' in window) {
-        self.socket = new WebSocket(url+params);
+        self.socket = new WebSocket(url + params);
     } else if ('MozWebSocket' in window) {
-        self.socket = new MozWebSocket(url+params);
+        self.socket = new MozWebSocket(url + params);
     } else {
-        url = "http://"+window.location.host+"/terminal.js";
-        self.socket= SockJS(url+params);
+        url = "http://" + window.location.host + "/terminal.js";
+        self.socket = SockJS(url + params);
     }
 
     self.term.open(self.termNode.empty()[0]);
     self.display = self.size();
-    self.term.on('data', function(data) {
-        if (self.disconnect){
+    self.term.on('data', function (data) {
+        if (self.disconnect) {
             self.socket.close();
-        }else {
-            self.sendData = data;
-            self.sendLine += data;
+        } else {
+            if (data == "\r") {
+                self.sendEnter = true;
+            } else {
+                self.sendData += data;
+                self.sendEnter = false;
+            }
             self.socket.send(data);
         }
     });
 
     //给发送按钮绑定事件
-    $("#chinput").bind("click",function () {
+    $("#chinput").bind("click", function () {
         var chinese = $("#chinese").val();
-        if ( chinese && chinese.length>0 ){
+        if (chinese && chinese.length > 0) {
             self.socket.send(chinese);
             $("#chinese").val('');
         }
@@ -122,9 +126,9 @@
 
     $(document).keypress(function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
-        if ( keyCode == 13 ){
+        if (keyCode == 13) {
             //在中文输入框里点击Enter按钮触发发送事件.
-            if (self.hasOwnProperty("chfocus") && self.chfocus ) {
+            if (self.hasOwnProperty("chfocus") && self.chfocus) {
                 $("#chinput").click();
             }
             //(终端已经logout的情况下,再点击Enter则关闭当前页面
@@ -137,30 +141,29 @@
 
     self.resize();
 
-    self.socket.onerror = function() {
+    self.socket.onerror = function () {
         self.term.write("Sorry! opencron terminal connect error!please try again.\n");
         window.clearInterval(self.term._blink);
     };
 
-    self.socket.onopen = function(event) {
+    self.socket.onopen = function (event) {
         //self.term.write("Welcome to opencron terminal!Connect Starting...\n");
     };
 
-    self.socket.onmessage = function(event) {
-        self.term.write(event.data);
-        if (self.sendData == "\r") {
-            if (event.data == "\r\nlogout\r\n" ){
-                if (self.sendLine == "exit\r"){
+    self.socket.onmessage = function (event) {
+        var data = event.data;
+        self.term.write(data);
+        if (self.sendEnter) {
+            if (data.replace(/\r\n/mg, "") == "logout") {
+                if (self.sendData == "exit") {
                     self.disconnect = true;
-                }else if(self.sendLine.sub){
-
                 }
             }
-            self.sendLine = "";
+            self.sendData = "";
         }
     };
 
-    self.socket.onclose = function() {
+    self.socket.onclose = function () {
         self.term.write("Thank you for using opencron terminal! bye...");
         //清除光标闪烁
         window.clearInterval(self.term._blink);
@@ -177,14 +180,14 @@
 
 ;OpencronTerm.prototype.theme = function () {
     'use strict';
-    if (this.themeName == arguments[0]){
+    if (this.themeName == arguments[0]) {
         return;
     }
     this.setColor(arguments[0]);
 
     $(".terminal").css({
-        "background-color":this.term.colors[256],
-        "color":this.term.colors[257]
+        "background-color": this.term.colors[256],
+        "color": this.term.colors[257]
     }).focus();
     /**
      * 别动,很神奇....非读熟源码是写不出下面的代码的.
@@ -199,8 +202,8 @@
         + '.terminal {\n'
         + '  float: left;\n'
         + '  font-family: Courier, monospace;\n'
-        + '  font-size: '+this.term.fontSize+'px;\n'
-        + '  line-height: '+this.term.lineHeight+'px;\n'
+        + '  font-size: ' + this.term.fontSize + 'px;\n'
+        + '  line-height: ' + this.term.lineHeight + 'px;\n'
         + '  color: ' + this.term.colors[256] + ';\n'
         + '  background: ' + this.term.colors[257] + ';\n'
         + '  padding: 5px;\n'
@@ -214,14 +217,14 @@
 
     //同步到后台服务器
     $.ajax({
-        url: '/terminal/theme?token=' + this.args[0] + "&csrf=" + this.args[1] + '&theme=' + this.themeName ,
+        url: '/terminal/theme?token=' + this.args[0] + "&csrf=" + this.args[1] + '&theme=' + this.themeName,
         cache: false
     });
 };
 
 ;OpencronTerm.prototype.setColor = function () {
-    this.themeName = arguments[0]||"default";
-    switch ( this.themeName ) {
+    this.themeName = arguments[0] || "default";
+    switch (this.themeName) {
         case "yellow":
             this.term.colors[256] = '#FFFFDD';
             this.term.colors[257] = '#000000';
@@ -247,6 +250,6 @@
             this.term.colors[257] = '#cccccc';
             break;
     }
-    $('body').css("background-color",this.term.colors[256]);
+    $('body').css("background-color", this.term.colors[256]);
 
 }
