@@ -79,7 +79,7 @@
             "#eeeeec"
         ]
     });
-    self.changeColor(self.args[2]);
+    self.setColor(self.args[2]);
     var size = this.size();
     var url = this.contextPath+'/terminal.ws';
     var params = "?cols="+size.cols+"&rows="+size.rows+"&width="+size.width+"&height="+size.height;
@@ -182,84 +182,11 @@
 ;OpencronTerm.prototype.theme = function () {
     var self = this;
     'use strict';
-    self.term = null;
-    self.termNode = $("#term");
-    self.term = new Terminal({
-        cols: self.size().cols,
-        rows: self.size().rows,
-        useStyle: true,
-        screenKeys: true,
-        cursorBlink: false,
-        convertEol: true,
-        colors: [
-            "#2e3436",
-            "#cc0000",
-            "#4e9a06",
-            "#c4a000",
-            "#3465a4",
-            "#75507b",
-            "#06989a",
-            "#d3d7cf",
-            "#555753",
-            "#ef2929",
-            "#8ae234",
-            "#fce94f",
-            "#729fcf",
-            "#ad7fa8",
-            "#34e2e2",
-            "#eeeeec"
-        ]
+    self.setColor(arguments[0]);
+    $(".terminal").css({
+        "background-color":self.term.colors[256],
+        "color":self.term.colors[257]
     });
-    self.changeColor(arguments[0]);
-    //同步到后台服务器
-    $.ajax({
-        url: '/terminal/theme?token=' + self.args[0] + "&csrf=" + self.args[1] + '&theme=' + arguments[0]||"default" ,
-        cache: false
-    });
-    self.term.open(self.termNode.empty()[0]);
-    self.term.write("change theme successful.Thank you for using opencron terminal.");
-    self.socket.send("\r");
-    self.event();
-};
-
-
-;OpencronTerm.prototype.changeColor = function () {
-    var self = this;
-    switch ( arguments[0]||"default" ){
-        case "yellow":
-            self.term.colors[256] = '#FFFFDD';
-            self.term.colors[257] = '#000000';
-            $('body').css("background-color","#FFFFDD");
-            $(".terminal").css("border","5px solid #FFFFDD");
-            break;
-        case "green":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#00FF00';
-            $('body').css("background-color","#000000");
-            $(".terminal").css("border","5px solid #000000");
-            break;
-        case "black":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#FFFFFF';
-            $('body').css("background-color","#000000");
-            $(".terminal").css("border","5px solid #000000");
-            break;
-        case "gray":
-            self.term.colors[256] = '#000000';
-            self.term.colors[257] = '#AAAAAA';
-            $('body').css("background-color","#000000");
-            $(".terminal").css("border","5px solid #000000");
-            break;
-        case "white":
-            self.term.colors[256] = '#FFFFFF';
-            self.term.colors[257] = '#000000';
-            $('body').css("background-color","#FFFFFF");
-            $(".terminal").css("border","5px solid #FFFFFF");
-            break;
-        default:
-            break
-    }
-
     /**
      * 别动,很神奇....非读熟源码是写不出下面的代码的.
      */
@@ -290,4 +217,40 @@
         + '}\n';
     head.insertBefore(style, head.firstChild);
 
+    //同步到后台服务器
+    $.ajax({
+        url: '/terminal/theme?token=' + self.args[0] + "&csrf=" + self.args[1] + '&theme=' + arguments[0]||"default" ,
+        cache: false
+    });
+};
+
+;OpencronTerm.prototype.setColor = function () {
+    var self = this;
+    switch ( arguments[0]||"default" ){
+        case "yellow":
+            self.term.colors[256] = '#FFFFDD';
+            self.term.colors[257] = '#000000';
+            break;
+        case "green":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#00FF00';
+            break;
+        case "black":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#FFFFFF';
+            break;
+        case "gray":
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#AAAAAA';
+            break;
+        case "white":
+            self.term.colors[256] = '#FFFFFF';
+            self.term.colors[257] = '#000000';
+            break;
+        default:
+            self.term.colors[256] = '#000000';
+            self.term.colors[257] = '#cccccc';
+            break
+    }
+    $('body').css("background-color",self.term.colors[256]);
 }
