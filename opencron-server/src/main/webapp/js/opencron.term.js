@@ -181,7 +181,7 @@
     $(".terminal").css({
         "background-color":this.term.colors[256],
         "color":this.term.colors[257]
-    });
+    }).focus();
     /**
      * 别动,很神奇....非读熟源码是写不出下面的代码的.
      */
