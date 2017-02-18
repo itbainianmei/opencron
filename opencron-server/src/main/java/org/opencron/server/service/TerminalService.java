@@ -196,7 +196,7 @@ public class TerminalService {
 
         //控制命令(exit)终端退出相关变量
         private boolean sendEnter;
-        private String sendData;
+        private String sendData = "";
 
         //连接时长相关变量
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;

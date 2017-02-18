@@ -96,17 +96,7 @@ OpencronTerm.prototype.open = function () {
     self.term.open(self.termNode.empty()[0]);
     self.display = self.size();
     self.term.on('data', function (data) {
-        if (self.disconnect) {
-            self.socket.close();
-        } else {
-            if (data == "\r") {
-                self.sendEnter = true;
-            } else {
-                self.sendData += data;
-                self.sendEnter = false;
-            }
-            self.socket.send(data);
-        }
+        self.socket.send(data);
     });
 
     //给发送按钮绑定事件
@@ -151,16 +141,7 @@ OpencronTerm.prototype.open = function () {
     };
 
     self.socket.onmessage = function (event) {
-        var data = event.data;
-        self.term.write(data);
-        if (self.sendEnter) {
-            if (data.replace(/\r\n/mg, "") == "logout") {
-                if (self.sendData == "exit") {
-                    self.disconnect = true;
-                }
-            }
-            self.sendData = "";
-        }
+        self.term.write(event.data);
     };
 
     self.socket.onclose = function () {
