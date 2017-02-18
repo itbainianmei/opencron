@@ -22,6 +22,7 @@
 package org.opencron.server.service;
 
 import com.jcraft.jsch.*;
+import org.opencron.common.utils.CommonUtils;
 import org.opencron.common.utils.DigestUtils;
 import org.opencron.server.dao.QueryDao;
 import org.opencron.server.domain.Terminal;
@@ -196,7 +197,8 @@ public class TerminalService {
 
         //控制命令(exit)终端退出相关变量
         private boolean sendEnter;
-        private String sendData = "";
+        private boolean receiveEnd = false;
+        private StringBuffer sendBuffer = new StringBuffer();
 
         //连接时长相关变量
         public static final int SERVER_ALIVE_INTERVAL = 60 * 1000;
@@ -258,14 +260,20 @@ public class TerminalService {
                                     logger.info("[opencron] Sftp upload file target path:{}", pwd);
                                 }
                             } else {
-                                webSocketSession.sendMessage(new TextMessage(message));
-                                if ( sendEnter ){
-                                    if ( message.replaceAll("\r\n","").equals("logout") ) {
-                                        if ( sendData.equals("exit") ) {
+                                webSocketSession.sendMessage( new TextMessage(message) );
+                                if ( sendEnter ) {
+                                    String trimMessage = message.replaceAll("\r\n","");
+                                    if (CommonUtils.isEmpty(trimMessage)) {
+                                        receiveEnd = false;
+                                    }else {
+                                        if ( sendBuffer.toString().equals("exit") && trimMessage.equals("logout") ) {
                                             closed = true;
                                         }
+                                        receiveEnd = true;
                                     }
-                                    sendData="";
+                                    if (receiveEnd) {
+                                        sendBuffer.setLength(0);
+                                    }
                                 }
                             }
                         }
@@ -290,8 +298,8 @@ public class TerminalService {
                     sendEnter = true;
                 }
             }else {
-                sendEnter =false;
-                sendData+=message;
+                sendEnter = false;
+                sendBuffer.append(message);
             }
 
             if (writer != null) {
@@ -559,8 +567,6 @@ public class TerminalService {
         }
     }
 
-
 }
-
 
 
