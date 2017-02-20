@@ -191,17 +191,20 @@ public class HomeController extends BaseController {
             return;
         }
         if (status == 200) {
-            User user = OpencronTools.getUser(session);
+            //登陆成功了则生成csrf...
+            String csrf = OpencronTools.getCSRF(session);
+            logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
 
+            User user = OpencronTools.getUser(session);
             //提示用户更改默认密码
             byte[] salt = Encodes.decodeHex(user.getSalt());
             byte[] hashPassword = Digests.sha1(DigestUtils.md5Hex("opencron").toUpperCase().getBytes(), salt, 1024);
             String hashPass = Encodes.encodeHex(hashPassword);
 
-            String format = "{\"status\":\"%s\",\"%s\":\"%s\"}";
+            String format = "{\"status\":\"%s\",\"%s\":\"%s\",\"%s\":\"%s\"}";
 
             if (user.getUserName().equals("opencron") && user.getPassword().equals(hashPass)) {
-                WebUtils.writeJson(response, String.format(format, "edit", "userId", user.getUserId()));
+                WebUtils.writeJson(response, String.format(format, "edit", "userId", user.getUserId(),"csrf",csrf));
                 return;
             }
 
@@ -211,11 +214,7 @@ public class HomeController extends BaseController {
                 IOUtils.writeFile(new File(path), user.getHeaderpic().getBinaryStream());
                 user.setHeaderPath(WebUtils.getWebUrlPath(request) + "/upload/" + name);
             }
-
-            //登陆成功了则生成csrf...
-            String csrf = OpencronTools.getCSRF(session);
-            logger.info("[opencron]login seccussful,generate csrf:{}",csrf);
-            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf));
+            WebUtils.writeJson(response, String.format(format, "success", "url", "/home?csrf="+csrf,"csrf",csrf));
             return;
         }
     }

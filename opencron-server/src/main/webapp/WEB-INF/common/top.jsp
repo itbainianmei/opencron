@@ -131,7 +131,7 @@
 				<div id="sidebar-calendar"></div>
 			</div>
 
-			<div class="s-widget m-b-25">
+			<div class="s-widget m-b-25 opencron-progress" style="display: none;" >
 				<h2 class="tile-title side-tile-title tile-title-color">
 					报告明细
 				</h2>

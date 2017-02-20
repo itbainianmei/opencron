@@ -92,6 +92,12 @@
             -moz-opacity:0.4;
             opacity:0.4;
         }
+
+        .nodata{
+            font-size: 40px;
+            font-weight: 400;
+        }
+
         a:visited {
             color: rgba(225,225,225,1);
         }
@@ -424,7 +430,7 @@
             <div id="record-report-nodata" class="text-center record-div-nodata col-xs-12 block-color" style="height: 300px;margin-bottom: 0px">
                 <div  style="font-size: 110px;margin-top: 60px" class="eye-record-nodata">
                     <i  class="glyphicon glyphicon-eye-close"></i>
-                    <span style="font-size: 40px;">无数据</span>
+                    <span class="nodata">无记录</span>
                 </div>
             </div>
         </div>
@@ -474,7 +480,7 @@
                     <div class="p-10 text-center div-nodata"  style="background:rgba(0,0,0,0.40);border-bottom-left-radius:2px;border-bottom-right-radius:2px;height: 192px;">
                         <div  style="font-size: 110px;" class="eye-grey">
                             <i  class="glyphicon glyphicon-eye-close"></i>
-                            <span style="font-size: 40px;">无数据</span>
+                            <span class="nodata">无记录</span>
                         </div>
                     </div>
                 </div>
@@ -513,7 +519,7 @@
                     <div class="text-center div-nodata" style="margin-top: 20px">
                         <div  style="font-size: 110px;" class="eye-grey">
                             <i  class="glyphicon glyphicon-eye-close"></i>
-                            <span style="font-size: 40px;">无数据</span>
+                            <span class="nodata">无记录</span>
                         </div>
                     </div>
                 </div>
@@ -545,7 +551,7 @@
                         <div class="text-center div-nodata" style="height: 200px;margin-top: 20px; position: relative;">
                             <div  style="font-size: 110px;" class="eye-grey">
                                 <i  class="glyphicon glyphicon-eye-close"></i>
-                                <span style="font-size: 40px;">无数据</span>
+                                <span class="nodata">无记录</span>
                             </div>
                         </div>
                     </div>
@@ -649,7 +655,7 @@
                     <div class="listview narrow text-center div-nodata" id="config-view-nodata" style="height: 290px;padding-top: 55px">
                         <div  style="font-size: 110px;" class="eye-grey">
                             <i  class="glyphicon glyphicon-eye-close"></i>
-                            <span style="font-size: 40px;">无数据</span>
+                            <span class="nodata" >无记录</span>
                         </div>
                     </div>
                 </div>

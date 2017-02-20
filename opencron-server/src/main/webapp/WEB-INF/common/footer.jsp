@@ -131,6 +131,7 @@
             dataType: "json",
             success: function (data) {
                 if (data != null) {
+                    $(".opencron-progress").show();
                     var job_type = parseInt(parseFloat(data.auto / (data.auto + data.operator)) * 100);
                     if (isNaN(job_type)) {
                         $("#progress_type").css("width", "0%");
@@ -167,6 +168,10 @@
                     } else {
                         $("#progress_status").attr("data-original-title", job_status+"%").css("width", job_status + "%");
                     }
+
+                }else {
+                    $(".opencron-progress").remove();
+
                 }
             }
         });

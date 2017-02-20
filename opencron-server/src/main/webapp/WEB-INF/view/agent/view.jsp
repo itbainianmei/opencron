@@ -322,7 +322,8 @@
                     "port": port,
                     "warning": warning,
                     "mobiles": mobiles,
-                    "emailAddress": email
+                    "emailAddress": email,
+                    "comment":$("#comment").val()
                 },
                 success: function (data) {
                     if (data == "success") {

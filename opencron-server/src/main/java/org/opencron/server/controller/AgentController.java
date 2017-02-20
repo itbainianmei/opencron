@@ -120,6 +120,7 @@ public class AgentController extends BaseController {
             agent1.setMobiles(agent.getMobiles());
             agent1.setEmailAddress(agent.getEmailAddress());
         }
+        agent1.setComment(agent.getComment());
         agent1.setUpdateTime(new Date());
         agentService.addOrUpdate(agent1);
         WebUtils.writeHtml(response, "success");

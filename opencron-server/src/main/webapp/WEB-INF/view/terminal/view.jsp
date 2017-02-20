@@ -90,7 +90,7 @@
                                         $("#time_"+id).text(json.logintime);
                                     }
                                 })
-                            },2000);
+                            },5000);
 
                         });
 

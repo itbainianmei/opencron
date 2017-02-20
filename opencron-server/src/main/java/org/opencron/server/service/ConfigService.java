@@ -85,7 +85,7 @@ public class ConfigService {
             user.setUserName("opencron");
             user.setPassword(DigestUtils.md5Hex("opencron").toUpperCase());
             user.setRoleId(999L);
-            user.setRealName("benjobs");
+            user.setRealName("opencron");
             user.setEmail("benjobs@qq.com");
             user.setQq("benjobs@qq.com");
             user.setContact("13800138000");

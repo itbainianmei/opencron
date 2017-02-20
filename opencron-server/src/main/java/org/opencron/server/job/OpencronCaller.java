@@ -83,7 +83,7 @@ public class OpencronCaller {
          * ping的超时设置为5毫秒,其他默认
          */
         if (request.getAction().equals(Action.PING)) {
-            transport = new TSocket(request.getHostName(),request.getPort(),1000*5);
+            transport = new TSocket(request.getHostName(),request.getPort(),1000*10);
         }else {
             transport = new TSocket(request.getHostName(),request.getPort());
         }

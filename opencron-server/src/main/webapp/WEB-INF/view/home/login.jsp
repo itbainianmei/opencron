@@ -383,6 +383,7 @@
                             $("#error_msg").html('<font color="red">请修改初始密码</font>');
                             $("#pwdform")[0].reset();
                             $("#id").val(data.userId);
+                            $("#csrf").val(data.csrf);
                             $('#pwdModal').modal('show');
                         }
                     }
@@ -403,11 +404,7 @@
                 alert("页面异常，请刷新重试!");
                 return false;
             }
-            var pwd0 = $("#pwd0").val();
-            if (!pwd0){
-                alert("请填原密码!");
-                return false;
-            }
+
             var pwd1 = $("#pwd1").val();
             if (!pwd1){
                 alert("请填新密码!");
@@ -431,12 +428,12 @@
                 return false;
             }
             $.ajax({
-                headers:{"csrf":"${csrf}"},
+                headers:{"csrf":$("#csrf").val()},
                 type:"POST",
                 url:"${contextPath}/user/editpwd",
                 data:{
                     "id":id,
-                    "pwd0":calcMD5(pwd0),
+                    "pwd0":calcMD5($("#password").val()),
                     "pwd1":calcMD5(pwd1),
                     "pwd2":calcMD5(pwd2)
                 },
@@ -507,12 +504,7 @@
                 <div class="modal-body">
                     <form class="form-horizontal" role="form" id="pwdform">
                         <input type="hidden" id="id">
-                        <div class="form-group" style="margin-bottom: 4px;">
-                            <label for="pwd0" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;原&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
-                            <div class="col-md-9">
-                                <input type="password" class="form-control " id="pwd0" placeholder="请输入原密码">&nbsp;&nbsp;<label id="oldpwd"></label>
-                            </div>
-                        </div>
+                        <input type="hidden" id="csrf">
                         <div class="form-group" style="margin-bottom: 20px;">
                             <label for="pwd1" class="col-lab control-label"><i class="glyphicon glyphicon-lock"></i>&nbsp;&nbsp;新&nbsp;&nbsp;密&nbsp;&nbsp;码：</label>
                             <div class="col-md-9">
