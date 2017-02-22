@@ -36,12 +36,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.List;
 
 import static org.opencron.server.service.TerminalService.*;
@@ -157,6 +159,18 @@ public class TerminalController extends BaseController {
             terminalClient.resize(cols,rows,width,height);
         }
         WebUtils.writeHtml(response,"");
+    }
+
+    @RequestMapping("/sendAll")
+    public void sendAll(String token,String cmd) throws Exception {
+        cmd =  URLDecoder.decode(cmd,"UTF-8");
+        TerminalClient terminalClient = TerminalSession.get(token);
+        if (terminalClient!=null) {
+            List<TerminalClient> terminalClients = TerminalSession.findClient(terminalClient.getTerminal().getUserId());
+            for (TerminalClient client:terminalClients) {
+                client.write(cmd);
+            }
+        }
     }
 
     @RequestMapping("/theme")

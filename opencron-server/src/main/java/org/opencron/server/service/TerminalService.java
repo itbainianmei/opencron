@@ -463,6 +463,22 @@ public class TerminalService {
                 }
             }
         }
+
+        public static List<TerminalClient> findClient(Serializable userId) throws IOException {
+            List<TerminalClient> terminalClients = new ArrayList<TerminalClient>(0);
+            if (notEmpty(terminalSession)) {
+                for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
+                    TerminalClient terminalClient = entry.getValue();
+                    if (terminalClient!=null && terminalClient.getTerminal()!=null) {
+                        if ( userId.equals(terminalClient.getTerminal().getUserId()) ) {
+                            terminalClients.add(terminalClient);
+                        }
+                    }
+                }
+            }
+            return terminalClients;
+        }
+
     }
 
     public static class OpencronSftpMonitor extends TimerTask implements SftpProgressMonitor {

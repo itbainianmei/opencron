@@ -100,26 +100,33 @@ OpencronTerm.prototype.open = function () {
     });
 
     //给发送按钮绑定事件
-    $("#chinput").bind("click", function () {
-        var chinese = $("#chinese").val();
-        if (chinese && chinese.length > 0) {
-            self.socket.send(chinese);
-            $("#chinese").val('');
+    $("#sendBtn").bind("click", function () {
+        var sendInput = $("#sendInput").val();
+        if (sendInput && sendInput.length > 0) {
+            if (self.sendType == 1){
+                self.socket.send(sendInput);
+            }else {
+                $.ajax({
+                    url: '/terminal/sendAll?token=' + self.args[0] + "&csrf=" + self.args[1] + '&cmd=' + encodeURIComponent(encodeURIComponent(sendInput)),
+                    cache: false
+                });
+            }
+            $("#sendInput").val('');
         }
     });
 
-    $("#chinese").focus(function () {
-        self.chfocus = true;
+    $("#sendInput").focus(function () {
+        self.inFocus = true;
     }).blur(function () {
-        self.chfocus = false;
+        self.inFocus = false;
     });
 
     $(document).keypress(function (e) {
         var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
         if (keyCode == 13) {
             //在中文输入框里点击Enter按钮触发发送事件.
-            if (self.hasOwnProperty("chfocus") && self.chfocus) {
-                $("#chinput").click();
+            if (self.hasOwnProperty("inFocus") && self.inFocus) {
+                $("#sendBtn").click();
             }
             //(终端已经logout的情况下,再点击Enter则关闭当前页面
             if (self.hasOwnProperty("termClosed")) {

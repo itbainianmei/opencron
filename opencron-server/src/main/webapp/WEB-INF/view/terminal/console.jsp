@@ -44,6 +44,8 @@
                     <ul class="dropdown-menu" >
                         <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="克隆会话">&nbsp;克隆会话</a></li>
                         <li><a href="javascript:upload()" title="上传文件">&nbsp;上传文件</a></li>
+                        <li><a href="javascript:sendChinese()" title="发送中文">&nbsp;发送中文</a></li>
+                        <li><a href="javascript:sendAll()" title="发送到所有会话">&nbsp;发送到所有会话</a></li>
                     </ul>
                 </li>
 
@@ -70,9 +72,9 @@
 
                 <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出</a></li>
 
-                <li style="padding-top: 11px;margin-left: 18px;">
-                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;中文</label>&nbsp;&nbsp;<input id="chinese" class="china-btn" size="30" placeholder="发送中文请在这里输入" type="text">
-                    &nbsp;<div class="btn btn-success btn-sm" id="chinput">发送</div>
+                <li id="sendNode" style="padding-top: 11px;margin-left: 18px;display: none;">
+                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;<span id="sendLabel"></span></label>&nbsp;&nbsp;<input id="sendInput" class="send-input" size="30" placeholder="" type="text">
+                    &nbsp;<div class="btn btn-success btn-sm" id="sendBtn">发送</div>
                 </li>
                 <li style="float: right;margin-right: 15px;"><a href="https://github.com/wolfboys/opencron" target="_blank"><i aria-hidden="true" class="fa fa-github" style="font-size:35px;position:absolute;top:8px"></i></a></li>
             </ul>
@@ -107,7 +109,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
        document.title = '${name}';
-        var opencronTerm =  new OpencronTerm('${token}','${csrf}','${theme}');
+        opencronTerm =  new OpencronTerm('${token}','${csrf}','${theme}');
         //去掉a点击时的虚线框
         $(".container").find("a").each(function (i,a) {
             $(a).focus(function () {
@@ -185,6 +187,22 @@
             window.close();
         });
     }
+
+    function sendChinese() {
+        $("#sendLabel").text("中文");
+        $("#sendInput").attr("placeholder","发送中文请在这里输入").focus();
+        $("#sendNode").show();
+        opencronTerm.sendType = 1;
+
+    }
+
+    function sendAll() {
+        $("#sendLabel").text("命令")
+        $("#sendInput").attr("placeholder","发送命令到所有终端请在这里输入").focus();
+        $("#sendNode").show();
+        opencronTerm.sendType = 2;
+    }
+
 </script>
 
 </body>
