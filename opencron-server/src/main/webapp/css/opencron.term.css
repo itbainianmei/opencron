@@ -100,3 +100,18 @@ body{
 :-ms-input-placeholder { /* Internet Explorer 10+ */
     color: rgba(255, 255, 255, 0.8);
 }
+
+@media all and (max-width: 970px) {
+    #sendNode{
+        display:none;
+    }
+    .navbar-nav > li {
+        float: left;
+    }
+
+    .send{
+        display: none;
+    }
+
+}
+

@@ -44,8 +44,8 @@
                     <ul class="dropdown-menu" >
                         <li><a href="${contextPath}/terminal/reopen?token=${token}&csrf=${csrf}" target="_blank" title="克隆会话">&nbsp;克隆会话</a></li>
                         <li><a href="javascript:upload()" title="上传文件">&nbsp;上传文件</a></li>
-                        <li><a href="javascript:sendChinese()" title="发送中文">&nbsp;发送中文</a></li>
-                        <li><a href="javascript:sendAll()" title="发送到所有会话">&nbsp;发送到所有会话</a></li>
+                        <li class="send"><a href="javascript:sendChinese()" title="发送中文">&nbsp;发送中文</a></li>
+                        <li class="send"><a href="javascript:sendAll()" title="发送到所有会话">&nbsp;发送到所有会话</a></li>
                     </ul>
                 </li>
 
