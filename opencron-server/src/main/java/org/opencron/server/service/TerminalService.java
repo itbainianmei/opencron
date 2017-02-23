@@ -442,6 +442,21 @@ public class TerminalService {
             return false;
         }
 
+        public static List<TerminalClient> findClient(Serializable sessionId) throws IOException {
+            List<TerminalClient> terminalClients = new ArrayList<TerminalClient>(0);
+            if (notEmpty(terminalSession)) {
+                for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
+                    TerminalClient terminalClient = entry.getValue();
+                    if (terminalClient != null && terminalClient.getTerminal() != null) {
+                        if (sessionId.equals(terminalClient.getHttpSessionId())) {
+                            terminalClients.add(terminalClient);
+                        }
+                    }
+                }
+            }
+            return terminalClients;
+        }
+
         public static WebSocketSession findSession(Terminal terminal) {
             for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                 TerminalClient client = entry.getValue();
@@ -463,21 +478,6 @@ public class TerminalService {
                     }
                 }
             }
-        }
-
-        public static List<TerminalClient> findClient(Serializable sessionId) throws IOException {
-            List<TerminalClient> terminalClients = new ArrayList<TerminalClient>(0);
-            if (notEmpty(terminalSession)) {
-                for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
-                    TerminalClient terminalClient = entry.getValue();
-                    if (terminalClient != null && terminalClient.getTerminal() != null) {
-                        if (sessionId.equals(terminalClient.getHttpSessionId())) {
-                            terminalClients.add(terminalClient);
-                        }
-                    }
-                }
-            }
-            return terminalClients;
         }
 
     }
