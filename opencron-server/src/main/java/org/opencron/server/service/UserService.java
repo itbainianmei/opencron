@@ -27,7 +27,6 @@ import org.opencron.server.dao.QueryDao;
 import org.opencron.server.dao.UploadDao;
 import org.opencron.server.domain.Role;
 import org.opencron.server.domain.User;
-import org.opencron.server.job.OpencronTools;
 import org.opencron.server.tag.PageBean;
 import org.opencron.common.utils.Digests;
 import org.opencron.common.utils.Encodes;
@@ -35,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;

@@ -43,8 +43,6 @@ import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.*;
 
-import static org.opencron.common.utils.CommonUtils.notEmpty;
-
 /**
  * Created by benjobs on 16/3/18.
  */

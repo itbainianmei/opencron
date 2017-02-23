@@ -25,7 +25,6 @@ package org.opencron.server.websocket;
 import java.io.IOException;
 
 import org.opencron.server.domain.Terminal;
-import org.opencron.server.job.OpencronTools;
 
 import static org.opencron.server.job.OpencronTools.SSH_SESSION_ID;
 import static org.opencron.server.service.TerminalService.*;
