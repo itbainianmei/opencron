@@ -72,8 +72,8 @@
 
                 <li><a href="javascript:closeTerminal();" title="退出终端" data-toggle="tooltip"><i aria-hidden="true" class="fa fa-power-off"></i>&nbsp;退出</a></li>
 
-                <li id="sendNode" style="padding-top: 11px;margin-left: 18px;display: none;">
-                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;<span id="sendLabel"></span></label>&nbsp;&nbsp;<input id="sendInput" class="send-input" size="30" placeholder="" type="text">
+                <li id="sendNode" style="padding-top: 11px;margin-left: 18px;">
+                    <label style="color:#777;font-weight: normal; "><i aria-hidden="true" class="fa fa-send"></i>&nbsp;<span id="sendLabel">中文</span></label>&nbsp;&nbsp;<input id="sendInput" class="send-input" size="30" placeholder="发送中文请在这里输入" type="text">
                     &nbsp;<div class="btn btn-success btn-sm" id="sendBtn">发送</div>
                 </li>
                 <li style="float: right;margin-right: 15px;"><a href="https://github.com/wolfboys/opencron" target="_blank"><i aria-hidden="true" class="fa fa-github" style="font-size:35px;position:absolute;top:8px"></i></a></li>
@@ -191,15 +191,12 @@
     function sendChinese() {
         $("#sendLabel").text("中文");
         $("#sendInput").attr("placeholder","发送中文请在这里输入").focus();
-        $("#sendNode").show();
         opencronTerm.sendType = 1;
-
     }
 
     function sendAll() {
-        $("#sendLabel").text("命令")
+        $("#sendLabel").text("命令");
         $("#sendInput").attr("placeholder","发送命令到所有终端请在这里输入").focus();
-        $("#sendNode").show();
         opencronTerm.sendType = 2;
     }
 

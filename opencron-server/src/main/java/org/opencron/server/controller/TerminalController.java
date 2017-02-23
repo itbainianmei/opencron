@@ -36,7 +36,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -166,7 +165,7 @@ public class TerminalController extends BaseController {
         cmd =  URLDecoder.decode(cmd,"UTF-8");
         TerminalClient terminalClient = TerminalSession.get(token);
         if (terminalClient!=null) {
-            List<TerminalClient> terminalClients = TerminalSession.findClient(terminalClient.getTerminal().getUserId());
+            List<TerminalClient> terminalClients = TerminalSession.findClient(terminalClient.getHttpSessionId());
             for (TerminalClient client:terminalClients) {
                 client.write(cmd);
             }

@@ -138,7 +138,7 @@ public class TerminalService {
 
     public PageBean<Terminal> getPageBeanByUser(PageBean pageBean, Long userId) {
         String sql = "SELECT * FROM  T_TERMINAL WHERE USERID = ? ORDER By ";
-        pageBean.verifyOrderBy("name","name","host","port","logintime");
+        pageBean.verifyOrderBy("name", "name", "host", "port", "logintime");
         sql += pageBean.getOrderBy() + " " + pageBean.getOrder();
         return queryDao.getPageBySql(pageBean, Terminal.class, sql, userId);
     }
@@ -147,7 +147,7 @@ public class TerminalService {
         return queryDao.get(Terminal.class, id);
     }
 
-    public String delete(HttpSession session,Long id) {
+    public String delete(HttpSession session, Long id) {
         Terminal term = getById(id);
         if (term == null) {
             return "error";
@@ -172,7 +172,7 @@ public class TerminalService {
         return queryDao.sqlQuery(Terminal.class, sql, user.getUserId());
     }
 
-    public void theme(Terminal terminal,String theme) throws Exception {
+    public void theme(Terminal terminal, String theme) throws Exception {
         terminal.setTheme(theme);
         saveOrUpdate(terminal);
     }
@@ -207,10 +207,11 @@ public class TerminalService {
 
         private boolean closed = false;
 
-        public TerminalClient(WebSocketSession webSocketSession,Terminal terminal) {
+        public TerminalClient(WebSocketSession webSocketSession, Terminal terminal) {
             this.webSocketSession = webSocketSession;
             this.terminal = terminal;
-            this.httpSessionId = (String) webSocketSession.getAttributes().get(HTTP_SESSION_ID);;
+            this.httpSessionId = (String) webSocketSession.getAttributes().get(HTTP_SESSION_ID);
+            ;
             this.clientId = (String) webSocketSession.getAttributes().get(SSH_SESSION_ID);
             this.sendTempCmdId = this.clientId + this.httpSessionId;
             this.jSch = new JSch();
@@ -234,7 +235,7 @@ public class TerminalService {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    byte[] buffer = new byte[ 1024 * 4 ];
+                    byte[] buffer = new byte[1024 * 4];
                     StringBuilder builder = new StringBuilder();
                     try {
                         while (webSocketSession != null && webSocketSession.isOpen()) {
@@ -251,22 +252,22 @@ public class TerminalService {
                             String message = builder.toString();
                             message = new String(message.getBytes(DigestUtils.getEncoding(message)), "UTF-8");
                             //获取pwd的结果输出,不能发送给前台
-                            if ( sendTempCmd ) {
-                                if( message.contains(sendTempCmdId) ){
-                                    if (  pwd != null || message.contains("echo")) {
+                            if (sendTempCmd) {
+                                if (message.contains(sendTempCmdId)) {
+                                    if (pwd != null || message.contains("echo")) {
                                         continue;
                                     }
-                                    pwd = message.replace(sendTempCmdId,"").replaceAll("\r\n.*","") + "/";
+                                    pwd = message.replace(sendTempCmdId, "").replaceAll("\r\n.*", "") + "/";
                                     logger.info("[opencron] Sftp upload file target path:{}", pwd);
                                 }
                             } else {
-                                webSocketSession.sendMessage( new TextMessage(message) );
-                                if ( sendEnter ) {
-                                    String trimMessage = message.replaceAll("\r\n","");
+                                webSocketSession.sendMessage(new TextMessage(message));
+                                if (sendEnter) {
+                                    String trimMessage = message.replaceAll("\r\n", "");
                                     if (CommonUtils.isEmpty(trimMessage)) {
                                         receiveEnd = false;
-                                    }else {
-                                        if ( sendBuffer.toString().equals("exit") && trimMessage.equals("logout") ) {
+                                    } else {
+                                        if (sendBuffer.toString().equals("exit") && trimMessage.equals("logout")) {
                                             closed = true;
                                         }
                                         receiveEnd = true;
@@ -294,10 +295,10 @@ public class TerminalService {
             if (message.equals("\r")) {
                 if (closed) {
                     disconnect();
-                }else {
+                } else {
                     sendEnter = true;
                 }
-            }else {
+            } else {
                 sendEnter = false;
                 sendBuffer.append(message);
             }
@@ -464,13 +465,13 @@ public class TerminalService {
             }
         }
 
-        public static List<TerminalClient> findClient(Serializable userId) throws IOException {
+        public static List<TerminalClient> findClient(Serializable sessionId) throws IOException {
             List<TerminalClient> terminalClients = new ArrayList<TerminalClient>(0);
             if (notEmpty(terminalSession)) {
                 for (Map.Entry<WebSocketSession, TerminalClient> entry : terminalSession.entrySet()) {
                     TerminalClient terminalClient = entry.getValue();
-                    if (terminalClient!=null && terminalClient.getTerminal()!=null) {
-                        if ( userId.equals(terminalClient.getTerminal().getUserId()) ) {
+                    if (terminalClient != null && terminalClient.getTerminal() != null) {
+                        if (sessionId.equals(terminalClient.getHttpSessionId())) {
                             terminalClients.add(terminalClient);
                         }
                     }

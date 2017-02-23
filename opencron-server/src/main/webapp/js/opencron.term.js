@@ -3,6 +3,7 @@
     this.term = null;
     this.termNode = null;
     this.args = arguments;
+    this.sendType = 1;
     this.contextPath = (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host;
     this.open();
 }
