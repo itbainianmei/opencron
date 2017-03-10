@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="${contextPath}/css/font-awesome.css?resId=${resourceId}" />
     <link rel="stylesheet" href="${contextPath}/css/font-awesome-ie7.min.css?resId=${resourceId}" />
     <link rel="stylesheet" href="${contextPath}/css/form.css?resId=${resourceId}" />
-    <link rel="stylesheet" href="${contextPath}/css/jquery.mmenu.all.css?resId=${resourceId}" media="all" />
 
     <link rel="stylesheet" href="${contextPath}/css/calendar.css?resId=${resourceId}" />
     <link rel="stylesheet" href="${contextPath}/css/style.css?resId=${resourceId}" />
